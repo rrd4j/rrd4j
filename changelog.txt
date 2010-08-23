@@ -1,0 +1,56 @@
+Changes in version 2.0.6 (30 May 2010)
+--------------------------------------
+* Changed license to Apache License, Version 2.0
+* Removed dependency on JDK 1.6. Compiles again with JDK 1.5.
+* Added RrdDbPoolNew with better concurrency (Fabrice Bacchella) + fixed issue 11
+* RrdNioBackend uses ScheduledExecutorService instead of Timer (and spawns daemon, named threads)
+* Removed JDK selection logic for the default factory. NIO is the default one.
+* Fixed minor issue in FetchRequest
+* Fixed caching bug (Christophe Roudet)
+* Fixed various typos
+* Beautified RRD File Inspector
+* Changed source dir to src/main/java
+* Maven2 Build (pom.xml)
+
+Changes in version 2.0.5
+------------------------
+* Reverted changes to Sample in 2.0.3 (binary searching broke storage)
+
+Changes in version 2.0.4
+------------------------
+* RrdSafeFileBackend uses AtomicLong to track it's lock counters
+* Fixed bugreport 2: in org.rrd4j.data.Aggregates.getAggregate(), the MIN case statement is missing. As
+a result, gprint statements cannot display the minimum value of a data series as an aggregate function.
+* Other minor changes
+
+Changes in version 2.0.3
+------------------------
+* Major performance and locking improvements with the BerkeleyDB backend
+* 10% performance improvement in the Sample class (now uses binary searching to get the correct datasource)
+* JRobin RRD file compability
+* Less synchronization in RrdBackendFactory
+* Other minor changes
+
+Changes in version 2.0.2
+------------------------
+* Minor improvements to RrdBerkeleyDbBackendFactory
+
+* Applied patch from Renaud Bruyeron:
+RrdGraphDefTemplate.resolveColors destroys COLOR_NAMES constant array, which breaks the parsing
+of XML template file. Another issue fixed by the patch is that Util.Xml.getChildNodes() does not
+filter out nodes that are not of type Node.ELEMENT_NODE - this breaks pretty much all the parsing
+code in the *Template classes.
+
+Changes in version 2.0.1
+------------------------
+* Bugfix in TimeAxis where drawing area <= 0 would throw exceptions (Ronny Standtke)
+* Bugfix in Archive.accumulate (break was missing)
+
+Changes in version 2.0 (JDK 1.5 migration)
+------------------------------------------
+* Bugfix in TimeAxis miscalculated when width was smaller then the endtime
+* Improvement: ConsolFun and DsType are now JDK 1.5 Enum's
+* Removed RrdException, replaced by IllegalArgumentException in most places
+* Usage of StringBuilder to improve performance
+* Sleepycat Berkeley DB backend (see http://www.sleepycat.com)
+* Varargs where usefull
