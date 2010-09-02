@@ -1,0 +1,29 @@
+<project name="RRD4J Documentation" default="doclava" basedir=".">
+    <property name="doclava.file" value="lib/doclava.jar"/>
+
+    <target name="doclava" description="Generate documentation">
+         <echo message="The Java home directory is: ${java.home}"/>
+
+        <javadoc packagenames="org.rrd4j.*"
+                 destdir="javadoc"
+                 docletpath="${doclava.file}"
+                 bootclasspath="${java.home}/lib/rt.jar"
+                >
+            <fileset dir="src/main/java"/>
+            <classpath>
+                <fileset dir="lib" includes="*.jar"/>
+            </classpath>
+
+            <doclet name="com.google.doclava.Doclava">
+                <param name="-stubs" value="build/stubs"/>
+                <param name="-hdf"/> <param name="project.name"/> <param name="RRD4J Documentation"/>
+                <param name="-federate"/> <param name="JDK"/> <param name=" http://download.oracle.com/javase/6/docs/api/index.html?"/>
+                <param name="-federationxml"/> <param name="JDK"/> <param name="http://doclava.googlecode.com/svn/static/api/openjdk-6.xml"/>
+            </doclet>
+        </javadoc>
+    </target>
+
+    <target name="clean" description="Remove generated files.">
+        <delete dir="build"/>
+    </target>
+</project>

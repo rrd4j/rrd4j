@@ -4,8 +4,7 @@ import java.io.IOException;
 
 /**
  * Class to represent internal RRD archive state for a single datasource. Objects of this
- * class are never manipulated directly, it's up to Rrd4j framework to manage
- * internal archive states.<p>
+ * class are never manipulated directly, it's up to Rrd4j to manage internal archive states.
  *
  * @author Sasa Markovic
  */
