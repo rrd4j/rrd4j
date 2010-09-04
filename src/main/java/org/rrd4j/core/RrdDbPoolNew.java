@@ -50,7 +50,7 @@ public class RrdDbPoolNew extends RrdDbPool {
                 }
             }
             poolLock.release();
-            return files.toArray(new String[0]);
+            return files.toArray(new String[files.size()]);
         } catch (InterruptedException e) {
         }
         return new String[]{};
