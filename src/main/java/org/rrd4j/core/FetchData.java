@@ -294,29 +294,6 @@ public class FetchData {
     }
 
     /**
-     * Returns aggregated value from the fetched data for a single datasource.
-     * Before applying aggregation functions, specified RPN expression is applied to fetched data.
-     * For example, if you have a gauge datasource named 'foots' but you want to find the maximum
-     * fetched value in meters use something like: <p>
-     * <code>getAggregate("foots", "MAX", "foots,0.3048,*");</code><p>
-     *
-     * @param dsName        Datasource name
-     * @param consolFun     Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
-     * @param rpnExpression RRDTool-like RPN expression
-     * @return Aggregated value
-     * @throws IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data, or if
-     *                                  invalid RPN expression is supplied
-     * @throws IOException              Thrown in case of I/O error (unlikely to happen)
-     * @deprecated This method is preserved just for backward compatibility.
-     */
-    public double getAggregate(String dsName, ConsolFun consolFun, String rpnExpression)
-            throws IOException {
-        // for backward compatibility
-        rpnExpression = rpnExpression.replaceAll("value", dsName);
-        return getRpnAggregate(rpnExpression, consolFun);
-    }
-
-    /**
      * Returns aggregated value for a set of values calculated by applying an RPN expression to the
      * fetched data. For example, if you have two datasources named <code>x</code> and <code>y</code>
      * in this FetchData and you want to calculate MAX value of <code>(x+y)/2<code> use something like: <p>

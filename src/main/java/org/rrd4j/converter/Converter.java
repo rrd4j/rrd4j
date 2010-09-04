@@ -1,4 +1,4 @@
-package org.rrd4j.convertor;
+package org.rrd4j.converter;
 
 import org.rrd4j.core.RrdDb;
 
