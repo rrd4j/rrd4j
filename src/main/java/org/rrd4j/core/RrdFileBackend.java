@@ -37,6 +37,7 @@ public class RrdFileBackend extends RrdBackend {
      * @throws IOException Thrown in case of I/O error
      */
     public void close() throws IOException {
+        file.getFD().sync();
         file.close();
     }
 
