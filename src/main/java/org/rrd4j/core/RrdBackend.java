@@ -287,8 +287,7 @@ public abstract class RrdBackend {
         assert b.length == 8 : "Invalid number of bytes for long conversion";
         int high = getInt(new byte[]{b[0], b[1], b[2], b[3]});
         int low = getInt(new byte[]{b[4], b[5], b[6], b[7]});
-        long value = ((long) (high) << 32) + (low & 0xFFFFFFFFL);
-        return value;
+        return ((long) (high) << 32) + (low & 0xFFFFFFFFL);
     }
 
     private static char getChar(byte[] b) {

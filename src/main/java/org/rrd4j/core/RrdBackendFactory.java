@@ -171,7 +171,7 @@ public abstract class RrdBackendFactory {
      *
      * @param path
      * @return True, if the header should be validated for this factory
-     * @throws IOException
+     * @throws IOException if header validation fails
      */
     protected abstract boolean shouldValidateHeader(String path) throws IOException;
 

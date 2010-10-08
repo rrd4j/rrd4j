@@ -14,8 +14,8 @@ import java.util.Arrays;
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
 public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
-    private volatile boolean dirty = false;
     private final Database rrdDatabase;
+    private volatile boolean dirty = false;
 
     protected RrdBerkeleyDbBackend(String path, Database rrdDatabase) {
         super(path);

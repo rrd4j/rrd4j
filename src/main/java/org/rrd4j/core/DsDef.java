@@ -21,10 +21,10 @@ import org.rrd4j.DsType;
 public class DsDef {
     static final String FORCE_ZEROS_FOR_NANS_SUFFIX = "!";
 
-    private String dsName;
-    private DsType dsType;
-    private long heartbeat;
-    private double minValue, maxValue;
+    private final String dsName;
+    private final DsType dsType;
+    private final long heartbeat;
+    private final double minValue, maxValue;
 
     /**
      * <p>Creates new data source definition object. This object should be passed as argument
