@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * {@link RrdBackendFactory} that uses <a href="http://www.oracle.com/technology/products/berkeley-db/je/index.html">Oracle Berkeley DB Java Edition</a>
+ * {@link RrdBackendFactory} that uses <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html">Oracle Berkeley DB Java Edition</a>
  * to read data. Call {@link #init()} after instantiation and {@link #destroy()} when tearing down
  * (or when using Spring use init-method and destroy-method).
  *
