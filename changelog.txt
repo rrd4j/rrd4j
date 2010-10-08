@@ -1,5 +1,5 @@
-Changes in version 2.0.6 (30 May 2010)
---------------------------------------
+Changes in version 2.1
+----------------------
 * Changed license to Apache License, Version 2.0
 * Removed dependency on JDK 1.6. Compiles again with JDK 1.5.
 * Added RrdDbPoolNew with better concurrency (Fabrice Bacchella) + fixed issue 11
@@ -10,7 +10,18 @@ Changes in version 2.0.6 (30 May 2010)
 * Fixed various typos
 * Beautified RRD File Inspector
 * Changed source dir to src/main/java
-* Maven2 Build (pom.xml)
+* Gradle (build.gradle) build script
+* MongoDB backend (see http://www.mongodb.org/)
+
+How to use the MongoDB backend:
+
+    // connect to localhost:27017
+    Mongo mongo = new Mongo();
+    mongo.setWriteConcern(WriteConcern.SAFE); // waits on a server at write operations
+    DBCollection coll = mongo.getDB("mydb").getCollection("rrd4j");
+
+    RrdMongoDBBackendFactory factory = new RrdMongoDBBackendFactory(coll);
+    RrdBackendFactory.registerAndSetAsDefaultFactory(factory);
 
 Changes in version 2.0.5
 ------------------------
