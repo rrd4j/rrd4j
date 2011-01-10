@@ -1,7 +1,7 @@
 Changes in version 2.1
 ----------------------
+* Requires JDK 1.6.
 * Changed license to Apache License, Version 2.0
-* Removed dependency on JDK 1.6. Compiles again with JDK 1.5.
 * Added RrdDbPoolNew with better concurrency (Fabrice Bacchella) + fixed issue 11
 * RrdNioBackend uses ScheduledExecutorService instead of Timer (and spawns daemon, named threads)
 * Removed JDK selection logic for the default factory. NIO is the default one.
@@ -11,17 +11,19 @@ Changes in version 2.1
 * Beautified RRD File Inspector
 * Changed source dir to src/main/java
 * Gradle (build.gradle) build script
+* BerkeleyBD factory accepts a Berkeley Database object in it's constructor
+* Fixed bug with TOTAL consolidation function
 * MongoDB backend (see http://www.mongodb.org/)
 
-How to use the MongoDB backend:
+How to use the MongoDB backend (for more information see http://www.mongodb.org/):
 
     // connect to localhost:27017
     Mongo mongo = new Mongo();
-    mongo.setWriteConcern(WriteConcern.SAFE); // waits on a server at write operations
-    DBCollection coll = mongo.getDB("mydb").getCollection("rrd4j");
+    mongo.setWriteConcern(WriteConcern.SAFE); // syncs write operations
+    DBCollection coll = mongo.getDB("my-rrd4j-db").getCollection("my-rrds");
 
-    RrdMongoDBBackendFactory factory = new RrdMongoDBBackendFactory(coll);
-    RrdBackendFactory.registerAndSetAsDefaultFactory(factory);
+    RrdMongoDBBackendFactory factory = new RrdMongoDBBackendFactory(coll); // automatically set as default factory
+    RrdDb rrdDb = ...
 
 Changes in version 2.0.5
 ------------------------
