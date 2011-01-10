@@ -49,22 +49,21 @@ public class Archive implements RrdUpdater {
         int numRows = rows.get();
         states = new ArcState[n];
         int version = parentDb.getHeader().getVersion();
-        if(version == 1) {
+        if (version == 1) {
             robins = new RobinArray[n];
-        for (int i = 0; i < n; i++) {
-            states[i] = new ArcState(this, shouldInitialize);
+            for (int i = 0; i < n; i++) {
+                states[i] = new ArcState(this, shouldInitialize);
                 robins[i] = new RobinArray(this, numRows, shouldInitialize);
             }
-        }
-        else {
+        } else {
             pointers = new RrdInt[n];
             robins = new RobinMatrix[n];
             for (int i = 0; i < n; i++) {
-                pointers[i]= new RrdInt(this);
+                pointers[i] = new RrdInt(this);
                 states[i] = new ArcState(this, shouldInitialize);
             }
-            values = new RrdDoubleMatrix(this, numRows, n, shouldInitialize);				
-            for(int i = 0; i < n; i++) {
+            values = new RrdDoubleMatrix(this, numRows, n, shouldInitialize);
+            for (int i = 0; i < n; i++) {
                 robins[i] = new RobinMatrix(this, values, pointers[i], i);
             }
         }
@@ -126,8 +125,7 @@ public class Archive implements RrdUpdater {
             if (updateTime % arcStep == 0) {
                 finalizeStep(state, robin);
                 break;
-            }
-            else {
+            } else {
                 updateTime += step;
             }
         }
@@ -144,8 +142,7 @@ public class Archive implements RrdUpdater {
     private void accumulate(ArcState state, double value) throws IOException {
         if (Double.isNaN(value)) {
             state.setNanSteps(state.getNanSteps() + 1);
-        }
-        else {
+        } else {
             switch (ConsolFun.valueOf(consolFun.get())) {
                 case MIN:
                     state.setAccumValue(Util.min(state.getAccumValue(), value));
@@ -175,8 +172,7 @@ public class Archive implements RrdUpdater {
                 accumValue /= (arcSteps - nanSteps);
             }
             robin.store(accumValue);
-        }
-        else {
+        } else {
             robin.store(Double.NaN);
         }
         state.setAccumValue(Double.NaN);
