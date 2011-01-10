@@ -169,7 +169,7 @@ public abstract class RrdBackendFactory {
     /**
      * Determines if the header should be validated.
      *
-     * @param path
+     * @param path Storage path
      * @return True, if the header should be validated for this factory
      * @throws IOException if header validation fails
      */
