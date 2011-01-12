@@ -4,9 +4,7 @@ import org.rrd4j.ConsolFun;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Class used to perform various complex operations on RRD files. Use an instance of the
@@ -38,6 +36,21 @@ public class RrdToolkit {
      */
     public static void addDatasource(String sourcePath, String destPath, DsDef newDatasource)
             throws IOException {
+        addDatasources(sourcePath, destPath, Collections.singleton(newDatasource));
+    }
+
+    /**
+     * Creates a new RRD file with one more datasource in it. RRD file is created based on the
+     * existing one (the original RRD file is not modified at all). All data from
+     * the original RRD file is copied to the new one.
+     *
+     * @param sourcePath     path to a RRD file to import data from (will not be modified)
+     * @param destPath       path to a new RRD file (will be created)
+     * @param newDatasources Datasource definitions to be added to the new RRD file
+     * @throws IOException Thrown in case of I/O error
+     */
+    public static void addDatasources(String sourcePath, String destPath, Iterable<DsDef> newDatasources)
+            throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException("Source and destination paths are the same");
         }
@@ -45,16 +58,16 @@ public class RrdToolkit {
         try {
             RrdDef rrdDef = rrdSource.getRrdDef();
             rrdDef.setPath(destPath);
-            rrdDef.addDatasource(newDatasource);
+            for (DsDef newDatasource : newDatasources) {
+                rrdDef.addDatasource(newDatasource);
+            }
             RrdDb rrdDest = new RrdDb(rrdDef);
             try {
                 rrdSource.copyStateTo(rrdDest);
-            }
-            finally {
+            } finally {
                 rrdDest.close();
             }
-        }
-        finally {
+        } finally {
             rrdSource.close();
         }
     }
@@ -76,8 +89,28 @@ public class RrdToolkit {
      * @throws IOException Thrown in case of I/O error
      */
     public static void addDatasource(String sourcePath, DsDef newDatasource, boolean saveBackup) throws IOException {
+        addDatasources(sourcePath, Collections.singleton(newDatasource), saveBackup);
+    }
+
+    /**
+     * <p>Adds datasources to a RRD file.</p>
+     * <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
+     * It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
+     * should be set to <code>true</code>). The backup file will be created in the same
+     * directory as the original one with <code>.bak</code> extension added to the
+     * original name.</p>
+     * <p>Before applying this method, be sure that the specified RRD file is not in use
+     * (not open)</p>
+     *
+     * @param sourcePath     path to a RRD file to add datasource to.
+     * @param newDatasources Datasource definitions to be added to the RRD file
+     * @param saveBackup    true, if backup of the original file should be created;
+     *                      false, otherwise
+     * @throws IOException Thrown in case of I/O error
+     */
+    public static void addDatasources(String sourcePath, Iterable<DsDef> newDatasources, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
-        addDatasource(sourcePath, destPath, newDatasource);
+        addDatasources(sourcePath, destPath, newDatasources);
         copyFile(destPath, sourcePath, saveBackup);
     }
 
@@ -105,12 +138,10 @@ public class RrdToolkit {
             RrdDb rrdDest = new RrdDb(rrdDef);
             try {
                 rrdSource.copyStateTo(rrdDest);
-            }
-            finally {
+            } finally {
                 rrdDest.close();
             }
-        }
-        finally {
+        } finally {
             rrdSource.close();
         }
     }
@@ -151,12 +182,10 @@ public class RrdToolkit {
             if (rrd.containsDs(oldDsName)) {
                 Datasource datasource = rrd.getDatasource(oldDsName);
                 datasource.setDsName(newDsName);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Could not find datasource [" + oldDsName + "] in file " + sourcePath);
             }
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -178,12 +207,10 @@ public class RrdToolkit {
             Datasource[] datasources;
             if (dsName == null) {
                 datasources = rrd.getDatasources();
-            }
-            else {
+            } else {
                 if (rrd.containsDs(dsName)) {
                     datasources = new Datasource[]{rrd.getDatasource(dsName)};
-                }
-                else {
+                } else {
                     throw new IllegalArgumentException("Could not find datasource [" + dsName + "] in file " + sourcePath);
                 }
             }
@@ -196,8 +223,7 @@ public class RrdToolkit {
                 }
             }
             return count;
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -224,12 +250,10 @@ public class RrdToolkit {
             RrdDb rrdDest = new RrdDb(rrdDef);
             try {
                 rrdSource.copyStateTo(rrdDest);
-            }
-            finally {
+            } finally {
                 rrdDest.close();
             }
-        }
-        finally {
+        } finally {
             rrdSource.close();
         }
     }
@@ -280,12 +304,10 @@ public class RrdToolkit {
             RrdDb rrdDest = new RrdDb(rrdDef);
             try {
                 rrdSource.copyStateTo(rrdDest);
-            }
-            finally {
+            } finally {
                 rrdDest.close();
             }
-        }
-        finally {
+        } finally {
             rrdSource.close();
         }
     }
@@ -353,8 +375,7 @@ public class RrdToolkit {
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setHeartbeat(newHeartbeat);
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -372,8 +393,7 @@ public class RrdToolkit {
         try {
             Datasource ds = rrd.getDatasource(dsIndex);
             ds.setHeartbeat(newHeartbeat);
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -394,8 +414,7 @@ public class RrdToolkit {
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMinValue(newMinValue, filterArchivedValues);
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -416,8 +435,7 @@ public class RrdToolkit {
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMaxValue(newMaxValue, filterArchivedValues);
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -440,8 +458,7 @@ public class RrdToolkit {
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMinMaxValue(newMinValue, newMaxValue, filterArchivedValues);
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -461,8 +478,7 @@ public class RrdToolkit {
         try {
             Archive arc = rrd.getArchive(consolFun, steps);
             arc.setXff(newXff);
-        }
-        finally {
+        } finally {
             rrd.close();
         }
     }
@@ -498,13 +514,11 @@ public class RrdToolkit {
                 RrdDb rrdDest = new RrdDb(rrdDef);
                 try {
                     rrdSource.copyStateTo(rrdDest);
-                }
-                finally {
+                } finally {
                     rrdDest.close();
                 }
             }
-        }
-        finally {
+        } finally {
             rrdSource.close();
         }
     }
@@ -555,13 +569,11 @@ public class RrdToolkit {
                 RrdDb rrdDest = new RrdDb(rrdDef);
                 try {
                     rrdSource.copyStateTo(rrdDest);
-                }
-                finally {
+                } finally {
                     rrdDest.close();
                 }
             }
-        }
-        finally {
+        } finally {
             rrdSource.close();
         }
     }
@@ -597,19 +609,18 @@ public class RrdToolkit {
             if (file.isDirectory() && recursive) {
                 // traverse subdirectories only if recursive flag is specified
                 traverseDirectory(file, extension, recursive, list);
-            }
-            else if (file.isFile() && file.getName().endsWith(extension)) {
+            } else if (file.isFile() && file.getName().endsWith(extension)) {
                 list.add(file.getCanonicalPath());
             }
         }
-	}
+    }
 
-	private static String createSplitPath(String dsName, String sourcePath) {
-		File file = new File(sourcePath);
-		String newName = dsName + "-" + file.getName();
-		String path = file.getAbsolutePath();
-		String parentDir = path.substring(0, 1 + path.lastIndexOf(Util.getFileSeparator()));
-		return parentDir + newName;
-	}
+    private static String createSplitPath(String dsName, String sourcePath) {
+        File file = new File(sourcePath);
+        String newName = dsName + "-" + file.getName();
+        String path = file.getAbsolutePath();
+        String parentDir = path.substring(0, 1 + path.lastIndexOf(Util.getFileSeparator()));
+        return parentDir + newName;
+    }
 }
 

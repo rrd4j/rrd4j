@@ -1,11 +1,8 @@
 package org.rrd4j.demo;
 
-import static org.rrd4j.ConsolFun.*;
-
 import org.rrd4j.core.*;
 import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphDef;
-import org.rrd4j.DsType;
 
 import java.awt.*;
 import java.io.BufferedOutputStream;
@@ -13,6 +10,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
+
+import static org.rrd4j.ConsolFun.*;
+import static org.rrd4j.DsType.GAUGE;
 
 /**
  * Simple demo just to check that everything is OK with this library. Creates two files in your
@@ -58,8 +58,8 @@ public class Demo {
         println("== Creating RRD file " + rrdPath);
         RrdDef rrdDef = new RrdDef(rrdPath, start - 1, 300);
         rrdDef.setVersion(2);
-        rrdDef.addDatasource("sun", DsType.GAUGE, 600, 0, Double.NaN);
-        rrdDef.addDatasource("shade", DsType.GAUGE, 600, 0, Double.NaN);
+        rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);
+        rrdDef.addDatasource("shade", GAUGE, 600, 0, Double.NaN);
         rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700);
         rrdDef.addArchive(AVERAGE, 0.5, 24, 775);
