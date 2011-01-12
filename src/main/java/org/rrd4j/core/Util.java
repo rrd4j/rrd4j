@@ -401,7 +401,7 @@ public class Util {
     }
 
     static int getMatchingDatasourceIndex(RrdDb rrd1, int dsIndex, RrdDb rrd2) throws IOException {
-        String dsName = rrd1.getDatasource(dsIndex).getDsName();
+        String dsName = rrd1.getDatasource(dsIndex).getName();
         try {
             return rrd2.getDsIndex(dsName);
         }
