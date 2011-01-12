@@ -3,7 +3,7 @@ package org.rrd4j;
 /**
  * Enumeration of available consolidation functions. Note that data aggregation inevitably leads to
  * loss of precision and information. The trick is to pick the aggregate function such that the interesting
- * properties of your data is kept across the aggregation process.
+ * properties of your data are kept across the aggregation process.
  */
 public enum ConsolFun {
     /**
