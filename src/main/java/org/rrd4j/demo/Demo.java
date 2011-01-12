@@ -1,6 +1,7 @@
 package org.rrd4j.demo;
 
 import static org.rrd4j.ConsolFun.*;
+
 import org.rrd4j.core.*;
 import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphDef;
@@ -63,6 +64,10 @@ public class Demo {
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700);
         rrdDef.addArchive(AVERAGE, 0.5, 24, 775);
         rrdDef.addArchive(AVERAGE, 0.5, 288, 797);
+        rrdDef.addArchive(TOTAL, 0.5, 1, 600);
+        rrdDef.addArchive(TOTAL, 0.5, 6, 700);
+        rrdDef.addArchive(TOTAL, 0.5, 24, 775);
+        rrdDef.addArchive(TOTAL, 0.5, 288, 797);
         rrdDef.addArchive(MAX, 0.5, 1, 600);
         rrdDef.addArchive(MAX, 0.5, 6, 700);
         rrdDef.addArchive(MAX, 0.5, 24, 775);
@@ -74,8 +79,7 @@ public class Demo {
         println("== RRD file created.");
         if (rrdDb.getRrdDef().equals(rrdDef)) {
             println("Checking RRD file structure... OK");
-        }
-        else {
+        } else {
             println("Invalid RRD file created. This is a serious bug, bailing out");
             return;
         }
@@ -221,8 +225,8 @@ public class Demo {
                 value = 0;
             }
             return Math.round(oldValue);
-		}
-	}
+        }
+    }
 }
 
 
