@@ -31,7 +31,6 @@ public class Sample {
     private long time;
     private final String[] dsNames;
     private final double[] values;
-    private final double[] nanValues;
 
     Sample(RrdDb parentDb, long time) throws IOException {
         this.parentDb = parentDb;
@@ -39,14 +38,11 @@ public class Sample {
 
         this.dsNames = parentDb.getDsNames();
         values = new double[dsNames.length];
-        nanValues = new double[dsNames.length];
-        Arrays.fill(nanValues, Double.NaN);
         clearValues();
     }
 
-    private Sample clearValues() {
-        System.arraycopy(nanValues, 0, values, 0, values.length);
-        return this;
+    private void clearValues() {
+        Arrays.fill(values, Double.NaN);
     }
 
     /**
@@ -231,7 +227,7 @@ public class Sample {
         StringBuilder buffer = new StringBuilder("update \"");
         buffer.append(parentDb.getRrdBackend().getPath()).append("\" ").append(time);
         for (double value : values) {
-            buffer.append(":");
+            buffer.append(':');
             buffer.append(Util.formatDouble(value, "U", false));
         }
         return buffer.toString();
