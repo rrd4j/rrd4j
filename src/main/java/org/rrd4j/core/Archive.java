@@ -25,19 +25,15 @@ public class Archive implements RrdUpdater {
     protected final RrdInt rows;
 
     // state
-    private Robin[] robins;
-    private ArcState[] states;
-
-    // state for version 2
-    private RrdInt[] pointers;
-    private RrdDoubleMatrix values;
+    private final Robin[] robins;
+    private final ArcState[] states;
 
     Archive(RrdDb parentDb, ArcDef arcDef) throws IOException {
         this.parentDb = parentDb;
-        consolFun = new RrdString(this, true);  // constant, may be cached
+        consolFun = new RrdString(this, true);     // constant, may be cached
         xff = new RrdDouble(this);
         steps = new RrdInt(this, true);            // constant, may be cached
-        rows = new RrdInt(this, true);            // constant, may be cached
+        rows = new RrdInt(this, true);             // constant, may be cached
         boolean shouldInitialize = arcDef != null;
         if (shouldInitialize) {
             consolFun.set(arcDef.getConsolFun().name());
@@ -56,13 +52,13 @@ public class Archive implements RrdUpdater {
                 robins[i] = new RobinArray(this, numRows, shouldInitialize);
             }
         } else {
-            pointers = new RrdInt[n];
+            RrdInt[] pointers = new RrdInt[n];
             robins = new RobinMatrix[n];
             for (int i = 0; i < n; i++) {
                 pointers[i] = new RrdInt(this);
                 states[i] = new ArcState(this, shouldInitialize);
             }
-            values = new RrdDoubleMatrix(this, numRows, n, shouldInitialize);
+            RrdDoubleMatrix values = new RrdDoubleMatrix(this, numRows, n, shouldInitialize);
             for (int i = 0; i < n; i++) {
                 robins[i] = new RobinMatrix(this, values, pointers[i], i);
             }
