@@ -1,10 +1,17 @@
-Changes in version 2.1
-----------------------
-* Requires JDK 1.6.
+Changes in version 2.1 - 12 Jan 2011
+------------------------------------
+Major changes:
+
 * Changed license to Apache License, Version 2.0
+* Fixed aggregation of TOTAL
+* MongoDB backend (see http://www.mongodb.org/)
+* Removed JDK selection logic for the default factory. NIO is the default one.
+
+Minor changes:
+
+* Requires JDK 1.6.
 * Added RrdDbPoolNew with better concurrency (Fabrice Bacchella) + fixed issue 11
 * RrdNioBackend uses ScheduledExecutorService instead of Timer (and spawns daemon, named threads)
-* Removed JDK selection logic for the default factory. NIO is the default one.
 * Fixed minor issue in FetchRequest
 * Fixed caching bug (Christophe Roudet)
 * Fixed various typos
@@ -12,10 +19,8 @@ Changes in version 2.1
 * Changed source dir to src/main/java
 * Gradle (build.gradle) build script
 * BerkeleyBD factory accepts a Berkeley Database object in it's constructor
-* Fixed bug with TOTAL consolidation function
-* MongoDB backend (see http://www.mongodb.org/)
 
-How to use the MongoDB backend (for more information see http://www.mongodb.org/):
+How to use the MongoDB backend (for more information see http://www.mongodb.org/display/DOCS/Java+Language+Center):
 
     // connect to localhost:27017
     Mongo mongo = new Mongo();
