@@ -465,7 +465,7 @@ public class RrdDb implements RrdUpdater {
         int n = datasources.length;
         String[] dsNames = new String[n];
         for (int i = 0; i < n; i++) {
-            dsNames[i] = datasources[i].getDsName();
+            dsNames[i] = datasources[i].getName();
         }
         return dsNames;
     }
@@ -680,7 +680,7 @@ public class RrdDb implements RrdUpdater {
     }
 
     final void archive(Datasource datasource, double value, long numUpdates) throws IOException {
-        int dsIndex = getDsIndex(datasource.getDsName());
+        int dsIndex = getDsIndex(datasource.getName());
         for (Archive archive : archives) {
             archive.archive(dsIndex, value, numUpdates);
         }
@@ -695,7 +695,7 @@ public class RrdDb implements RrdUpdater {
      */
     public int getDsIndex(String dsName) throws IOException {
         for (int i = 0; i < datasources.length; i++) {
-            if (datasources[i].getDsName().equals(dsName)) {
+            if (datasources[i].getName().equals(dsName)) {
                 return i;
             }
         }
@@ -711,7 +711,7 @@ public class RrdDb implements RrdUpdater {
      */
     public boolean containsDs(String dsName) throws IOException {
         for (Datasource datasource : datasources) {
-            if (datasource.getDsName().equals(dsName)) {
+            if (datasource.getName().equals(dsName)) {
                 return true;
             }
         }
@@ -859,8 +859,8 @@ public class RrdDb implements RrdUpdater {
         RrdDef rrdDef = new RrdDef(path, startTime, step, version);
         // add datasources
         for (Datasource datasource : datasources) {
-            DsDef dsDef = new DsDef(datasource.getDsName(),
-                    datasource.getDsType(), datasource.getHeartbeat(),
+            DsDef dsDef = new DsDef(datasource.getName(),
+                    datasource.getType(), datasource.getHeartbeat(),
                     datasource.getMinValue(), datasource.getMaxValue());
             rrdDef.addDatasource(dsDef);
         }

@@ -53,7 +53,7 @@ class GraphFrame extends JFrame {
                 Datasource ds = rrdDb.getDatasource(dsIndex);
                 Archive arc = rrdDb.getArchive(arcIndex);
                 Robin robin = arc.getRobin(dsIndex);
-                dsName = ds.getDsName();
+                dsName = ds.getName();
                 t1 = arc.getStartTime();
                 t2 = arc.getEndTime();
                 long step = arc.getArcStep();

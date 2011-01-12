@@ -189,7 +189,7 @@ public class RrdToolkit {
             }
             int count = 0;
             for (Datasource datasource : datasources) {
-                String currentDsName = datasource.getDsName();
+                String currentDsName = datasource.getName();
                 if (!currentDsName.endsWith(DsDef.FORCE_ZEROS_FOR_NANS_SUFFIX)) {
                     datasource.setDsName(currentDsName + DsDef.FORCE_ZEROS_FOR_NANS_SUFFIX);
                     count++;

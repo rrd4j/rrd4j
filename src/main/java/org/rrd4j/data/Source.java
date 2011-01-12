@@ -1,7 +1,8 @@
 package org.rrd4j.data;
 
 abstract class Source {
-    final private String name;
+    private final String name;
+
     protected double[] values;
     protected long[] timestamps;
 

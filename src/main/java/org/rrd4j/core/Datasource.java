@@ -81,7 +81,7 @@ public class Datasource implements RrdUpdater {
      * @return Datasource name
      * @throws IOException Thrown in case of I/O error
      */
-    public String getDsName() throws IOException {
+    public String getName() throws IOException {
         return dsName.get();
     }
 
@@ -91,7 +91,7 @@ public class Datasource implements RrdUpdater {
      * @return Datasource type.
      * @throws IOException Thrown in case of I/O error
      */
-    public DsType getDsType() throws IOException {
+    public DsType getType() throws IOException {
         return DsType.valueOf(dsType.get());
     }
 

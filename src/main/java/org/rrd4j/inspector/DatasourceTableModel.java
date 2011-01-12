@@ -65,8 +65,8 @@ class DatasourceTableModel extends AbstractTableModel {
                     try {
                         Datasource ds = rrd.getDatasource(dsIndex);
                         values = new Object[]{
-                                ds.getDsName(),
-                                ds.getDsType(),
+                                ds.getName(),
+                                ds.getType(),
                                 "" + ds.getHeartbeat(),
                                 InspectorModel.formatDouble(ds.getMinValue()),
                                 InspectorModel.formatDouble(ds.getMaxValue()),

@@ -17,54 +17,58 @@ class ImageWorker {
     static final int IMG_BUFFER_CAPACITY = 10000; // bytes
 
     private BufferedImage img;
-    private Graphics2D gd;
+    private Graphics2D g2d;
     private int imgWidth, imgHeight;
-    private AffineTransform aftInitial;
+    private AffineTransform initialAffineTransform;
 
     ImageWorker(int width, int height) {
         resize(width, height);
     }
 
     void resize(int width, int height) {
-        if (gd != null) {
+        if (g2d != null) {
             dispose();
         }
-        this.imgWidth = width;
-        this.imgHeight = height;
-        this.img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        this.gd = img.createGraphics();
-        this.aftInitial = gd.getTransform();
-        this.setAntiAliasing(false);
-        this.gd.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON); 
-        this.gd.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+
+        imgWidth = width;
+        imgHeight = height;
+        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        g2d = img.createGraphics();
+        initialAffineTransform = g2d.getTransform();
+
+        setAntiAliasing(false);
+
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
     }
 
     void clip(int x, int y, int width, int height) {
-        gd.setClip(x, y, width, height);
+        g2d.setClip(x, y, width, height);
     }
 
     void transform(int x, int y, double angle) {
-        gd.translate(x, y);
-        gd.rotate(angle);
+        g2d.translate(x, y);
+        g2d.rotate(angle);
     }
 
     void reset() {
-        gd.setTransform(aftInitial);
-        gd.setClip(0, 0, imgWidth, imgHeight);
+        g2d.setTransform(initialAffineTransform);
+        g2d.setClip(0, 0, imgWidth, imgHeight);
     }
 
     void fillRect(int x, int y, int width, int height, Paint paint) {
-        gd.setPaint(paint);
-        gd.fillRect(x, y, width, height);
+        g2d.setPaint(paint);
+        g2d.fillRect(x, y, width, height);
     }
 
     void fillPolygon(int[] x, int[] y, Paint paint) {
-        gd.setPaint(paint);
-        gd.fillPolygon(x, y, x.length);
+        g2d.setPaint(paint);
+        g2d.fillPolygon(x, y, x.length);
     }
 
     void fillPolygon(double[] x, double yBottom, double[] yTop, Paint paint) {
-        gd.setPaint(paint);
+        g2d.setPaint(paint);
         PathIterator path = new PathIterator(yTop);
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
             int start = pos[0], end = pos[1], n = end - start;
@@ -76,13 +80,13 @@ class ImageWorker {
             xDev[n] = xDev[n - 1];
             xDev[n + 1] = xDev[0];
             yDev[n] = yDev[n + 1] = (int) yBottom;
-            gd.fillPolygon(xDev, yDev, xDev.length);
-            gd.drawPolygon(xDev, yDev, xDev.length);
+            g2d.fillPolygon(xDev, yDev, xDev.length);
+            g2d.drawPolygon(xDev, yDev, xDev.length);
         }
     }
 
     void fillPolygon(double[] x, double[] yBottom, double[] yTop, Paint paint) {
-        gd.setPaint(paint);
+        g2d.setPaint(paint);
         PathIterator path = new PathIterator(yTop);
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
             int start = pos[0], end = pos[1], n = end - start;
@@ -93,27 +97,27 @@ class ImageWorker {
                 yDev[ix1] = (int) yTop[i];
                 yDev[ix2] = (int) yBottom[i];
             }
-            gd.fillPolygon(xDev, yDev, xDev.length);
-            gd.drawPolygon(xDev, yDev, xDev.length);
+            g2d.fillPolygon(xDev, yDev, xDev.length);
+            g2d.drawPolygon(xDev, yDev, xDev.length);
         }
     }
 
 
     void drawLine(int x1, int y1, int x2, int y2, Paint paint, Stroke stroke) {
-        gd.setStroke(stroke);
-        gd.setPaint(paint);
-        gd.drawLine(x1, y1, x2, y2);
+        g2d.setStroke(stroke);
+        g2d.setPaint(paint);
+        g2d.drawLine(x1, y1, x2, y2);
     }
 
     void drawPolyline(int[] x, int[] y, Paint paint, Stroke stroke) {
-        gd.setStroke(stroke);
-        gd.setPaint(paint);
-        gd.drawPolyline(x, y, x.length);
+        g2d.setStroke(stroke);
+        g2d.setPaint(paint);
+        g2d.drawPolyline(x, y, x.length);
     }
 
     void drawPolyline(double[] x, double[] y, Paint paint, Stroke stroke) {
-        gd.setPaint(paint);
-        gd.setStroke(stroke);
+        g2d.setPaint(paint);
+        g2d.setStroke(stroke);
         PathIterator path = new PathIterator(y);
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
             int start = pos[0], end = pos[1];
@@ -122,42 +126,42 @@ class ImageWorker {
                 xDev[i - start] = (int) x[i];
                 yDev[i - start] = (int) y[i];
             }
-            gd.drawPolyline(xDev, yDev, xDev.length);
+            g2d.drawPolyline(xDev, yDev, xDev.length);
         }
     }
 
     void drawString(String text, int x, int y, Font font, Paint paint) {
-        gd.setFont(font);
-        gd.setPaint(paint);
-        gd.drawString(text, x, y);
+        g2d.setFont(font);
+        g2d.setPaint(paint);
+        g2d.drawString(text, x, y);
     }
 
     double getFontAscent(Font font) {
-        LineMetrics lm = font.getLineMetrics(DUMMY_TEXT, gd.getFontRenderContext());
+        LineMetrics lm = font.getLineMetrics(DUMMY_TEXT, g2d.getFontRenderContext());
         return lm.getAscent();
     }
 
     double getFontHeight(Font font) {
-        LineMetrics lm = font.getLineMetrics(DUMMY_TEXT, gd.getFontRenderContext());
+        LineMetrics lm = font.getLineMetrics(DUMMY_TEXT, g2d.getFontRenderContext());
         return lm.getAscent() + lm.getDescent();
     }
 
     double getStringWidth(String text, Font font) {
-        return font.getStringBounds(text, 0, text.length(), gd.getFontRenderContext()).getBounds().getWidth();
+        return font.getStringBounds(text, 0, text.length(), g2d.getFontRenderContext()).getBounds().getWidth();
     }
 
     void setAntiAliasing(boolean enable) {
-        gd.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 enable ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
     void setTextAntiAliasing(boolean enable) {
-        gd.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 enable ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
 
     void dispose() {
-        gd.dispose();
+        g2d.dispose();
     }
 
     void saveImage(OutputStream stream, String type, float quality) throws IOException {
@@ -208,7 +212,7 @@ class ImageWorker {
     public void loadImage(String imageFile) throws IOException {
         BufferedImage wpImage = ImageIO.read(new File(imageFile));
         TexturePaint paint = new TexturePaint(wpImage, new Rectangle(0, 0, wpImage.getWidth(), wpImage.getHeight()));
-        gd.setPaint(paint);
-        gd.fillRect(0, 0, wpImage.getWidth(), wpImage.getHeight());
+        g2d.setPaint(paint);
+        g2d.fillRect(0, 0, wpImage.getWidth(), wpImage.getHeight());
     }
 }
