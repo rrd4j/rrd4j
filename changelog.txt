@@ -1,15 +1,16 @@
-Changes in version 2.1 - 12 Jan 2011
+Changes in version 2.0.6 - 12 Jan 2011
 ------------------------------------
 Major changes:
 
+* Migrated to Google Code (http://code.google.com/p/rrd4j)
 * Changed license to Apache License, Version 2.0
+* Requires JDK 1.6.
 * Fixed aggregation of TOTAL
 * MongoDB backend (see http://www.mongodb.org/)
 * Removed JDK selection logic for the default factory. NIO is the default one.
 
 Minor changes:
 
-* Requires JDK 1.6.
 * Added RrdDbPoolNew with better concurrency (Fabrice Bacchella) + fixed issue 11
 * RrdNioBackend uses ScheduledExecutorService instead of Timer (and spawns daemon, named threads)
 * Fixed minor issue in FetchRequest
