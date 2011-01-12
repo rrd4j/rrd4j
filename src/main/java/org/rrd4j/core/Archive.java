@@ -154,6 +154,7 @@ public class Archive implements RrdUpdater {
                     state.setAccumValue(value);
                     break;
                 case AVERAGE:
+                case TOTAL:
                     state.setAccumValue(Util.sum(state.getAccumValue(), value));
                     break;
             }
