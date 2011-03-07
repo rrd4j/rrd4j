@@ -2,6 +2,7 @@ package org.rrd4j.graph;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
+import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
 
 import java.awt.*;
@@ -672,6 +673,27 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void datasource(String name, Plottable plottable) {
         sources.add(new PDef(name, plottable));
+    }
+    
+    /**
+     * Create a new virtual datasource to get a percentile value from another datasource
+     *
+     * @param name          Source name.
+     * @param defName       Other source name.
+     * @param percent       The percent value
+     */
+    public void percentile(String name, String defName, double percent) {
+        sources.add(new VDef(name, defName, percent));
+    }
+
+    /**
+     * Create a new virtual datasource to get the 95th percentile value from another datasource
+     *
+     * @param name          Source name.
+     * @param defName       Other source name.
+     */
+    public void percentile(String name, String defName) {
+        sources.add(new VDef(name, defName, DataProcessor.DEFAULT_PERCENTILE));
     }
 
     /**

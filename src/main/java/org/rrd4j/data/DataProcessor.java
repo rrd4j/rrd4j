@@ -35,7 +35,7 @@ public class DataProcessor {
      * no other value is specified with {@link #setStep(long) setStep()} method.
      */
     public static final int DEFAULT_PIXEL_COUNT = 600;
-    private static final double DEFAULT_PERCENTILE = 95.0; // %
+    public static final double DEFAULT_PERCENTILE = 95.0; // %
 
     private int pixelCount = DEFAULT_PIXEL_COUNT;
 
