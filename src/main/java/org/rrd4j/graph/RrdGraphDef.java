@@ -831,6 +831,17 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param srcName Virtual source name.
      * @param color   Color of the filled area.
+     */
+    public void area(String srcName, Paint color) {
+        plotElements.add(new Area(srcName, color));
+    }
+
+    /**
+     * Plots requested data in the form of the filled area starting from zero, using
+     * the color specified.
+     *
+     * @param srcName Virtual source name.
+     * @param color   Color of the filled area.
      * @param legend  Legend text.
      */
     public void area(String srcName, Paint color, String legend) {
