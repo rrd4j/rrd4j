@@ -1,6 +1,7 @@
 package org.rrd4j.graph;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.FetchData;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
@@ -672,6 +673,17 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void datasource(String name, Plottable plottable) {
         sources.add(new PDef(name, plottable));
+    }
+
+    /**
+     * Creates a new 'fetched' datasource. Datasource values are obtained from the
+     * given {@link FetchData} object.
+     *
+     * @param name      Source name.
+     * @param fetchData FetchData object.
+     */
+    public void datasource(String name, FetchData fetchData) {
+        sources.add(new TDef(name, fetchData));
     }
 
     /**
