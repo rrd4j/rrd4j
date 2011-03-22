@@ -8,66 +8,89 @@ import java.util.StringTokenizer;
 class RpnCalculator {
     private static final byte TKN_VAR = 0;
     private static final byte TKN_NUM = 1;
+
+    // Arithmetics
     private static final byte TKN_PLUS = 2;
     private static final byte TKN_MINUS = 3;
     private static final byte TKN_MULT = 4;
     private static final byte TKN_DIV = 5;
     private static final byte TKN_MOD = 6;
+
     private static final byte TKN_SIN = 7;
     private static final byte TKN_COS = 8;
     private static final byte TKN_LOG = 9;
     private static final byte TKN_EXP = 10;
-    private static final byte TKN_FLOOR = 11;
-    private static final byte TKN_CEIL = 12;
-    private static final byte TKN_ROUND = 13;
-    private static final byte TKN_POW = 14;
-    private static final byte TKN_ABS = 15;
-    private static final byte TKN_SQRT = 16;
-    private static final byte TKN_RANDOM = 17;
-    private static final byte TKN_LT = 18;
-    private static final byte TKN_LE = 19;
-    private static final byte TKN_GT = 20;
-    private static final byte TKN_GE = 21;
-    private static final byte TKN_EQ = 22;
-    private static final byte TKN_IF = 23;
-    private static final byte TKN_MIN = 24;
-    private static final byte TKN_MAX = 25;
-    private static final byte TKN_LIMIT = 26;
-    private static final byte TKN_DUP = 27;
-    private static final byte TKN_EXC = 28;
-    private static final byte TKN_POP = 29;
-    private static final byte TKN_UN = 30;
-    private static final byte TKN_UNKN = 31;
-    private static final byte TKN_NOW = 32;
-    private static final byte TKN_TIME = 33;
-    private static final byte TKN_PI = 34;
-    private static final byte TKN_E = 35;
-    private static final byte TKN_AND = 36;
-    private static final byte TKN_OR = 37;
-    private static final byte TKN_XOR = 38;
-    private static final byte TKN_PREV = 39;
-    private static final byte TKN_INF = 40;
-    private static final byte TKN_NEGINF = 41;
-    private static final byte TKN_STEP = 42;
-    private static final byte TKN_YEAR = 43;
-    private static final byte TKN_MONTH = 44;
-    private static final byte TKN_DATE = 45;
-    private static final byte TKN_HOUR = 46;
-    private static final byte TKN_MINUTE = 47;
-    private static final byte TKN_SECOND = 48;
-    private static final byte TKN_WEEK = 49;
-    private static final byte TKN_SIGN = 50;
-    private static final byte TKN_RND = 51;
+    private static final byte TKN_SQRT = 11;
+    private static final byte TKN_ATAN = 12;
+    private static final byte TKN_ATAN2 = 13;
 
-    private String rpnExpression;
-    private String sourceName;
-    private DataProcessor dataProcessor;
+    private static final byte TKN_FLOOR = 14;
+    private static final byte TKN_CEIL = 15;
 
-    private Token[] tokens;
-    private RpnStack stack = new RpnStack();
-    private double[] calculatedValues;
-    private long[] timestamps;
-    private double timeStep;
+    private static final byte TKN_DEG2RAD = 16;
+    private static final byte TKN_RAD2DEG = 17;
+    private static final byte TKN_ROUND = 18;
+    private static final byte TKN_POW = 19;
+    private static final byte TKN_ABS = 20;
+    private static final byte TKN_RANDOM = 21;
+
+    // Boolean operators
+    private static final byte TKN_LT = 22;
+    private static final byte TKN_LE = 23;
+    private static final byte TKN_GT = 24;
+    private static final byte TKN_GE = 25;
+    private static final byte TKN_EQ = 26;
+    private static final byte TKN_NE = 27;
+    private static final byte TKN_IF = 28;
+
+    // Comparing values
+    private static final byte TKN_MIN = 29;
+    private static final byte TKN_MAX = 30;
+    private static final byte TKN_LIMIT = 31;
+
+    // Processing the stack directly
+    private static final byte TKN_DUP = 32;
+    private static final byte TKN_EXC = 33;
+    private static final byte TKN_POP = 34;
+
+    // Special values
+    private static final byte TKN_UN = 35;
+    private static final byte TKN_UNKN = 36;
+    private static final byte TKN_NOW = 37;
+
+    private static final byte TKN_TIME = 38;
+    private static final byte TKN_PI = 39;
+    private static final byte TKN_E = 40;
+
+    private static final byte TKN_AND = 41;
+    private static final byte TKN_OR = 42;
+    private static final byte TKN_XOR = 43;
+
+    private static final byte TKN_PREV = 44;
+    private static final byte TKN_INF = 45;
+    private static final byte TKN_NEGINF = 46;
+    private static final byte TKN_STEP = 47;
+
+    private static final byte TKN_YEAR = 48;
+    private static final byte TKN_MONTH = 49;
+    private static final byte TKN_DATE = 50;
+    private static final byte TKN_HOUR = 51;
+    private static final byte TKN_MINUTE = 52;
+    private static final byte TKN_SECOND = 53;
+    private static final byte TKN_WEEK = 54;
+
+    private static final byte TKN_SIGN = 55;
+    private static final byte TKN_RND = 56;
+
+    private final String rpnExpression;
+    private final String sourceName;
+    private final DataProcessor dataProcessor;
+
+    private final Token[] tokens;
+    private final RpnStack stack = new RpnStack();
+    private final double[] calculatedValues;
+    private final long[] timestamps;
+    private final double timeStep;
 
     RpnCalculator(String rpnExpression, String sourceName, DataProcessor dataProcessor) {
         this.rpnExpression = rpnExpression;
@@ -76,6 +99,7 @@ class RpnCalculator {
         this.timestamps = dataProcessor.getTimestamps();
         this.timeStep = this.timestamps[1] - this.timestamps[0];
         this.calculatedValues = new double[this.timestamps.length];
+
         StringTokenizer st = new StringTokenizer(rpnExpression, ", ");
         tokens = new Token[st.countTokens()];
         for (int i = 0; st.hasMoreTokens(); i++) {
@@ -116,11 +140,23 @@ class RpnCalculator {
         else if (parsedText.equals("EXP")) {
             token.id = TKN_EXP;
         }
+        else if (parsedText.equals("ATAN")) {
+            token.id = TKN_ATAN;
+        }
+        else if (parsedText.equals("ATAN2")) {
+            token.id = TKN_ATAN2;
+        }
         else if (parsedText.equals("FLOOR")) {
             token.id = TKN_FLOOR;
         }
         else if (parsedText.equals("CEIL")) {
             token.id = TKN_CEIL;
+        }
+        else if (parsedText.equals("DEG2RAD")) {
+            token.id = TKN_DEG2RAD;
+        }
+        else if (parsedText.equals("RAD2DEG")) {
+            token.id = TKN_RAD2DEG;
         }
         else if (parsedText.equals("ROUND")) {
             token.id = TKN_ROUND;
@@ -151,6 +187,9 @@ class RpnCalculator {
         }
         else if (parsedText.equals("EQ")) {
             token.id = TKN_EQ;
+        }
+        else if (parsedText.equals("NE")) {
+            token.id = TKN_NE;
         }
         else if (parsedText.equals("IF")) {
             token.id = TKN_IF;
@@ -299,11 +338,25 @@ class RpnCalculator {
                     case TKN_EXP:
                         push(Math.exp(pop()));
                         break;
+                    case TKN_ATAN:
+                        push(Math.atan(pop()));
+                        break;
+                    case TKN_ATAN2:
+                        x2 = pop();
+                        x1 = pop();
+                        push(Math.atan2(x1, x2));
+                        break;
                     case TKN_FLOOR:
                         push(Math.floor(pop()));
                         break;
                     case TKN_CEIL:
                         push(Math.ceil(pop()));
+                        break;
+                    case TKN_DEG2RAD:
+                        push(Math.toRadians(pop()));
+                        break;
+                    case TKN_RAD2DEG:
+                        push(Math.toDegrees(pop()));
                         break;
                     case TKN_ROUND:
                         push(Math.round(pop()));
@@ -346,6 +399,11 @@ class RpnCalculator {
                         x2 = pop();
                         x1 = pop();
                         push(x1 == x2 ? 1 : 0);
+                        break;
+                    case TKN_NE:
+                        x2 = pop();
+                        x1 = pop();
+                        push(x1 != x2 ? 1 : 0);
                         break;
                     case TKN_IF:
                         x3 = pop();
