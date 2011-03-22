@@ -5,13 +5,15 @@ import org.rrd4j.data.Plottable;
 
 class VDef extends Source {
     private class Percentile extends Plottable {
-        private final double percent;
         private final DataProcessor dproc;
+        private final double percent;
+
         private double percentile = Double.NaN;
 
         /**
-         * Create the constant plottable
-         * @param value the value that will be always returned.
+         * Create the constant plottable.
+         *
+         * @param percent the percent that will be always returned
          */
         public Percentile(DataProcessor dproc, double percent) {
             this.dproc = dproc;
@@ -19,15 +21,14 @@ class VDef extends Source {
         }
 
         public double getValue(long timestamp) {
-            if(Double.isNaN(percentile))
+            if (Double.isNaN(percentile))
                 percentile = dproc.getPercentile(defName, percent);
             return percentile;
         }
-
     }
 
-    private final double percent;
     private final String defName;
+    private final double percent;
 
     VDef(String name, String defName, double percent) {
         super(name);
@@ -37,7 +38,6 @@ class VDef extends Source {
 
     @Override
     void requestData(DataProcessor dproc) {
-        dproc.addDatasource(name, new Percentile(dproc,percent));
+        dproc.addDatasource(name, new Percentile(dproc, percent));
     }
-
 }

@@ -519,8 +519,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     public void setColor(int colorTag, Paint color) {
         if (colorTag >= 0 && colorTag < colors.length) {
             colors[colorTag] = color;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Invalid color index specified: " + colorTag);
         }
     }
@@ -674,26 +673,26 @@ public class RrdGraphDef implements RrdGraphConstants {
     public void datasource(String name, Plottable plottable) {
         sources.add(new PDef(name, plottable));
     }
-    
-    /**
-     * Create a new virtual datasource to get a percentile value from another datasource
-     *
-     * @param name          Source name.
-     * @param defName       Other source name.
-     * @param percent       The percent value
-     */
-    public void percentile(String name, String defName, double percent) {
-        sources.add(new VDef(name, defName, percent));
-    }
 
     /**
      * Create a new virtual datasource to get the 95th percentile value from another datasource
      *
-     * @param name          Source name.
-     * @param defName       Other source name.
+     * @param name    Source name.
+     * @param defName Other source name.
      */
     public void percentile(String name, String defName) {
-        sources.add(new VDef(name, defName, DataProcessor.DEFAULT_PERCENTILE));
+        percentile(name, defName, DataProcessor.DEFAULT_PERCENTILE);
+    }
+
+    /**
+     * Create a new virtual datasource to get a percentile value from another datasource
+     *
+     * @param name    Source name.
+     * @param defName Other source name.
+     * @param percent The percent value
+     */
+    public void percentile(String name, String defName, double percent) {
+        sources.add(new VDef(name, defName, percent));
     }
 
     /**
@@ -800,17 +799,14 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Plots requested data as a line, using the color and the line width specified.
+     * Plots requested data as a line, using the color specified. Line width is assumed to be
+     * 1.0F.
      *
      * @param srcName Virtual source name
      * @param color   Line color
-     * @param legend  Legend text
-     * @param width   Line width (default: 1.0F)
      */
-    public void line(String srcName, Paint color, String legend, float width) {
-        LegendText legendText = new LegendText(color, legend);
-        comments.add(legendText);
-        plotElements.add(new Line(srcName, color, width));
+    public void line(String srcName, Paint color) {
+        line(srcName, color, null, 1F);
     }
 
     /**
@@ -825,6 +821,33 @@ public class RrdGraphDef implements RrdGraphConstants {
         line(srcName, color, legend, 1F);
     }
 
+
+    /**
+     * Plots requested data as a line, using the color and the line width specified.
+     *
+     * @param srcName Virtual source name
+     * @param color   Line color
+     * @param width   Line width (default: 1.0F)
+     */
+    public void line(String srcName, Paint color, float width) {
+        line(srcName, color, null, width);
+    }
+
+    /**
+     * Plots requested data as a line, using the color and the line width specified.
+     *
+     * @param srcName Virtual source name
+     * @param color   Line color
+     * @param legend  Legend text
+     * @param width   Line width (default: 1.0F)
+     */
+    public void line(String srcName, Paint color, String legend, float width) {
+        if (legend != null) {
+            comments.add(new LegendText(color, legend));
+        }
+        plotElements.add(new Line(srcName, color, width));
+    }
+
     /**
      * Plots requested data in the form of the filled area starting from zero, using
      * the color specified.
@@ -833,7 +856,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param color   Color of the filled area.
      */
     public void area(String srcName, Paint color) {
-        plotElements.add(new Area(srcName, color));
+        area(srcName, color, null);
     }
 
     /**
@@ -845,8 +868,30 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param legend  Legend text.
      */
     public void area(String srcName, Paint color, String legend) {
-        comments.add(new LegendText(color, legend));
+        if (legend != null) {
+            comments.add(new LegendText(color, legend));
+        }
         plotElements.add(new Area(srcName, color));
+    }
+
+    /**
+     * Does the same as {@link #line(String, java.awt.Paint)},
+     * but the graph gets stacked on top of the
+     * previous LINE, AREA or STACK graph. Depending on the type of the
+     * previous graph, the STACK will be either a LINE or an AREA.  This
+     * obviously implies that the first STACK must be preceded by an AREA
+     * or LINE.
+     * <p/>
+     * Note, that when you STACK onto *UNKNOWN* data, Rrd4j will not
+     * draw any graphics ... *UNKNOWN* is not zero.
+     *
+     * @param srcName Virtual source name
+     * @param color   Stacked graph color
+     * @throws IllegalArgumentException Thrown if this STACK has no previously defined AREA, STACK or LINE
+     *                                  graph bellow it.
+     */
+    public void stack(String srcName, Paint color) {
+        stack(srcName, color, null);
     }
 
     /**
@@ -878,10 +923,10 @@ public class RrdGraphDef implements RrdGraphConstants {
         }
         if (parent == null) {
             throw new IllegalArgumentException("You have to stack graph onto something (line or area)");
-        }
-        else {
-            LegendText legendText = new LegendText(color, legend);
-            comments.add(legendText);
+        } else {
+            if (legend != null) {
+                comments.add(new LegendText(color, legend));
+            }
             plotElements.add(new Stack(parent, srcName, color));
         }
     }
@@ -979,6 +1024,6 @@ public class RrdGraphDef implements RrdGraphConstants {
                 return true;
             }
         }
-		return false;
-	}
+        return false;
+    }
 }
