@@ -749,7 +749,17 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Draws a horizontal rule into the graph and optionally adds a legend
+     * Draws a horizontal rule into the graph.
+     *
+     * @param value Position of the rule
+     * @param color Rule color
+     */
+    public void hrule(double value, Paint color) {
+        hrule(value, color, null, 1.0F);
+    }
+
+    /**
+     * Draws a horizontal rule into the graph and optionally adds a legend.
      *
      * @param value  Position of the rule
      * @param color  Rule color
@@ -760,7 +770,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Draws a horizontal rule into the graph and optionally adds a legend
+     * Draws a horizontal rule into the graph and optionally adds a legend.
      *
      * @param value  Position of the rule
      * @param color  Rule color
@@ -771,6 +781,16 @@ public class RrdGraphDef implements RrdGraphConstants {
         LegendText legendText = new LegendText(color, legend);
         comments.add(legendText);
         plotElements.add(new HRule(value, color, legendText, width));
+    }
+
+    /**
+     * Draws a vertical rule into the graph.
+     *
+     * @param timestamp Position of the rule (seconds since epoch)
+     * @param color     Rule color
+     */
+    public void vrule(long timestamp, Paint color) {
+        vrule(timestamp, color, null, 1.0F);
     }
 
     /**
