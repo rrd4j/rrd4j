@@ -522,6 +522,7 @@ public class RrdGraph implements RrdGraphConstants {
         dproc.setPoolUsed(gdef.poolUsed);
         if (gdef.step > 0) {
             dproc.setStep(gdef.step);
+            dproc.setFetchRequestResolution(gdef.step); 
         }
         for (Source src : gdef.sources) {
             src.requestData(dproc);
