@@ -6,7 +6,7 @@ import java.io.IOException;
  * Abstract byte array based backend.
  */
 public abstract class RrdByteArrayBackend extends RrdBackend {
-    byte[] buffer;
+    protected byte[] buffer;
 
     protected RrdByteArrayBackend(String path) {
         super(path);
