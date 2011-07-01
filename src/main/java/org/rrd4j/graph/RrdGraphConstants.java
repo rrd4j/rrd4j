@@ -252,6 +252,15 @@ public interface RrdGraphConstants {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            finally {
+                try {
+                    if (fontstream != null) { 
+                        fontstream.close();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 
