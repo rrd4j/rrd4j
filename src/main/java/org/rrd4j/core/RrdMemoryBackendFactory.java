@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * memory, you'll have to call {@link #delete(java.lang.String) delete(path)} method of this class.</p>
  */
 public class RrdMemoryBackendFactory extends RrdBackendFactory {
-    private final Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
+    protected final Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
 
     /**
      * Creates RrdMemoryBackend object.
