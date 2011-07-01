@@ -6,7 +6,7 @@ import java.io.IOException;
  * Base implementation class for all backend classes. Each Round Robin Database object
  * ({@link RrdDb} object) is backed with a single RrdBackend object which performs
  * actual I/O operations on the underlying storage. Rrd4j supports
- * three different bakcends out of the box:</p>
+ * multiple backends out of the box. E.g.:</p>
  * <ul>
  * <li>{@link RrdFileBackend}: objects of this class are created from the
  * {@link RrdFileBackendFactory} class. This was the default backend used in all
@@ -39,7 +39,7 @@ import java.io.IOException;
  *
  * <li>Create instance of your custom RrdBackendFactory and register it as a regular
  * factory available to Rrd4j framework. See javadoc for {@link RrdBackendFactory} to
- * find out how to do this
+ * find out how to do this.
  * </ul>
  */
 public abstract class RrdBackend {
@@ -114,7 +114,7 @@ public abstract class RrdBackend {
 
     /**
      * This method suggests the caching policy to the Rrd4j frontend (high-level) classes. If <code>true</code>
-     * is returned, frontent classes will cache frequently used parts of a RRD file in memory to improve
+     * is returned, frontend classes will cache frequently used parts of a RRD file in memory to improve
      * performance. If </code>false</code> is returned, high level classes will never cache RRD file sections
      * in memory.
      *
@@ -126,7 +126,7 @@ public abstract class RrdBackend {
     }
 
     /**
-     * Reads all RRD bytes from the underlying storage
+     * Reads all RRD bytes from the underlying storage.
      *
      * @return RRD bytes
      * @throws IOException Thrown in case of I/O error
