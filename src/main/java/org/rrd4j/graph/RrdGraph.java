@@ -76,9 +76,9 @@ public class RrdGraph implements RrdGraphConstants {
                 placeLegends();
                 createImageWorker();
                 drawBackground();
-                drawAxis();
                 drawData();
                 drawGrid();
+                drawAxis();
                 drawText();
                 drawLegend();
                 drawRules();
