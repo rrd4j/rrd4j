@@ -47,75 +47,88 @@ public class TimeParser {
         if (token.id == TimeToken.MONTHS_MINUTES) {
             /* hard job to guess what does that -5m means: -5mon or -5min? */
             switch (prev_multiplier) {
-                case TimeToken.DAYS:
-                case TimeToken.WEEKS:
-                case TimeToken.MONTHS:
-                case TimeToken.YEARS:
+            case TimeToken.DAYS:
+            case TimeToken.WEEKS:
+            case TimeToken.MONTHS:
+            case TimeToken.YEARS:
+                token = scanner.resolveMonthsMinutes(TimeToken.MONTHS);
+                break;
+            case TimeToken.SECONDS:
+            case TimeToken.MINUTES:
+            case TimeToken.HOURS:
+                token = scanner.resolveMonthsMinutes(TimeToken.MINUTES);
+                break;
+            default:
+                if (delta < 6) {
                     token = scanner.resolveMonthsMinutes(TimeToken.MONTHS);
-                    break;
-                case TimeToken.SECONDS:
-                case TimeToken.MINUTES:
-                case TimeToken.HOURS:
+                }
+                else {
                     token = scanner.resolveMonthsMinutes(TimeToken.MINUTES);
-                    break;
-                default:
-                    if (delta < 6) {
-                        token = scanner.resolveMonthsMinutes(TimeToken.MONTHS);
-                    }
-                    else {
-                        token = scanner.resolveMonthsMinutes(TimeToken.MINUTES);
-                    }
+                }
             }
         }
         prev_multiplier = token.id;
         delta *= (op == TimeToken.PLUS) ? +1 : -1;
         switch (token.id) {
-            case TimeToken.YEARS:
-                spec.dyear += delta;
-                return;
-            case TimeToken.MONTHS:
-                spec.dmonth += delta;
-                return;
-            case TimeToken.WEEKS:
-                delta *= 7;
-                /* FALLTHRU */
-            case TimeToken.DAYS:
-                spec.dday += delta;
-                return;
-            case TimeToken.HOURS:
-                spec.dhour += delta;
-                return;
-            case TimeToken.MINUTES:
-                spec.dmin += delta;
-                return;
-            case TimeToken.SECONDS:
-            default: // default is 'seconds'
-                spec.dsec += delta;
+        case TimeToken.YEARS:
+            spec.dyear += delta;
+            return;
+        case TimeToken.MONTHS:
+            spec.dmonth += delta;
+            return;
+        case TimeToken.WEEKS:
+            delta *= 7;
+            /* FALLTHRU */
+        case TimeToken.DAYS:
+            spec.dday += delta;
+            return;
+        case TimeToken.HOURS:
+            spec.dhour += delta;
+            return;
+        case TimeToken.MINUTES:
+            spec.dmin += delta;
+            return;
+        case TimeToken.SECONDS:
+        default: // default is 'seconds'
+            spec.dsec += delta;
         }
     }
 
+    /**
+     * Try and read a "timeofday" specification.  This method will be called
+     * when we see a plain number at the start of a time, which means we could be
+     * reading a time, or a day.  If it turns out to be a date, then this method restores
+     * the scanner state to what it was at entry, and returns without setting anything.
+     */
     private void timeOfDay() {
         int hour, minute = 0;
         /* save token status in case we must abort */
         scanner.saveState();
         /* first pick out the time of day - we assume a HH (COLON|DOT) MM time */
         if (token.value.length() > 2) {
+            //Definitely not an hour specification; probably a date or something.  Give up now
             return;
         }
         hour = Integer.parseInt(token.value);
         token = scanner.nextToken();
-        if (token.id == TimeToken.SLASH || token.id == TimeToken.DOT) {
+        if (token.id == TimeToken.SLASH) {
             /* guess we are looking at a date */
             token = scanner.restoreState();
             return;
         }
-        if (token.id == TimeToken.COLON) {
-            expectToken(TimeToken.NUMBER, "Parsing HH:MM syntax, expecting MM as number, got none");
+        if (token.id == TimeToken.COLON || token.id == TimeToken.DOT) {
+            expectToken(TimeToken.NUMBER, "Parsing HH:MM or HH.MM syntax, expecting MM as number, got none");
             minute = Integer.parseInt(token.value);
             if (minute > 59) {
-                throw new IllegalArgumentException("Parsing HH:MM syntax, got MM = " + minute + " (>59!)");
+                throw new IllegalArgumentException("Parsing HH:MM or HH.MM syntax, got MM = " +
+                        minute + " (>59!)");
             }
             token = scanner.nextToken();
+            if(token.id == TimeToken.DOT) {
+                //Oh look, another dot; must have actually been a date in DD.MM.YYYY format.  Give up and return
+                token = scanner.restoreState();
+                return;
+            }
         }
         /* check if an AM or PM specifier was given */
         if (token.id == TimeToken.AM || token.id == TimeToken.PM) {
@@ -137,7 +150,7 @@ public class TimeParser {
             token = scanner.nextToken();
         }
         else if (hour > 23) {
-            /* guess it was not a time then ... */
+            /* guess it was not a time then, probably a date ... */
             token = scanner.restoreState();
             return;
         }
@@ -174,102 +187,102 @@ public class TimeParser {
     private void day() {
         long mday = 0, wday, mon, year = spec.year;
         switch (token.id) {
-            case TimeToken.YESTERDAY:
-                spec.day--;
-                /* FALLTRHU */
-            case TimeToken.TODAY:    /* force ourselves to stay in today - no further processing */
+        case TimeToken.YESTERDAY:
+            spec.day--;
+            /* FALLTRHU */
+        case TimeToken.TODAY:    /* force ourselves to stay in today - no further processing */
+            token = scanner.nextToken();
+            break;
+        case TimeToken.TOMORROW:
+            spec.day++;
+            token = scanner.nextToken();
+            break;
+        case TimeToken.JAN:
+        case TimeToken.FEB:
+        case TimeToken.MAR:
+        case TimeToken.APR:
+        case TimeToken.MAY:
+        case TimeToken.JUN:
+        case TimeToken.JUL:
+        case TimeToken.AUG:
+        case TimeToken.SEP:
+        case TimeToken.OCT:
+        case TimeToken.NOV:
+        case TimeToken.DEC:
+            /* do month mday [year] */
+            mon = (token.id - TimeToken.JAN);
+            expectToken(TimeToken.NUMBER, "the day of the month should follow month name");
+            mday = Long.parseLong(token.value);
+            token = scanner.nextToken();
+            if (token.id == TimeToken.NUMBER) {
+                year = Long.parseLong(token.value);
+                token = scanner.nextToken();
+            }
+            else {
+                year = spec.year;
+            }
+            assignDate(mday, mon, year);
+            break;
+        case TimeToken.SUN:
+        case TimeToken.MON:
+        case TimeToken.TUE:
+        case TimeToken.WED:
+        case TimeToken.THU:
+        case TimeToken.FRI:
+        case TimeToken.SAT:
+            /* do a particular day of the week */
+            wday = (token.id - TimeToken.SUN);
+            spec.day += (wday - spec.wday);
+            token = scanner.nextToken();
+            break;
+        case TimeToken.NUMBER:
+            /* get numeric <sec since 1970>, MM/DD/[YY]YY, or DD.MM.[YY]YY */
+            // int tlen = token.value.length();
+            mon = Long.parseLong(token.value);
+            if (mon > 10L * 365L * 24L * 60L * 60L) {
+                spec.localtime(mon);
                 token = scanner.nextToken();
                 break;
-            case TimeToken.TOMORROW:
-                spec.day++;
+            }
+            if (mon > 19700101 && mon < 24000101) { /*works between 1900 and 2400 */
+                year = mon / 10000;
+                mday = mon % 100;
+                mon = (mon / 100) % 100;
                 token = scanner.nextToken();
-                break;
-            case TimeToken.JAN:
-            case TimeToken.FEB:
-            case TimeToken.MAR:
-            case TimeToken.APR:
-            case TimeToken.MAY:
-            case TimeToken.JUN:
-            case TimeToken.JUL:
-            case TimeToken.AUG:
-            case TimeToken.SEP:
-            case TimeToken.OCT:
-            case TimeToken.NOV:
-            case TimeToken.DEC:
-                /* do month mday [year] */
-                mon = (token.id - TimeToken.JAN);
-                expectToken(TimeToken.NUMBER, "the day of the month should follow month name");
-                mday = Long.parseLong(token.value);
+            }
+            else {
                 token = scanner.nextToken();
-                if (token.id == TimeToken.NUMBER) {
-                    year = Long.parseLong(token.value);
+                if (mon <= 31 && (token.id == TimeToken.SLASH || token.id == TimeToken.DOT)) {
+                    int sep = token.id;
+                    expectToken(TimeToken.NUMBER, "there should be " +
+                            (sep == TimeToken.DOT ? "month" : "day") +
+                            " number after " +
+                            (sep == TimeToken.DOT ? '.' : '/'));
+                    mday = Long.parseLong(token.value);
                     token = scanner.nextToken();
-                }
-                else {
-                    year = spec.year;
-                }
-                assignDate(mday, mon, year);
-                break;
-            case TimeToken.SUN:
-            case TimeToken.MON:
-            case TimeToken.TUE:
-            case TimeToken.WED:
-            case TimeToken.THU:
-            case TimeToken.FRI:
-            case TimeToken.SAT:
-                /* do a particular day of the week */
-                wday = (token.id - TimeToken.SUN);
-                spec.day += (wday - spec.wday);
-                token = scanner.nextToken();
-                break;
-            case TimeToken.NUMBER:
-                /* get numeric <sec since 1970>, MM/DD/[YY]YY, or DD.MM.[YY]YY */
-                // int tlen = token.value.length();
-                mon = Long.parseLong(token.value);
-                if (mon > 10L * 365L * 24L * 60L * 60L) {
-                    spec.localtime(mon);
-                    token = scanner.nextToken();
-                    break;
-                }
-                if (mon > 19700101 && mon < 24000101) { /*works between 1900 and 2400 */
-                    year = mon / 10000;
-                    mday = mon % 100;
-                    mon = (mon / 100) % 100;
-                    token = scanner.nextToken();
-                }
-                else {
-                    token = scanner.nextToken();
-                    if (mon <= 31 && (token.id == TimeToken.SLASH || token.id == TimeToken.DOT)) {
-                        int sep = token.id;
-                        expectToken(TimeToken.NUMBER, "there should be " +
-                                (sep == TimeToken.DOT ? "month" : "day") +
-                                " number after " +
+                    if (token.id == sep) {
+                        expectToken(TimeToken.NUMBER, "there should be year number after " +
                                 (sep == TimeToken.DOT ? '.' : '/'));
-                        mday = Long.parseLong(token.value);
+                        year = Long.parseLong(token.value);
                         token = scanner.nextToken();
-                        if (token.id == sep) {
-                            expectToken(TimeToken.NUMBER, "there should be year number after " +
-                                    (sep == TimeToken.DOT ? '.' : '/'));
-                            year = Long.parseLong(token.value);
-                            token = scanner.nextToken();
-                        }
-                        /* flip months and days for European timing */
-                        if (sep == TimeToken.DOT) {
-                            long x = mday;
-                            mday = mon;
-                            mon = x;
-                        }
+                    }
+                    /* flip months and days for European timing */
+                    if (sep == TimeToken.DOT) {
+                        long x = mday;
+                        mday = mon;
+                        mon = x;
                     }
                 }
-                mon--;
-                if (mon < 0 || mon > 11) {
-                    throw new IllegalArgumentException("Did you really mean month " + (mon + 1));
-                }
-                if (mday < 1 || mday > 31) {
-                    throw new IllegalArgumentException("I'm afraid that " + mday + " is not a valid day of the month");
-                }
-                assignDate(mday, mon, year);
-                break;
+            }
+            mon--;
+            if (mon < 0 || mon > 11) {
+                throw new IllegalArgumentException("Did you really mean month " + (mon + 1));
+            }
+            if (mday < 1 || mday > 31) {
+                throw new IllegalArgumentException("I'm afraid that " + mday + " is not a valid day of the month");
+            }
+            assignDate(mday, mon, year);
+            break;
         }
     }
 
@@ -286,86 +299,87 @@ public class TimeParser {
         spec.localtime(now);
         token = scanner.nextToken();
         switch (token.id) {
-            case TimeToken.PLUS:
-            case TimeToken.MINUS:
-                break; /* jump to OFFSET-SPEC part */
-            case TimeToken.START:
-                spec.type = TimeSpec.TYPE_START;
-                /* FALLTHRU */
-            case TimeToken.END:
-                if (spec.type != TimeSpec.TYPE_START) {
-                    spec.type = TimeSpec.TYPE_END;
-                }
-                spec.year = spec.month = spec.day = spec.hour = spec.min = spec.sec = 0;
-                /* FALLTHRU */
-            case TimeToken.NOW:
-                int time_reference = token.id;
-                token = scanner.nextToken();
-                if (token.id == TimeToken.PLUS || token.id == TimeToken.MINUS) {
-                    break;
-                }
-                if (time_reference != TimeToken.NOW) {
-                    throw new IllegalArgumentException("Words 'start' or 'end' MUST be followed by +|- offset");
-                }
-                else if (token.id != TimeToken.EOF) {
-                    throw new IllegalArgumentException("If 'now' is followed by a token it must be +|- offset");
-                }
+        case TimeToken.PLUS:
+        case TimeToken.MINUS:
+            break; /* jump to OFFSET-SPEC part */
+        case TimeToken.START:
+            spec.type = TimeSpec.TYPE_START;
+            /* FALLTHRU */
+        case TimeToken.END:
+            if (spec.type != TimeSpec.TYPE_START) {
+                spec.type = TimeSpec.TYPE_END;
+            }
+            spec.year = spec.month = spec.day = spec.hour = spec.min = spec.sec = 0;
+            /* FALLTHRU */
+        case TimeToken.NOW:
+            int time_reference = token.id;
+            token = scanner.nextToken();
+            if (token.id == TimeToken.PLUS || token.id == TimeToken.MINUS) {
                 break;
-                /* Only absolute time specifications below */
-            case TimeToken.NUMBER:
-                timeOfDay();
-                if (token.id != TimeToken.NUMBER) {
-                    break;
-                }
-                /* fix month parsing */
-            case TimeToken.JAN:
-            case TimeToken.FEB:
-            case TimeToken.MAR:
-            case TimeToken.APR:
-            case TimeToken.MAY:
-            case TimeToken.JUN:
-            case TimeToken.JUL:
-            case TimeToken.AUG:
-            case TimeToken.SEP:
-            case TimeToken.OCT:
-            case TimeToken.NOV:
-            case TimeToken.DEC:
-                day();
-                if (token.id != TimeToken.NUMBER) {
-                    break;
-                }
-                timeOfDay();
+            }
+            if (time_reference != TimeToken.NOW) {
+                throw new IllegalArgumentException("Words 'start' or 'end' MUST be followed by +|- offset");
+            }
+            else if (token.id != TimeToken.EOF) {
+                throw new IllegalArgumentException("If 'now' is followed by a token it must be +|- offset");
+            }
+            break;
+            /* Only absolute time specifications below */
+        case TimeToken.NUMBER:
+            timeOfDay();
+            /* fix month parsing */
+        case TimeToken.JAN:
+        case TimeToken.FEB:
+        case TimeToken.MAR:
+        case TimeToken.APR:
+        case TimeToken.MAY:
+        case TimeToken.JUN:
+        case TimeToken.JUL:
+        case TimeToken.AUG:
+        case TimeToken.SEP:
+        case TimeToken.OCT:
+        case TimeToken.NOV:
+        case TimeToken.DEC:
+        case TimeToken.TODAY:
+        case TimeToken.YESTERDAY:
+        case TimeToken.TOMORROW:
+            day();
+            if (token.id != TimeToken.NUMBER) {
                 break;
+            }
+            //Allows (but does not require) the time to be specified after the day.  This extends the rrdfetch specification
+            timeOfDay();
+            break;
 
-                /* evil coding for TEATIME|NOON|MIDNIGHT - we've initialized
-                     * hr to zero up above, then fall into this case in such a
-                     * way so we add +12 +4 hours to it for teatime, +12 hours
-                     * to it for noon, and nothing at all for midnight, then
-                     * set our rettime to that hour before leaping into the
-                     * month scanner
-                     */
-            case TimeToken.TEATIME:
-                hr += 4;
-                /* FALLTHRU */
-            case TimeToken.NOON:
-                hr += 12;
-                /* FALLTHRU */
-            case TimeToken.MIDNIGHT:
-                spec.hour = hr;
-                spec.min = 0;
-                spec.sec = 0;
-                token = scanner.nextToken();
-                day();
-                break;
-            default:
-                throw new IllegalArgumentException("Unparsable time: " + token.value);
+            /* evil coding for TEATIME|NOON|MIDNIGHT - we've initialized
+             * hr to zero up above, then fall into this case in such a
+             * way so we add +12 +4 hours to it for teatime, +12 hours
+             * to it for noon, and nothing at all for midnight, then
+             * set our rettime to that hour before leaping into the
+             * month scanner
+             */
+        case TimeToken.TEATIME:
+            hr += 4;
+            /* FALLTHRU */
+        case TimeToken.NOON:
+            hr += 12;
+            /* FALLTHRU */
+        case TimeToken.MIDNIGHT:
+            spec.hour = hr;
+            spec.min = 0;
+            spec.sec = 0;
+            token = scanner.nextToken();
+            day();
+            break;
+        default:
+            throw new IllegalArgumentException("Unparsable time: " + token.value);
         }
 
         /*
-           * the OFFSET-SPEC part
-           *
-           * (NOTE, the sc_tokid was prefetched for us by the previous code)
-           */
+         * the OFFSET-SPEC part
+         *
+         * (NOTE, the sc_tokid was prefetched for us by the previous code)
+         */
         if (token.id == TimeToken.PLUS || token.id == TimeToken.MINUS) {
             scanner.setContext(false);
             while (token.id == TimeToken.PLUS || token.id == TimeToken.MINUS ||
@@ -384,7 +398,7 @@ public class TimeParser {
         /* now we should be at EOF */
         if (token.id != TimeToken.EOF) {
             throw new IllegalArgumentException("Unparsable trailing text: " + token.value);
-		}
-		return spec;
-	}
+        }
+        return spec;
+    }
 }
