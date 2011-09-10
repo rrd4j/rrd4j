@@ -24,7 +24,7 @@ public class RrdGraph implements RrdGraphConstants {
             0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
     };
 
-    private static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'u', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
+    private static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'µ', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
 
     final RrdGraphDef gdef;
     ImageParameters im = new ImageParameters();
