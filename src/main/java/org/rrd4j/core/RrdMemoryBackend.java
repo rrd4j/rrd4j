@@ -1,7 +1,5 @@
 package org.rrd4j.core;
 
-import java.io.IOException;
-
 /**
  * Backend to be used to store all RRD bytes in memory.
  */

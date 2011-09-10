@@ -547,7 +547,7 @@ class RpnCalculator {
         return stack.isEmpty();
     }
 
-    private class RpnStack {
+    private static final class RpnStack {
         private static final int MAX_STACK_SIZE = 1000;
         private double[] stack = new double[MAX_STACK_SIZE];
         private int pos = 0;
@@ -582,7 +582,7 @@ class RpnCalculator {
         }
     }
 
-    private class Token {
+    private static final class Token {
         byte id = -1;
         double number = Double.NaN;
         String variable = null;

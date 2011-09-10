@@ -1,11 +1,10 @@
 package org.rrd4j.core;
 
+import java.io.IOException;
+
+import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Database;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Backend which is used to store RRD data to ordinary disk files

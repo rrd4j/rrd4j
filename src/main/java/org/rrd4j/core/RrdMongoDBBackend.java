@@ -1,11 +1,10 @@
 package org.rrd4j.core;
 
+import java.io.IOException;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFS;
-
-import java.io.IOException;
 
 /**
  * @author Mathias Bogaert

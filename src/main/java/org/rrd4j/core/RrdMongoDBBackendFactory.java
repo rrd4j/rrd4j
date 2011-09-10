@@ -1,11 +1,9 @@
 package org.rrd4j.core;
 
+import java.io.IOException;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
-
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * {@link RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
