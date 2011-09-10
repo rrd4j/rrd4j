@@ -1,43 +1,48 @@
 package org.rrd4j.graph;
 
-import org.rrd4j.core.Util;
+import java.awt.Font;
+import java.awt.Paint;
 
-import java.awt.*;
+import org.rrd4j.core.Util;
 
 class ValueAxis implements RrdGraphConstants {
     private static final YLabel[] ylabels = {
-            new YLabel(0.1, 1, 2, 5, 10),
-            new YLabel(0.2, 1, 5, 10, 20),
-            new YLabel(0.5, 1, 2, 4, 10),
-            new YLabel(1.0, 1, 2, 5, 10),
-            new YLabel(2.0, 1, 5, 10, 20),
-            new YLabel(5.0, 1, 2, 4, 10),
-            new YLabel(10.0, 1, 2, 5, 10),
-            new YLabel(20.0, 1, 5, 10, 20),
-            new YLabel(50.0, 1, 2, 4, 10),
-            new YLabel(100.0, 1, 2, 5, 10),
-            new YLabel(200.0, 1, 5, 10, 20),
-            new YLabel(500.0, 1, 2, 4, 10),
-            new YLabel(1000.0, 1, 2, 5, 10),
-            new YLabel(2000.0, 1, 5, 10, 20),
-            new YLabel(5000.0, 1, 2, 4, 10),
-            new YLabel(10000.0, 1, 2, 5, 10),
-            new YLabel(20000.0, 1, 5, 10, 20),
-            new YLabel(50000.0, 1, 2, 4, 10),
-            new YLabel(100000.0, 1, 2, 5, 10),
-            new YLabel(0.0, 0, 0, 0, 0)
+        new YLabel(0.1, 1, 2, 5, 10),
+        new YLabel(0.2, 1, 5, 10, 20),
+        new YLabel(0.5, 1, 2, 4, 10),
+        new YLabel(1.0, 1, 2, 5, 10),
+        new YLabel(2.0, 1, 5, 10, 20),
+        new YLabel(5.0, 1, 2, 4, 10),
+        new YLabel(10.0, 1, 2, 5, 10),
+        new YLabel(20.0, 1, 5, 10, 20),
+        new YLabel(50.0, 1, 2, 4, 10),
+        new YLabel(100.0, 1, 2, 5, 10),
+        new YLabel(200.0, 1, 5, 10, 20),
+        new YLabel(500.0, 1, 2, 4, 10),
+        new YLabel(1000.0, 1, 2, 5, 10),
+        new YLabel(2000.0, 1, 5, 10, 20),
+        new YLabel(5000.0, 1, 2, 4, 10),
+        new YLabel(10000.0, 1, 2, 5, 10),
+        new YLabel(20000.0, 1, 5, 10, 20),
+        new YLabel(50000.0, 1, 2, 4, 10),
+        new YLabel(100000.0, 1, 2, 5, 10),
+        new YLabel(0.0, 0, 0, 0, 0)
     };
 
-    private RrdGraph rrdGraph;
     private ImageParameters im;
     private ImageWorker worker;
     private RrdGraphDef gdef;
+    private Mapper mapper;
 
     ValueAxis(RrdGraph rrdGraph) {
-        this.rrdGraph = rrdGraph;
-        this.im = rrdGraph.im;
-        this.gdef = rrdGraph.gdef;
-        this.worker = rrdGraph.worker;
+        this(rrdGraph.im, rrdGraph.worker, rrdGraph.gdef, rrdGraph.mapper);
+    }
+
+    ValueAxis(ImageParameters im, ImageWorker worker, RrdGraphDef gdef, Mapper mapper) {
+        this.im = im;
+        this.gdef = gdef;
+        this.worker = worker;
+        this.mapper = mapper;
     }
 
     boolean draw() {
@@ -45,16 +50,14 @@ class ValueAxis implements RrdGraphConstants {
         Paint gridColor = gdef.colors[COLOR_GRID];
         Paint mGridColor = gdef.colors[COLOR_MGRID];
         Paint fontColor = gdef.colors[COLOR_FONT];
-        int fontHeight = (int) Math.ceil(rrdGraph.getSmallFontHeight());
         int labelOffset = (int) (worker.getFontAscent(font) / 2);
-        int labfact = 2, gridind = -1;
+        int labfact = 2;
         double range = im.maxval - im.minval;
         double scaledrange = range / im.magfact;
         double gridstep;
         if (Double.isNaN(scaledrange)) {
             return false;
         }
-        int pixel = 1;
         String labfmt = null;
         if (Double.isNaN(im.ygridstep)) {
             if (gdef.altYGrid) {
@@ -94,22 +97,15 @@ class ValueAxis implements RrdGraphConstants {
                 }
             }
             else {
-                for (int i = 0; ylabels[i].grid > 0; i++) {
-                    pixel = (int) (im.ysize / (scaledrange / ylabels[i].grid));
-                    if (gridind == -1 && pixel > 5) {
-                        gridind = i;
-                        break;
-                    }
+                //Start looking for a minimum of 3 labels, but settle for 2 or 1 if need be
+                int minimumLabelCount = 3;
+                YLabel selectedYLabel = null;
+                while(selectedYLabel == null) {
+                    selectedYLabel = findYLabel(minimumLabelCount);
+                    minimumLabelCount--;
                 }
-                if (gridind == -1) gridind = 0;
-
-                for (int i = 0; i < 4; i++) {
-                    if (pixel * ylabels[gridind].labelFacts[i] >= 2 * fontHeight) {
-                        labfact = ylabels[gridind].labelFacts[i];
-                        break;
-                    }
-                }
-                gridstep = ylabels[gridind].grid * im.magfact;
+                gridstep = selectedYLabel.grid * im.magfact;
+                labfact = findLabelFactor(selectedYLabel);
             }
         }
         else {
@@ -121,7 +117,7 @@ class ValueAxis implements RrdGraphConstants {
         int egrid = (int) (im.maxval / gridstep + 1);
         double scaledstep = gridstep / im.magfact;
         for (int i = sgrid; i <= egrid; i++) {
-            int y = rrdGraph.mapper.ytr(gridstep * i);
+            int y = mapper.ytr(gridstep * i);
             if (y >= im.yorigin - im.ysize && y <= im.yorigin) {
                 if (i % labfact == 0) {
                     String graph_label;
@@ -160,6 +156,85 @@ class ValueAxis implements RrdGraphConstants {
             }
         }
         return true;
+    }
+
+    /**
+     * Finds an acceptable YLabel object for the current graph
+     * If the graph covers positive and negative on the y-axis, then
+     * desiredMinimumLabelCount is checked as well, to ensure the chosen YLabel definition
+     * will result in the required number of labels
+     * 
+     * Returns null if none are acceptable (none the right size or with
+     * enough labels)
+     */
+    private YLabel findYLabel(int desiredMinimumLabelCount) {
+        double scaledrange = this.getScaledRange();
+        int labelFactor;
+        //Check each YLabel definition to see if it's acceptable
+        for (int i = 0; ylabels[i].grid > 0; i++) {
+            YLabel thisYLabel = ylabels[i];
+            //First cut is whether this gridstep would give enough space per gridline
+            if (this.getPixelsPerGridline(thisYLabel) > 5 ) {
+                //Yep; now we might have to check the number of labels
+                if(im.minval < 0.0 && im.maxval > 0.0) {
+                    //The graph covers positive and negative values, so we need the
+                    // desiredMinimumLabelCount number of labels, which is going to
+                    // usually be 3, then maybe 2, then only as a last resort, 1. 
+                    // So, we need to find out what the label factor would be
+                    // if we chose this ylab definition
+                    labelFactor = findLabelFactor(thisYLabel);
+                    if(labelFactor == -1) {
+                        //Default to too many to satisfy the label count test, unless we're looking for just 1	
+                        // in which case be sure to satisfy the label count test
+                        labelFactor = desiredMinimumLabelCount==1?1:desiredMinimumLabelCount+1; 
+                    }
+                    //Adding one?  Think fenceposts (need one more than just dividing length by space between)
+                    int labelCount = ((int)(scaledrange/thisYLabel.grid)/labelFactor)+1;
+                    if(labelCount > desiredMinimumLabelCount) {
+                        return thisYLabel; //Enough pixels, *and* enough labels
+                    }
+
+                } else {
+                    //Only positive or negative on the graph y-axis.  No need to
+                    // care about the label count.
+                    return thisYLabel;
+                }
+            }
+        }
+
+        double val = 1;
+        while(val < scaledrange) {
+            val = val * 10;
+        }
+        return new YLabel(val/10, 1, 2, 5, 10);
+    }
+
+    /**
+     * Find the smallest labelFactor acceptable (can fit labels) for the given YLab definition
+     * Returns the label factor if one is ok, otherwise returns -1 if none are acceptable
+     */
+    private int findLabelFactor(YLabel thisYLabel) {
+        int pixel = this.getPixelsPerGridline(thisYLabel);
+        int fontHeight = (int) Math.ceil(worker.getFontHeight(gdef.smallFont));
+        for (int j = 0; j < 4; j++) {
+            if (pixel * thisYLabel.labelFacts[j] >= 2 * fontHeight) {
+                return thisYLabel.labelFacts[j];
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Finds the number of pixels per gridline that the given YLabel definition will result in
+     */
+    private int getPixelsPerGridline(YLabel thisYLabel) {
+        double scaledrange = this.getScaledRange();
+        return (int) (im.ysize / (scaledrange / thisYLabel.grid));
+    }
+
+    private double getScaledRange() {
+        double range = im.maxval - im.minval;
+        return range / im.magfact;
     }
 
     static class YLabel {
