@@ -131,9 +131,9 @@ public class TimeSpec {
      */
     public static long[] getTimestamps(TimeSpec spec1, TimeSpec spec2) {
         Calendar[] gcs = getTimes(spec1, spec2);
-		return new long[] {
-			Util.getTimestamp(gcs[0]), Util.getTimestamp(gcs[1])
-		};
-	}
+        return new long[] {
+                Util.getTimestamp(gcs[0]), Util.getTimestamp(gcs[1])
+        };
+    }
 }
 
