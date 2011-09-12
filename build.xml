@@ -45,6 +45,7 @@
                destdir="${classes}"
                classpathref="class.path"
                compiler="modern"
+        	   encoding="UTF-8"         	 
                source="1.5"/>
         <copy todir="${classes}">
             <fileset dir="${resources}"/>
