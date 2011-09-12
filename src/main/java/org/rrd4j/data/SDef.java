@@ -2,7 +2,7 @@ package org.rrd4j.data;
 
 import org.rrd4j.ConsolFun;
 
-class SDef extends Source {
+class SDef extends Source implements NonRrdSource  {
     private String defName;
     private ConsolFun consolFun;
     private double value;
@@ -38,7 +38,12 @@ class SDef extends Source {
         return agg;
     }
 
-    double getPercentile(long tStart, long tEnd, double percentile) {
-        return value;
+    public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
+        String defName = getDefName();
+        ConsolFun consolFun = getConsolFun();
+        Source source = dataProcessor.getSource(defName);
+        double value = source.getAggregates(tStart, tEnd).getAggregate(consolFun);
+        setValue(value);
     }
+
 }

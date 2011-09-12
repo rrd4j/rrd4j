@@ -1,6 +1,6 @@
 package org.rrd4j.data;
 
-class PDef extends Source {
+class PDef extends Source implements NonRrdSource  {
     private final Plottable plottable;
 
     PDef(String name, Plottable plottable) {
@@ -8,7 +8,7 @@ class PDef extends Source {
         this.plottable = plottable;
     }
 
-    void calculateValues() {
+    public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
         long[] times = getTimestamps();
         double[] vals = new double[times.length];
         for (int i = 0; i < times.length; i++) {

@@ -365,7 +365,7 @@ public class DataProcessor {
         return values;
     }
 
-    private Source getSource(String sourceName) {
+    Source getSource(String sourceName) {
         Source source = sources.get(sourceName);
         if (source != null) {
             return source;
@@ -470,6 +470,22 @@ public class DataProcessor {
     public void addDatasource(String name, String file, String dsName, ConsolFun consolFunc, String backend) {
         Def def = new Def(name, file, dsName, consolFunc, backend);
         sources.put(name, def);
+    }
+
+    /**
+     * Creates a datasource that performs a percentile calculation on an
+     * another named datasource to yield a single value.  
+     * 
+     * Requires that the other datasource has already been defined; otherwise, it'll
+     * end up with no data
+     * 
+     * @param name - the new virtual datasource name
+     * @param sourceName - the datasource from which to extract the percentile.  Must be a previously
+     *                     defined virtual datasource
+     * @param percentile - the percentile to extract from the source datasource
+     */
+    public void addDatasource(String name, String sourceName, double percentile) {
+        sources.put(name, new PercentileDef(name, sourceName, percentile));
     }
 
     /**
@@ -735,35 +751,11 @@ public class DataProcessor {
 
     private void calculateNonRrdSources() {
         for (Source source : sources.values()) {
-            if (source instanceof SDef) {
-                calculateSDef((SDef) source);
-            }
-            else if (source instanceof CDef) {
-                calculateCDef((CDef) source);
-            }
-            else if (source instanceof PDef) {
-                calculatePDef((PDef) source);
+            if (source instanceof NonRrdSource) {
+                ((NonRrdSource)source).calculate(tStart, tEnd, this);
             }
         }
     }
-
-    private void calculatePDef(PDef pdef) {
-        pdef.calculateValues();
-    }
-
-    private void calculateCDef(CDef cDef) {
-        RpnCalculator calc = new RpnCalculator(cDef.getRpnExpression(), cDef.getName(), this);
-        cDef.setValues(calc.calculateValues());
-    }
-
-    private void calculateSDef(SDef sDef) {
-        String defName = sDef.getDefName();
-        ConsolFun consolFun = sDef.getConsolFun();
-        Source source = getSource(defName);
-        double value = source.getAggregates(tStart, tEnd).getAggregate(consolFun);
-        sDef.setValue(value);
-    }
-
     private RrdDb getRrd(Def def) throws IOException {
         String path = def.getPath(), backend = def.getBackend();
         if (poolUsed && backend == null) {
@@ -846,10 +838,10 @@ public class DataProcessor {
 
         // 95-percentile
         System.out.println("\n95-percentile for X: " + Util.formatDouble(dp.get95Percentile("X")));
-		System.out.println("95-percentile for Y: " + Util.formatDouble(dp.get95Percentile("Y")));
+        System.out.println("95-percentile for Y: " + Util.formatDouble(dp.get95Percentile("Y")));
 
-		// lastArchiveUpdateTime
-		System.out.println("\nLast archive update time was: " + dp.getLastRrdArchiveUpdateTime());
-	}
+        // lastArchiveUpdateTime
+        System.out.println("\nLast archive update time was: " + dp.getLastRrdArchiveUpdateTime());
+    }
 }
 

@@ -1,6 +1,6 @@
 package org.rrd4j.data;
 
-class CDef extends Source {
+class CDef extends Source implements NonRrdSource {
     private final String rpnExpression;
 
     CDef(String name, String rpnExpression) {
@@ -10,5 +10,10 @@ class CDef extends Source {
 
     String getRpnExpression() {
         return rpnExpression;
+    }
+    
+    public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
+        RpnCalculator calc = new RpnCalculator(rpnExpression, getName(), dataProcessor);
+        setValues(calc.calculateValues());
     }
 }
