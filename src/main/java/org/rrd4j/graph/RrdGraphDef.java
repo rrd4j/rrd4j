@@ -704,7 +704,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param percent The percent value
      */
     public void percentile(String name, String defName, double percent) {
-        sources.add(new VDef(name, defName, percent));
+        sources.add(new PercentileDef(name, defName, percent));
     }
 
     /**

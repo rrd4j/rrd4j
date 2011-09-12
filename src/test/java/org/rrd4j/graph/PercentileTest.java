@@ -57,6 +57,7 @@ public class PercentileTest {
         
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 2016);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+        
         RrdDb db = new RrdDb(def, RrdBackendFactory.getFactory(backend));
         
         return db;
