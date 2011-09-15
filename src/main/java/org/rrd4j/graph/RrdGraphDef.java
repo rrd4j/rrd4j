@@ -556,7 +556,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Suppresses anything but the graph, works only for height < 64.
+     * Suppresses anything but the graph.
      *
      * @param onlyGraph true if only graph should be created, false otherwise (default).
      */

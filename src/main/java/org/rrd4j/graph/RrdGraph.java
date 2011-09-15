@@ -302,28 +302,31 @@ public class RrdGraph implements RrdGraphConstants {
         im.xsize = gdef.width;
         im.ysize = gdef.height;
         im.unitslength = gdef.unitsLength;
+
         if (gdef.onlyGraph) {
-            if (im.ysize > 64) {
-                throw new IllegalArgumentException("Cannot create graph only, height too big: " + im.ysize);
-            }
             im.xorigin = 0;
         }
         else {
             im.xorigin = (int) (PADDING_LEFT + im.unitslength * getSmallFontCharWidth());
         }
-        if (gdef.verticalLabel != null) {
+
+        if (!gdef.onlyGraph && gdef.verticalLabel != null) {
             im.xorigin += getSmallFontHeight();
         }
+
         if (gdef.onlyGraph) {
             im.yorigin = im.ysize;
         }
         else {
             im.yorigin = PADDING_TOP + im.ysize;
         }
+
         mapper = new Mapper(this);
-        if (gdef.title != null) {
+
+        if (!gdef.onlyGraph && gdef.title != null) {
             im.yorigin += getLargeFontHeight() + PADDING_TITLE;
         }
+
         if (gdef.onlyGraph) {
             im.xgif = im.xsize;
             im.ygif = im.yorigin;
