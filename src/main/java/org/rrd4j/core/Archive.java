@@ -146,6 +146,11 @@ public class Archive implements RrdUpdater {
                 case MAX:
                     state.setAccumValue(Util.max(state.getAccumValue(), value));
                     break;
+                case FIRST:
+                    if (Double.isNaN(state.getAccumValue())) {
+                        state.setAccumValue(value);
+                    }
+                    break;
                 case LAST:
                     state.setAccumValue(value);
                     break;
@@ -177,7 +182,7 @@ public class Archive implements RrdUpdater {
     }
 
     /**
-     * Returns archive consolidation function ("AVERAGE", "MIN", "MAX" or "LAST").
+     * Returns archive consolidation function ("AVERAGE", "MIN", "MAX", "FIRST", "LAST" or "TOTAL").
      *
      * @return Archive consolidation function.
      * @throws IOException Thrown in case of I/O error.

@@ -534,7 +534,7 @@ public class RrdDb implements RrdUpdater {
      * for the explanation of the resolution parameter).</p>
      *
      * @param consolFun  Consolidation function to be used in fetch request. Allowed values are
-     *                   AVERAGE, MIN, MAX and LAST (see {@link ConsolFun} enum).
+     *                   AVERAGE, MIN, MAX, FIRST, LAST and TOTAL (see {@link ConsolFun} enum).
      * @param fetchStart Starting timestamp for fetch request.
      * @param fetchEnd   Ending timestamp for fetch request.
      * @return Request object that should be used to actually fetch data from RRD.
