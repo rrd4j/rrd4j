@@ -19,19 +19,29 @@ import java.io.PrintStream;
  */
 public class CDPStatusBlock {
 
+    static private enum cdp_par_en {
+        CDP_val, CDP_unkn_pdp_cnt, CDP_hw_intercept, CDP_hw_last_intercept, CDP_hw_slope, 
+        CDP_hw_last_slope, CDP_null_count,
+        CDP_last_null_count, CDP_primary_val, CDP_secondary_val
+    };
+
     long offset;
     long size;
     int unknownDatapoints;
     double value;
 
+    double secondary_value;
+    double primary_value;
+
     CDPStatusBlock(RRDFile file) throws IOException {
-
+        //Should read MAX_CDP_PAR_EN = 10
+        //Size should be 0x50
         offset = file.getFilePointer();
-        value = file.readDouble();
-        unknownDatapoints = file.readInt();
-
-        // Skip rest of cdp_prep_t.scratch
-        file.skipBytes(68);
+        UnivalArray scratch = file.getUnivalArray(10);
+        value = scratch.getDouble(cdp_par_en.CDP_val);
+        unknownDatapoints = (int) scratch.getDouble(cdp_par_en.CDP_unkn_pdp_cnt);
+        primary_value = scratch.getDouble(cdp_par_en.CDP_primary_val);
+        secondary_value = scratch.getDouble(cdp_par_en.CDP_secondary_val);
 
         size = file.getFilePointer() - offset;
     }
@@ -55,7 +65,6 @@ public class CDPStatusBlock {
     }
 
     void toXml(PrintStream s) {
-
         s.print("\t\t\t<ds><value> ");
         s.print(value);
         s.print(" </value>  <unknown_datapoints> ");
@@ -79,6 +88,10 @@ public class CDPStatusBlock {
         sb.append(unknownDatapoints);
         sb.append(", value=");
         sb.append(value);
+        sb.append(", primaryValue=");
+        sb.append(primary_value);
+        sb.append(", secondaryValue=");
+        sb.append(secondary_value);
         sb.append("]");
 
         return sb.toString();

@@ -16,7 +16,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Instances of this class model
@@ -33,9 +36,10 @@ public class RRDatabase {
     // RRD file name
     private String name;
     Header header;
-    ArrayList<DataSource> dataSources;
-    ArrayList<Archive> archives;
+    private ArrayList<DataSource> dataSources;
+    private ArrayList<Archive> archives;
     Date lastUpdate;
+    private Map<String, Integer> nameindex;
 
     /**
      * Creates a database to read from.
@@ -54,22 +58,27 @@ public class RRDatabase {
      * @throws IOException if an I/O error occurs.
      */
     public RRDatabase(File file) throws IOException {
-
+        /*
+         * read the raw data according to the c-structure rrd_t (from rrd source
+         * distribution file rrd_format.h)
+         */
         name = file.getName();
         rrdFile = new RRDFile(file);
         header = new Header(rrdFile);
 
+        nameindex = new HashMap<String, Integer>(header.dsCount);
+
         // Load the data sources
-        dataSources = new ArrayList<DataSource>();
+        dataSources = new ArrayList<DataSource>(header.dsCount);
 
         for (int i = 0; i < header.dsCount; i++) {
             DataSource ds = new DataSource(rrdFile);
-
+            nameindex.put(ds.getName(), i);
             dataSources.add(ds);
         }
 
         // Load the archives
-        archives = new ArrayList<Archive>();
+        archives = new ArrayList<Archive>(header.dsCount);
 
         for (int i = 0; i < header.rraCount; i++) {
             Archive archive = new Archive(this);
@@ -81,13 +90,20 @@ public class RRDatabase {
 
         lastUpdate = new Date((long) (rrdFile.readInt()) * 1000);
 
+        /* rrd v >= 3 last_up with us */
+        if (header.getVersionAsInt() >= Constants.VERSION_WITH_LAST_UPDATE_SEC) {
+            rrdFile.readInt();
+            rrdFile.align();
+        }
+
         // Load PDPStatus(s)
         for (int i = 0; i < header.dsCount; i++) {
             DataSource ds = dataSources.get(i);
 
             ds.loadPDPStatusBlock(rrdFile);
         }
-
+        rrdFile.align(8);
+        rrdFile.readDouble();
         // Load CDPStatus(s)
         for (int i = 0; i < header.rraCount; i++) {
             Archive archive = archives.get(i);
@@ -98,7 +114,6 @@ public class RRDatabase {
         // Load current row information for each archive
         for (int i = 0; i < header.rraCount; i++) {
             Archive archive = archives.get(i);
-
             archive.loadCurrentRow(rrdFile);
         }
 
@@ -117,6 +132,10 @@ public class RRDatabase {
      */
     public Header getHeader() {
         return header;
+    }
+
+    public Set<String> getDataSourcesName() {
+        return nameindex.keySet();
     }
 
     /**
@@ -157,6 +176,10 @@ public class RRDatabase {
      */
     public Archive getArchive(int index) {
         return archives.get(index);
+    }
+
+    public Archive getArchive(String name) {
+        return archives.get(nameindex.get(name));
     }
 
     /**
@@ -238,7 +261,15 @@ public class RRDatabase {
      * @throws IOException              if there was a problem reading data from the database.
      */
     public DataChunk getData(ConsolidationFunctionType type) throws IOException {
-        return getData(type, 1L);
+        Calendar endCal = Calendar.getInstance();
+
+        endCal.set(Calendar.MILLISECOND, 0);
+
+        Calendar startCal = (Calendar) endCal.clone();
+
+        startCal.add(Calendar.DATE, -1);
+
+        return getData(type, startCal.getTime(), endCal.getTime(), 1L);
     }
 
     /**
@@ -253,8 +284,15 @@ public class RRDatabase {
      *                                  the requested consolidation function.
      * @throws IOException              if there was a problem reading data from the database.
      */
-    public DataChunk getData(ConsolidationFunctionType type, long step)
-            throws IOException {
+    public DataChunk getData(ConsolidationFunctionType type, Date startDate, Date endDate, long step)
+    throws IOException {
+        long end = startDate.getTime() / 1000;
+        long start = endDate.getTime() / 1000;
+        return getData(type, start, end, step);
+    }
+
+    public DataChunk getData(ConsolidationFunctionType type, long start, long end, long step)
+    throws IOException {
 
         ArrayList<Archive> possibleArchives = getArchiveList(type);
 
@@ -263,16 +301,6 @@ public class RRDatabase {
                     + type);
         }
 
-        Calendar endCal = Calendar.getInstance();
-
-        endCal.set(Calendar.MILLISECOND, 0);
-
-        Calendar startCal = (Calendar) endCal.clone();
-
-        startCal.add(Calendar.DATE, -1);
-
-        long end = endCal.getTime().getTime() / 1000;
-        long start = startCal.getTime().getTime() / 1000;
         Archive archive = findBestArchive(start, end, step, possibleArchives);
 
         // Tune the parameters
@@ -285,9 +313,6 @@ public class RRDatabase {
 
         int rows = (int) ((end - start) / step + 1);
 
-        //cat.debug("start " + start + " end " + end + " step " + step + " rows "
-        //          + rows);
-
         // Find start and end offsets
         // This is terrible - some of this should be encapsulated in Archive - CT.
         long lastUpdateLong = lastUpdate.getTime() / 1000;
@@ -296,11 +321,7 @@ public class RRDatabase {
         int startOffset = (int) ((start - archiveStartTime) / step);
         int endOffset = (int) ((archiveEndTime - end) / step);
 
-        //cat.debug("start " + archiveStartTime + " end " + archiveEndTime
-        //          + " startOffset " + startOffset + " endOffset "
-        //          + (archive.rowCount - endOffset));
-
-        DataChunk chunk = new DataChunk(start, startOffset, endOffset, step,
+        DataChunk chunk = new DataChunk(nameindex, start, startOffset, endOffset, step,
                 header.dsCount, rows);
 
         archive.loadData(chunk);
@@ -309,11 +330,11 @@ public class RRDatabase {
     }
 
     /*
-      * This is almost a verbatim copy of the original C code by Tobias Oetiker.
-      * I need to put more of a Java style on it - CT
-      */
+     * This is almost a verbatim copy of the original C code by Tobias Oetiker.
+     * I need to put more of a Java style on it - CT
+     */
     private Archive findBestArchive(long start, long end, long step,
-                                    ArrayList<Archive> archives) {
+            ArrayList<Archive> archives) {
 
         Archive archive = null;
         Archive bestFullArchive = null;
@@ -322,7 +343,6 @@ public class RRDatabase {
         int firstPart = 1;
         int firstFull = 1;
         long bestMatch = 0;
-        //long bestPartRRA = 0;
         long bestStepDiff = 0;
         long tmpStepDiff = 0;
 
@@ -330,10 +350,10 @@ public class RRDatabase {
             archive = archive1;
 
             long calEnd = lastUpdateLong
-                    - (lastUpdateLong
+            - (lastUpdateLong
                     % (archive.pdpCount * header.pdpStep));
             long calStart = calEnd
-                    - (archive.pdpCount * archive.rowCount
+            - (archive.pdpCount * archive.rowCount
                     * header.pdpStep);
             long fullMatch = end - start;
 
@@ -366,7 +386,7 @@ public class RRDatabase {
         }
 
         // See how the matching went
-        // optimise this
+        // optimize this
         if (firstFull == 0) {
             archive = bestFullArchive;
         }
@@ -461,9 +481,20 @@ public class RRDatabase {
      */
     public String toString() {
 
-        StringBuilder sb = new StringBuilder("\n");
+        String endianness;
+        if(rrdFile.isBigEndian())
+            endianness = "Big";
+        else
+            endianness = "Little";
+
+
+        StringBuilder sb = new StringBuilder(endianness + " endian" + ", " + rrdFile.getBits() + " bits\n");
 
         sb.append(header.toString());
+
+        sb.append(", lastupdate: ");
+        sb.append(lastUpdate.getTime() / 1000);
+
 
         for (DataSource ds : dataSources) {
             sb.append("\n\t");
@@ -475,6 +506,6 @@ public class RRDatabase {
             sb.append(archive.toString());
         }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

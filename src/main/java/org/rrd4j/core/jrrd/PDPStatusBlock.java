@@ -18,27 +18,21 @@ import java.io.IOException;
  */
 public class PDPStatusBlock {
 
-    long offset;
-    long size;
+    private long offset;
+    private long size;
     String lastReading;
     int unknownSeconds;
     double value;
+    static private enum pdp_par_en {PDP_unkn_sec_cnt, PDP_val};
 
     PDPStatusBlock(RRDFile file) throws IOException {
 
         offset = file.getFilePointer();
         lastReading = file.readString(Constants.LAST_DS_LEN);
 
-        file.align(4);
-
-        unknownSeconds = file.readInt();
-
-        file.skipBytes(4);
-
-        value = file.readDouble();
-
-        // Skip rest of pdp_prep_t.par[]
-        file.skipBytes(64);
+        UnivalArray scratch = file.getUnivalArray(10);
+        unknownSeconds = (int) scratch.getLong(pdp_par_en.PDP_unkn_sec_cnt);
+        value = scratch.getDouble(pdp_par_en.PDP_val);
 
         size = file.getFilePointer() - offset;
     }

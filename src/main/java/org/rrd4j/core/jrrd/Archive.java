@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Instances of this class model an archive section of an RRD file.
@@ -26,6 +27,8 @@ import java.util.Iterator;
  */
 public class Archive {
 
+    static private enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha};
+
     RRDatabase db;
     long offset;
     long dataOffset;
@@ -34,7 +37,7 @@ public class Archive {
     int rowCount;
     int pdpCount;
     double xff;
-    ArrayList<CDPStatusBlock> cdpStatusBlocks;
+    List<CDPStatusBlock> cdpStatusBlocks;
     int currentRow;
 
     private double[][] values;
@@ -46,18 +49,13 @@ public class Archive {
         RRDFile file = db.rrdFile;
 
         offset = file.getFilePointer();
-        type =
-                ConsolidationFunctionType.get(file.readString(Constants.CF_NAM_SIZE));
+        type = ConsolidationFunctionType.valueOf(file.readString(Constants.CF_NAM_SIZE).toUpperCase());
+        file.align();
         rowCount = file.readInt();
         pdpCount = file.readInt();
 
-        file.align();
-
-        xff = file.readDouble();
-
-        // Skip rest of rra_def_t.par[]
-        file.align();
-        file.skipBytes(72);
+        UnivalArray par = file.getUnivalArray(10);
+        xff = par.getDouble(rra_par_en.RRA_cdp_xff_val);
 
         size = file.getFilePointer() - offset;
     }
@@ -137,15 +135,12 @@ public class Archive {
         }
 
         db.rrdFile.ras.seek(dataOffset + (pointer * 8));
-        //cat.debug("Archive Base: " + dataOffset + " Archive Pointer: " + pointer);
-        //cat.debug("Start Offset: " + chunk.start + " End Offset: "
-        //          + (rowCount - chunk.end));
 
         double[][] data = chunk.data;
 
         /*
-           * This is also terrible - cleanup - CT
-           */
+         * This is also terrible - cleanup - CT
+         */
         int row = 0;
         for (int i = chunk.start; i < rowCount - chunk.end; i++, row++) {
             if (i < 0) {                   // no valid data yet
@@ -207,7 +202,7 @@ public class Archive {
 
             s.println(Double.isNaN(value)
                     ? "NaN"
-                    : numberFormat.format(value));
+                            : numberFormat.format(value));
             s.print(sb);
             s.print(cdpIndex++);
             s.print("].unknown_datapoints = ");
@@ -299,43 +294,13 @@ public class Archive {
         }
     }
 
-    /*
-    // THIS IS THE ORIGINAL CODE: BUGGY! Replaced by Sasa Markovic with a new method
-    // Funny: the bug will appear only if dsCount != 2 :)
-    public double[][] getValuesOriginal() throws IOException {
-        if (values != null) {
-            return values;
-        }
-        values = new double[db.header.dsCount][rowCount];
-        int row = currentRow;
-        db.rrdFile.ras.seek(dataOffset + (row + 1) * 16); // <----- BUG (resolved below)
-        for (int counter = 0; counter < rowCount; counter++) {
-            row++;
-            if (row == rowCount) {
-                row = 0;
-                db.rrdFile.ras.seek(dataOffset);
-            }
-            for (int col = 0; col < db.header.dsCount; col++) {
-                double value = db.rrdFile.readDouble();
-                values[col][counter] = value;
-            }
-        }
-        return values;
-    }
-    */
-
-    // Resolved bug from the original method (see above)
-
     public double[][] getValues() throws IOException {
-        // OK PART
         if (values != null) {
             return values;
         }
         values = new double[db.header.dsCount][rowCount];
         int row = currentRow;
-        // HERE ARE THE DRAGONS!
         db.rrdFile.ras.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
-        // OK, TOO!
         for (int counter = 0; counter < rowCount; counter++) {
             row++;
             if (row == rowCount) {
@@ -402,10 +367,8 @@ public class Archive {
         sb.append(", currentRow=");
         sb.append(currentRow);
         sb.append("]");
-
-        for (Iterator<CDPStatusBlock> i = cdpStatusBlocks.iterator(); i.hasNext();) {
-            CDPStatusBlock cdp = i.next();
-
+        
+        for(CDPStatusBlock cdp: cdpStatusBlocks) {
             sb.append("\n\t\t");
             sb.append(cdp.toString());
         }

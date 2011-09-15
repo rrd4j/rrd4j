@@ -20,34 +20,27 @@ import java.text.NumberFormat;
  */
 public class DataSource {
 
-    long offset;
-    long size;
-    String name;
-    DataSourceType type;
-    int minimumHeartbeat;
-    double minimum;
-    double maximum;
-    PDPStatusBlock pdpStatusBlock;
+    static private enum ds_param_en { DS_mrhb_cnt, DS_min_val, DS_max_val, DS_cde }
+
+    private long offset;
+    private long size;
+    private String name;
+    private DataSourceType type;
+    private int minimumHeartbeat;
+    private double minimum;
+    private double maximum;
+    private PDPStatusBlock pdpStatusBlock;
 
     DataSource(RRDFile file) throws IOException {
 
         offset = file.getFilePointer();
         name = file.readString(Constants.DS_NAM_SIZE);
-        type = DataSourceType.get(file.readString(Constants.DST_SIZE));
+        type = DataSourceType.valueOf(file.readString(Constants.DST_SIZE).toUpperCase());
 
-        file.align(8);
-
-        minimumHeartbeat = file.readInt(true);
-
-        file.align(8);
-
-        minimum = file.readDouble();
-        maximum = file.readDouble();
-
-        // Skip rest of ds_def_t.par[]
-        file.align();
-        file.skipBytes(56);
-
+        UnivalArray par = file.getUnivalArray(10);
+        minimumHeartbeat = (int) par.getLong(ds_param_en.DS_mrhb_cnt);
+        minimum = par.getDouble(ds_param_en.DS_min_val);
+        maximum = par.getDouble(ds_param_en.DS_max_val);
         size = file.getFilePointer() - offset;
     }
 
@@ -126,12 +119,12 @@ public class DataSource {
         s.print("].min = ");
         s.println(Double.isNaN(minimum)
                 ? "NaN"
-                : numberFormat.format(minimum));
+                        : numberFormat.format(minimum));
         s.print(sb);
         s.print("].max = ");
         s.println(Double.isNaN(maximum)
                 ? "NaN"
-                : numberFormat.format(maximum));
+                        : numberFormat.format(maximum));
         s.print(sb);
         s.print("].last_ds = ");
         s.println(pdpStatusBlock.lastReading);
@@ -142,7 +135,7 @@ public class DataSource {
 
         s.println(Double.isNaN(value)
                 ? "NaN"
-                : numberFormat.format(value));
+                        : numberFormat.format(value));
         s.print(sb);
         s.print("].unknown_sec = ");
         s.println(pdpStatusBlock.unknownSeconds);

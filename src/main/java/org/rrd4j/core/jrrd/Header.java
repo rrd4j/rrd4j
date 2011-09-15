@@ -18,9 +18,10 @@ import java.io.IOException;
  */
 public class Header implements Constants {
 
-    static final long offset = 0;
-    long size;
-    String version;
+    private static final long offset = 0;
+    private long size;
+    String version = UNDEFINED_VERSION;
+    private int iVersion = UNDEFINED_VERSION_AS_INT;
     int dsCount;
     int rraCount;
     int pdpStep;
@@ -30,9 +31,14 @@ public class Header implements Constants {
         if (!file.readString(4).equals(COOKIE)) {
             throw new IOException("Invalid COOKIE");
         }
-
-        if (!(version = file.readString(5)).equals(VERSION)) {
-            throw new IOException("Unsupported RRD version (" + version + ")");
+        version = file.readString(5);
+        try {
+            iVersion = Integer.parseInt(version);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Unsupported RRD version (" + version + ")");
+        }
+        if (iVersion > MAX_SUPPORTED_VERSION) {
+            throw new RuntimeException("Unsupported RRD version (" + version + ")");
         }
 
         file.align();
@@ -46,7 +52,8 @@ public class Header implements Constants {
 
         // Skip rest of stat_head_t.par
         file.align();
-        file.skipBytes(80);
+        @SuppressWarnings("unused")
+        UnivalArray par = file.getUnivalArray(10);
 
         size = file.getFilePointer() - offset;
     }
@@ -61,6 +68,15 @@ public class Header implements Constants {
     }
 
     /**
+     * Returns the version of the database as an integer.
+     *
+     * @return the version of the database.
+     */
+    public int getVersionAsInt() {
+        return iVersion;
+    }
+
+   /**
      * Returns the number of <code>DataSource</code>s in the database.
      *
      * @return the number of <code>DataSource</code>s in the database.

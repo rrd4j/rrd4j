@@ -8,7 +8,11 @@
  */
 package org.rrd4j.core.jrrd;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * This class is a quick hack to read information from an RRD file. Writing
@@ -22,59 +26,73 @@ import java.io.*;
  * @version $Revision: 1.1 $
  */
 public class RRDFile implements Constants {
-
-    boolean bigEndian;
-    int alignment;
+    private int alignment;
+    private int longSize = 4;
     RandomAccessFile ras;
-    byte[] buffer;
+
+    private ByteBuffer bbuffer = ByteBuffer.allocate(1024);
+    private byte[] buffer = bbuffer.array();
+    private ByteOrder order;
 
     RRDFile(String name) throws IOException {
         this(new File(name));
     }
 
     RRDFile(File file) throws IOException {
-
         ras = new RandomAccessFile(file, "r");
-        buffer = new byte[128];
-
         initDataLayout(file);
+    }
+
+    private int read(int len) throws IOException {
+        bbuffer.clear();
+        int read = ras.read(buffer, 0, len);
+        return read;
     }
 
     private void initDataLayout(File file) throws IOException {
 
         if (file.exists()) {    // Load the data formats from the file
-            ras.read(buffer, 0, 24);
+            read(32);
 
             int index;
 
             if ((index = indexOf(FLOAT_COOKIE_BIG_ENDIAN, buffer)) != -1) {
-                bigEndian = true;
+                order = ByteOrder.BIG_ENDIAN;
             }
             else if ((index = indexOf(FLOAT_COOKIE_LITTLE_ENDIAN, buffer))
                     != -1) {
-                bigEndian = false;
+                order = ByteOrder.LITTLE_ENDIAN;
             }
             else {
                 throw new IOException("Invalid RRD file");
             }
+            bbuffer.order(order);
 
             switch (index) {
 
-                case 12:
-                    alignment = 4;
-                    break;
+            case 12:
+                alignment = 4;
+                break;
 
-                case 16:
-                    alignment = 8;
-                    break;
+            case 16:
+                alignment = 8;
+                break;
 
-                default:
-                    throw new RuntimeException("Unsupported architecture");
+            default:
+                throw new RuntimeException("Unsupported architecture");
+            }
+
+            bbuffer.position(index + 8);
+            //We cannot have dsCount && rracount == 0
+            //If one is 0, it's a 64 bits rrd
+            int int1 = bbuffer.getInt();  //Should be dsCount in ILP32
+            int int2 = bbuffer.getInt();  //Should be rraCount in ILP32
+            if(int1  == 0 || int2 ==0) {
+                longSize = 8;
             }
         }
         else {                // Default to data formats for this hardware architecture
         }
-
         ras.seek(0);    // Reset file pointer to start of file
     }
 
@@ -83,7 +101,7 @@ public class RRDFile implements Constants {
     }
 
     boolean isBigEndian() {
-        return bigEndian;
+        return order == ByteOrder.BIG_ENDIAN;
     }
 
     int getAlignment() {
@@ -91,47 +109,18 @@ public class RRDFile implements Constants {
     }
 
     double readDouble() throws IOException {
-
-        //double value;
-        byte[] tx = new byte[8];
-
-        ras.read(buffer, 0, 8);
-
-        if (bigEndian) {
-            tx = buffer;
-        }
-        else {
-            for (int i = 0; i < 8; i++) {
-                tx[7 - i] = buffer[i];
-            }
-        }
-
-        DataInputStream reverseDis =
-                new DataInputStream(new ByteArrayInputStream(tx));
-
-        return reverseDis.readDouble();
+        read(8);
+        return bbuffer.getDouble();
     }
 
     int readInt() throws IOException {
-        return readInt(false);
-    }
-
-    int readInt(boolean dump) throws IOException {
-
-        ras.read(buffer, 0, 4);
-
-        int value;
-
-        if (bigEndian) {
-            value = (0xFF & buffer[3]) | ((0xFF & buffer[2]) << 8)
-                    | ((0xFF & buffer[1]) << 16) | ((0xFF & buffer[0]) << 24);
+        read(longSize);
+        if(longSize == 4) {
+            return bbuffer.getInt();
         }
         else {
-            value = (0xFF & buffer[0]) | ((0xFF & buffer[1]) << 8)
-                    | ((0xFF & buffer[2]) << 16) | ((0xFF & buffer[3]) << 24);
+            return (int) bbuffer.getLong();
         }
-
-        return value;
     }
 
     String readString(int maxLength) throws IOException {
@@ -170,5 +159,20 @@ public class RRDFile implements Constants {
 
     void close() throws IOException {
         ras.close();
+    }
+
+    protected void read(ByteBuffer bb) throws IOException{
+        ras.getChannel().read(bb);
+    }
+
+    protected UnivalArray getUnivalArray(int size) throws IOException {
+        return new UnivalArray(this, size);
+    }
+
+    /**
+     * @return the longSize
+     */
+    public int getBits() {
+        return longSize * 8;
     }
 }
