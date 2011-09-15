@@ -22,6 +22,7 @@ class Aggregator {
         Aggregates agg = new Aggregates();
         long totalSeconds = 0;
         boolean firstFound = false;
+        double sum = 0;
         for (int i = 0; i < timestamps.length; i++) {
             long left = Math.max(timestamps[i] - step, tStart);
             long right = Math.min(timestamps[i], tEnd);
@@ -32,6 +33,8 @@ class Aggregator {
                 double value = values[i];
                 agg.min = Util.min(agg.min, value);
                 agg.max = Util.max(agg.max, value);
+                agg.total = Util.sum(agg.total, value);
+
                 if (!firstFound) {
                     agg.first = value;
                     firstFound = true;
@@ -39,13 +42,14 @@ class Aggregator {
                 } else if (delta >= step) {  // an entire bucket is included in this range
                     agg.last = value;
                 }
+
                 if (!Double.isNaN(value)) {
-                    agg.total = Util.sum(agg.total, delta * value);
+                    sum = Util.sum(sum, delta * value);
                     totalSeconds += delta;
                 }
             }
         }
-        agg.average = totalSeconds > 0 ? (agg.total / totalSeconds) : Double.NaN;
+        agg.average = totalSeconds > 0 ? (sum / totalSeconds) : Double.NaN;
         return agg;
     }
 
