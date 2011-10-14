@@ -15,7 +15,7 @@
     <property name="tmpfile" value="tmp.tar"/>
     <property name="lib-rrd4j" value="rrd4j-${version}.jar"/>
     <property name="lib-inspector" value="inspector-${version}.jar"/>
-    <property name="lib-convertor" value="convertor-${version}.jar"/>
+    <property name="lib-converter" value="converter-${version}.jar"/>
     <property name="dist-prefix" value="rrd4j-${version}"/>
     <property name="dist-file" value="${dist-prefix}.tar.gz"/>
 
@@ -59,7 +59,7 @@
             </manifest>
             <include name="org/rrd4j/*.class"/>
             <include name="org/rrd4j/cmd/**/*.class"/>
-            <include name="org/rrd4j/convertor/**/*.class"/>
+            <include name="org/rrd4j/converter/**/*.class"/>
             <include name="org/rrd4j/core/**/*.class"/>
             <include name="org/rrd4j/data/**/*.class"/>
             <include name="org/rrd4j/demo/**/*.class"/>
@@ -69,12 +69,12 @@
             <include name="*.gif"/>
             <include name="*.png"/>
         </jar>
-        <jar jarfile="${dist}/${lib-convertor}" basedir="${classes}">
+        <jar jarfile="${dist}/${lib-converter}" basedir="${classes}">
             <manifest>
-                <attribute name="Main-Class" value="org.rrd4j.convertor.Convertor"/>
+                <attribute name="Main-Class" value="org.rrd4j.converter.Convertor"/>
                 <attribute name="Class-Path" value="${lib-rrd4j}"/>
             </manifest>
-            <include name="org/rrd4j/convertor/**/*.class"/>
+            <include name="org/rrd4j/converter/**/*.class"/>
         </jar>
         <jar jarfile="${dist}/${lib-inspector}" basedir="${classes}">
             <manifest>
@@ -90,7 +90,7 @@
     <target name="javadoc" depends="compile">
         <javadoc author="false" version="false"
                  destdir="${javadoc}"
-                 packagenames="org.rrd4j.cmd.*,org.rrd4j.convertor.*,org.rrd4j.core.*,org.rrd4j.data.*,org.rrd4j.demo.*,org.rrd4j.graph.*,org.rrd4j.inspector.*,org.rrd4j.*"
+                 packagenames="org.rrd4j.cmd.*,org.rrd4j.converter.*,org.rrd4j.core.*,org.rrd4j.data.*,org.rrd4j.demo.*,org.rrd4j.graph.*,org.rrd4j.inspector.*,org.rrd4j.*"
                  excludepackagenames="org.rrd4j.core.jrrd.*"
                  source="1.6"
                  sourcepath="${src}"
