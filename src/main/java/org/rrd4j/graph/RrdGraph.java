@@ -560,6 +560,7 @@ public class RrdGraph implements RrdGraphConstants {
                     if (c instanceof LegendText) {
                         // draw with BOX
                         worker.fillRect(x, y - box, box, box, gdef.colors[COLOR_FRAME]);
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_BACK]);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, ((LegendText) c).legendColor);
                         worker.drawString(c.resolvedText, x + boxSpace, y, gdef.smallFont, gdef.colors[COLOR_FONT]);
                     }
