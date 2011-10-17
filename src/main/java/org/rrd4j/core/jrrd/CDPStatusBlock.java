@@ -1,11 +1,3 @@
-/*
- * Copyright (C) 2001 Ciaran Treanor <ciaran@codeloop.com>
- *
- * Distributable under GPL license.
- * See terms of license at gnu.org.
- *
- * $Id: CDPStatusBlock.java,v 1.1 2006/02/03 08:27:16 sasam Exp $
- */
 package org.rrd4j.core.jrrd;
 
 import java.io.IOException;
