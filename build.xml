@@ -2,7 +2,7 @@
     <description>RRD4J Build File</description>
 
     <!-- VARIABLES -->
-    <property name="version" value="2.0.8"/>
+    <property name="version" value="2.1"/>
     <property name="who" value="Mathias Bogaert &lt;mathias.bogaert@gmail.com&gt;"/>
 
     <property name="classes" value="classes"/>

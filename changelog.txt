@@ -1,7 +1,12 @@
-Changes in version 2.0.8
+Changes in version 2.1
 ----------------------------------------
-* Fixed Issue 12:  Make RrdMemoryBackend better extensible
-* Fixed Issue 13:  RrdGraphConstants FontConstructor should close InputStream
+* Fixed Issue 1: Key colours don't match the graph when using transparency
+* Fixed Issue 10: some parts of this code has GPL license?
+* Fixed Issue 12: Make RrdMemoryBackend better extensible
+* Fixed Issue 13: RrdGraphConstants FontConstructor should close InputStream
+* Fixed Issue 16: Released *.jar contain no class files
+* Fixed Issue 11: rrdDb.createFetchRequest.fetchData.getAggregate(Total) does not return the correct value for step sizes other than 1.
+* Implemented Issue 15: Support for version 0003
 * Minor fixes and improvements.
 
 Changes in version 2.0.7 - 22 March 2011
