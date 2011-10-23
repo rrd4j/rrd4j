@@ -72,7 +72,6 @@
                 <directory>${basedir}</directory>
                 <targetPath>META-INF</targetPath>
                 <includes>
-                    <include>NOTICE.txt</include>
                     <include>LICENSE.txt</include>
                 </includes>
             </resource>
