@@ -10,6 +10,7 @@ import java.io.IOException;
  */
 public class Header implements Constants {
 
+    private final static double FLOAT_COOKIE = 8.642135E130;
     private static final long offset = 0;
     private long size;
     String version = UNDEFINED_VERSION;
@@ -36,7 +37,10 @@ public class Header implements Constants {
         file.align();
 
         // Consume the FLOAT_COOKIE
-        file.readDouble();
+        double cookie = file.readDouble();
+        if(cookie != FLOAT_COOKIE) {
+            throw new RuntimeException("This RRD was created on another architecture");
+        }
 
         dsCount = file.readInt();
         rraCount = file.readInt();

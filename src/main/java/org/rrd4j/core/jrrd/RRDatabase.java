@@ -80,13 +80,15 @@ public class RRDatabase {
 
         rrdFile.align();
 
-        lastUpdate = new Date((long) (rrdFile.readInt()) * 1000);
+        long last_up = (long) rrdFile.readInt() * 1000;
 
         /* rrd v >= 3 last_up with us */
         if (header.getVersionAsInt() >= Constants.VERSION_WITH_LAST_UPDATE_SEC) {
-            rrdFile.readInt();
+            long last_up_usec = rrdFile.readInt();
+            last_up += last_up_usec / 1000;
             rrdFile.align();
         }
+        lastUpdate = new Date(last_up);
 
         // Load PDPStatus(s)
         for (int i = 0; i < header.dsCount; i++) {

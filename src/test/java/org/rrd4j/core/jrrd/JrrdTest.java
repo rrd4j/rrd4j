@@ -69,6 +69,7 @@ public class JrrdTest {
         RRDatabase rrd = new RRDatabase(url.getFile());
         Assert.assertEquals("Invalid date", new Date(920808900000L), rrd.getLastUpdate());
         Assert.assertEquals("Invalid number of archives", 2, rrd.getNumArchives());
+        Assert.assertEquals("Invalid number of archives", 2, rrd.getDataSourcesName().size());
         Assert.assertEquals("Invalid version", version, rrd.header.getVersion());
     }
 }
