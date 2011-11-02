@@ -8,8 +8,8 @@ import java.io.IOException;
  * actual I/O operations on the underlying storage. Rrd4j supports
  * multiple backends out of the box. E.g.:</p>
  * <ul>
- * <li>{@link RrdFileBackend}: objects of this class are created from the
- * {@link RrdFileBackendFactory} class. This was the default backend used in all
+ * <li>{@link RrdRandomAccessFileBackend}: objects of this class are created from the
+ * {@link RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
  * Rrd4j releases prior to 1.4.0. It uses java.io.* package and
  * RandomAccessFile class to store RRD data in files on the disk.
  *

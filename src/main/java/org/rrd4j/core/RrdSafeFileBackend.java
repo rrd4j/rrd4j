@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * be shared between several JVMs at the same time. However, this backend is a little bit slow
  * since it does not use fast java.nio.* package (it's still based on the RandomAccessFile class).
  */
-public class RrdSafeFileBackend extends RrdFileBackend {
+public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
     private static final Counters counters = new Counters();
 
     private FileLock lock;
@@ -37,7 +37,7 @@ public class RrdSafeFileBackend extends RrdFileBackend {
 
     private void lockFile(long lockWaitTime, long lockRetryPeriod) throws IOException {
         long entryTime = System.currentTimeMillis();
-        FileChannel channel = file.getChannel();
+        FileChannel channel = rafile.getChannel();
         lock = channel.tryLock(0, Long.MAX_VALUE, false);
         if (lock != null) {
             counters.registerQuickLock();

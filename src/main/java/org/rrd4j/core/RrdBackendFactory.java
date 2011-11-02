@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * Rrd4j supports four different backend types (backend factories) out of the box:<p>
  * <ul>
- * <li>{@link RrdFileBackend}: objects of this class are created from the
- * {@link RrdFileBackendFactory} class. This was the default backend used in all
+ * <li>{@link RrdRandomAccessFileBackend}: objects of this class are created from the
+ * {@link RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
  * Rrd4j releases before 1.4.0 release. It uses java.io.* package and RandomAccessFile class to store
  * RRD data in files on the disk.
  *
@@ -48,7 +48,7 @@ public abstract class RrdBackendFactory {
     private static RrdBackendFactory defaultFactory;
 
     static {
-        RrdFileBackendFactory fileFactory = new RrdFileBackendFactory();
+        RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
         registerFactory(fileFactory);
         RrdMemoryBackendFactory memoryFactory = new RrdMemoryBackendFactory();
         registerFactory(memoryFactory);

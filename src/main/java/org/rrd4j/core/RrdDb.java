@@ -98,7 +98,7 @@ public class RrdDb implements RrdUpdater {
      * @throws IOException Thrown in case of I/O error.
      */
     public RrdDb(RrdDef rrdDef) throws IOException {
-        this(rrdDef, RrdFileBackendFactory.getDefaultFactory());
+        this(rrdDef, RrdBackendFactory.getDefaultFactory());
     }
 
     /**

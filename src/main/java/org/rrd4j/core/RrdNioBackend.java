@@ -13,7 +13,7 @@ import sun.nio.ch.DirectBuffer;
  * Backend which is used to store RRD data to ordinary disk files
  * using java.nio.* package. This is the default backend engine.
  */
-public class RrdNioBackend extends RrdFileBackend {
+public class RrdNioBackend extends RrdRandomAccessFileBackend {
     private MappedByteBuffer byteBuffer;
 
     private final Runnable syncRunnable = new Runnable() {
@@ -61,7 +61,7 @@ public class RrdNioBackend extends RrdFileBackend {
         if (length > 0) {
             FileChannel.MapMode mapMode =
                 readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
-            byteBuffer = file.getChannel().map(mapMode, 0, length);
+            byteBuffer = rafile.getChannel().map(mapMode, 0, length);
         }
     }
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Factory class which creates actual {@link RrdSafeFileBackend} objects.
  */
-public class RrdSafeFileBackendFactory extends RrdFileBackendFactory {
+public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory {
     /**
      * Default time (in milliseconds) this backend will wait for a file lock.
      */
