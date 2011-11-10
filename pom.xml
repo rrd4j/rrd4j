@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>5</version>
+        <version>7</version>
     </parent>
 
     <properties>
@@ -34,12 +34,17 @@
     <scm>
         <!-- See http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html -->
         <!-- for how to perform a release from the connection below. -->
-        <connection>scm:svn:https://rrd4j.googlecode.com/svn/tags/2.1</connection>
-        <developerConnection>scm:svn:https://rrd4j.googlecode.com/svn/tags/2.1</developerConnection>
-        <url>http://code.google.com/p/rrd4j/source/browse/#svn/tags/2.1</url>
+        <connection>scm:svn:https://rrd4j.googlecode.com/svn/branches/NewBackEnd</connection>
+        <developerConnection>scm:svn:https://rrd4j.googlecode.com/svn/branches/NewBackEnd</developerConnection>
+        <url>https://rrd4j.googlecode.com/svn/trunk</url>
     </scm>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>10.0.1</version>
+        </dependency>
         <!-- Dependencies for optional backends should have optional=true. -->
         <dependency>
             <groupId>com.sleepycat</groupId>
@@ -182,7 +187,16 @@
                     <tagBase>https://rrd4j.googlecode.com/svn/tags</tagBase>
                 </configuration>
             </plugin>
-
+            <plugin>
+                      <groupId>org.codehaus.mojo</groupId>
+                      <artifactId>findbugs-maven-plugin</artifactId>
+                      <version>2.0.1</version>
+                      <configuration>
+                         <findbugsXmlOutput>true</findbugsXmlOutput>
+                         <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                         <xmlOutput>true</xmlOutput>
+                      </configuration>
+                   </plugin>
         </plugins>
 
         <pluginManagement>
@@ -215,6 +229,8 @@
                         <keyname>RRD4J Build</keyname>
                         <useAgent>true</useAgent>
                         <mavenExecutorId>forked-path</mavenExecutorId>
+                        <!-- <executable>gpg2</executable>
+                        <skip>true</skip>  -->
                     </configuration>
                 </plugin>
                 <plugin>
