@@ -246,6 +246,6 @@ public abstract class RrdBackendFactory extends AbstractService {
         else notifyFailed(new RuntimeException("failed to stop" + getName()));
     }
 
-    abstract boolean startBackend();
-    abstract boolean stopBackend();
+    abstract protected boolean startBackend();
+    abstract protected boolean stopBackend();
 }

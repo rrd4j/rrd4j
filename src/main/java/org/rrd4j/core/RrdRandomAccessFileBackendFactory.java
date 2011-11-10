@@ -36,12 +36,12 @@ public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
     }
 
     @Override
-    boolean startBackend() {
+    protected boolean  startBackend() {
         return true;
     }
 
     @Override
-    boolean stopBackend() {
+    protected boolean stopBackend() {
         return true;
     }
 
