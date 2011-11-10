@@ -5,18 +5,19 @@ import java.io.IOException;
 /**
  * Factory class which creates actual {@link RrdSafeFileBackend} objects.
  */
+@RrdBackendMeta("SAFE")
 public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory {
     /**
      * Default time (in milliseconds) this backend will wait for a file lock.
      */
     public static final long LOCK_WAIT_TIME = 3000L;
-    private static long lockWaitTime = LOCK_WAIT_TIME;
+    private long lockWaitTime = LOCK_WAIT_TIME;
 
     /**
      * Default time between two consecutive file locking attempts.
      */
     public static final long LOCK_RETRY_PERIOD = 50L;
-    private static long lockRetryPeriod = LOCK_RETRY_PERIOD;
+    private long lockRetryPeriod = LOCK_RETRY_PERIOD;
 
     /**
      * Creates RrdSafeFileBackend object for the given file path.
@@ -30,16 +31,12 @@ public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory
         return new RrdSafeFileBackend(path, lockWaitTime, lockRetryPeriod);
     }
 
-    public String getName() {
-        return "SAFE";
-    }
-
     /**
      * Returns time this backend will wait for a file lock.
      *
      * @return Time (in milliseconds) this backend will wait for a file lock.
      */
-    public static long getLockWaitTime() {
+    public long getLockWaitTime() {
         return lockWaitTime;
     }
 
@@ -48,8 +45,8 @@ public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory
      *
      * @param lockWaitTime Maximum lock wait time (in milliseconds)
      */
-    public static void setLockWaitTime(long lockWaitTime) {
-        RrdSafeFileBackendFactory.lockWaitTime = lockWaitTime;
+    public void setLockWaitTime(long lockWaitTime) {
+        this.lockWaitTime = lockWaitTime;
     }
 
     /**
@@ -57,7 +54,7 @@ public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory
      *
      * @return Time (im milliseconds) between two consecutive file locking attempts.
      */
-    public static long getLockRetryPeriod() {
+    public long getLockRetryPeriod() {
         return lockRetryPeriod;
     }
 
@@ -66,7 +63,7 @@ public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory
      *
      * @param lockRetryPeriod time (in milliseconds) between two consecutive file locking attempts.
      */
-    public static void setLockRetryPeriod(long lockRetryPeriod) {
-		RrdSafeFileBackendFactory.lockRetryPeriod = lockRetryPeriod;
+    public void setLockRetryPeriod(long lockRetryPeriod) {
+		this.lockRetryPeriod = lockRetryPeriod;
 	}
 }

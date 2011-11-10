@@ -6,6 +6,7 @@ import java.io.IOException;
  * Factory class which creates actual {@link RrdRandomAccessFileBackend} objects. This was the default
  * backend factory in Rrd4j before 1.4.0 release.
  */
+@RrdBackendMeta("FILE")
 public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
     /**
      * Creates RrdFileBackend object for the given file path.
@@ -34,7 +35,14 @@ public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
         return true;
     }
 
-    public String getName() {
-        return "FILE";
+    @Override
+    boolean startBackend() {
+        return true;
     }
+
+    @Override
+    boolean stopBackend() {
+        return true;
+    }
+
 }

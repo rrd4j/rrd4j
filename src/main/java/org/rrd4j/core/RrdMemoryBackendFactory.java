@@ -14,8 +14,27 @@ import java.util.concurrent.ConcurrentHashMap;
  * (RRD data must be available for the next <code>new RrdDb(path)</code> call. To release allocated
  * memory, you'll have to call {@link #delete(java.lang.String) delete(path)} method of this class.</p>
  */
+@RrdBackendMeta("MEMORY")
 public class RrdMemoryBackendFactory extends RrdBackendFactory {
-    protected final Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
+    protected  Map<String, RrdMemoryBackend> backends;
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStart()
+     */
+    @Override
+    protected boolean startBackend() {
+        backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStop()
+     */
+    @Override
+    protected boolean stopBackend() {
+        backends = null;
+        return true;
+    }
 
     /**
      * Creates RrdMemoryBackend object.
@@ -68,12 +87,4 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
         }
     }
 
-    /**
-     * Returns the name of this factory.
-     *
-     * @return Factory name (equals to "MEMORY").
-     */
-    public String getName() {
-        return "MEMORY";
-    }
 }

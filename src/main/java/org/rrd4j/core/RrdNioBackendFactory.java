@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Factory class which creates actual {@link RrdNioBackend} objects. This is the default factory since
  * 1.4.0 version
  */
+@RrdBackendMeta("NIO")
 public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * Period in seconds between consecutive synchronizations when
@@ -20,7 +21,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      */
     public static final int DEFAULT_SYNC_PERIOD = 300; // seconds
 
-    private static int syncPeriod = DEFAULT_SYNC_PERIOD;
+    private int syncPeriod = DEFAULT_SYNC_PERIOD;
 
     /**
      * The core pool size for the sync executor. Defaults to 6.
@@ -30,13 +31,18 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * The {@link ScheduledExecutorService} used to periodically sync the mapped file to disk with.
      */
-    private final ScheduledExecutorService syncExecutor;
+    private ScheduledExecutorService syncExecutor;
+    
+    private Thread shutdownHook;
 
-    public RrdNioBackendFactory() {
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStart()
+     */
+    @Override
+    protected boolean startBackend() {
         syncExecutor = Executors.newScheduledThreadPool(DEFAULT_SYNC_CORE_POOL_SIZE, new DaemonThreadFactory("RRD4J Sync"));
 
-        // Add a shutdown hook to stop the thread pool gracefully when the application exits
-        Runtime.getRuntime().addShutdownHook(new Thread("RRD4J Sync-ThreadPool-Shutdown") {
+        shutdownHook = new Thread("RRD4J Sync-ThreadPool-Shutdown") {
             @Override
             public void run() {
                 try {
@@ -48,7 +54,21 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
                     // Shutting down...so ignore.
                 }
             }
-        });
+        };
+
+        // Add a shutdown hook to stop the thread pool gracefully when the application exits
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStop()
+     */
+    @Override
+    protected boolean stopBackend() {
+        syncExecutor.shutdown();
+        Runtime.getRuntime().removeShutdownHook(shutdownHook);
+        return true;
     }
 
     /**
@@ -58,7 +78,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      *
      * @return Time in seconds between consecutive background synchronizations.
      */
-    public static int getSyncPeriod() {
+    public int getSyncPeriod() {
         return syncPeriod;
     }
 
@@ -67,8 +87,8 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      *
      * @param syncPeriod Time in seconds between consecutive background synchronizations.
      */
-    public static void setSyncPeriod(int syncPeriod) {
-        RrdNioBackendFactory.syncPeriod = syncPeriod;
+    public void setSyncPeriod(int syncPeriod) {
+        this.syncPeriod = syncPeriod;
     }
 
     /**
@@ -82,10 +102,6 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         return new RrdNioBackend(path, readOnly, syncExecutor, syncPeriod);
-    }
-
-    public String getName() {
-        return "NIO";
     }
 
     /**

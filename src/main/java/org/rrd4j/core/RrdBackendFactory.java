@@ -1,8 +1,12 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.common.util.concurrent.AbstractService;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Base (abstract) backend factory class which holds references to all concrete
@@ -43,24 +47,18 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * See javadoc for {@link RrdBackend} to find out how to create your custom backends.
  */
-public abstract class RrdBackendFactory {
-    private static final Map<String, RrdBackendFactory> factories = new ConcurrentHashMap<String, RrdBackendFactory>();
-    private static RrdBackendFactory defaultFactory;
+public abstract class RrdBackendFactory extends AbstractService {
+    private static final Map<String, Class<? extends RrdBackendFactory>> factories = new ConcurrentHashMap<String, Class<? extends RrdBackendFactory>>();
+    private static RrdBackendFactory defaultFactory = null;
+    private static String defaultFactoryName = RrdNioBackendFactory.class.getAnnotation(RrdBackendMeta.class).value();
 
     static {
-        RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
-        registerFactory(fileFactory);
-        RrdMemoryBackendFactory memoryFactory = new RrdMemoryBackendFactory();
-        registerFactory(memoryFactory);
-        RrdNioBackendFactory nioFactory = new RrdNioBackendFactory();
-        registerFactory(nioFactory);
-        RrdSafeFileBackendFactory safeFactory = new RrdSafeFileBackendFactory();
-        registerFactory(safeFactory);
-        selectDefaultFactory();
-    }
-
-    private static void selectDefaultFactory() {
-        setDefaultFactory("NIO");
+        registerFactory(RrdRandomAccessFileBackendFactory.class);
+        registerFactory(RrdMemoryBackendFactory.class);
+        registerFactory(RrdNioBackendFactory.class);
+        registerFactory(RrdSafeFileBackendFactory.class);
+        registerFactory(RrdBerkeleyDbBackendFactory.class);
+        registerFactory(RrdMongoDBBackendFactory.class);
     }
 
     /**
@@ -80,11 +78,26 @@ public abstract class RrdBackendFactory {
      *             RRD data is stored in memory, it gets lost as soon as JVM exits.
      *             </ul>
      * @return Backend factory for the given factory name
+     * @throws InvocationTargetException 
      */
     public static RrdBackendFactory getFactory(String name) {
-        RrdBackendFactory factory = factories.get(name);
-        if (factory != null) {
-            return factory;
+        Class<? extends RrdBackendFactory> factoryClass = factories.get(name);
+        if (factoryClass != null) {
+            try {
+                return factoryClass.getConstructor().newInstance();
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException(e);
+            } catch (SecurityException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
         }
         else {
             throw new IllegalArgumentException("No backend factory found with the name specified [" + name + "]");
@@ -96,13 +109,21 @@ public abstract class RrdBackendFactory {
      *
      * @param factory Factory to be registered
      */
-    public static void registerFactory(RrdBackendFactory factory) {
-        String name = factory.getName();
-        if (!factories.containsKey(name)) {
-            factories.put(name, factory);
+    public static String registerFactory(Class<? extends RrdBackendFactory> factoryClass) {
+
+        RrdBackendMeta nameAnnotation = factoryClass.getAnnotation(RrdBackendMeta.class);
+        if(nameAnnotation != null) {
+            String name = nameAnnotation.value();
+            if (!factories.containsKey(name)) {
+                factories.put(name, factoryClass);
+                return name;
+            }
+            else {
+                throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
+            }
         }
         else {
-            throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
+            throw new IllegalArgumentException("Backend factory don't have the name anotation");
         }
     }
 
@@ -111,10 +132,11 @@ public abstract class RrdBackendFactory {
      * factory as the default.
      *
      * @param factory Factory to be registered and set as default
+     * @throws InvocationTargetException 
      */
-    public static void registerAndSetAsDefaultFactory(RrdBackendFactory factory) {
-        registerFactory(factory);
-        setDefaultFactory(factory.getName());
+    public static void registerAndSetAsDefaultFactory(Class<? extends RrdBackendFactory> factoryClass) {
+        String name = registerFactory(factoryClass);
+        setDefaultFactory(name);
     }
 
     /**
@@ -122,8 +144,13 @@ public abstract class RrdBackendFactory {
      * {@link RrdDb} objects if no factory is specified in the RrdDb constructor.
      *
      * @return Default backend factory.
+     * @throws InvocationTargetException 
      */
-    public static RrdBackendFactory getDefaultFactory() {
+    public static synchronized RrdBackendFactory getDefaultFactory() {
+        if(defaultFactory == null) {
+            defaultFactory = getFactory(defaultFactoryName);
+            defaultFactory.start();
+        }
         return defaultFactory;
     }
 
@@ -135,15 +162,21 @@ public abstract class RrdBackendFactory {
      *                    different RRD backends: "FILE" (java.io.* based), "SAFE" (java.io.* based - use this
      *                    backend if RRD files may be accessed from several JVMs at the same time),
      *                    "NIO" (java.nio.* based) and "MEMORY" (byte[] based).
+     * @throws InvocationTargetException 
      */
     public static void setDefaultFactory(String factoryName) {
+        if(defaultFactory != null) {
+            ListenableFuture<State> futur = defaultFactory.stop();
+            //Not sure about that, needs more comprehension of Listenable
+            if(!futur.isDone()) {
+                throw new IllegalStateException("Could not change the default backend factory. " +
+                        "This method must be called before the first RRD gets created");
+
+            }
+        }
         // We will allow this only if no RRDs are created
         if (!RrdBackend.isInstanceCreated()) {
             defaultFactory = getFactory(factoryName);
-        }
-        else {
-            throw new IllegalStateException("Could not change the default backend factory. " +
-                    "This method must be called before the first RRD gets created");
         }
     }
 
@@ -180,5 +213,39 @@ public abstract class RrdBackendFactory {
      *
      * @return Name of the factory.
      */
-	public abstract String getName();
+    public String getName() {
+        return getClass().getAnnotation(RrdBackendMeta.class).value();
+    }
+
+    /* (non-Javadoc)
+     * @see com.google.common.util.concurrent.AbstractService#doStart()
+     */
+    @Override
+    protected void doStart() {
+        if(startBackend()) {
+            try {
+                notifyStarted();
+            } catch (Exception e) {
+                notifyFailed(e);  
+            }
+        }
+        else notifyFailed(new RuntimeException("failed to start" + getName()));
+    }
+
+    /* (non-Javadoc)
+     * @see com.google.common.util.concurrent.AbstractService#doStop()
+     */
+    @Override
+    protected void doStop() {
+        if(stopBackend())
+            try {
+                notifyStopped();
+            } catch (Exception e) {
+                notifyFailed(e);  
+            }
+        else notifyFailed(new RuntimeException("failed to stop" + getName()));
+    }
+
+    abstract boolean startBackend();
+    abstract boolean stopBackend();
 }

@@ -13,14 +13,36 @@ import java.util.concurrent.CopyOnWriteArraySet;
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
+@RrdBackendMeta("BERKELEY")
 public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
-    private final Database rrdDatabase;
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStart()
+     */
+    @Override
+    protected boolean startBackend() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStop()
+     */
+    @Override
+    protected boolean stopBackend() {
+        rrdDatabase.close();
+        rrdDatabase = null;
+        return true;
+    }
+
+    private Database rrdDatabase;
 
     private final Set<String> pathCache = new CopyOnWriteArraySet<String>();
 
-    public RrdBerkeleyDbBackendFactory(Database rrdDatabase) {
+    public void setDatabase(Database rrdDatabase) {
         this.rrdDatabase = rrdDatabase;
-        RrdBackendFactory.registerAndSetAsDefaultFactory(this);
+    }
+
+    public Database getDatabase() {
+        return rrdDatabase;
     }
 
     /**
@@ -88,7 +110,4 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         return false;
     }
 
-    public String getName() {
-        return "BERKELEY";
-    }
 }

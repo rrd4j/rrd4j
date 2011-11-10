@@ -11,8 +11,9 @@ import com.mongodb.DBCollection;
  *
  * @author Mathias Bogaert
  */
+@RrdBackendMeta("MONGODB")
 public class RrdMongoDBBackendFactory extends RrdBackendFactory {
-    private final DBCollection rrdCollection;
+    private DBCollection rrdCollection;
 
     /**
      * Creates a RrdMongoDBBackendFactory. Make sure that the passed {@link DBCollection} has a safe write
@@ -20,14 +21,30 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
      *
      * @param rrdCollection the collection to use for storing RRD byte data
      */
-    public RrdMongoDBBackendFactory(DBCollection rrdCollection) {
+    public RrdMongoDBBackendFactory() {
+    }
+    
+    public void setDBCollection(DBCollection rrdCollection) {
         this.rrdCollection = rrdCollection;
-
+    }
+    
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStart()
+     */
+    @Override
+    protected boolean startBackend() {
         // make sure we have an index on the path field
         rrdCollection.ensureIndex(new BasicDBObject("path", 1));
+        return true;
+    }
 
-        // set the RRD backend factory
-        RrdBackendFactory.registerAndSetAsDefaultFactory(this);
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#doStop()
+     */
+    @Override
+    protected boolean stopBackend() {
+        rrdCollection = null;
+        return true;
     }
 
     @Override
@@ -47,8 +64,4 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         return false;
     }
 
-    @Override
-    public String getName() {
-        return "MONGODB";
-    }
 }
