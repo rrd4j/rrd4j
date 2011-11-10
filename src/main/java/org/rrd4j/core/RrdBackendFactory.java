@@ -114,13 +114,8 @@ public abstract class RrdBackendFactory extends AbstractService {
         RrdBackendMeta nameAnnotation = factoryClass.getAnnotation(RrdBackendMeta.class);
         if(nameAnnotation != null) {
             String name = nameAnnotation.value();
-            if (!factories.containsKey(name)) {
                 factories.put(name, factoryClass);
                 return name;
-            }
-            else {
-                throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
-            }
         }
         else {
             throw new IllegalArgumentException("Backend factory don't have the name anotation");
