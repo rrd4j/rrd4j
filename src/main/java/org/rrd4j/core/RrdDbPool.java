@@ -6,6 +6,10 @@ public abstract class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
         static final RrdDbPool instance = new RrdDbPoolNew();
     }
+    
+    protected RrdDbPool() {
+        RrdBackendFactory.getDefaultFactory().start();
+    }
 
     /**
      * Creates a single instance of the class on the first call,

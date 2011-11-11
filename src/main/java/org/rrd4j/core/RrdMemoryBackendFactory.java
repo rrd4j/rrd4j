@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>Calling {@link RrdDb#close() close()} on RrdDb objects does not release any memory at all
  * (RRD data must be available for the next <code>new RrdDb(path)</code> call. To release allocated
- * memory, you'll have to call {@link #delete(java.lang.String) delete(path)} method of this class.</p>
+ * memory, you'll have to call {@link #delete(java.lang.String) delete(path)} method of this class or stop the factory.</p>
  */
 @RrdBackendMeta("MEMORY")
 public class RrdMemoryBackendFactory extends RrdBackendFactory {
@@ -32,6 +33,7 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      */
     @Override
     protected boolean stopBackend() {
+        backends.clear();
         backends = null;
         return true;
     }
@@ -85,6 +87,18 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
         else {
             return false;
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#getStats()
+     */
+    @Override
+    public Map<String, Number> getStats() {
+        long size = 0;
+        for(RrdMemoryBackend be: backends.values()) {
+            size += be.getLength();
+        }
+        return Collections.singletonMap("memory usage", (Number) new Long(size));
     }
 
 }

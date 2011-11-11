@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -68,6 +69,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     protected boolean stopBackend() {
         syncExecutor.shutdown();
         Runtime.getRuntime().removeShutdownHook(shutdownHook);
+        shutdownHook = null;
         return true;
     }
 
@@ -132,5 +134,14 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
                 t.setPriority(Thread.NORM_PRIORITY);
             return t;
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#getStats()
+     */
+    @Override
+    public Map<String, Number> getStats() {
+        // TODO Auto-generated method stub
+        return super.getStats();
     }
 }

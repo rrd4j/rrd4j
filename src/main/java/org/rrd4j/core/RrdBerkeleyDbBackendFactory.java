@@ -3,6 +3,9 @@ package org.rrd4j.core;
 import com.sleepycat.je.*;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -15,11 +18,25 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @RrdBackendMeta("BERKELEY")
 public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
+
+    private Database rrdDatabase;
+
+    private Set<String> pathCache;
+
+    public void setDatabase(Database rrdDatabase) {
+        this.rrdDatabase = rrdDatabase;
+    }
+
+    public Database getDatabase() {
+        return rrdDatabase;
+    }
+
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackendFactory#doStart()
      */
     @Override
     protected boolean startBackend() {
+        pathCache = new CopyOnWriteArraySet<String>();
         return true;
     }
 
@@ -31,18 +48,6 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         rrdDatabase.close();
         rrdDatabase = null;
         return true;
-    }
-
-    private Database rrdDatabase;
-
-    private final Set<String> pathCache = new CopyOnWriteArraySet<String>();
-
-    public void setDatabase(Database rrdDatabase) {
-        this.rrdDatabase = rrdDatabase;
-    }
-
-    public Database getDatabase() {
-        return rrdDatabase;
     }
 
     /**
@@ -108,6 +113,41 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
 
     protected boolean shouldValidateHeader(String path) {
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#sync()
+     */
+    @Override
+    public void doSync() {
+        rrdDatabase.sync();
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackendFactory#getStats()
+     */
+    @Override
+    public Map<String, Number> getStats() {
+        DatabaseStats stats = rrdDatabase.getStats(StatsConfig.DEFAULT);
+        if(stats instanceof BtreeStats) {
+            BtreeStats statsbt = (BtreeStats) stats;
+            Map<String, Number> statsMap =  new HashMap<String, Number>();
+            statsMap.put("BottomInternalNodeCount", statsbt.getBottomInternalNodeCount());
+            statsMap.put("DeletedLeafNodeCount", statsbt.getDeletedLeafNodeCount());
+            statsMap.put("DupCountLeafNodeCount", statsbt.getDupCountLeafNodeCount());
+            statsMap.put("DuplicateBottomInternalNodeCount", statsbt.getDuplicateBottomInternalNodeCount());
+            statsMap.put("DuplicateInternalNodeCount", statsbt.getDuplicateInternalNodeCount());
+            statsMap.put("DuplicateTreeMaxDepth", statsbt.getDuplicateTreeMaxDepth());
+            statsMap.put("InternalNodeCount", statsbt.getInternalNodeCount());
+            statsMap.put("LeafNodeCount", statsbt.getLeafNodeCount());
+            statsMap.put("MainTreeMaxDepth", statsbt.getMainTreeMaxDepth());
+            statsMap.put("Relatches", statsbt.getRelatches());
+            statsMap.put("RootSplits", statsbt.getRootSplits());
+            return statsMap;
+        }
+        else {
+            return Collections.emptyMap();
+        }
     }
 
 }
