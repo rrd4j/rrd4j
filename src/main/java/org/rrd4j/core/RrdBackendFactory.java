@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.google.common.util.concurrent.AbstractService;
-
 /**
  * Base (abstract) backend factory class which holds references to all concrete
  * backend factories and defines abstract methods which must be implemented in
@@ -48,7 +46,37 @@ import com.google.common.util.concurrent.AbstractService;
  *
  * See javadoc for {@link RrdBackend} to find out how to create your custom backends.
  */
-public abstract class RrdBackendFactory extends AbstractService {
+public abstract class RrdBackendFactory {
+    public enum State {
+        /**
+         * A service in this state is inactive. It does minimal work and consumes
+         * minimal resources.
+         */
+        NEW,
+        /**
+         * A service in this state is transitioning to {@link #RUNNING}.
+         */
+        STARTING,
+        /**
+         * A service in this state is operational.
+         */
+        RUNNING,
+        /**
+         * A service in this state is transitioning to {@link #TERMINATED}.
+         */
+        STOPPING,
+        /**
+         * A service in this state has completed execution normally. It does minimal
+         * work and consumes minimal resources.
+         */
+        TERMINATED,
+        /**
+         * A service in this state has encountered a problem and may not be
+         * operational. It cannot be started nor stopped.
+         */
+        FAILED
+    }
+
     private static final class FactoryState {
         private final Class<? extends RrdBackendFactory> clazz;
         volatile private RrdBackendFactory instance;
@@ -179,6 +207,7 @@ public abstract class RrdBackendFactory extends AbstractService {
     }
 
     private final String name;
+    private volatile State state = State.NEW;
 
     protected RrdBackendFactory() {
         name = getClass().getAnnotation(RrdBackendMeta.class).value();
@@ -193,7 +222,13 @@ public abstract class RrdBackendFactory extends AbstractService {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws IOException Thrown in case of I/O error.
      */
-    protected abstract RrdBackend open(String path, boolean readOnly) throws IOException;
+    protected RrdBackend open(String path, boolean readOnly) throws IOException {
+        if(state != State.RUNNING)
+            throw new IllegalStateException("backend not started");
+        return doOpen(path, readOnly);
+    }
+
+    protected abstract RrdBackend doOpen(String path, boolean readOnly) throws IOException;
 
     /**
      * Determines if a storage with the given path already exists.
@@ -224,37 +259,53 @@ public abstract class RrdBackendFactory extends AbstractService {
     /* (non-Javadoc)
      * @see com.google.common.util.concurrent.AbstractService#doStart()
      */
-    @Override
-    protected final void doStart() {
-        if(startBackend()) {
-            try {
-                notifyStarted();
-            } catch (Exception e) {
-                notifyFailed(e);  
+    public synchronized final State start() {
+        if(state != State.NEW)
+            return state;
+        state = State.STARTING;
+        try {
+            if(startBackend()) {
+                state = State.RUNNING;
             }
+            else {
+                state = State.FAILED;
+                throw new IllegalStateException("backend failed to start");
+            }
+        } catch (Exception e) {
+            state = State.FAILED;  
+            throw new IllegalStateException("backend failed to start with exception", e);
         }
-        else notifyFailed(new RuntimeException("failed to start" + getName()));
+        return state;
     }
 
     /* (non-Javadoc)
      * @see com.google.common.util.concurrent.AbstractService#doStop()
      */
-    @Override
-    protected final void doStop() {
-        if(stopBackend())
-            try {
-                notifyStopped();
-            } catch (Exception e) {
-                notifyFailed(e);  
+    public synchronized final State stop() {
+        if(state != State.RUNNING)
+            return state;
+        state = State.STOPPING;
+        try {
+            if(stopBackend()) {
+                state = State.TERMINATED;
             }
-        else notifyFailed(new RuntimeException("failed to stop" + getName()));
+            else {
+                state = State.FAILED;
+                throw new IllegalStateException("backend failed to stop");
+            }
+        } catch (Exception e) {
+            state = State.FAILED;  
+            throw new IllegalStateException("backend failed to stop with exception", e);
+
+        }
+        return state;
     }
 
     /**
      * A class that can be called to force an commit to permanent storage of date
      */
     public final void sync() {
-        if(isRunning())
+        if(state == State.RUNNING)
             doSync();
     }
 
@@ -274,4 +325,11 @@ public abstract class RrdBackendFactory extends AbstractService {
 
     abstract protected boolean startBackend();
     abstract protected boolean stopBackend();
+
+    /**
+     * @return the state
+     */
+    State getState() {
+        return state;
+    }
 }

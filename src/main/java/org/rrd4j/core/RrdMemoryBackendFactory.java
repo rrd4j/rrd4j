@@ -47,7 +47,7 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      * @return RrdMemoryBackend object which handles all I/O operations
      * @throws IOException Thrown in case of I/O error.
      */
-    protected RrdBackend open(String id, boolean readOnly) throws IOException {
+    protected RrdBackend doOpen(String id, boolean readOnly) throws IOException {
         RrdMemoryBackend backend;
         if (backends.containsKey(id)) {
             backend = backends.get(id);

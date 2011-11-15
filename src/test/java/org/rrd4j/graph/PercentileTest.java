@@ -3,6 +3,7 @@ package org.rrd4j.graph;
 import java.io.IOException;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
@@ -12,8 +13,13 @@ import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
 
 public class PercentileTest {
-    static final private String backend = "MEMORY";
+    static final private String BACKEND = "MEMORY";
     static final private String fileName = "foobar.rrd";
+    
+    @BeforeClass
+    public static void startBackend() {
+        RrdBackendFactory.getFactory(BACKEND).start();
+    }
     
     @Test
     public void testSampleVDEFPercentile() throws Exception {
@@ -36,7 +42,7 @@ public class PercentileTest {
         RrdGraphDef graphDef = new RrdGraphDef();
         graphDef.setStartTime(startTime - 300);
         graphDef.setEndTime(endTime + 300);
-        graphDef.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
+        graphDef.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, BACKEND);
         graphDef.percentile("nfp", "baz", 95);
         graphDef.print("nfp", ConsolFun.AVERAGE, "%le");
 
@@ -58,7 +64,10 @@ public class PercentileTest {
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 2016);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
         
-        RrdDb db = new RrdDb(def, RrdBackendFactory.getFactory(backend));
+        RrdBackendFactory factory = RrdBackendFactory.getFactory(BACKEND);
+        factory.start();
+        
+        RrdDb db = new RrdDb(def, factory);
         
         return db;
     }

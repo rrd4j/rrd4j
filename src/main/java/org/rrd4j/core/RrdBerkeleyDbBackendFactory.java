@@ -53,7 +53,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
     /**
      * Creates new RrdBerkeleyDbBackend object for the given id (path).
      */
-    protected RrdBackend open(String path, boolean readOnly) throws IOException {
+    protected RrdBackend doOpen(String path, boolean readOnly) throws IOException {
         if (pathCache.contains(path)) {
             DatabaseEntry theKey = new DatabaseEntry(path.getBytes("UTF-8"));
             DatabaseEntry theData = new DatabaseEntry();

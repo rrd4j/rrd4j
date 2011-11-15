@@ -47,7 +47,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
     }
 
     @Override
-    protected RrdBackend open(String path, boolean readOnly) throws IOException {
+    protected RrdBackend doOpen(String path, boolean readOnly) throws IOException {
         return new RrdMongoDBBackend(path, rrdCollection);
     }
 
