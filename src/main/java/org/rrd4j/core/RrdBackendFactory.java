@@ -5,10 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.util.concurrent.AbstractService;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Base (abstract) backend factory class which holds references to all concrete
@@ -50,7 +49,14 @@ import com.google.common.util.concurrent.ListenableFuture;
  * See javadoc for {@link RrdBackend} to find out how to create your custom backends.
  */
 public abstract class RrdBackendFactory extends AbstractService {
-    private static final Map<String, Class<? extends RrdBackendFactory>> factories = new ConcurrentHashMap<String, Class<? extends RrdBackendFactory>>();
+    private static final class FactoryState {
+        private final Class<? extends RrdBackendFactory> clazz;
+        volatile private RrdBackendFactory instance;
+        FactoryState(Class<? extends RrdBackendFactory> clazz) {
+            this.clazz = clazz;
+        }
+    }
+    private static final ConcurrentMap<String, FactoryState> factories = new ConcurrentHashMap<String, FactoryState>();
     private static RrdBackendFactory defaultFactory = null;
     private static String defaultFactoryName = RrdNioBackendFactory.class.getAnnotation(RrdBackendMeta.class).value();
     static {
@@ -62,14 +68,9 @@ public abstract class RrdBackendFactory extends AbstractService {
         registerFactory(RrdMongoDBBackendFactory.class);
     }
 
-    private final String name;
-
-    protected RrdBackendFactory() {
-        name = getClass().getAnnotation(RrdBackendMeta.class).value();
-    }
-    
     /**
-     * Returns backend factory for the given backend factory name.
+     * Returns backend factory for the given backend factory name. <p>
+     * It will not start nor configure the factory.
      *
      * @param factoryName Backend factory name. Initially supported names are:<p>
      *             <ul>
@@ -87,10 +88,17 @@ public abstract class RrdBackendFactory extends AbstractService {
      * @return Backend factory for the given factory name
      */
     public static RrdBackendFactory getFactory(String factoryName) {
-        Class<? extends RrdBackendFactory> factoryClass = factories.get(factoryName);
-        if (factoryClass != null) {
+        FactoryState fs = factories.get(factoryName);
+        if(fs == null) {
+            throw new IllegalArgumentException("No backend factory found with the name specified [" + factoryName + "]");           
+        }
+        synchronized(fs) {
+            Class<? extends RrdBackendFactory> factoryClass = fs.clazz;
             try {
-                return factoryClass.getConstructor().newInstance();
+                if(fs.instance == null) {
+                    fs.instance = factoryClass.getConstructor().newInstance();
+                }
+                return fs.instance;
             } catch (IllegalArgumentException e) {
                 throw new IllegalStateException("The backend " +  factoryName + " can't be used", e);
             } catch (SecurityException e) {
@@ -105,9 +113,6 @@ public abstract class RrdBackendFactory extends AbstractService {
                 throw new IllegalStateException("The backend " +  factoryName + " can't be used", e);
             }
         }
-        else {
-            throw new IllegalArgumentException("No backend factory found with the name specified [" + factoryName + "]");
-        }
     }
 
     /**
@@ -116,11 +121,11 @@ public abstract class RrdBackendFactory extends AbstractService {
      * @param factory Factory to be registered
      */
     public static String registerFactory(Class<? extends RrdBackendFactory> factoryClass) {
-
         RrdBackendMeta nameAnnotation = factoryClass.getAnnotation(RrdBackendMeta.class);
         if(nameAnnotation != null) {
             String name = nameAnnotation.value();
-            factories.put(name, factoryClass);
+            FactoryState fs = new FactoryState(factoryClass);
+            factories.putIfAbsent(name, fs);
             return name;
         }
         else {
@@ -130,8 +135,9 @@ public abstract class RrdBackendFactory extends AbstractService {
 
     /**
      * Registers new (custom) backend factory within the Rrd4j framework and sets this
-     * factory as the default.
-     *
+     * factory as the default.<p>
+     * It will not start nor configure the factory.
+     * 
      * @param factory Factory to be registered and set as default
      */
     public static void registerAndSetAsDefaultFactory(Class<? extends RrdBackendFactory> factoryClass) {
@@ -141,7 +147,8 @@ public abstract class RrdBackendFactory extends AbstractService {
 
     /**
      * Returns the default backend factory. This factory is used to construct
-     * {@link RrdDb} objects if no factory is specified in the RrdDb constructor.
+     * {@link RrdDb} objects if no factory is specified in the RrdDb constructor.<p>
+     * It will not start nor configure the factory.
      *
      * @return Default backend factory.
      */
@@ -155,6 +162,7 @@ public abstract class RrdBackendFactory extends AbstractService {
     /**
      * Replaces the default backend factory with a new one. This method must be called before
      * the first RRD gets created. <p>
+     * It will not start nor configure the factory.
      *
      * @param factoryName Name of the default factory. Out of the box, Rrd4j supports four
      *                    different RRD backends: "FILE" (java.io.* based), "SAFE" (java.io.* based - use this
@@ -162,30 +170,18 @@ public abstract class RrdBackendFactory extends AbstractService {
      *                    "NIO" (java.nio.* based) and "MEMORY" (byte[] based).
      */
     public static synchronized void setDefaultFactory(String factoryName) {
-        if(defaultFactory != null) {
-            ListenableFuture<State> futur = defaultFactory.stop();
-            try {
-                State oldFactoryState = futur.get();
-                if(!State.TERMINATED.equals(oldFactoryState) || State.NEW.equals(oldFactoryState)) {
-                    throw new IllegalStateException("Could not change the default backend factory. " +
-                            "This method must be called before the first RRD gets created");
-                }
-            } catch (InterruptedException e) {
-                throw new IllegalStateException("Could not change the default backend factory. " +
-                        "This method must be called before the first RRD gets created");
-            } catch (ExecutionException e) {
-                throw new IllegalStateException("Could not change the default backend factory. " +
-                        "This method must be called before the first RRD gets created");
-            }
-        }
-        // We will allow this only if no RRDs are created
-        if (!RrdBackend.isInstanceCreated()) {
-            defaultFactory = getFactory(factoryName);
-        }
-        else {
+        if (RrdBackend.isInstanceCreated() && ! defaultFactoryName.equals(factoryName)) {
             throw new IllegalStateException("Could not change the default backend factory. " +
                     "This method must be called before the first RRD gets created");
         }
+        defaultFactoryName = factoryName;
+        defaultFactory = null;
+    }
+
+    private final String name;
+
+    protected RrdBackendFactory() {
+        name = getClass().getAnnotation(RrdBackendMeta.class).value();
     }
 
     /**
@@ -253,7 +249,7 @@ public abstract class RrdBackendFactory extends AbstractService {
             }
         else notifyFailed(new RuntimeException("failed to stop" + getName()));
     }
-    
+
     /**
      * A class that can be called to force an commit to permanent storage of date
      */
@@ -261,13 +257,13 @@ public abstract class RrdBackendFactory extends AbstractService {
         if(isRunning())
             doSync();
     }
-    
+
     /**
      * A empty method. Subclass should overwrite it to force a sync of data.
      */
     protected void doSync() {
     }
-    
+
     /**
      * A method can be be overriden to provide back-end staticics
      * @return an empty map
