@@ -2,12 +2,12 @@ package org.rrd4j.core;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
-import com.google.common.util.concurrent.Service.State;
 import java.util.Map;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.rrd4j.core.RrdBackendFactory.State;
 
 public class RrdMemoryBackendFactoryTest extends BackEndFactoryTest {
 
@@ -27,9 +27,9 @@ public class RrdMemoryBackendFactoryTest extends BackEndFactoryTest {
     public void testStat() throws IOException {
         RrdBackendFactory factory = RrdBackendFactory.getFactory("MEMORY");
         
-        State started = factory.startAndWait();
+        State started = factory.start();
         
-        Assert.assertEquals(State.RUNNING, started);
+        Assert.assertEquals("Failed to start the backend", State.RUNNING, started);
         
         Map<String, Number> stats = getStats(factory, "dummy");
         Assert.assertTrue(stats.containsKey("memory usage"));

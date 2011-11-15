@@ -516,12 +516,14 @@ public class TimeParserTest {
     @Test
     public void testDayOfWeekTimeSpec() {
         Calendar cal = new GregorianCalendar();
+        cal.setFirstDayOfWeek(Calendar.SUNDAY);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
         cal.set(Calendar.HOUR_OF_DAY, 12);
         this.setSubHourFieldsZero(cal);
         Date startDate = cal.getTime();
 
         cal = new GregorianCalendar();
+        cal.setFirstDayOfWeek(Calendar.SUNDAY);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
         cal.set(Calendar.HOUR_OF_DAY, 18);
         this.setSubHourFieldsZero(cal);
@@ -532,6 +534,8 @@ public class TimeParserTest {
         long start = result[0] * 1000;
         long end = result[1] * 1000;
 
+        System.out.println(startDate + " " + new Date(start));
+        System.out.println(endDate + " " + new Date(end));
         assertEquals(startDate.getTime(), start);
         assertEquals(endDate.getTime(), end);
 

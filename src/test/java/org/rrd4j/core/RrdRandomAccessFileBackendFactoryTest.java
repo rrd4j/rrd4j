@@ -28,7 +28,7 @@ public class RrdRandomAccessFileBackendFactoryTest extends BackEndFactoryTest {
     public void testStat() throws IOException {
         RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
         
-        factory.startAndWait();
+        factory.start();
         Map<String, Number> stats = getStats(factory, "truc.rrd");
         Assert.assertEquals(0, stats.size());
     }
