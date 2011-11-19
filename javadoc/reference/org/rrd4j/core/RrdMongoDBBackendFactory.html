@@ -383,7 +383,7 @@ Summary:
 
 <h2>Class Overview</h2>
 <p><code><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></code> that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
- MongoDB <code><a href="http://api.mongodb.org/java/current/index.html?com/mongodb/DBCollection.html">DBCollection</a></code> and pass it via the constructor.</p>
+ MongoDB com.mongodb.DBCollection and pass it via the constructor.</p>
 
 
 
@@ -449,7 +449,7 @@ Summary:
             </nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html#RrdMongoDBBackendFactory(com.mongodb.DBCollection)">RrdMongoDBBackendFactory</a></span>(<a href="http://api.mongodb.org/java/current/index.html?com/mongodb/DBCollection.html">DBCollection</a> rrdCollection)</nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html#RrdMongoDBBackendFactory(com.mongodb.DBCollection)">RrdMongoDBBackendFactory</a></span>(DBCollection rrdCollection)</nobr>
         
         <div class="jd-descrdiv">Creates a RrdMongoDBBackendFactory.</div>
   
@@ -1002,7 +1002,7 @@ From class
         
       </span>
       <span class="sympad">RrdMongoDBBackendFactory</span>
-      <span class="normal">(<a href="http://api.mongodb.org/java/current/index.html?com/mongodb/DBCollection.html">DBCollection</a> rrdCollection)</span>
+      <span class="normal">(DBCollection rrdCollection)</span>
     </h4>
       <div class="api-level">
         <div>
@@ -1014,7 +1014,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Creates a RrdMongoDBBackendFactory. Make sure that the passed <code><a href="http://api.mongodb.org/java/current/index.html?com/mongodb/DBCollection.html">DBCollection</a></code> has a safe write
+  <div class="jd-tagdata jd-tagdescr"><p>Creates a RrdMongoDBBackendFactory. Make sure that the passed com.mongodb.DBCollection has a safe write
  concern, is capped (if needed) and slaveOk() called if applicable.</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
