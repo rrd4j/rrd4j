@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../", "../../../../assets/");
 </script>
-<script src="../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -176,6 +178,7 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/data/Plottable.html">Plottable</a></li>
       </ul>
     </li>
+              
               
               
               
@@ -225,6 +228,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -389,6 +393,13 @@ Summary:
 
     
     <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">double</td>
+        <td class="jd-linkcol"><a href="../../../org/rrd4j/data/DataProcessor.html#DEFAULT_PERCENTILE">DEFAULT_PERCENTILE</a></td>
+        <td class="jd-descrcol" width="100%"></td>
+    </tr>
+    
+    
+    <tr class=" api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/data/DataProcessor.html#DEFAULT_PIXEL_COUNT">DEFAULT_PIXEL_COUNT</a></td>
         <td class="jd-descrcol" width="100%">Constant representing the default number of pixels on a Rrd4j graph (will be used if
@@ -396,7 +407,7 @@ Summary:
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">boolean</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/data/DataProcessor.html#DEFAULT_POOL_USAGE_POLICY">DEFAULT_POOL_USAGE_POLICY</a></td>
         <td class="jd-descrcol" width="100%">Constant that defines the default <code><a href="../../../org/rrd4j/core/RrdDbPool.html">RrdDbPool</a></code> usage policy.</td>
@@ -605,6 +616,25 @@ Summary:
             
             
             
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/data/DataProcessor.html#addDatasource(java.lang.String, java.lang.String, double)">addDatasource</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> sourceName, double percentile)</nobr>
+        
+        <div class="jd-descrdiv">Creates a datasource that performs a percentile calculation on an
+ another named datasource to yield a single value.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
             <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
@@ -616,7 +646,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -634,7 +664,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -652,7 +682,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -670,7 +700,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -688,7 +718,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -707,7 +737,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -725,7 +755,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -744,7 +774,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -762,7 +792,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -780,7 +810,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -798,7 +828,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -816,7 +846,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -834,7 +864,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -853,7 +883,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -871,7 +901,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -889,7 +919,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -907,7 +937,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -926,7 +956,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -945,7 +975,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -963,7 +993,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -981,7 +1011,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -999,7 +1029,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1018,7 +1048,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1036,7 +1066,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1054,7 +1084,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1313,6 +1343,45 @@ From class
 <!-- ========= ENUM CONSTANTS DETAIL ======== -->
 <h2>Constants</h2>
 
+
+
+
+<A NAME="DEFAULT_PERCENTILE"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+        static 
+        final 
+        double
+      </span>
+        DEFAULT_PERCENTILE
+    </h4>
+      <div class="api-level">
+        
+
+
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+
+    
+        <div class="jd-tagdata">
+        <span class="jd-tagtitle">Constant Value: </span>
+        <span>
+            
+                95.0
+            
+        </span>
+        </div>
+    
+    </div>
+</div>
 
 
 
@@ -1887,6 +1956,60 @@ From class
           <th>rpnExpression</td>
           <td>RPN expression containig comma (or space) delimited simple and complex
                       source names, RPN constants, functions and operators.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="addDatasource(java.lang.String, java.lang.String, double)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">addDatasource</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> sourceName, double percentile)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Creates a datasource that performs a percentile calculation on an
+ another named datasource to yield a single value.  
+ 
+ Requires that the other datasource has already been defined; otherwise, it'll
+ end up with no data</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>name</td>
+          <td>- the new virtual datasource name</td>
+        </tr>
+        <tr>
+          <th>sourceName</td>
+          <td>- the datasource from which to extract the percentile.  Must be a previously
+                     defined virtual datasource</td>
+        </tr>
+        <tr>
+          <th>percentile</td>
+          <td>- the percentile to extract from the source datasource
 </td>
         </tr>
       </table>
@@ -3117,7 +3240,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

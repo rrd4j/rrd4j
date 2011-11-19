@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../", "../../../../assets/");
 </script>
-<script src="../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="selected api apilevel-">
   <a href="../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -182,8 +184,6 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchData.html">FetchData</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchRequest.html">FetchRequest</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/Header.html">Header</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinArray.html">RobinArray</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinMatrix.html">RobinMatrix</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackend.html">RrdBackend</a></li>
           <li class="selected api apilevel-"><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackend.html">RrdBerkeleyDbBackend</a></li>
@@ -191,16 +191,18 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdByteArrayBackend.html">RrdByteArrayBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDb.html">RrdDb</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPool.html">RrdDbPool</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolNew.html">RrdDbPoolNew</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolOld.html">RrdDbPoolOld</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDef.html">RrdDef</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDefTemplate.html">RrdDefTemplate</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackend.html">RrdMemoryBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackend.html">RrdMongoDBBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html">RrdMongoDBBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackend.html">RrdNioBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackendFactory.html">RrdNioBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackend.html">RrdSafeFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackendFactory.html">RrdSafeFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdToolkit.html">RrdToolkit</a></li>
@@ -211,6 +213,7 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/XmlWriter.html">XmlWriter</a></li>
       </ul>
     </li>
+              
               
               
               
@@ -260,6 +263,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -368,7 +372,9 @@ Summary:
             
               <a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a>,
             
-              <a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a>
+              <a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a>,
+            
+              <a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html">RrdMongoDBBackendFactory</a>
             
           
       </div>
@@ -378,16 +384,21 @@ Summary:
   <table class="jd-sumtable-expando">
         <tr class="alt-color api apilevel-" >
               <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html">RrdBerkeleyDbBackendFactory</a></td>
-              <td class="jd-descrcol" width="100%"><code><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></code> that uses <a href="http://www.oracle.com/technology/products/berkeley-db/je/index.html">Oracle Berkeley DB Java Edition</a>
+              <td class="jd-descrcol" width="100%"><code><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></code> that uses
+ <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html">Oracle Berkeley DB Java Edition</a>
  to read data.&nbsp;</td>
           </tr>
         <tr class=" api apilevel-" >
               <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a></td>
-              <td class="jd-descrcol" width="100%">Factory class which creates actual <code><a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a></code> objects.&nbsp;</td>
+              <td class="jd-descrcol" width="100%">An abstract backend factory which is used to store RRD data to ordinary files on the disk.&nbsp;</td>
           </tr>
         <tr class="alt-color api apilevel-" >
               <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a></td>
               <td class="jd-descrcol" width="100%">Factory class which creates actual <code><a href="../../../org/rrd4j/core/RrdMemoryBackend.html">RrdMemoryBackend</a></code> objects.&nbsp;</td>
+          </tr>
+        <tr class=" api apilevel-" >
+              <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html">RrdMongoDBBackendFactory</a></td>
+              <td class="jd-descrcol" width="100%"><code><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></code> that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage.&nbsp;</td>
           </tr>
   </table>
       </div>
@@ -412,6 +423,8 @@ Summary:
             
               <a href="../../../org/rrd4j/core/RrdNioBackendFactory.html">RrdNioBackendFactory</a>,
             
+              <a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a>,
+            
               <a href="../../../org/rrd4j/core/RrdSafeFileBackendFactory.html">RrdSafeFileBackendFactory</a>
             
           
@@ -425,6 +438,10 @@ Summary:
               <td class="jd-descrcol" width="100%">Factory class which creates actual <code><a href="../../../org/rrd4j/core/RrdNioBackend.html">RrdNioBackend</a></code> objects.&nbsp;</td>
           </tr>
         <tr class=" api apilevel-" >
+              <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a></td>
+              <td class="jd-descrcol" width="100%">Factory class which creates actual <code><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a></code> objects.&nbsp;</td>
+          </tr>
+        <tr class="alt-color api apilevel-" >
               <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdSafeFileBackendFactory.html">RrdSafeFileBackendFactory</a></td>
               <td class="jd-descrcol" width="100%">Factory class which creates actual <code><a href="../../../org/rrd4j/core/RrdSafeFileBackend.html">RrdSafeFileBackend</a></code> objects.&nbsp;</td>
           </tr>
@@ -447,8 +464,8 @@ Summary:
 
  Rrd4j supports four different backend types (backend factories) out of the box:<p>
  <ul>
- <li><code><a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a></code>: objects of this class are created from the
- <code><a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a></code> class. This was the default backend used in all
+ <li><code><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a></code>: objects of this class are created from the
+ <code><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a></code> class. This was the default backend used in all
  Rrd4j releases before 1.4.0 release. It uses java.io.* package and RandomAccessFile class to store
  RRD data in files on the disk.
 
@@ -1434,6 +1451,15 @@ From class
       
   <div class="jd-tagdata jd-tagdescr"><p>Determines if the header should be validated.</p></div>
   <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>path</td>
+          <td>Storage path</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Returns</h5>
       <ul class="nolist"><li>True, if the header should be validated for this factory</li></ul>
   </div>
@@ -1442,7 +1468,8 @@ From class
       <table class="jd-tagtable">  
         <tr>
             <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/IOException.html">IOException</a></td>
-            <td></td>
+            <td>if header validation fails
+</td>
         </tr>
       </table>
   </div>
@@ -1468,7 +1495,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

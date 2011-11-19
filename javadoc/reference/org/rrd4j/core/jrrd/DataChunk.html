@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../../", "../../../../../assets/");
 </script>
-<script src="../../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="api apilevel-">
   <a href="../../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="selected api apilevel-">
@@ -171,17 +173,21 @@
       <ul>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/CDPStatusBlock.html">CDPStatusBlock</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a></li>
           <li class="selected api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataChunk.html">DataChunk</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSource.html">DataSource</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/Header.html">Header</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/PDPStatusBlock.html">PDPStatusBlock</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html">RRDatabase</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/RRDFile.html">RRDFile</a></li>
       </ul>
     </li>
               
+              
+    <li><h2>Enums</h2>
+      <ul>
+          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a></li>
+          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></li>
+      </ul>
+    </li>
               
               
             </ul><br/>
@@ -230,6 +236,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -378,6 +385,40 @@ Summary:
 <!-- ========== METHOD SUMMARY =========== -->
 <table id="pubmethods" class="jd-sumtable"><tr><th colspan="12">Public Methods</th></tr>
 
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            double[][]</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/DataChunk.html#getData()">getData</a></span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            <a href="../../../../org/rrd4j/data/Plottable.html">Plottable</a></nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/DataChunk.html#toPlottable(java.lang.String)">toPlottable</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name)</nobr>
+        
+        <div class="jd-descrdiv">Extract a datasource from the datachunck given is name as a Plotabble  </div>
+  
+  </td></tr>
 
 
 	 
@@ -656,6 +697,87 @@ From class
 
 
 
+<A NAME="getData()"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        double[][]
+      </span>
+      <span class="sympad">getData</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>the data
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="toPlottable(java.lang.String)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../org/rrd4j/data/Plottable.html">Plottable</a>
+      </span>
+      <span class="sympad">toPlottable</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Extract a datasource from the datachunck given is name as a Plotabble  </p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>name</td>
+          <td>the datasource name</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>a plottable for the datasource
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
 <A NAME="toString()"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -715,7 +837,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../", "../../../assets/");
 </script>
-<script src="../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="selected api apilevel-">
   <a href="../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="api apilevel-">
   <a href="../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -165,6 +167,7 @@
           </div> <!-- end resize-packages -->
           <div id="classes-nav">
             <ul>
+              
               
               
               
@@ -241,6 +244,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -349,7 +353,9 @@ Summary:
 
 
 <h2>Class Overview</h2>
-<p>Enumeration of available consolidation functions.
+<p>Enumeration of available consolidation functions. Note that data aggregation inevitably leads to
+ loss of precision and information. The trick is to pick the aggregate function such that the interesting
+ properties of your data are kept across the aggregation process.
 </p>
 
 
@@ -395,42 +401,42 @@ Summary:
     <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../org/rrd4j/ConsolFun.html">ConsolFun</a>&nbsp;</td>
         <td class="jd-linkcol">AVERAGE&nbsp;</td>
-        <td class="jd-descrcol" width="100%">&nbsp;</td>
+        <td class="jd-descrcol" width="100%">The average of the data points is stored.&nbsp;</td>
     </tr>
     
     
     <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../org/rrd4j/ConsolFun.html">ConsolFun</a>&nbsp;</td>
         <td class="jd-linkcol">FIRST&nbsp;</td>
-        <td class="jd-descrcol" width="100%">&nbsp;</td>
+        <td class="jd-descrcol" width="100%">The fist data point is used.&nbsp;</td>
     </tr>
     
     
     <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../org/rrd4j/ConsolFun.html">ConsolFun</a>&nbsp;</td>
         <td class="jd-linkcol">LAST&nbsp;</td>
-        <td class="jd-descrcol" width="100%">&nbsp;</td>
+        <td class="jd-descrcol" width="100%">The last data point is used.&nbsp;</td>
     </tr>
     
     
     <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../org/rrd4j/ConsolFun.html">ConsolFun</a>&nbsp;</td>
         <td class="jd-linkcol">MAX&nbsp;</td>
-        <td class="jd-descrcol" width="100%">&nbsp;</td>
+        <td class="jd-descrcol" width="100%">The largest of the data points is stored.&nbsp;</td>
     </tr>
     
     
     <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../org/rrd4j/ConsolFun.html">ConsolFun</a>&nbsp;</td>
         <td class="jd-linkcol">MIN&nbsp;</td>
-        <td class="jd-descrcol" width="100%">&nbsp;</td>
+        <td class="jd-descrcol" width="100%">The smallest of the data points is stored.&nbsp;</td>
     </tr>
     
     
     <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../org/rrd4j/ConsolFun.html">ConsolFun</a>&nbsp;</td>
         <td class="jd-linkcol">TOTAL&nbsp;</td>
-        <td class="jd-descrcol" width="100%">&nbsp;</td>
+        <td class="jd-descrcol" width="100%">The total of the data points is stored.&nbsp;</td>
     </tr>
     
     
@@ -999,7 +1005,8 @@ From interface
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>The average of the data points is stored.
+</p></div>
 
     
     </div>
@@ -1029,7 +1036,8 @@ From interface
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>The fist data point is used.
+</p></div>
 
     
     </div>
@@ -1059,7 +1067,8 @@ From interface
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>The last data point is used.
+</p></div>
 
     
     </div>
@@ -1089,7 +1098,8 @@ From interface
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>The largest of the data points is stored.
+</p></div>
 
     
     </div>
@@ -1119,7 +1129,8 @@ From interface
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>The smallest of the data points is stored.
+</p></div>
 
     
     </div>
@@ -1149,7 +1160,8 @@ From interface
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>The total of the data points is stored.
+</p></div>
 
     
     </div>
@@ -1263,7 +1275,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

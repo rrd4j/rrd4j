@@ -68,7 +68,7 @@
 </method>
 </class>
 </package>
-<package name="org.rrd4j.convertor"
+<package name="org.rrd4j.converter"
 >
 <class name="Converter"
  extends="java.lang.Object"
@@ -531,32 +531,6 @@
 <exception name="IOException" type="java.io.IOException">
 </exception>
 </method>
-<method name="getDsName"
- return="java.lang.String"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getDsType"
- return="org.rrd4j.DsType"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
 <method name="getHeartbeat"
  return="long"
  abstract="false"
@@ -609,6 +583,19 @@
 <exception name="IOException" type="java.io.IOException">
 </exception>
 </method>
+<method name="getName"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
 <method name="getNanSeconds"
  return="long"
  abstract="false"
@@ -643,6 +630,19 @@
  deprecated="not deprecated"
  visibility="public"
 >
+</method>
+<method name="getType"
+ return="org.rrd4j.DsType"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="IOException" type="java.io.IOException">
+</exception>
 </method>
 <method name="setDsName"
  return="void"
@@ -925,25 +925,6 @@
 </parameter>
 <parameter name="consolFun" type="org.rrd4j.ConsolFun">
 </parameter>
-</method>
-<method name="getAggregate"
- return="double"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="deprecated"
- visibility="public"
->
-<parameter name="dsName" type="java.lang.String">
-</parameter>
-<parameter name="consolFun" type="org.rrd4j.ConsolFun">
-</parameter>
-<parameter name="rpnExpression" type="java.lang.String">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
 </method>
 <method name="getAggregates"
  return="org.rrd4j.data.Aggregates"
@@ -1716,484 +1697,6 @@
 </exception>
 </method>
 </interface>
-<class name="RobinArray"
- extends="java.lang.Object"
- abstract="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<implements name="org.rrd4j.core.Robin">
-</implements>
-<method name="bulkStore"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValue" type="double">
-</parameter>
-<parameter name="bulkCount" type="int">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="copyStateTo"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="other" type="org.rrd4j.core.RrdUpdater">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="dump"
- return="java.lang.String"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="filterValues"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="minValue" type="double">
-</parameter>
-<parameter name="maxValue" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getParent"
- return="org.rrd4j.core.Archive"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getRrdAllocator"
- return="org.rrd4j.core.RrdAllocator"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getRrdBackend"
- return="org.rrd4j.core.RrdBackend"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getSize"
- return="int"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getValue"
- return="double"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="index" type="int">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getValues"
- return="double[]"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getValues"
- return="double[]"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="index" type="int">
-</parameter>
-<parameter name="count" type="int">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setValue"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="index" type="int">
-</parameter>
-<parameter name="value" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setValues"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValues" type="double...">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setValues"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValue" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="store"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValue" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="update"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValues" type="double[]">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-</class>
-<class name="RobinMatrix"
- extends="java.lang.Object"
- abstract="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<implements name="org.rrd4j.core.Robin">
-</implements>
-<method name="bulkStore"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValue" type="double">
-</parameter>
-<parameter name="bulkCount" type="int">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="copyStateTo"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="other" type="org.rrd4j.core.RrdUpdater">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="dump"
- return="java.lang.String"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="filterValues"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="minValue" type="double">
-</parameter>
-<parameter name="maxValue" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getParent"
- return="org.rrd4j.core.Archive"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getRrdAllocator"
- return="org.rrd4j.core.RrdAllocator"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getRrdBackend"
- return="org.rrd4j.core.RrdBackend"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getSize"
- return="int"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getValue"
- return="double"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="index" type="int">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getValues"
- return="double[]"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getValues"
- return="double[]"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="index" type="int">
-</parameter>
-<parameter name="count" type="int">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setValue"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="index" type="int">
-</parameter>
-<parameter name="value" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setValues"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValues" type="double...">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setValues"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValue" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="store"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValue" type="double">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="update"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newValues" type="double[]">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-</class>
 <class name="RrdBackend"
  extends="java.lang.Object"
  abstract="true"
@@ -2478,7 +1981,7 @@
 >
 <parameter name="path" type="java.lang.String">
 </parameter>
-<parameter name="rrdDatabase" type="Database">
+<parameter name="rrdDatabase" type="com.sleepycat.je.Database">
 </parameter>
 </constructor>
 <constructor name="RrdBerkeleyDbBackend"
@@ -2492,7 +1995,7 @@
 </parameter>
 <parameter name="path" type="java.lang.String">
 </parameter>
-<parameter name="rrdDatabase" type="Database">
+<parameter name="rrdDatabase" type="com.sleepycat.je.Database">
 </parameter>
 </constructor>
 </class>
@@ -2511,6 +2014,8 @@
  deprecated="not deprecated"
  visibility="public"
 >
+<parameter name="rrdDatabase" type="com.sleepycat.je.Database">
+</parameter>
 </constructor>
 <method name="delete"
  return="void"
@@ -2524,19 +2029,6 @@
 >
 <parameter name="path" type="java.lang.String">
 </parameter>
-</method>
-<method name="destroy"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="Exception" type="java.lang.Exception">
-</exception>
 </method>
 <method name="exists"
  return="boolean"
@@ -2564,19 +2056,6 @@
  visibility="public"
 >
 </method>
-<method name="init"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<exception name="Exception" type="java.lang.Exception">
-</exception>
-</method>
 <method name="open"
  return="org.rrd4j.core.RrdBackend"
  abstract="false"
@@ -2593,32 +2072,6 @@
 </parameter>
 <exception name="IOException" type="java.io.IOException">
 </exception>
-</method>
-<method name="setHomeDirectory"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="homeDirectory" type="java.lang.String">
-</parameter>
-</method>
-<method name="setRrdDatabaseName"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="rrdDatabaseName" type="java.lang.String">
-</parameter>
 </method>
 <method name="shouldValidateHeader"
  return="boolean"
@@ -2712,6 +2165,17 @@
 <exception name="IOException" type="java.io.IOException">
 </exception>
 </method>
+<field name="buffer"
+ type="byte[]"
+ transient="false"
+ volatile="false"
+ value="null"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+</field>
 </class>
 <class name="RrdDb"
  extends="java.lang.Object"
@@ -3602,308 +3066,6 @@
 >
 </field>
 </class>
-<class name="RrdDbPoolNew"
- extends="org.rrd4j.core.RrdDbPool"
- abstract="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<constructor name="RrdDbPoolNew"
- type="org.rrd4j.core.RrdDbPoolNew"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="protected"
->
-</constructor>
-<method name="getCapacity"
- return="int"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getOpenCount"
- return="int"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="rrdDb" type="org.rrd4j.core.RrdDb">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getOpenCount"
- return="int"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="path" type="java.lang.String">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getOpenFileCount"
- return="int"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getOpenFiles"
- return="java.lang.String[]"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="release"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="rrdDb" type="org.rrd4j.core.RrdDb">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="requestRrdDb"
- return="org.rrd4j.core.RrdDb"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="path" type="java.lang.String">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="requestRrdDb"
- return="org.rrd4j.core.RrdDb"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="rrdDef" type="org.rrd4j.core.RrdDef">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="requestRrdDb"
- return="org.rrd4j.core.RrdDb"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="path" type="java.lang.String">
-</parameter>
-<parameter name="sourcePath" type="java.lang.String">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setCapacity"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="newCapacity" type="int">
-</parameter>
-</method>
-</class>
-<class name="RrdDbPoolOld"
- extends="org.rrd4j.core.RrdDbPool"
- abstract="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<method name="getCapacity"
- return="int"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getOpenCount"
- return="int"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="rrdDb" type="org.rrd4j.core.RrdDb">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getOpenCount"
- return="int"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="path" type="java.lang.String">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="getOpenFileCount"
- return="int"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="getOpenFiles"
- return="java.lang.String[]"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="release"
- return="void"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="rrdDb" type="org.rrd4j.core.RrdDb">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="requestRrdDb"
- return="org.rrd4j.core.RrdDb"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="path" type="java.lang.String">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="requestRrdDb"
- return="org.rrd4j.core.RrdDb"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="rrdDef" type="org.rrd4j.core.RrdDef">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="requestRrdDb"
- return="org.rrd4j.core.RrdDb"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="path" type="java.lang.String">
-</parameter>
-<parameter name="sourcePath" type="java.lang.String">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setCapacity"
- return="void"
- abstract="false"
- native="false"
- synchronized="true"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-<parameter name="capacity" type="int">
-</parameter>
-</method>
-</class>
 <class name="RrdDef"
  extends="java.lang.Object"
  abstract="false"
@@ -4445,7 +3607,7 @@
 </class>
 <class name="RrdFileBackend"
  extends="org.rrd4j.core.RrdBackend"
- abstract="false"
+ abstract="true"
  static="false"
  final="false"
  deprecated="not deprecated"
@@ -4462,9 +3624,20 @@
 </parameter>
 <parameter name="readOnly" type="boolean">
 </parameter>
+</constructor>
+<method name="close"
+ return="void"
+ abstract="true"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
 <exception name="IOException" type="java.io.IOException">
 </exception>
-</constructor>
+</method>
 <method name="getCanonicalPath"
  return="java.lang.String"
  abstract="false"
@@ -4506,57 +3679,8 @@
 <exception name="IOException" type="java.io.IOException">
 </exception>
 </method>
-<method name="read"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="protected"
->
-<parameter name="offset" type="long">
-</parameter>
-<parameter name="b" type="byte[]">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="setLength"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="protected"
->
-<parameter name="length" type="long">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
-<method name="write"
- return="void"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="protected"
->
-<parameter name="offset" type="long">
-</parameter>
-<parameter name="b" type="byte[]">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
-</method>
 <field name="file"
- type="java.io.RandomAccessFile"
+ type="java.io.File"
  transient="false"
  volatile="false"
  static="false"
@@ -4578,7 +3702,7 @@
 </class>
 <class name="RrdFileBackendFactory"
  extends="org.rrd4j.core.RrdBackendFactory"
- abstract="false"
+ abstract="true"
  static="false"
  final="false"
  deprecated="not deprecated"
@@ -4604,34 +3728,6 @@
 >
 <parameter name="path" type="java.lang.String">
 </parameter>
-</method>
-<method name="getName"
- return="java.lang.String"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
-</method>
-<method name="open"
- return="org.rrd4j.core.RrdBackend"
- abstract="false"
- native="false"
- synchronized="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="protected"
->
-<parameter name="path" type="java.lang.String">
-</parameter>
-<parameter name="readOnly" type="boolean">
-</parameter>
-<exception name="IOException" type="java.io.IOException">
-</exception>
 </method>
 <method name="shouldValidateHeader"
  return="boolean"
@@ -4753,9 +3849,117 @@
 <exception name="IOException" type="java.io.IOException">
 </exception>
 </method>
+<field name="backends"
+ type="java.util.Map"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="true"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+</field>
+</class>
+<class name="RrdMongoDBBackend"
+ extends="org.rrd4j.core.RrdByteArrayBackend"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="RrdMongoDBBackend"
+ type="org.rrd4j.core.RrdMongoDBBackend"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="path" type="java.lang.String">
+</parameter>
+<parameter name="rrdCollection" type="com.mongodb.DBCollection">
+</parameter>
+</constructor>
+</class>
+<class name="RrdMongoDBBackendFactory"
+ extends="org.rrd4j.core.RrdBackendFactory"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="RrdMongoDBBackendFactory"
+ type="org.rrd4j.core.RrdMongoDBBackendFactory"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="rrdCollection" type="com.mongodb.DBCollection">
+</parameter>
+</constructor>
+<method name="exists"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="path" type="java.lang.String">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="getName"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="open"
+ return="org.rrd4j.core.RrdBackend"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="path" type="java.lang.String">
+</parameter>
+<parameter name="readOnly" type="boolean">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="shouldValidateHeader"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="path" type="java.lang.String">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
 </class>
 <class name="RrdNioBackend"
- extends="org.rrd4j.core.RrdFileBackend"
+ extends="org.rrd4j.core.RrdRandomAccessFileBackend"
  abstract="false"
  static="false"
  final="false"
@@ -4808,6 +4012,17 @@
  visibility="public"
 >
 </constructor>
+<method name="getName"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
 <method name="getSyncPeriod"
  return="int"
  abstract="false"
@@ -4818,6 +4033,23 @@
  deprecated="not deprecated"
  visibility="public"
 >
+</method>
+<method name="open"
+ return="org.rrd4j.core.RrdBackend"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="path" type="java.lang.String">
+</parameter>
+<parameter name="readOnly" type="boolean">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
 </method>
 <method name="setSyncPeriod"
  return="void"
@@ -4855,8 +4087,148 @@
 >
 </field>
 </class>
-<class name="RrdSafeFileBackend"
+<class name="RrdRandomAccessFileBackend"
  extends="org.rrd4j.core.RrdFileBackend"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="RrdRandomAccessFileBackend"
+ type="org.rrd4j.core.RrdRandomAccessFileBackend"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="path" type="java.lang.String">
+</parameter>
+<parameter name="readOnly" type="boolean">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</constructor>
+<method name="close"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="read"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="offset" type="long">
+</parameter>
+<parameter name="b" type="byte[]">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="setLength"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="length" type="long">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="write"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="offset" type="long">
+</parameter>
+<parameter name="b" type="byte[]">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<field name="rafile"
+ type="java.io.RandomAccessFile"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="true"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+</field>
+</class>
+<class name="RrdRandomAccessFileBackendFactory"
+ extends="org.rrd4j.core.RrdFileBackendFactory"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="RrdRandomAccessFileBackendFactory"
+ type="org.rrd4j.core.RrdRandomAccessFileBackendFactory"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="getName"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="open"
+ return="org.rrd4j.core.RrdBackend"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="path" type="java.lang.String">
+</parameter>
+<parameter name="readOnly" type="boolean">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+</class>
+<class name="RrdSafeFileBackend"
+ extends="org.rrd4j.core.RrdRandomAccessFileBackend"
  abstract="false"
  static="false"
  final="false"
@@ -4892,7 +4264,7 @@
 </method>
 </class>
 <class name="RrdSafeFileBackendFactory"
- extends="org.rrd4j.core.RrdFileBackendFactory"
+ extends="org.rrd4j.core.RrdRandomAccessFileBackendFactory"
  abstract="false"
  static="false"
  final="false"
@@ -5064,6 +4436,44 @@
 <parameter name="sourcePath" type="java.lang.String">
 </parameter>
 <parameter name="newDatasource" type="org.rrd4j.core.DsDef">
+</parameter>
+<parameter name="saveBackup" type="boolean">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="addDatasources"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="sourcePath" type="java.lang.String">
+</parameter>
+<parameter name="destPath" type="java.lang.String">
+</parameter>
+<parameter name="newDatasources" type="java.lang.Iterable&lt;org.rrd4j.core.DsDef&gt;">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="addDatasources"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="sourcePath" type="java.lang.String">
+</parameter>
+<parameter name="newDatasources" type="java.lang.Iterable&lt;org.rrd4j.core.DsDef&gt;">
 </parameter>
 <parameter name="saveBackup" type="boolean">
 </parameter>
@@ -7171,14 +6581,14 @@
 </method>
 </class>
 <class name="ConsolidationFunctionType"
- extends="java.lang.Object"
+ extends="java.lang.Enum"
  abstract="false"
  static="false"
- final="false"
+ final="true"
  deprecated="not deprecated"
  visibility="public"
 >
-<method name="get"
+<method name="valueOf"
  return="org.rrd4j.core.jrrd.ConsolidationFunctionType"
  abstract="false"
  native="false"
@@ -7188,49 +6598,20 @@
  deprecated="not deprecated"
  visibility="public"
 >
-<parameter name="s" type="java.lang.String">
+<parameter name="name" type="java.lang.String">
 </parameter>
 </method>
-<field name="AVERAGE"
- type="org.rrd4j.core.jrrd.ConsolidationFunctionType"
- transient="false"
- volatile="false"
+<method name="values"
+ return="org.rrd4j.core.jrrd.ConsolidationFunctionType[]"
+ abstract="false"
+ native="false"
+ synchronized="false"
  static="true"
  final="true"
  deprecated="not deprecated"
  visibility="public"
 >
-</field>
-<field name="LAST"
- type="org.rrd4j.core.jrrd.ConsolidationFunctionType"
- transient="false"
- volatile="false"
- static="true"
- final="true"
- deprecated="not deprecated"
- visibility="public"
->
-</field>
-<field name="MAX"
- type="org.rrd4j.core.jrrd.ConsolidationFunctionType"
- transient="false"
- volatile="false"
- static="true"
- final="true"
- deprecated="not deprecated"
- visibility="public"
->
-</field>
-<field name="MIN"
- type="org.rrd4j.core.jrrd.ConsolidationFunctionType"
- transient="false"
- volatile="false"
- static="true"
- final="true"
- deprecated="not deprecated"
- visibility="public"
->
-</field>
+</method>
 </class>
 <class name="DataChunk"
  extends="java.lang.Object"
@@ -7240,6 +6621,30 @@
  deprecated="not deprecated"
  visibility="public"
 >
+<method name="getData"
+ return="double[][]"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="toPlottable"
+ return="org.rrd4j.data.Plottable"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+</method>
 </class>
 <class name="DataSource"
  extends="java.lang.Object"
@@ -7317,14 +6722,14 @@
 </method>
 </class>
 <class name="DataSourceType"
- extends="java.lang.Object"
+ extends="java.lang.Enum"
  abstract="false"
  static="false"
- final="false"
+ final="true"
  deprecated="not deprecated"
  visibility="public"
 >
-<method name="get"
+<method name="valueOf"
  return="org.rrd4j.core.jrrd.DataSourceType"
  abstract="false"
  native="false"
@@ -7334,49 +6739,20 @@
  deprecated="not deprecated"
  visibility="public"
 >
-<parameter name="s" type="java.lang.String">
+<parameter name="name" type="java.lang.String">
 </parameter>
 </method>
-<field name="ABSOLUTE"
- type="org.rrd4j.core.jrrd.DataSourceType"
- transient="false"
- volatile="false"
+<method name="values"
+ return="org.rrd4j.core.jrrd.DataSourceType[]"
+ abstract="false"
+ native="false"
+ synchronized="false"
  static="true"
  final="true"
  deprecated="not deprecated"
  visibility="public"
 >
-</field>
-<field name="COUNTER"
- type="org.rrd4j.core.jrrd.DataSourceType"
- transient="false"
- volatile="false"
- static="true"
- final="true"
- deprecated="not deprecated"
- visibility="public"
->
-</field>
-<field name="DERIVE"
- type="org.rrd4j.core.jrrd.DataSourceType"
- transient="false"
- volatile="false"
- static="true"
- final="true"
- deprecated="not deprecated"
- visibility="public"
->
-</field>
-<field name="GAUGE"
- type="org.rrd4j.core.jrrd.DataSourceType"
- transient="false"
- volatile="false"
- static="true"
- final="true"
- deprecated="not deprecated"
- visibility="public"
->
-</field>
+</method>
 </class>
 <class name="Header"
  extends="java.lang.Object"
@@ -7430,6 +6806,17 @@
  visibility="public"
 >
 </method>
+<method name="getVersionAsInt"
+ return="int"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
 </class>
 <class name="PDPStatusBlock"
  extends="java.lang.Object"
@@ -7472,15 +6859,6 @@
  visibility="public"
 >
 </method>
-</class>
-<class name="RRDFile"
- extends="java.lang.Object"
- abstract="false"
- static="false"
- final="false"
- deprecated="not deprecated"
- visibility="public"
->
 </class>
 <class name="RRDatabase"
  extends="java.lang.Object"
@@ -7540,6 +6918,19 @@
 <parameter name="index" type="int">
 </parameter>
 </method>
+<method name="getArchive"
+ return="org.rrd4j.core.jrrd.Archive"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+</method>
 <method name="getArchives"
  return="java.util.Iterator&lt;org.rrd4j.core.jrrd.Archive&gt;"
  abstract="false"
@@ -7590,6 +6981,31 @@
  visibility="public"
 >
 <parameter name="type" type="org.rrd4j.core.jrrd.ConsolidationFunctionType">
+</parameter>
+<parameter name="startDate" type="java.util.Date">
+</parameter>
+<parameter name="endDate" type="java.util.Date">
+</parameter>
+<parameter name="step" type="long">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="getData"
+ return="org.rrd4j.core.jrrd.DataChunk"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="type" type="org.rrd4j.core.jrrd.ConsolidationFunctionType">
+</parameter>
+<parameter name="start" type="long">
+</parameter>
+<parameter name="end" type="long">
 </parameter>
 <parameter name="step" type="long">
 </parameter>
@@ -7611,6 +7027,17 @@
 </method>
 <method name="getDataSources"
  return="java.util.Iterator&lt;org.rrd4j.core.jrrd.DataSource&gt;"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getDataSourcesName"
+ return="java.util.Set&lt;java.lang.String&gt;"
  abstract="false"
  native="false"
  synchronized="false"
@@ -8115,6 +7542,23 @@
 >
 <parameter name="name" type="java.lang.String">
 </parameter>
+<parameter name="sourceName" type="java.lang.String">
+</parameter>
+<parameter name="percentile" type="double">
+</parameter>
+</method>
+<method name="addDatasource"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
 <parameter name="fetchData" type="org.rrd4j.core.FetchData">
 </parameter>
 </method>
@@ -8442,6 +7886,17 @@
 <parameter name="step" type="long">
 </parameter>
 </method>
+<field name="DEFAULT_PERCENTILE"
+ type="double"
+ transient="false"
+ volatile="false"
+ value="95.0"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
 <field name="DEFAULT_PIXEL_COUNT"
  type="int"
  transient="false"
@@ -9556,6 +9011,21 @@
 </parameter>
 <parameter name="color" type="java.awt.Paint">
 </parameter>
+</method>
+<method name="area"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="srcName" type="java.lang.String">
+</parameter>
+<parameter name="color" type="java.awt.Paint">
+</parameter>
 <parameter name="legend" type="java.lang.String">
 </parameter>
 </method>
@@ -9659,6 +9129,21 @@
 <parameter name="plottable" type="org.rrd4j.data.Plottable">
 </parameter>
 </method>
+<method name="datasource"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+<parameter name="fetchData" type="org.rrd4j.core.FetchData">
+</parameter>
+</method>
 <method name="gprint"
  return="void"
  abstract="false"
@@ -9690,6 +9175,21 @@
 </parameter>
 <parameter name="color" type="java.awt.Paint">
 </parameter>
+</method>
+<method name="hrule"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="value" type="double">
+</parameter>
+<parameter name="color" type="java.awt.Paint">
+</parameter>
 <parameter name="legend" type="java.lang.String">
 </parameter>
 </method>
@@ -9726,7 +9226,37 @@
 </parameter>
 <parameter name="color" type="java.awt.Paint">
 </parameter>
+</method>
+<method name="line"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="srcName" type="java.lang.String">
+</parameter>
+<parameter name="color" type="java.awt.Paint">
+</parameter>
 <parameter name="legend" type="java.lang.String">
+</parameter>
+</method>
+<method name="line"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="srcName" type="java.lang.String">
+</parameter>
+<parameter name="color" type="java.awt.Paint">
 </parameter>
 <parameter name="width" type="float">
 </parameter>
@@ -9746,6 +9276,40 @@
 <parameter name="color" type="java.awt.Paint">
 </parameter>
 <parameter name="legend" type="java.lang.String">
+</parameter>
+<parameter name="width" type="float">
+</parameter>
+</method>
+<method name="percentile"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+<parameter name="defName" type="java.lang.String">
+</parameter>
+</method>
+<method name="percentile"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+<parameter name="defName" type="java.lang.String">
+</parameter>
+<parameter name="percent" type="double">
 </parameter>
 </method>
 <method name="print"
@@ -10399,7 +9963,37 @@
 </parameter>
 <parameter name="color" type="java.awt.Paint">
 </parameter>
+</method>
+<method name="stack"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="srcName" type="java.lang.String">
+</parameter>
+<parameter name="color" type="java.awt.Paint">
+</parameter>
 <parameter name="legend" type="java.lang.String">
+</parameter>
+</method>
+<method name="vrule"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="timestamp" type="long">
+</parameter>
+<parameter name="color" type="java.awt.Paint">
 </parameter>
 </method>
 <method name="vrule"

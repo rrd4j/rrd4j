@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../../", "../../../../../assets/");
 </script>
-<script src="../../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="api apilevel-">
   <a href="../../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="selected api apilevel-">
@@ -171,17 +173,21 @@
       <ul>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/CDPStatusBlock.html">CDPStatusBlock</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataChunk.html">DataChunk</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSource.html">DataSource</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/Header.html">Header</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/PDPStatusBlock.html">PDPStatusBlock</a></li>
           <li class="selected api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html">RRDatabase</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/RRDFile.html">RRDFile</a></li>
       </ul>
     </li>
               
+              
+    <li><h2>Enums</h2>
+      <ul>
+          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a></li>
+          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></li>
+      </ul>
+    </li>
               
               
             </ul><br/>
@@ -230,6 +236,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -474,14 +481,11 @@ Summary:
             
             
             
-            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Iterator.html">Iterator</a>&lt;<a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a>&gt;</nobr>
+            <a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getArchives(org.rrd4j.core.jrrd.ConsolidationFunctionType)">getArchives</a></span>(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type)</nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getArchive(java.lang.String)">getArchive</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name)</nobr>
         
-        <div class="jd-descrdiv">Returns an iterator over the archives in this database of the given type
- in proper sequence.</div>
-  
   </td></tr>
 
 
@@ -496,10 +500,45 @@ Summary:
             <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Iterator.html">Iterator</a>&lt;<a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a>&gt;</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getArchives(org.rrd4j.core.jrrd.ConsolidationFunctionType)">getArchives</a></span>(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type)</nobr>
+        
+        <div class="jd-descrdiv">Returns an iterator over the archives in this database of the given type
+ in proper sequence.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Iterator.html">Iterator</a>&lt;<a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a>&gt;</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getArchives()">getArchives</a></span>()</nobr>
         
         <div class="jd-descrdiv">Returns an iterator over the archives in this database in proper sequence.</div>
   
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            <a href="../../../../org/rrd4j/core/jrrd/DataChunk.html">DataChunk</a></nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getData(org.rrd4j.core.jrrd.ConsolidationFunctionType, long, long, long)">getData</a></span>(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type, long start, long end, long step)</nobr>
+        
   </td></tr>
 
 
@@ -533,7 +572,7 @@ Summary:
             <a href="../../../../org/rrd4j/core/jrrd/DataChunk.html">DataChunk</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getData(org.rrd4j.core.jrrd.ConsolidationFunctionType, long)">getData</a></span>(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type, long step)</nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getData(org.rrd4j.core.jrrd.ConsolidationFunctionType, java.util.Date, java.util.Date, long)">getData</a></span>(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Date.html">Date</a> startDate, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Date.html">Date</a> endDate, long step)</nobr>
         
         <div class="jd-descrdiv">Returns data from the database corresponding to the given consolidation
  function.</div>
@@ -585,6 +624,22 @@ Summary:
             
             
             
+            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Set.html">Set</a>&lt;<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a>&gt;</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html#getDataSourcesName()">getDataSourcesName</a></span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
             <a href="../../../../org/rrd4j/core/jrrd/Header.html">Header</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
@@ -596,7 +651,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -614,7 +669,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -632,7 +687,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -651,7 +706,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -670,7 +725,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -688,7 +743,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1157,6 +1212,37 @@ From class
 </div>
 
 
+<A NAME="getArchive(java.lang.String)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a>
+      </span>
+      <span class="sympad">getArchive</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+
+    </div>
+</div>
+
+
 <A NAME="getArchives(org.rrd4j.core.jrrd.ConsolidationFunctionType)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -1241,6 +1327,46 @@ From class
 </div>
 
 
+<A NAME="getData(org.rrd4j.core.jrrd.ConsolidationFunctionType, long, long, long)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../org/rrd4j/core/jrrd/DataChunk.html">DataChunk</a>
+      </span>
+      <span class="sympad">getData</span>
+      <span class="normal">(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type, long start, long end, long step)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Throws</h5>
+      <table class="jd-tagtable">  
+        <tr>
+            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/IOException.html">IOException</a></td>
+            <td></td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
 <A NAME="getData(org.rrd4j.core.jrrd.ConsolidationFunctionType)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -1302,7 +1428,7 @@ From class
 </div>
 
 
-<A NAME="getData(org.rrd4j.core.jrrd.ConsolidationFunctionType, long)"></A>
+<A NAME="getData(org.rrd4j.core.jrrd.ConsolidationFunctionType, java.util.Date, java.util.Date, long)"></A>
 
 <div class="jd-details api apilevel-"> 
     <h4 class="jd-details-title">
@@ -1315,7 +1441,7 @@ From class
         <a href="../../../../org/rrd4j/core/jrrd/DataChunk.html">DataChunk</a>
       </span>
       <span class="sympad">getData</span>
-      <span class="normal">(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type, long step)</span>
+      <span class="normal">(<a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a> type, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Date.html">Date</a> startDate, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Date.html">Date</a> endDate, long step)</span>
     </h4>
       <div class="api-level">
         <div>
@@ -1443,6 +1569,37 @@ From class
       <ul class="nolist"><li>an iterator over the data sources in this database in proper sequence.
 </li></ul>
   </div>
+
+    </div>
+</div>
+
+
+<A NAME="getDataSourcesName()"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/Set.html">Set</a>&lt;<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a>&gt;
+      </span>
+      <span class="sympad">getDataSourcesName</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     </div>
 </div>
@@ -1749,7 +1906,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

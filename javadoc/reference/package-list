@@ -1,5 +1,5 @@
 org.rrd4j
-org.rrd4j.convertor
+org.rrd4j.converter
 org.rrd4j.core
 org.rrd4j.core.jrrd
 org.rrd4j.core.timespec

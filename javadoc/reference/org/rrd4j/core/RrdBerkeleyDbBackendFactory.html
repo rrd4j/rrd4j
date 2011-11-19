@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../", "../../../../assets/");
 </script>
-<script src="../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="selected api apilevel-">
   <a href="../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -182,8 +184,6 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchData.html">FetchData</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchRequest.html">FetchRequest</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/Header.html">Header</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinArray.html">RobinArray</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinMatrix.html">RobinMatrix</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackend.html">RrdBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackend.html">RrdBerkeleyDbBackend</a></li>
@@ -191,16 +191,18 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdByteArrayBackend.html">RrdByteArrayBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDb.html">RrdDb</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPool.html">RrdDbPool</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolNew.html">RrdDbPoolNew</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolOld.html">RrdDbPoolOld</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDef.html">RrdDef</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDefTemplate.html">RrdDefTemplate</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackend.html">RrdMemoryBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackend.html">RrdMongoDBBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html">RrdMongoDBBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackend.html">RrdNioBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackendFactory.html">RrdNioBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackend.html">RrdSafeFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackendFactory.html">RrdSafeFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdToolkit.html">RrdToolkit</a></li>
@@ -211,6 +213,7 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/XmlWriter.html">XmlWriter</a></li>
       </ul>
     </li>
+              
               
               
               
@@ -267,6 +270,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -378,11 +382,9 @@ Summary:
 
 
 <h2>Class Overview</h2>
-<p><code><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></code> that uses <a href="http://www.oracle.com/technology/products/berkeley-db/je/index.html">Oracle Berkeley DB Java Edition</a>
- to read data. Call <code><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#init()">init()</a></code> after instantiation and <code><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#destroy()">destroy()</a></code> when tearing down
- (or when using Spring use init-method and destroy-method).
-
- <p>NOTE: you can set the used Berkeley DB name using <code><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#setRrdDatabaseName(java.lang.String)">setRrdDatabaseName(String)</a></code></p></p>
+<p><code><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></code> that uses
+ <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html">Oracle Berkeley DB Java Edition</a>
+ to read data. Construct a BerkeleyDB com.sleepycat.je.Database object and pass it via the constructor.</p>
 
 
 
@@ -448,7 +450,7 @@ Summary:
             </nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#RrdBerkeleyDbBackendFactory()">RrdBerkeleyDbBackendFactory</a></span>()</nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#RrdBerkeleyDbBackendFactory(com.sleepycat.je.Database)">RrdBerkeleyDbBackendFactory</a></span>(Database rrdDatabase)</nobr>
         
   </td></tr>
 
@@ -490,22 +492,6 @@ Summary:
             
             
             
-            void</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#destroy()">destroy</a></span>()</nobr>
-        
-  </td></tr>
-
-
-	 
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
             <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
@@ -513,54 +499,6 @@ Summary:
         
         <div class="jd-descrdiv">Returns the name (primary ID) for the factory.</div>
   
-  </td></tr>
-
-
-	 
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
-            void</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#init()">init</a></span>()</nobr>
-        
-  </td></tr>
-
-
-	 
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
-            void</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#setHomeDirectory(java.lang.String)">setHomeDirectory</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> homeDirectory)</nobr>
-        
-  </td></tr>
-
-
-	 
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
-            void</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackendFactory.html#setRrdDatabaseName(java.lang.String)">setRrdDatabaseName</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> rrdDatabaseName)</nobr>
-        
   </td></tr>
 
 
@@ -1066,7 +1004,7 @@ From class
 
 
 
-<A NAME="RrdBerkeleyDbBackendFactory()"></A>
+<A NAME="RrdBerkeleyDbBackendFactory(com.sleepycat.je.Database)"></A>
 
 <div class="jd-details api apilevel-"> 
     <h4 class="jd-details-title">
@@ -1079,7 +1017,7 @@ From class
         
       </span>
       <span class="sympad">RrdBerkeleyDbBackendFactory</span>
-      <span class="normal">()</span>
+      <span class="normal">(Database rrdDatabase)</span>
     </h4>
       <div class="api-level">
         <div>
@@ -1143,46 +1081,6 @@ From class
 </div>
 
 
-<A NAME="destroy()"></A>
-
-<div class="jd-details api apilevel-"> 
-    <h4 class="jd-details-title">
-      <span class="normal">
-        public 
-         
-         
-         
-         
-        void
-      </span>
-      <span class="sympad">destroy</span>
-      <span class="normal">()</span>
-    </h4>
-      <div class="api-level">
-        <div>
-
-</div>
-        
-  
-
-      </div>
-    <div class="jd-details-descr">
-      
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Throws</h5>
-      <table class="jd-tagtable">  
-        <tr>
-            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Exception.html">Exception</a></td>
-            <td></td>
-        </tr>
-      </table>
-  </div>
-
-    </div>
-</div>
-
-
 <A NAME="getName()"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -1214,108 +1112,6 @@ From class
       <ul class="nolist"><li>Name of the factory.
 </li></ul>
   </div>
-
-    </div>
-</div>
-
-
-<A NAME="init()"></A>
-
-<div class="jd-details api apilevel-"> 
-    <h4 class="jd-details-title">
-      <span class="normal">
-        public 
-         
-         
-         
-         
-        void
-      </span>
-      <span class="sympad">init</span>
-      <span class="normal">()</span>
-    </h4>
-      <div class="api-level">
-        <div>
-
-</div>
-        
-  
-
-      </div>
-    <div class="jd-details-descr">
-      
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Throws</h5>
-      <table class="jd-tagtable">  
-        <tr>
-            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Exception.html">Exception</a></td>
-            <td></td>
-        </tr>
-      </table>
-  </div>
-
-    </div>
-</div>
-
-
-<A NAME="setHomeDirectory(java.lang.String)"></A>
-
-<div class="jd-details api apilevel-"> 
-    <h4 class="jd-details-title">
-      <span class="normal">
-        public 
-         
-         
-         
-         
-        void
-      </span>
-      <span class="sympad">setHomeDirectory</span>
-      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> homeDirectory)</span>
-    </h4>
-      <div class="api-level">
-        <div>
-
-</div>
-        
-  
-
-      </div>
-    <div class="jd-details-descr">
-      
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
-
-    </div>
-</div>
-
-
-<A NAME="setRrdDatabaseName(java.lang.String)"></A>
-
-<div class="jd-details api apilevel-"> 
-    <h4 class="jd-details-title">
-      <span class="normal">
-        public 
-         
-         
-         
-         
-        void
-      </span>
-      <span class="sympad">setRrdDatabaseName</span>
-      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> rrdDatabaseName)</span>
-    </h4>
-      <div class="api-level">
-        <div>
-
-</div>
-        
-  
-
-      </div>
-    <div class="jd-details-descr">
-      
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     </div>
 </div>
@@ -1471,6 +1267,15 @@ From class
       
   <div class="jd-tagdata jd-tagdescr"><p>Determines if the header should be validated.</p></div>
   <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>path</td>
+          <td>Storage path</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Returns</h5>
       <ul class="nolist"><li>True, if the header should be validated for this factory</li></ul>
   </div>
@@ -1496,7 +1301,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>
