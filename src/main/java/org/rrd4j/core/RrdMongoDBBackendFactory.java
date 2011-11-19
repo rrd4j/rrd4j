@@ -7,7 +7,7 @@ import com.mongodb.DBCollection;
 
 /**
  * {@link RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
- * MongoDB {#link DBCollection} and pass it via the constructor.
+ * MongoDB {@link com.mongodb.DBCollection} and pass it via the constructor.
  *
  * @author Mathias Bogaert
  */
@@ -15,7 +15,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
     private final DBCollection rrdCollection;
 
     /**
-     * Creates a RrdMongoDBBackendFactory. Make sure that the passed {@link DBCollection} has a safe write
+     * Creates a RrdMongoDBBackendFactory. Make sure that the passed {@link com.mongodb.DBCollection} has a safe write
      * concern, is capped (if needed) and slaveOk() called if applicable.
      *
      * @param rrdCollection the collection to use for storing RRD byte data

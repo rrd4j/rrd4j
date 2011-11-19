@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * {@link RrdBackendFactory} that uses
  * <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html">Oracle Berkeley DB Java Edition</a>
- * to read data. Construct a BerkeleyDB {#link Database} object and pass it via the constructor.
+ * to read data. Construct a BerkeleyDB {@link com.sleepycat.je.Database} object and pass it via the constructor.
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */

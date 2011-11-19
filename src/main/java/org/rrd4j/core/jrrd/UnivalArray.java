@@ -10,9 +10,15 @@ import java.nio.ByteOrder;
  * @author Fabrice Bacchella <fbacchella@spamcop.net>
  *
  */
-public class UnivalArray {
+class UnivalArray {
     private ByteBuffer buffer;
 
+    /**
+     * Read an UnivalArray from a rrd native file at the current position
+     * @param file the RRdFile
+     * @param size the numer of elements in the array
+     * @throws IOException
+     */
     public UnivalArray(RRDFile file, int size) throws IOException {
         buffer = ByteBuffer.allocate(size * 8);
         if(file.isBigEndian())

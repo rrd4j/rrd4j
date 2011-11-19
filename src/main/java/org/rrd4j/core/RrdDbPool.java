@@ -2,6 +2,13 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
+/**
+ * This class should be used to synchronize access to RRD files
+ * in a multithreaded environment. This class should be also used to prevent opening of
+ * too many RRD files at the same time (thus avoiding operating system limits).
+ * <p>
+ * The abstract wrapper for different implementations of the pools.
+ */
 public abstract class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
         static final RrdDbPool instance = new RrdDbPoolNew();

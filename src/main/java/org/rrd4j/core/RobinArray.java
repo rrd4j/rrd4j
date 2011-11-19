@@ -14,7 +14,7 @@ import java.io.IOException;
  *
  * @author Sasa Markovic
  */
-public class RobinArray implements Robin {
+class RobinArray implements Robin {
     private final Archive parentArc;
     private final RrdInt pointer;
     private final RrdDoubleArray values;

@@ -7,9 +7,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * This class is a quick hack to read information from an RRD file. Writing
- * to RRD files is not currently supported. As I said, this is a quick hack.
- * Some thought should be put into the overall design of the file IO.
+ * This class is used read information from an RRD file. Writing
+ * to RRD files is not currently supported. It uses NIO's RandomAccessFile to read the file
  * <p/>
  * Currently this can read RRD files that were generated on Solaris (Sparc)
  * and Linux (x86).
@@ -17,10 +16,10 @@ import java.nio.ByteOrder;
  * @author <a href="mailto:ciaran@codeloop.com">Ciaran Treanor</a>
  * @version $Revision: 1.1 $
  */
-public class RRDFile implements Constants {
+class RRDFile implements Constants {
     private int alignment;
     private int longSize = 4;
-    RandomAccessFile ras;
+    final RandomAccessFile ras;
 
     private ByteBuffer bbuffer = ByteBuffer.allocate(1024);
     private byte[] buffer = bbuffer.array();
@@ -153,18 +152,18 @@ public class RRDFile implements Constants {
         ras.close();
     }
 
-    protected void read(ByteBuffer bb) throws IOException{
+    void read(ByteBuffer bb) throws IOException{
         ras.getChannel().read(bb);
     }
 
-    protected UnivalArray getUnivalArray(int size) throws IOException {
+    UnivalArray getUnivalArray(int size) throws IOException {
         return new UnivalArray(this, size);
     }
 
     /**
-     * @return the longSize
+     * @return the long size in bits for this file
      */
-    public int getBits() {
+    int getBits() {
         return longSize * 8;
     }
 }

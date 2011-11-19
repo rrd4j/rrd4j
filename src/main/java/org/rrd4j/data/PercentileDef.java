@@ -1,7 +1,7 @@
 package org.rrd4j.data;
 import org.rrd4j.ConsolFun;
 
-public class PercentileDef extends SDef {
+class PercentileDef extends SDef {
     double percentile;
     String defName;
 
