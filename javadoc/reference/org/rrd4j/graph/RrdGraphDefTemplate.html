@@ -548,7 +548,7 @@ Summary:
  <li>There is a strong relation between the XML template syntax and the syntax of
  <code><a href="../../../org/rrd4j/graph/RrdGraphDef.html">RrdGraphDef</a></code> class methods. If you are not sure what some XML tag means, check javadoc
  for the corresponding class method.
- <li>hard-coded timestamps in templates should be long integeres
+ <li>hard-coded timestamps in templates should be long integers
  (like: 1000243567) or at-style formatted strings
  <li>whitespaces are not harmful
  <li>use <code>true</code>, <code>on</code>, <code>yes</code>, <code>y</code>,
@@ -593,7 +593,7 @@ Summary:
  t.setVariable("end", new GregorianCalendar(2004, 2, 26));
  </pre>
  <li>Once all template variables are set, just use the template object to create RrdGraphDef
- object. This object is actually used to create Rrd4j grahps:
+ object. This object is actually used to create Rrd4j graphs:
  <pre>
  RrdGraphDef gdef = t.getRrdGraphDef();
  RrdGraph g = new RrdGraph(gdef);
@@ -601,7 +601,7 @@ Summary:
  </ul>
  You should create new RrdGraphDefTemplate object only once for each XML template. Single template
  object can be reused to create as many RrdGraphDef objects as needed, with different values
- specified for template variables. XML synatax check is performed only once - the first graph
+ specified for template variables. XML syntax check is performed only once - the first graph
  definition object gets created relatively slowly, but it will be created much faster next time.
 </p>
 

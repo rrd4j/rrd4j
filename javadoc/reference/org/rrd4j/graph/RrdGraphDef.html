@@ -1217,7 +1217,7 @@ Summary:
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#datasource(java.lang.String, java.lang.String, org.rrd4j.ConsolFun)">datasource</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> defName, <a href="../../../org/rrd4j/ConsolFun.html">ConsolFun</a> consolFun)</nobr>
         
-        <div class="jd-descrdiv">Creates a new (static) virtual datasouce.</div>
+        <div class="jd-descrdiv">Creates a new (static) virtual datasource.</div>
   
   </td></tr>
 
@@ -1872,7 +1872,7 @@ Summary:
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#setInterlaced(boolean)">setInterlaced</a></span>(boolean interlaced)</nobr>
         
         <div class="jd-descrdiv">Creates interlaced GIF image (currently not supported,
- method is present only for RRDTool comaptibility).</div>
+ method is present only for RRDTool compatibility).</div>
   
   </td></tr>
 
@@ -2903,7 +2903,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Creates a new (static) virtual datasouce. The value of the datasource is constant. This value is
+  <div class="jd-tagdata jd-tagdescr"><p>Creates a new (static) virtual datasource. The value of the datasource is constant. This value is
  evaluated by applying the given consolidation function to another virtual datasource.</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
@@ -3701,14 +3701,13 @@ From class
  <p/>
  If an additional '%s' is found AFTER the marker, the value will be
  scaled and an appropriate SI magnitude unit will be printed in
- place of the '%s' marker. The scaling will take the '--base' argu-
- ment into consideration!
+ place of the '%s' marker. The scaling will take the '--base' argument into consideration!
  <p/>
  If a '%S' is used instead of a '%s', then instead of calculating
  the appropriate SI magnitude unit for this value, the previously
  calculated SI magnitude unit will be used.  This is useful if you
- want all the values in a print statement to have the same SI magni-
- tude unit.  If there was no previous SI magnitude calculation made,
+ want all the values in a print statement to have the same SI magnitude unit.
+ If there was no previous SI magnitude calculation made,
  then '%S' behaves like a '%s', unless the value is 0, in which case
  it does not remember a SI magnitude unit and a SI magnitude unit
  will only be calculated when the next '%s' is seen or the next '%S'
@@ -4613,7 +4612,7 @@ From class
     <div class="jd-details-descr">
       
   <div class="jd-tagdata jd-tagdescr"><p>Creates interlaced GIF image (currently not supported,
- method is present only for RRDTool comaptibility).</p></div>
+ method is present only for RRDTool compatibility).</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
       <table class="jd-tagtable">
@@ -4701,7 +4700,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>lazy</td>
-          <td>true, if graph should be 'lazy', false otherwise (defualt)
+          <td>true, if graph should be 'lazy', false otherwise (default)
 </td>
         </tr>
       </table>
@@ -5083,7 +5082,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>rigid</td>
-          <td>true if uper and lower limits should not be expanded to accomodate
+          <td>true if upper and lower limits should not be expanded to accommodate
               values outside of the specified range. False otherwise (default).
 </td>
         </tr>
@@ -5167,7 +5166,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>smallFont</td>
-          <td>Default font for graphing. Use only monospaced fonths.
+          <td>Default font for graphing. Use only monospaced fonts.
 </td>
         </tr>
       </table>
@@ -5604,10 +5603,10 @@ From class
  values will be scaled to the appropriate units (k, M, etc.). However
  you may wish to display units always in k (Kilo, 10e3) even if
  the data is in the M (Mega, 10e6) range for instance.  Value should
- be an integer which is a multiple of 3 between -18 and 18, inclu-
- sive. It is the exponent on the units you which to use.  For example,
- use 3 to display the y-axis values in k (Kilo, 10e3, thou-
- sands), use -6 to display the y-axis values in u (Micro, 10e-6,
+ be an integer which is a multiple of 3 between -18 and 18, inclusive.
+ It is the exponent on the units you which to use.  For example,
+ use 3 to display the y-axis values in k (Kilo, 10e3, thousands),
+ use -6 to display the y-axis values in µ (Micro, 10e-6,
  millionths). Use a value of 0 to prevent any scaling of the y-axis
  values.</p></div>
 
