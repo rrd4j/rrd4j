@@ -107,7 +107,7 @@ public class Datasource implements RrdUpdater {
     }
 
     /**
-     * Returns mimimal allowed value for this datasource.
+     * Returns minimal allowed value for this datasource.
      *
      * @return Minimal value allowed.
      * @throws IOException Thrown in case of I/O error
@@ -359,7 +359,7 @@ public class Datasource implements RrdUpdater {
 
     /**
      * Sets minimum allowed value for this datasource. If <code>filterArchivedValues</code>
-     * argment is set to true, all archived values less then <code>minValue</code> will
+     * argument is set to true, all archived values less then <code>minValue</code> will
      * be fixed to NaN.
      *
      * @param minValue             New minimal value. Specify <code>Double.NaN</code> if no minimal
@@ -387,7 +387,7 @@ public class Datasource implements RrdUpdater {
 
     /**
      * Sets maximum allowed value for this datasource. If <code>filterArchivedValues</code>
-     * argment is set to true, all archived values greater then <code>maxValue</code> will
+     * argument is set to true, all archived values greater then <code>maxValue</code> will
      * be fixed to NaN.
      *
      * @param maxValue             New maximal value. Specify <code>Double.NaN</code> if no max
@@ -415,7 +415,7 @@ public class Datasource implements RrdUpdater {
 
     /**
      * Sets min/max values allowed for this datasource. If <code>filterArchivedValues</code>
-     * argment is set to true, all archived values less then <code>minValue</code> or
+     * argument is set to true, all archived values less then <code>minValue</code> or
      * greater then <code>maxValue</code> will be fixed to NaN.
      *
      * @param minValue             New minimal value. Specify <code>Double.NaN</code> if no min

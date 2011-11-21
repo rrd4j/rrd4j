@@ -53,11 +53,11 @@ public class FetchRequest {
      * Sets request filter in order to fetch data only for
      * the specified array of datasources (datasource names).
      * If not set (or set to null), fetched data will
-     * containt values of all datasources defined in the corresponding RRD.
+     * contain values of all datasources defined in the corresponding RRD.
      * To fetch data only from selected
      * datasources, specify an array of datasource names as method argument.
      *
-     * @param filter Array of datsources (datsource names) to fetch data from.
+     * @param filter Array of datasources (datasource names) to fetch data from.
      */
     public void setFilter(String... filter) {
         this.filter = filter;
@@ -67,11 +67,11 @@ public class FetchRequest {
      * Sets request filter in order to fetch data only for
      * the specified set of datasources (datasource names).
      * If the filter is not set (or set to null), fetched data will
-     * containt values of all datasources defined in the corresponding RRD.
+     * contain values of all datasources defined in the corresponding RRD.
      * To fetch data only from selected
      * datasources, specify a set of datasource names as method argument.
      *
-     * @param filter Set of datsource names to fetch data for.
+     * @param filter Set of datasource names to fetch data for.
      */
     public void setFilter(Set<String> filter) {
         this.filter = filter.toArray(new String[filter.size()]);
@@ -81,11 +81,11 @@ public class FetchRequest {
      * Sets request filter in order to fetch data only for
      * a single datasource (datasource name).
      * If not set (or set to null), fetched data will
-     * containt values of all datasources defined in the corresponding RRD.
+     * contain values of all datasources defined in the corresponding RRD.
      * To fetch data for a single datasource only,
      * specify an array of datasource names as method argument.
      *
-     * @param filter Array of datsources (datsource names) to fetch data from.
+     * @param filter Array of datasources (datasource names) to fetch data from.
      */
     public void setFilter(String filter) {
         this.filter = (filter == null) ? null : (new String[]{filter});
@@ -102,7 +102,7 @@ public class FetchRequest {
     }
 
     /**
-     * Returns consolitation function to be used during the fetch process.
+     * Returns consolidation function to be used during the fetch process.
      *
      * @return Consolidation function.
      */
@@ -113,7 +113,7 @@ public class FetchRequest {
     /**
      * Returns starting timestamp to be used for the fetch request.
      *
-     * @return Starting timstamp in seconds.
+     * @return Starting timestamp in seconds.
      */
     public long getFetchStart() {
         return fetchStart;

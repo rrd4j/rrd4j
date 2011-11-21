@@ -19,9 +19,9 @@
  * endCal.set(Calendar.MILLISECOND, 0);
  * Calendar startCal = (Calendar) endCal.clone();
  * startCal.add(Calendar.DATE, -1);
- * DataChunk chunck = db.getData(ConsolidationFunctionType.AVERAGE, startCal.getTime(), endCal.getTime(), 1L);
+ * DataChunk chunk = db.getData(ConsolidationFunctionType.AVERAGE, startCal.getTime(), endCal.getTime(), 1L);
  * for(String name: db.getDataSourcesName()) {
- *     gd.datasource(name, chunck.toPlottable(name));
+ *     gd.datasource(name, chunk.toPlottable(name));
  * }
  * </pre>
  *

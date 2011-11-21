@@ -224,7 +224,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param simpleDateFormat Date format (SimpleDateFormat pattern of strftime-like pattern)
      */
     public void setTimeAxis(int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
-                            int labelUnit, int labelUnitCount, int labelSpan, String simpleDateFormat) {
+            int labelUnit, int labelUnitCount, int labelSpan, String simpleDateFormat) {
         timeAxisSetting = new TimeAxisSetting(minorUnit, minorUnitCount, majorUnit, majorUnitCount,
                 labelUnit, labelUnitCount, labelSpan, simpleDateFormat);
     }
@@ -310,10 +310,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      * values will be scaled to the appropriate units (k, M, etc.). However
      * you may wish to display units always in k (Kilo, 10e3) even if
      * the data is in the M (Mega, 10e6) range for instance.  Value should
-     * be an integer which is a multiple of 3 between -18 and 18, inclu-
-     * sive. It is the exponent on the units you which to use.  For example,
-     * use 3 to display the y-axis values in k (Kilo, 10e3, thou-
-     * sands), use -6 to display the y-axis values in u (Micro, 10e-6,
+     * be an integer which is a multiple of 3 between -18 and 18, inclusive.
+     * It is the exponent on the units you which to use.  For example,
+     * use 3 to display the y-axis values in k (Kilo, 10e3, thousands),
+     * use -6 to display the y-axis values in µ (Micro, 10e-6,
      * millionths). Use a value of 0 to prevent any scaling of the y-axis
      * values.
      *
@@ -366,7 +366,7 @@ public class RrdGraphDef implements RrdGraphConstants {
 
     /**
      * Creates interlaced GIF image (currently not supported,
-     * method is present only for RRDTool comaptibility).
+     * method is present only for RRDTool compatibility).
      *
      * @param interlaced true, if GIF image should be interlaced.
      */
@@ -436,7 +436,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     /**
      * Creates graph only if the current graph is out of date or not existent.
      *
-     * @param lazy true, if graph should be 'lazy', false otherwise (defualt)
+     * @param lazy true, if graph should be 'lazy', false otherwise (default)
      */
     public void setLazy(boolean lazy) {
         this.lazy = lazy;
@@ -473,7 +473,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * the lower and upper limit if the graph contains a value outside the
      * valid range. With the <code>true</code> argument you can disable this behavior.
      *
-     * @param rigid true if uper and lower limits should not be expanded to accomodate
+     * @param rigid true if upper and lower limits should not be expanded to accommodate
      *              values outside of the specified range. False otherwise (default).
      */
     public void setRigid(boolean rigid) {
@@ -597,7 +597,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * Sets default font for graphing. Note that Rrd4j will behave unpredictably if proportional
      * font is selected.
      *
-     * @param smallFont Default font for graphing. Use only monospaced fonths.
+     * @param smallFont Default font for graphing. Use only monospaced fonts.
      */
     public void setSmallFont(Font smallFont) {
         this.smallFont = smallFont;
@@ -653,7 +653,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Creates a new (static) virtual datasouce. The value of the datasource is constant. This value is
+     * Creates a new (static) virtual datasource. The value of the datasource is constant. This value is
      * evaluated by applying the given consolidation function to another virtual datasource.
      *
      * @param name      Source name
@@ -715,14 +715,13 @@ public class RrdGraphDef implements RrdGraphConstants {
      * <p/>
      * If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
-     * place of the '%s' marker. The scaling will take the '--base' argu-
-     * ment into consideration!
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
      * <p/>
      * If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
-     * want all the values in a print statement to have the same SI magni-
-     * tude unit.  If there was no previous SI magnitude calculation made,
+     * want all the values in a print statement to have the same SI magnitude unit.
+     * If there was no previous SI magnitude calculation made,
      * then '%S' behaves like a '%s', unless the value is 0, in which case
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'

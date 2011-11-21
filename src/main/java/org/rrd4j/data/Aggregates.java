@@ -38,7 +38,7 @@ public class Aggregates {
     }
 
     /**
-     * Returns the first falue
+     * Returns the first value
      *
      * @return First value
      */

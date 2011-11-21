@@ -118,7 +118,7 @@ public abstract class RrdBackendFactory {
     }
 
     /**
-     * Returns the defaul backend factory. This factory is used to construct
+     * Returns the default backend factory. This factory is used to construct
      * {@link RrdDb} objects if no factory is specified in the RrdDb constructor.
      *
      * @return Default backend factory.

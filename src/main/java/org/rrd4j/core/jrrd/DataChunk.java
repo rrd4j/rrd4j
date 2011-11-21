@@ -69,7 +69,7 @@ public class DataChunk {
     }
 
     /**
-     * Extract a datasource from the datachunck given is name as a Plotabble  
+     * Extract a datasource from the datachunck given is name as a Plottable  
      * @param name the datasource name
      * @return a plottable for the datasource
      */

@@ -164,7 +164,7 @@ public class CubicSplineInterpolator extends Plottable {
     }
 
     /**
-     * Method overriden from the base class. This method will be called by the framework. Call
+     * Method overridden from the base class. This method will be called by the framework. Call
      * this method only if you need spline-interpolated values in your code.
      *
      * @param timestamp timestamp in seconds

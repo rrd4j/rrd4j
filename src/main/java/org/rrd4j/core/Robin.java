@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Class to represent archive values for a single datasource. Robin class is the heart of
  * the so-called "round robin database" concept. Basically, each Robin object is a
- * fixed length array of double values. Each double value reperesents consolidated, archived
+ * fixed length array of double values. Each double value represents consolidated, archived
  * value for the specific timestamp. When the underlying array of double values gets completely
  * filled, new values will replace the oldest ones.<p>
  * <p/>
