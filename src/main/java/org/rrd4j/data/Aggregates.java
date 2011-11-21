@@ -8,7 +8,7 @@ import org.rrd4j.core.Util;
  * don't need to create objects of this class directly. Objects of this class are returned from
  * <code>getAggregates()</code> method in
  * {@link org.rrd4j.core.FetchData#getAggregates(String) FetchData} and
- * {@link DataProcessor#getAggregates(String)} DataProcessor} classes.
+ * {@link DataProcessor#getAggregates(String)} DataProcessor classes.
  */
 public class Aggregates {
     double min = Double.NaN, max = Double.NaN;

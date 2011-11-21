@@ -34,7 +34,7 @@ import java.util.Date;
  * <a href="../../../../man/rrdgraph.html" target="man">rrdgraph</a>.
  * For RRDTool's advanced graphing capabilities (RPN extensions), also supported in Rrd4j,
  * there is an excellent
- * <a href="http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/tutorial/cdeftutorial.html" target="man">CDEF tutorial</a>.
+ * <a href="http://oss.oetiker.ch/rrdtool/tut/cdeftutorial.en.html" target="man">CDEF tutorial</a>.
  * </p>
  *
  * @see RrdBackend

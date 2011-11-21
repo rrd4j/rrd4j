@@ -33,7 +33,7 @@ public class ArcDef {
      * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a></p>
      *
      * @param consolFun Consolidation function. Allowed values are "AVERAGE", "MIN",
-     *                  "MAX" and "LAST" (these string constants are conveniently defined in the
+     *                  "MAX", "LAST" and "TOTAL" (these string constants are conveniently defined in the
      *                  {@link ConsolFun} class).
      * @param xff       X-files factor, between 0 and 1.
      * @param steps     Number of archive steps.

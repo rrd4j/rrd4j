@@ -126,7 +126,7 @@ public class LinearInterpolator extends Plottable {
      * total square distance of real data points from from the best-fit line is at minimum.<p>
      *
      * The full explanation of this interpolation method can be found
-     * <a href="http://www.tufts.edu/~gdallal/slr.htm">here</a>.<p>
+     * <a href="http://www.JerryDallal.com/LHSP/slr.htm">here</a>.<p>
      *
      * @param interpolationMethod Should be <code>INTERPOLATE_LEFT</code>,
      *                            <code>INTERPOLATE_RIGHT</code>, <code>INTERPOLATE_LINEAR</code> or
