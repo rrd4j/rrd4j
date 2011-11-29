@@ -17,7 +17,8 @@ public class Header implements RrdUpdater {
     static final String SIGNATURE = "RRD4J";
 
     static final String DEFAULT_SIGNATURE = "RRD4J, version 0.1";
-    static final String RRDTOOL_VERSION = "0001";
+    static final String RRDTOOL_VERSION1 = "0001";
+    static final String RRDTOOL_VERSION3 = "0003";
     static final private String VERSIONS[] = {"version 0.1", "version 0.2"};
 
     private RrdDb parentDb;
@@ -58,7 +59,7 @@ public class Header implements RrdUpdater {
     Header(RrdDb parentDb, DataImporter reader) throws IOException {
         this(parentDb, (RrdDef) null);
         String version = reader.getVersion();
-        if (!RRDTOOL_VERSION.equals(version)) {
+        if (!RRDTOOL_VERSION1.equals(version) && !RRDTOOL_VERSION3.equals(version) ) {
             throw new IllegalArgumentException("Could not unserialize xml version " + version);
         }
         signature.set(DEFAULT_SIGNATURE);
@@ -147,7 +148,7 @@ public class Header implements RrdUpdater {
 
     void appendXml(XmlWriter writer) throws IOException {
         writer.writeComment(signature.get());
-        writer.writeTag("version", RRDTOOL_VERSION);
+        writer.writeTag("version", RRDTOOL_VERSION3);
         writer.writeComment("Seconds");
         writer.writeTag("step", step.get());
         writer.writeComment(Util.getDate(lastUpdateTime.get()));
