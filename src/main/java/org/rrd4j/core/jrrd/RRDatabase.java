@@ -80,11 +80,11 @@ public class RRDatabase {
 
         rrdFile.align();
 
-        long last_up = (long) rrdFile.readInt() * 1000;
+        long last_up = (long) rrdFile.readLong() * 1000;
 
         /* rrd v >= 3 last_up with us */
         if (header.getVersionAsInt() >= Constants.VERSION_WITH_LAST_UPDATE_SEC) {
-            long last_up_usec = rrdFile.readInt();
+            long last_up_usec = rrdFile.readLong();
             last_up += last_up_usec / 1000;
             rrdFile.align();
         }
@@ -93,28 +93,25 @@ public class RRDatabase {
         // Load PDPStatus(s)
         for (int i = 0; i < header.dsCount; i++) {
             DataSource ds = dataSources.get(i);
-
             ds.loadPDPStatusBlock(rrdFile);
         }
         rrdFile.align(8);
-        rrdFile.readDouble();
+        //Don't know why, but needed any way
+        if(this.header.getVersionAsInt() == 1 && this.rrdFile.getBits() == 32)
+            rrdFile.ras.readInt();
         // Load CDPStatus(s)
         for (int i = 0; i < header.rraCount; i++) {
             Archive archive = archives.get(i);
-
             archive.loadCDPStatusBlocks(rrdFile, header.dsCount);
         }
-
         // Load current row information for each archive
         for (int i = 0; i < header.rraCount; i++) {
             Archive archive = archives.get(i);
             archive.loadCurrentRow(rrdFile);
         }
-
         // Now load the data
         for (int i = 0; i < header.rraCount; i++) {
             Archive archive = archives.get(i);
-
             archive.loadData(rrdFile, header.dsCount);
         }
     }
@@ -287,7 +284,7 @@ public class RRDatabase {
 
     public DataChunk getData(ConsolidationFunctionType type, long start, long end, long step)
     throws IOException {
-
+        
         ArrayList<Archive> possibleArchives = getArchiveList(type);
 
         if (possibleArchives.size() == 0) {

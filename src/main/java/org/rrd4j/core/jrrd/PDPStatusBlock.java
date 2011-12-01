@@ -21,7 +21,6 @@ public class PDPStatusBlock {
 
         offset = file.getFilePointer();
         lastReading = file.readString(Constants.LAST_DS_LEN);
-
         UnivalArray scratch = file.getUnivalArray(10);
         unknownSeconds = (int) scratch.getLong(pdp_par_en.PDP_unkn_sec_cnt);
         value = scratch.getDouble(pdp_par_en.PDP_val);

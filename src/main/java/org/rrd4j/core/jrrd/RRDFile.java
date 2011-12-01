@@ -105,6 +105,11 @@ class RRDFile implements Constants {
     }
 
     int readInt() throws IOException {
+        read(4);
+        return bbuffer.getInt();
+    }
+
+    int readLong() throws IOException {
         read(longSize);
         if(longSize == 4) {
             return bbuffer.getInt();

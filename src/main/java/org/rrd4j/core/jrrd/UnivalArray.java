@@ -11,7 +11,8 @@ import java.nio.ByteOrder;
  *
  */
 class UnivalArray {
-    private ByteBuffer buffer;
+    private final ByteBuffer buffer;
+    private final int sizeoflong;
 
     /**
      * Read an UnivalArray from a rrd native file at the current position
@@ -20,6 +21,7 @@ class UnivalArray {
      * @throws IOException
      */
     public UnivalArray(RRDFile file, int size) throws IOException {
+        sizeoflong = file.getBits();
         buffer = ByteBuffer.allocate(size * 8);
         if(file.isBigEndian())
             buffer.order(ByteOrder.BIG_ENDIAN);
@@ -27,10 +29,13 @@ class UnivalArray {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
         file.read(buffer);
     }
-    
+
     public long getLong(Enum<?> e) {
         buffer.position(8 * e.ordinal());
-        return buffer.getLong();
+        if(sizeoflong == 64)
+            return buffer.getLong();
+        else
+            return buffer.getInt();
     }
 
     public double getDouble(Enum<?> e) {

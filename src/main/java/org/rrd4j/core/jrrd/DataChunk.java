@@ -14,14 +14,14 @@ import org.rrd4j.data.Plottable;
 public class DataChunk {
 
     private static final String NEWLINE = System.getProperty("line.separator");
-    private long startTime;
-    int start;
-    int end;
-    private long step;
-    int dsCount;
-    double[][] data;
-    private int rows;
-    private Map<String, Integer> nameindex;
+    private final long startTime;
+    final int start;
+    final int end;
+    final private long step;
+    final int dsCount;
+    final double[][] data;
+    final private int rows;
+    private final Map<String, Integer> nameindex;
 
     DataChunk(Map<String, Integer> nameindex, long startTime, int start, int end, long step, int dsCount, int rows) {
         this.nameindex = nameindex;
