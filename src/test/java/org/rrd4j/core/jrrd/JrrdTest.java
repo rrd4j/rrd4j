@@ -1,7 +1,10 @@
 package org.rrd4j.core.jrrd;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -64,17 +67,24 @@ public class JrrdTest {
         testFile("/rrdtool/0001b328.rrd", "0001");
     }
 
+    @Test
+    public void test_1_l_32_4() throws IOException {
+        testFile("/rrdtool/0001l324.rrd", "0001");
+    }
+
+    @Test
+    public void test_1_l_64_8() throws IOException {
+        testFile("/rrdtool/0001l648.rrd", "0001");
+    }
+
     private void testFile(String file, String version) throws IOException {
-        System.out.println("");
-        System.out.println("***************");
-        System.out.println(file);
         URL url = getClass().getResource(file); 
         RRDatabase rrd = new RRDatabase(url.getFile());
-        System.out.println(rrd.rrdFile.ras.length() - rrd.rrdFile.getFilePointer());
-        System.out.println(rrd);
         Assert.assertEquals("Invalid date", new Date(920808900000L), rrd.getLastUpdate());
         Assert.assertEquals("Invalid number of archives", 2, rrd.getNumArchives());
-        Assert.assertEquals("Invalid number of archives", 2, rrd.getDataSourcesName().size());
+        Assert.assertEquals("Invalid number of datasources", 2, rrd.getDataSourcesName().size());
+        Assert.assertEquals("Invalid heartbeat for datasource 0", 600, rrd.getDataSource(0).getMinimumHeartbeat());
+        Assert.assertEquals("Invalid heartbeat for datasource 1", 600, rrd.getDataSource(1).getMinimumHeartbeat());
         Assert.assertEquals("Invalid version", version, rrd.header.getVersion());
         Assert.assertEquals("Invalid number of row", 24, rrd.getArchive(0).getRowCount());
         Assert.assertEquals("Invalid number of row", 10, rrd.getArchive(1).getRowCount());
@@ -85,10 +95,24 @@ public class JrrdTest {
         if("0003".equals(version) ) {
             Assert.assertEquals("bad primary value", 1.43161853E7, rrd.getArchive(0).getCDPStatusBlock(0).primary_value, 1);
         }
+        Assert.assertEquals("bad primary value", 1.4316557620000001E7, rrd.getArchive(1).getCDPStatusBlock(0).value, 1);
+        rrd.rrdFile.ras.seek( rrd.getArchive(0).dataOffset + 16 * rrd.getArchive(0).currentRow);
+        double speed = readDouble(rrd.rrdFile);
+        double weight = readDouble(rrd.rrdFile);
+        Assert.assertEquals(1.4316185300e+07, speed, 1e-7);
+        Assert.assertEquals(3, weight, 1e-7);
         DataChunk data = rrd.getData(ConsolidationFunctionType.AVERAGE, 920802300, 920808900, 300);
-        System.out.println(data.toPlottable("speed").getValue(920802300));
-        //Assert.assertEquals(0.02, data.toPlottable("speed").getValue(920802300), 1e-7);
+        Assert.assertEquals(0.02, data.toPlottable("speed").getValue(920802300), 1e-7);
         Assert.assertEquals(1.0, data.toPlottable("weight").getValue(920802300), 1e-7);
     }
+    
+   Double readDouble(RRDFile rrdFile) throws IOException {
+       RandomAccessFile ras = rrdFile.ras;
+       byte[] buffer = new byte[8];
+       ras.read(buffer);
+       ByteBuffer bb = ByteBuffer.wrap(buffer);
+       bb.order(rrdFile.isBigEndian() ? ByteOrder.BIG_ENDIAN: ByteOrder.LITTLE_ENDIAN);
+       return bb.getDouble();
+   }
 
 }
