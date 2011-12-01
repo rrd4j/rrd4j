@@ -2,9 +2,6 @@ package org.rrd4j.converter;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 import org.rrd4j.core.RrdBackendFactory;
@@ -41,10 +38,19 @@ public class ConverterTest {
         testImport("/rrdtool/0001b328.rrd");
     }
 
+    @Test
+    public void test_1_l_32_4() throws IOException {
+        testImport("/rrdtool/0001l324.rrd");
+    }
+
+    @Test
+    public void test_1_l_64_8() throws IOException {
+        testImport("/rrdtool/0001l648.rrd");
+    }
+
     private void testImport(String file) throws IOException {
         URL url = getClass().getResource(file); 
         RrdDb rrd = new RrdDb("test", "rrdtool:/" + url.getFile(), RrdBackendFactory.getFactory("MEMORY"));
-        Assert.assertEquals("Invalid date", new Date(920808900000L).getTime(), rrd.getLastUpdateTime() * 1000);
-
+        org.rrd4j.TestsUtils.testRrdDb(rrd);
     }
 }
