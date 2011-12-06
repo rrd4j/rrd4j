@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.rrd4j</groupId>
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>http://code.google.com/p/rrd4j/</url>
 
@@ -34,9 +33,9 @@
     <scm>
         <!-- See http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html -->
         <!-- for how to perform a release from the connection below. -->
-        <connection>scm:svn:https://rrd4j.googlecode.com/svn/tags/2.1</connection>
-        <developerConnection>scm:svn:https://rrd4j.googlecode.com/svn/tags/2.1</developerConnection>
-        <url>http://code.google.com/p/rrd4j/source/browse/#svn/tags/2.1</url>
+        <connection>scm:svn:https://rrd4j.googlecode.com/svn/tags/2.1.1</connection>
+        <developerConnection>scm:svn:https://rrd4j.googlecode.com/svn/tags/2.1.1</developerConnection>
+        <url>http://code.google.com/p/rrd4j/source/browse/#svn/tags/2.1.1</url>
     </scm>
 
     <dependencies>
