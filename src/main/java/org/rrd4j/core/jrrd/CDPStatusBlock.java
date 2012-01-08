@@ -17,13 +17,13 @@ public class CDPStatusBlock {
         CDP_last_null_count, CDP_primary_val, CDP_secondary_val
     };
 
-    long offset;
-    long size;
-    int unknownDatapoints;
-    double value;
+    final long offset;
+    final long size;
+    final int unknownDatapoints;
+    final double value;
 
-    double secondary_value;
-    double primary_value;
+    final double secondary_value;
+    final double primary_value;
 
     CDPStatusBlock(RRDFile file) throws IOException {
         //Should read MAX_CDP_PAR_EN = 10

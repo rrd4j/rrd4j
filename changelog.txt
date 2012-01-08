@@ -1,4 +1,8 @@
-Changes in version 2.1
+Changes in version 2.1.1 - 6 Dec 2011
+----------------------------------------
+* Invalid rrdtools file import
+
+Changes in version 2.1 - 24 Nov 2011
 ----------------------------------------
 * Fixed Issue 1: Key colours don't match the graph when using transparency
 * Fixed Issue 10: some parts of this code has GPL license?

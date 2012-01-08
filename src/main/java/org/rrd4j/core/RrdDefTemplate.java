@@ -103,7 +103,7 @@ import java.util.Calendar;
  * </ul>
  * You should create new RrdDefTemplate object only once for each XML template. Single template
  * object can be reused to create as many RrdDef objects as needed, with different values
- * specified for template variables. XML synatax check is performed only once - the first
+ * specified for template variables. XML syntax check is performed only once - the first
  * definition object gets created relatively slowly, but it will be created much faster next time.
  */
 public class RrdDefTemplate extends XmlTemplate {
@@ -148,7 +148,7 @@ public class RrdDefTemplate extends XmlTemplate {
      * is called, values for all non-optional placeholders must be supplied. To specify
      * placeholder values at runtime, use some of the overloaded
      * {@link XmlTemplate#setVariable(String, String) setVariable()} methods. Once this method
-     * returns, all placeholder values are preserved. To remove them all, call inhereted
+     * returns, all placeholder values are preserved. To remove them all, call inherited
      * {@link XmlTemplate#clearValues() clearValues()} method explicitly.<p>
      *
      * @return RrdDef object constructed from the underlying XML template,

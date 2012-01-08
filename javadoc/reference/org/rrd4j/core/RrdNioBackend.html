@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../", "../../../../assets/");
 </script>
-<script src="../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="selected api apilevel-">
   <a href="../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -182,8 +184,6 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchData.html">FetchData</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchRequest.html">FetchRequest</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/Header.html">Header</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinArray.html">RobinArray</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinMatrix.html">RobinMatrix</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackend.html">RrdBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackend.html">RrdBerkeleyDbBackend</a></li>
@@ -191,16 +191,18 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdByteArrayBackend.html">RrdByteArrayBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDb.html">RrdDb</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPool.html">RrdDbPool</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolNew.html">RrdDbPoolNew</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolOld.html">RrdDbPoolOld</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDef.html">RrdDef</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDefTemplate.html">RrdDefTemplate</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackend.html">RrdMemoryBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackend.html">RrdMongoDBBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html">RrdMongoDBBackendFactory</a></li>
           <li class="selected api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackend.html">RrdNioBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackendFactory.html">RrdNioBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackend.html">RrdSafeFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackendFactory.html">RrdSafeFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdToolkit.html">RrdToolkit</a></li>
@@ -211,6 +213,7 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/XmlWriter.html">XmlWriter</a></li>
       </ul>
     </li>
+              
               
               
               
@@ -265,6 +268,15 @@
   
   
   
+   
+  
+  
+
+  
+   
+  
+  
+  
   
 
   
@@ -276,6 +288,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -340,7 +353,11 @@ Summary:
   
 
   
-    extends <a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a><br/>
+  
+  
+
+  
+    extends <a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a><br/>
   
   
   
@@ -360,7 +377,7 @@ Summary:
 
     <tr>
          	
-        <td colspan="4" class="jd-inheritance-class-cell"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">java.lang.Object</a></td>
+        <td colspan="5" class="jd-inheritance-class-cell"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">java.lang.Object</a></td>
     </tr>
     
 
@@ -368,7 +385,7 @@ Summary:
         
             <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
          	
-        <td colspan="3" class="jd-inheritance-class-cell"><a href="../../../org/rrd4j/core/RrdBackend.html">org.rrd4j.core.RrdBackend</a></td>
+        <td colspan="4" class="jd-inheritance-class-cell"><a href="../../../org/rrd4j/core/RrdBackend.html">org.rrd4j.core.RrdBackend</a></td>
     </tr>
     
 
@@ -378,11 +395,25 @@ Summary:
         
             <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
          	
-        <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../org/rrd4j/core/RrdFileBackend.html">org.rrd4j.core.RrdFileBackend</a></td>
+        <td colspan="3" class="jd-inheritance-class-cell"><a href="../../../org/rrd4j/core/RrdFileBackend.html">org.rrd4j.core.RrdFileBackend</a></td>
     </tr>
     
 
     <tr>
+        
+            <td class="jd-inheritance-space">&nbsp;</td>
+        
+            <td class="jd-inheritance-space">&nbsp;</td>
+        
+            <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+         	
+        <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">org.rrd4j.core.RrdRandomAccessFileBackend</a></td>
+    </tr>
+    
+
+    <tr>
+        
+            <td class="jd-inheritance-space">&nbsp;</td>
         
             <td class="jd-inheritance-space">&nbsp;</td>
         
@@ -465,6 +496,41 @@ Summary:
 <tr class="api apilevel-" >
 <td colspan="12">
 
+  <a href="#" onclick="return toggleInherited(this, null)" id="inherited-fields-org.rrd4j.core.RrdRandomAccessFileBackend" class="jd-expando-trigger closed"
+          ><img id="inherited-fields-org.rrd4j.core.RrdRandomAccessFileBackend-trigger"
+          src="../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>From class
+<a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">org.rrd4j.core.RrdRandomAccessFileBackend</a>
+<div id="inherited-fields-org.rrd4j.core.RrdRandomAccessFileBackend">
+  <div id="inherited-fields-org.rrd4j.core.RrdRandomAccessFileBackend-list"
+        class="jd-inheritedlinks">
+  </div>
+  <div id="inherited-fields-org.rrd4j.core.RrdRandomAccessFileBackend-summary" style="display: none;">
+    <table class="jd-sumtable-expando">
+    
+
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          protected
+          
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/RandomAccessFile.html">RandomAccessFile</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html#rafile">rafile</a></td>
+          <td class="jd-descrcol" width="100%">Random access file handle.</td>
+      </tr>
+      
+    
+</table>
+  </div>
+</div>
+</td></tr>
+
+
+
+<tr class="api apilevel-" >
+<td colspan="12">
+
   <a href="#" onclick="return toggleInherited(this, null)" id="inherited-fields-org.rrd4j.core.RrdFileBackend" class="jd-expando-trigger closed"
           ><img id="inherited-fields-org.rrd4j.core.RrdFileBackend-trigger"
           src="../../../../assets/images/triangle-closed.png"
@@ -484,9 +550,9 @@ Summary:
           protected
           
           final
-          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/RandomAccessFile.html">RandomAccessFile</a></nobr></td>
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/File.html">File</a></nobr></td>
           <td class="jd-linkcol"><a href="../../../org/rrd4j/core/RrdFileBackend.html#file">file</a></td>
-          <td class="jd-descrcol" width="100%">Random access file handle.</td>
+          <td class="jd-descrcol" width="100%"></td>
       </tr>
       
     
@@ -669,6 +735,104 @@ Summary:
 
 <tr class="api apilevel-" >
 <td colspan="12">
+  <a href="#" onclick="return toggleInherited(this, null)" id="inherited-methods-org.rrd4j.core.RrdRandomAccessFileBackend" class="jd-expando-trigger closed"
+          ><img id="inherited-methods-org.rrd4j.core.RrdRandomAccessFileBackend-trigger"
+          src="../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>
+From class
+
+  <a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">org.rrd4j.core.RrdRandomAccessFileBackend</a>
+
+<div id="inherited-methods-org.rrd4j.core.RrdRandomAccessFileBackend">
+  <div id="inherited-methods-org.rrd4j.core.RrdRandomAccessFileBackend-list"
+        class="jd-inheritedlinks">
+  </div>
+  <div id="inherited-methods-org.rrd4j.core.RrdRandomAccessFileBackend-summary" style="display: none;">
+    <table class="jd-sumtable-expando">
+    
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html#close()">close</a></span>()</nobr>
+        
+        <div class="jd-descrdiv">Closes the underlying RRD file.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html#read(long, byte[])">read</a></span>(long offset, byte[] b)</nobr>
+        
+        <div class="jd-descrdiv">Reads a number of bytes from the RRD file on the disk</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html#setLength(long)">setLength</a></span>(long length)</nobr>
+        
+        <div class="jd-descrdiv">Sets length of the underlying RRD file.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html#write(long, byte[])">write</a></span>(long offset, byte[] b)</nobr>
+        
+        <div class="jd-descrdiv">Writes bytes to the underlying RRD file on the disk</div>
+  
+  </td></tr>
+
+
+</table>
+  </div>
+</div>
+</td></tr>
+
+
+
+<tr class="api apilevel-" >
+<td colspan="12">
   <a href="#" onclick="return toggleInherited(this, null)" id="inherited-methods-org.rrd4j.core.RrdFileBackend" class="jd-expando-trigger closed"
           ><img id="inherited-methods-org.rrd4j.core.RrdFileBackend-trigger"
           src="../../../../assets/images/triangle-closed.png"
@@ -689,7 +853,7 @@ From class
 	 
     <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
-            
+            abstract
             
             
             
@@ -754,60 +918,6 @@ From class
         <span class="sympad"><a href="../../../org/rrd4j/core/RrdFileBackend.html#getLength()">getLength</a></span>()</nobr>
         
         <div class="jd-descrdiv">Returns RRD file length.</div>
-  
-  </td></tr>
-
-
-	 
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
-            void</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdFileBackend.html#read(long, byte[])">read</a></span>(long offset, byte[] b)</nobr>
-        
-        <div class="jd-descrdiv">Reads a number of bytes from the RRD file on the disk</div>
-  
-  </td></tr>
-
-
-	 
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
-            void</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdFileBackend.html#setLength(long)">setLength</a></span>(long length)</nobr>
-        
-        <div class="jd-descrdiv">Sets length of the underlying RRD file.</div>
-  
-  </td></tr>
-
-
-	 
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
-            void</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/RrdFileBackend.html#write(long, byte[])">write</a></span>(long offset, byte[] b)</nobr>
-        
-        <div class="jd-descrdiv">Writes bytes to the underlying RRD file on the disk</div>
   
   </td></tr>
 
@@ -942,7 +1052,7 @@ From class
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../org/rrd4j/core/RrdBackend.html#readAll()">readAll</a></span>()</nobr>
         
-        <div class="jd-descrdiv">Reads all RRD bytes from the underlying storage</div>
+        <div class="jd-descrdiv">Reads all RRD bytes from the underlying storage.</div>
   
   </td></tr>
 
@@ -1556,7 +1666,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

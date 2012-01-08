@@ -49,7 +49,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template
@@ -61,7 +61,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template
@@ -73,7 +73,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template
@@ -85,7 +85,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template
@@ -97,7 +97,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template
@@ -121,7 +121,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template
@@ -133,7 +133,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template
@@ -145,7 +145,7 @@ public abstract class XmlTemplate {
     /**
      * Sets value for a single XML template variable. Variable name should be specified
      * without leading '${' and ending '}' placeholder markers. For example, for a placeholder
-     * <code>${start}</code>, specify <code>start</start> for the <code>name</code> parameter.
+     * <code>${start}</code>, specify <code>start</code> for the <code>name</code> parameter.
      *
      * @param name  variable name
      * @param value value to be set in the XML template

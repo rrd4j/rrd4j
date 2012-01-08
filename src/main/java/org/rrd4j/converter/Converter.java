@@ -86,7 +86,7 @@ public class Converter {
      * <p>To convert RRD files created with RRDTool use the following syntax:</p>
      * <pre>
      * java -cp rrd4j-{version} org.rrd4j.convertor.Convert [path to RRD file(s)]
-     * <pre>
+     * </pre>
      * <p>For example:</p>
      * <pre>
      * java -cp rrd4j-{version} org.rrd4j.convertor.Convert rrdtool/files/*.rrd

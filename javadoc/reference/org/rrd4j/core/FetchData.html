@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../", "../../../../assets/");
 </script>
-<script src="../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="selected api apilevel-">
   <a href="../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -182,8 +184,6 @@
           <li class="selected api apilevel-"><a href="../../../org/rrd4j/core/FetchData.html">FetchData</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchRequest.html">FetchRequest</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/Header.html">Header</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinArray.html">RobinArray</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinMatrix.html">RobinMatrix</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackend.html">RrdBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackend.html">RrdBerkeleyDbBackend</a></li>
@@ -191,16 +191,18 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdByteArrayBackend.html">RrdByteArrayBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDb.html">RrdDb</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPool.html">RrdDbPool</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolNew.html">RrdDbPoolNew</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolOld.html">RrdDbPoolOld</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDef.html">RrdDef</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDefTemplate.html">RrdDefTemplate</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackend.html">RrdMemoryBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackend.html">RrdMongoDBBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html">RrdMongoDBBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackend.html">RrdNioBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackendFactory.html">RrdNioBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackend.html">RrdSafeFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackendFactory.html">RrdSafeFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdToolkit.html">RrdToolkit</a></li>
@@ -211,6 +213,7 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/XmlWriter.html">XmlWriter</a></li>
       </ul>
     </li>
+              
               
               
               
@@ -260,6 +263,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -546,28 +550,6 @@ Summary:
             
             
             
-            double</nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/core/FetchData.html#getAggregate(java.lang.String, org.rrd4j.ConsolFun, java.lang.String)">getAggregate</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> dsName, <a href="../../../org/rrd4j/ConsolFun.html">ConsolFun</a> consolFun, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> rpnExpression)</nobr>
-        
-        <div class="jd-descrdiv">
-      <em>
-  This method is deprecated.
-      This method is preserved just for backward compatibility.
-</em></div>
-  
-  </td></tr>
-
-
-	 
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
             <a href="../../../org/rrd4j/data/Aggregates.html">Aggregates</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
@@ -580,7 +562,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -598,7 +580,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -616,7 +598,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -634,7 +616,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -652,7 +634,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -670,7 +652,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -688,7 +670,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -706,7 +688,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -725,7 +707,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -743,7 +725,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -761,7 +743,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -780,7 +762,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -799,7 +781,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -818,7 +800,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -836,7 +818,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -854,7 +836,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -873,7 +855,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -891,7 +873,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -909,7 +891,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -927,7 +909,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1494,81 +1476,6 @@ From class
             <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/IllegalArgumentException.html">IllegalArgumentException</a></td>
             <td>Thrown if the given datasource name cannot be found in fetched data.
 </td>
-        </tr>
-      </table>
-  </div>
-
-    </div>
-</div>
-
-
-<A NAME="getAggregate(java.lang.String, org.rrd4j.ConsolFun, java.lang.String)"></A>
-
-<div class="jd-details api apilevel-"> 
-    <h4 class="jd-details-title">
-      <span class="normal">
-        public 
-         
-         
-         
-         
-        double
-      </span>
-      <span class="sympad">getAggregate</span>
-      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> dsName, <a href="../../../org/rrd4j/ConsolFun.html">ConsolFun</a> consolFun, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> rpnExpression)</span>
-    </h4>
-      <div class="api-level">
-        <div>
-
-</div>
-        
-  
-
-      </div>
-    <div class="jd-details-descr">
-      <p>
-  <p class="caution">
-      <strong>
-  This method is deprecated.</strong><br/> This method is preserved just for backward compatibility.
-
-  </p>
-  <div class="jd-tagdata jd-tagdescr"><p>Returns aggregated value from the fetched data for a single datasource.
- Before applying aggregation functions, specified RPN expression is applied to fetched data.
- For example, if you have a gauge datasource named 'foots' but you want to find the maximum
- fetched value in meters use something like: <p>
- <code>getAggregate("foots", "MAX", "foots,0.3048,*");</code><p></p></div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Parameters</h5>
-      <table class="jd-tagtable">
-        <tr>
-          <th>dsName</td>
-          <td>Datasource name</td>
-        </tr>
-        <tr>
-          <th>consolFun</td>
-          <td>Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)</td>
-        </tr>
-        <tr>
-          <th>rpnExpression</td>
-          <td>RRDTool-like RPN expression</td>
-        </tr>
-      </table>
-  </div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Returns</h5>
-      <ul class="nolist"><li>Aggregated value</li></ul>
-  </div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Throws</h5>
-      <table class="jd-tagtable">  
-        <tr>
-            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/IllegalArgumentException.html">IllegalArgumentException</a></td>
-            <td>Thrown if the given datasource name cannot be found in fetched data, or if
-                                  invalid RPN expression is supplied</td>
-        </tr>  
-        <tr>
-            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/IOException.html">IOException</a></td>
-            <td>Thrown in case of I/O error (unlikely to happen)</td>
         </tr>
       </table>
   </div>
@@ -2505,7 +2412,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

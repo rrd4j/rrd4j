@@ -11,7 +11,7 @@ import java.io.IOException;
  * <p/>
  * Each archive object consists of three parts: archive definition, archive state objects
  * (one state object for each datasource) and round robin archives (one round robin for
- * each datasource). API (read-only) is provided to access each of theese parts.<p>
+ * each datasource). API (read-only) is provided to access each of these parts.<p>
  *
  * @author Sasa Markovic
  */

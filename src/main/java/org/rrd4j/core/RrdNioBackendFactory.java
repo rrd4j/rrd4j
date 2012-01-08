@@ -30,7 +30,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     public static final int DEFAULT_SYNC_CORE_POOL_SIZE = 6;
 
     /**
-     * The {@link ScheduledExecutorService} used to periodically sync the mapped file to disk with.
+     * The {@link java.util.concurrent.ScheduledExecutorService} used to periodically sync the mapped file to disk with.
      */
     private ScheduledExecutorService syncExecutor;
     

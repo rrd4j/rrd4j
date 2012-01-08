@@ -29,6 +29,7 @@ public class DataSource {
         name = file.readString(Constants.DS_NAM_SIZE);
         type = DataSourceType.valueOf(file.readString(Constants.DST_SIZE).toUpperCase());
 
+        file.align(8);
         UnivalArray par = file.getUnivalArray(10);
         minimumHeartbeat = (int) par.getLong(ds_param_en.DS_mrhb_cnt);
         minimum = par.getDouble(ds_param_en.DS_min_val);

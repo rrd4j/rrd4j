@@ -59,7 +59,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
     }
 
     /**
-     * This method is overriden to disable high-level caching in frontend RRD4J classes.
+     * This method is overridden to disable high-level caching in frontend RRD4J classes.
      *
      * @return Always returns <code>false</code>. There is no need to cache anything in high-level classes
      *         since all RRD bytes are already in memory.

@@ -75,7 +75,16 @@ class XmlReader extends DataImporter {
     }
 
     double getXff(int arcIndex) {
-        return Util.Xml.getChildValueAsDouble(arcNodes[arcIndex], "xff");
+        Node arc = arcNodes[arcIndex];
+        Node params[] = Util.Xml.getChildNodes(arc, "params");
+        //RRD4J xml, xff is in the archive definition
+        if(params.length == 0) {
+            return Util.Xml.getChildValueAsDouble(arc, "xff");
+        }
+        //RRDTool xml, xff is in the archive definition
+        else {
+            return Util.Xml.getChildValueAsDouble(params[0], "xff");
+        }
     }
 
     int getSteps(int arcIndex) {

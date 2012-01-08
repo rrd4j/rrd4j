@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../../", "../../../../../assets/");
 </script>
-<script src="../../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="api apilevel-">
   <a href="../../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="selected api apilevel-">
@@ -171,17 +173,21 @@
       <ul>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/Archive.html">Archive</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/CDPStatusBlock.html">CDPStatusBlock</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataChunk.html">DataChunk</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSource.html">DataSource</a></li>
-          <li class="selected api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/Header.html">Header</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/PDPStatusBlock.html">PDPStatusBlock</a></li>
           <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/RRDatabase.html">RRDatabase</a></li>
-          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/RRDFile.html">RRDFile</a></li>
       </ul>
     </li>
               
+              
+    <li><h2>Enums</h2>
+      <ul>
+          <li class="api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/ConsolidationFunctionType.html">ConsolidationFunctionType</a></li>
+          <li class="selected api apilevel-"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></li>
+      </ul>
+    </li>
               
               
             </ul><br/>
@@ -228,17 +234,37 @@
   
   
 
+  
+   
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+   
+  
+  
+  
+  
+
 
 <div class="sum-details-links">
+
 
 Summary:
 
 
 
 
-
-  <a href="#constants">Constants</a>
+  <a href="#enumconstants">Enums</a>
   
+
 
 
 
@@ -272,15 +298,19 @@ Summary:
 <div id="jd-header">
     public
      
-     
+    final 
     
-    class
+    enum
 <h1>DataSourceType</h1>
 
 
 
   
-    extends <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">Object</a><br/>
+  
+  
+
+  
+    extends <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Enum.html">Enum</a>&lt;E&nbsp;extends&nbsp;<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Enum.html">Enum</a>&lt;E&gt;&gt;<br/>
   
   
   
@@ -300,11 +330,21 @@ Summary:
 
     <tr>
          	
-        <td colspan="2" class="jd-inheritance-class-cell"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">java.lang.Object</a></td>
+        <td colspan="3" class="jd-inheritance-class-cell"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">java.lang.Object</a></td>
     </tr>
     
 
     <tr>
+        
+            <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+         	
+        <td colspan="2" class="jd-inheritance-class-cell"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Enum.html">java.lang.Enum</a>&lt;E&nbsp;extends&nbsp;<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Enum.html">java.lang.Enum</a>&lt;E&gt;&gt;</td>
+    </tr>
+    
+
+    <tr>
+        
+            <td class="jd-inheritance-space">&nbsp;</td>
         
             <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
          	
@@ -362,47 +402,47 @@ Summary:
 
 
 
-
-
 <!-- =========== ENUM CONSTANT SUMMARY =========== -->
-<table id="constants" class="jd-sumtable"><tr><th colspan="12">Constants</th></tr>
-
+<table id="enumconstants" class="jd-sumtable"><tr><th colspan="12">Enum Values</th></tr>
 
     
     <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></td>
-        <td class="jd-linkcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#ABSOLUTE">ABSOLUTE</a></td>
-        <td class="jd-descrcol" width="100%">Field ABSOLUTE
-</td>
+        <td class="jd-descrcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a>&nbsp;</td>
+        <td class="jd-linkcol">ABSOLUTE&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
     <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></td>
-        <td class="jd-linkcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#COUNTER">COUNTER</a></td>
-        <td class="jd-descrcol" width="100%">Field COUNTER
-</td>
+        <td class="jd-descrcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a>&nbsp;</td>
+        <td class="jd-linkcol">CDEF&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
     <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></td>
-        <td class="jd-linkcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#DERIVE">DERIVE</a></td>
-        <td class="jd-descrcol" width="100%">Field DERIVE
-</td>
+        <td class="jd-descrcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a>&nbsp;</td>
+        <td class="jd-linkcol">COUNTER&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
     <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></td>
-        <td class="jd-linkcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#GAUGE">GAUGE</a></td>
-        <td class="jd-descrcol" width="100%">Field GAUGE
-</td>
+        <td class="jd-descrcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a>&nbsp;</td>
+        <td class="jd-linkcol">DERIVE&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
+    </tr>
+    
+    
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-descrcol"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a>&nbsp;</td>
+        <td class="jd-linkcol">GAUGE&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
 
-</table>
+
 
 
 
@@ -430,15 +470,13 @@ Summary:
             
             
             
+            static
             
-            
-            boolean</nobr>
+            <a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#equals(java.lang.Object)">equals</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">Object</a> obj)</nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#valueOf(java.lang.String)">valueOf</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name)</nobr>
         
-        <div class="jd-descrdiv">Compares this object against the specified object.</div>
-  
   </td></tr>
 
 
@@ -447,34 +485,14 @@ Summary:
         <td class="jd-typecol"><nobr>
             
             
-            
+            final
             static
             
-            <a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a></nobr>
+            <a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType[]</a></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#get(java.lang.String)">get</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> s)</nobr>
+        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#values()">values</a></span>()</nobr>
         
-        <div class="jd-descrdiv">Returns a <code>DataSourceType</code> with the given name.</div>
-  
-  </td></tr>
-
-
-	 
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><nobr>
-            
-            
-            
-            
-            
-            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></nobr>
-        </td>
-        <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html#toString()">toString</a></span>()</nobr>
-        
-        <div class="jd-descrdiv">Returns a string representation of this object.</div>
-  
   </td></tr>
 
 
@@ -491,6 +509,208 @@ Summary:
 <table id="inhmethods" class="jd-sumtable"><tr><th>
   <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited Methods</div></th></tr>
+
+
+<tr class="api apilevel-" >
+<td colspan="12">
+  <a href="#" onclick="return toggleInherited(this, null)" id="inherited-methods-java.lang.Enum" class="jd-expando-trigger closed"
+          ><img id="inherited-methods-java.lang.Enum-trigger"
+          src="../../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>
+From class
+
+  <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Enum.html">java.lang.Enum</a>
+
+<div id="inherited-methods-java.lang.Enum">
+  <div id="inherited-methods-java.lang.Enum-list"
+        class="jd-inheritedlinks">
+  </div>
+  <div id="inherited-methods-java.lang.Enum-summary" style="display: none;">
+    <table class="jd-sumtable-expando">
+    
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">Object</a></nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">clone</span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            int</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">compareTo</span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">Object</a> arg0)</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            int</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">compareTo</span>(E arg0)</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            boolean</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">equals</span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">Object</a> arg0)</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">finalize</span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Class.html">Class</a>&lt;E&gt;</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">getDeclaringClass</span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            int</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">hashCode</span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">name</span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            final
+            
+            
+            int</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">ordinal</span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">toString</span>()</nobr>
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            static
+            &lt;T&nbsp;extends&nbsp;<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Enum.html">Enum</a>&lt;T&gt;&gt;
+            T</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">valueOf</span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Class.html">Class</a>&lt;T&gt; arg0, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> arg1)</nobr>
+        
+  </td></tr>
+
+
+</table>
+  </div>
+</div>
+</td></tr>
+
 
 
 <tr class="api apilevel-" >
@@ -694,6 +914,50 @@ From class
 </td></tr>
 
 
+
+
+
+<tr class="api apilevel-" >
+<td colspan="12">
+  <a href="#" onclick="return toggleInherited(this, null)" id="inherited-methods-java.lang.Comparable" class="jd-expando-trigger closed"
+          ><img id="inherited-methods-java.lang.Comparable-trigger"
+          src="../../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>
+From interface
+
+  <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Comparable.html">java.lang.Comparable</a>
+
+<div id="inherited-methods-java.lang.Comparable">
+  <div id="inherited-methods-java.lang.Comparable-list"
+        class="jd-inheritedlinks">
+  </div>
+  <div id="inherited-methods-java.lang.Comparable-summary" style="display: none;">
+    <table class="jd-sumtable-expando">
+    
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            abstract
+            
+            
+            
+            
+            int</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad">compareTo</span>(T arg0)</nobr>
+        
+  </td></tr>
+
+
+</table>
+  </div>
+</div>
+</td></tr>
+
+
 </table>
 
 
@@ -714,11 +978,8 @@ From class
 <!-- Enum Values -->
 
 
-<!-- Constants -->
-
-
 <!-- ========= ENUM CONSTANTS DETAIL ======== -->
-<h2>Constants</h2>
+<h2>Enum Values</h2>
 
 
 
@@ -745,8 +1006,37 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Field ABSOLUTE
-</p></div>
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+
+    
+    </div>
+</div>
+
+
+
+<A NAME="CDEF"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+        static 
+        final 
+        <a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a>
+      </span>
+        CDEF
+    </h4>
+      <div class="api-level">
+        
+
+
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     
     </div>
@@ -776,8 +1066,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Field COUNTER
-</p></div>
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     
     </div>
@@ -807,8 +1096,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Field DERIVE
-</p></div>
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     
     </div>
@@ -838,14 +1126,16 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Field GAUGE
-</p></div>
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     
     </div>
 </div>
 
 
+
+
+<!-- Constants -->
 
 
 <!-- Fields -->
@@ -867,44 +1157,7 @@ From class
 
 
 
-<A NAME="equals(java.lang.Object)"></A>
-
-<div class="jd-details api apilevel-"> 
-    <h4 class="jd-details-title">
-      <span class="normal">
-        public 
-         
-         
-         
-         
-        boolean
-      </span>
-      <span class="sympad">equals</span>
-      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Object.html">Object</a> obj)</span>
-    </h4>
-      <div class="api-level">
-        <div>
-
-</div>
-        
-  
-
-      </div>
-    <div class="jd-details-descr">
-      
-  <div class="jd-tagdata jd-tagdescr"><p>Compares this object against the specified object.</p></div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Returns</h5>
-      <ul class="nolist"><li><code>true</code> if the objects are the same,
-         <code>false</code> otherwise.
-</li></ul>
-  </div>
-
-    </div>
-</div>
-
-
-<A NAME="get(java.lang.String)"></A>
+<A NAME="valueOf(java.lang.String)"></A>
 
 <div class="jd-details api apilevel-"> 
     <h4 class="jd-details-title">
@@ -916,8 +1169,8 @@ From class
          
         <a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType</a>
       </span>
-      <span class="sympad">get</span>
-      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> s)</span>
+      <span class="sympad">valueOf</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name)</span>
     </h4>
       <div class="api-level">
         <div>
@@ -929,39 +1182,25 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Returns a <code>DataSourceType</code> with the given name.</p></div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Parameters</h5>
-      <table class="jd-tagtable">
-        <tr>
-          <th>s</td>
-          <td>name of the <code>DataSourceType</code> required.</td>
-        </tr>
-      </table>
-  </div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Returns</h5>
-      <ul class="nolist"><li>a <code>DataSourceType</code> with the given name.
-</li></ul>
-  </div>
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     </div>
 </div>
 
 
-<A NAME="toString()"></A>
+<A NAME="values()"></A>
 
 <div class="jd-details api apilevel-"> 
     <h4 class="jd-details-title">
       <span class="normal">
         public 
+        static 
+        final 
          
          
-         
-         
-        <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a>
+        <a href="../../../../org/rrd4j/core/jrrd/DataSourceType.html">DataSourceType[]</a>
       </span>
-      <span class="sympad">toString</span>
+      <span class="sympad">values</span>
       <span class="normal">()</span>
     </h4>
       <div class="api-level">
@@ -974,12 +1213,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Returns a string representation of this object.</p></div>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Returns</h5>
-      <ul class="nolist"><li>a string representation of this object.
-</li></ul>
-  </div>
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
 
     </div>
 </div>
@@ -1006,7 +1240,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

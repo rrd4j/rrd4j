@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../", "../../../../assets/");
 </script>
-<script src="../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="selected api apilevel-">
   <a href="../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -182,8 +184,6 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchData.html">FetchData</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/FetchRequest.html">FetchRequest</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/Header.html">Header</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinArray.html">RobinArray</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RobinMatrix.html">RobinMatrix</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackend.html">RrdBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBackendFactory.html">RrdBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdBerkeleyDbBackend.html">RrdBerkeleyDbBackend</a></li>
@@ -191,16 +191,18 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdByteArrayBackend.html">RrdByteArrayBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDb.html">RrdDb</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPool.html">RrdDbPool</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolNew.html">RrdDbPoolNew</a></li>
-          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDbPoolOld.html">RrdDbPoolOld</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDef.html">RrdDef</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdDefTemplate.html">RrdDefTemplate</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackend.html">RrdFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdFileBackendFactory.html">RrdFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackend.html">RrdMemoryBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMemoryBackendFactory.html">RrdMemoryBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackend.html">RrdMongoDBBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdMongoDBBackendFactory.html">RrdMongoDBBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackend.html">RrdNioBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdNioBackendFactory.html">RrdNioBackendFactory</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackend.html">RrdRandomAccessFileBackend</a></li>
+          <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdRandomAccessFileBackendFactory.html">RrdRandomAccessFileBackendFactory</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackend.html">RrdSafeFileBackend</a></li>
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/RrdSafeFileBackendFactory.html">RrdSafeFileBackendFactory</a></li>
           <li class="selected api apilevel-"><a href="../../../org/rrd4j/core/RrdToolkit.html">RrdToolkit</a></li>
@@ -211,6 +213,7 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/core/XmlWriter.html">XmlWriter</a></li>
       </ul>
     </li>
+              
               
               
               
@@ -260,6 +263,7 @@
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -521,6 +525,42 @@ Summary:
         <span class="sympad"><a href="../../../org/rrd4j/core/RrdToolkit.html#addDatasource(java.lang.String, org.rrd4j.core.DsDef, boolean)">addDatasource</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> sourcePath, <a href="../../../org/rrd4j/core/DsDef.html">DsDef</a> newDatasource, boolean saveBackup)</nobr>
         
         <div class="jd-descrdiv"><p>Adds one more datasource to a RRD file.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            static
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdToolkit.html#addDatasources(java.lang.String, java.lang.Iterable<org.rrd4j.core.DsDef>, boolean)">addDatasources</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> sourcePath, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Iterable.html">Iterable</a>&lt;<a href="../../../org/rrd4j/core/DsDef.html">DsDef</a>&gt; newDatasources, boolean saveBackup)</nobr>
+        
+        <div class="jd-descrdiv"><p>Adds datasources to a RRD file.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            static
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/core/RrdToolkit.html#addDatasources(java.lang.String, java.lang.String, java.lang.Iterable<org.rrd4j.core.DsDef>)">addDatasources</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> sourcePath, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> destPath, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Iterable.html">Iterable</a>&lt;<a href="../../../org/rrd4j/core/DsDef.html">DsDef</a>&gt; newDatasources)</nobr>
+        
+        <div class="jd-descrdiv">Creates a new RRD file with one more datasource in it.</div>
   
   </td></tr>
 
@@ -1198,7 +1238,7 @@ From class
     <div class="jd-details-descr">
       
   <div class="jd-tagdata jd-tagdescr"><p><p>Adds one more archive to a RRD file.</p>
- <p>WARNING: This method is potentialy dangerous! It will modify your RRD file.
+ <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
  It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
  should be set to <code>true</code>). The backup file will be created in the same
  directory as the original one with <code>.bak</code> extension added to the
@@ -1346,6 +1386,132 @@ From class
           <th>saveBackup</td>
           <td>true, if backup of the original file should be created;
                       false, otherwise</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Throws</h5>
+      <table class="jd-tagtable">  
+        <tr>
+            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/IOException.html">IOException</a></td>
+            <td>Thrown in case of I/O error
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="addDatasources(java.lang.String, java.lang.Iterable<org.rrd4j.core.DsDef>, boolean)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+        static 
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">addDatasources</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> sourcePath, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Iterable.html">Iterable</a>&lt;<a href="../../../org/rrd4j/core/DsDef.html">DsDef</a>&gt; newDatasources, boolean saveBackup)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p><p>Adds datasources to a RRD file.</p>
+ <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
+ It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
+ should be set to <code>true</code>). The backup file will be created in the same
+ directory as the original one with <code>.bak</code> extension added to the
+ original name.</p>
+ <p>Before applying this method, be sure that the specified RRD file is not in use
+ (not open)</p></p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>sourcePath</td>
+          <td>path to a RRD file to add datasource to.</td>
+        </tr>
+        <tr>
+          <th>newDatasources</td>
+          <td>Datasource definitions to be added to the RRD file</td>
+        </tr>
+        <tr>
+          <th>saveBackup</td>
+          <td>true, if backup of the original file should be created;
+                      false, otherwise</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Throws</h5>
+      <table class="jd-tagtable">  
+        <tr>
+            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/io/IOException.html">IOException</a></td>
+            <td>Thrown in case of I/O error
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="addDatasources(java.lang.String, java.lang.String, java.lang.Iterable<org.rrd4j.core.DsDef>)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+        static 
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">addDatasources</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> sourcePath, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> destPath, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/Iterable.html">Iterable</a>&lt;<a href="../../../org/rrd4j/core/DsDef.html">DsDef</a>&gt; newDatasources)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Creates a new RRD file with one more datasource in it. RRD file is created based on the
+ existing one (the original RRD file is not modified at all). All data from
+ the original RRD file is copied to the new one.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>sourcePath</td>
+          <td>path to a RRD file to import data from (will not be modified)</td>
+        </tr>
+        <tr>
+          <th>destPath</td>
+          <td>path to a new RRD file (will be created)</td>
+        </tr>
+        <tr>
+          <th>newDatasources</td>
+          <td>Datasource definitions to be added to the new RRD file</td>
         </tr>
       </table>
   </div>
@@ -1579,7 +1745,7 @@ From class
     <div class="jd-details-descr">
       
   <div class="jd-tagdata jd-tagdescr"><p><p>Removes one archive from a RRD file.</p>
- <p>WARNING: This method is potentialy dangerous! It will modify your RRD file.
+ <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
  It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
  should be set to <code>true</code>). The backup file will be created in the same
  directory as the original one with <code>.bak</code> extension added to the
@@ -1709,7 +1875,7 @@ From class
     <div class="jd-details-descr">
       
   <div class="jd-tagdata jd-tagdescr"><p><p>Removes single datasource from a RRD file.</p>
- <p>WARNING: This method is potentialy dangerous! It will modify your RRD file.
+ <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
  It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
  should be set to <code>true</code>). The backup file will be created in the same
  directory as the original one with <code>.bak</code> extension added to the
@@ -1982,7 +2148,7 @@ From class
         </tr>
         <tr>
           <th>steps</td>
-          <td>Number of sptes of the target archive</td>
+          <td>Number of steps of the target archive</td>
         </tr>
         <tr>
           <th>newXff</td>
@@ -2036,7 +2202,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>sourcePath</td>
-          <td>Path to exisiting RRD file (will be updated)</td>
+          <td>Path to existing RRD file (will be updated)</td>
         </tr>
         <tr>
           <th>datasourceName</td>
@@ -2094,7 +2260,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>sourcePath</td>
-          <td>Path to exisiting RRD file (will be updated)</td>
+          <td>Path to existing RRD file (will be updated)</td>
         </tr>
         <tr>
           <th>dsIndex</td>
@@ -2152,7 +2318,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>sourcePath</td>
-          <td>Path to exisiting RRD file (will be updated)</td>
+          <td>Path to existing RRD file (will be updated)</td>
         </tr>
         <tr>
           <th>datasourceName</td>
@@ -2215,7 +2381,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>sourcePath</td>
-          <td>Path to exisiting RRD file (will be updated)</td>
+          <td>Path to existing RRD file (will be updated)</td>
         </tr>
         <tr>
           <th>datasourceName</td>
@@ -2282,7 +2448,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>sourcePath</td>
-          <td>Path to exisiting RRD file (will be updated)</td>
+          <td>Path to existing RRD file (will be updated)</td>
         </tr>
         <tr>
           <th>datasourceName</td>
@@ -2389,7 +2555,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

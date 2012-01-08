@@ -48,10 +48,12 @@
 
 
 
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation for RRD4J Documentation." />
+
 <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico" />
 <title>
 
@@ -61,16 +63,16 @@
 | RRD4J Documentation
 
 </title>
-<link href="../../../../assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
 <link href="../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
 <script src="../../../../assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="../../../../assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
 <script src="../../../../assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("../../../", "../../../../assets/");
 </script>
-<script src="../../../../assets/android-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
 <script src="../../../../assets/navtree_data.js" type="text/javascript"></script>
 <script src="../../../../assets/customizations.js" type="text/javascript"></script>
 <noscript>
@@ -145,7 +147,7 @@
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/package-summary.html">org.rrd4j</a></li>
     <li class="api apilevel-">
-  <a href="../../../org/rrd4j/convertor/package-summary.html">org.rrd4j.convertor</a></li>
+  <a href="../../../org/rrd4j/converter/package-summary.html">org.rrd4j.converter</a></li>
     <li class="api apilevel-">
   <a href="../../../org/rrd4j/core/package-summary.html">org.rrd4j.core</a></li>
     <li class="api apilevel-">
@@ -181,6 +183,7 @@
           <li class="api apilevel-"><a href="../../../org/rrd4j/graph/RrdGraphInfo.html">RrdGraphInfo</a></li>
       </ul>
     </li>
+              
               
               
               
@@ -233,10 +236,13 @@
    
   
   
+   
+  
   
 
 
 <div class="sum-details-links">
+
 
 Summary:
 
@@ -249,6 +255,9 @@ Summary:
   
 
 
+
+  &#124; <a href="#inhfields">Inherited Fields</a>
+  
 
 
   &#124; <a href="#pubctors">Ctors</a>
@@ -523,28 +532,20 @@ Summary:
     
     
     <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String[]</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#COLOR_NAMES">COLOR_NAMES</a></td>
-        <td class="jd-descrcol" width="100%">Allowed color names which can be used in <code><a href="../../../org/rrd4j/graph/RrdGraphDef.html#setColor(java.lang.String, java.awt.Paint)">setColor(String, java.awt.Paint)</a></code> method
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#COLOR_SHADEA">COLOR_SHADEA</a></td>
         <td class="jd-descrcol" width="100%">Index of the top-left graph shade color.</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#COLOR_SHADEB">COLOR_SHADEB</a></td>
         <td class="jd-descrcol" width="100%">Index of the bottom-right graph shade color.</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DAY">DAY</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent day
@@ -552,34 +553,10 @@ Summary:
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_ARROW_COLOR">DEFAULT_ARROW_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default arrow color
-</td>
-    </tr>
-    
-    
     <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_BACK_COLOR">DEFAULT_BACK_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default graph background color
-</td>
-    </tr>
-    
-    
-    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">double</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_BASE">DEFAULT_BASE</a></td>
         <td class="jd-descrcol" width="100%">Default value base
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_CANVAS_COLOR">DEFAULT_CANVAS_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default graph canvas color
 </td>
     </tr>
     
@@ -593,30 +570,6 @@ Summary:
     
     
     <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_FONT_COLOR">DEFAULT_FONT_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default font color
-</td>
-    </tr>
-    
-    
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_FRAME_COLOR">DEFAULT_FRAME_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default frame color
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_GRID_COLOR">DEFAULT_GRID_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default minor grid color
-</td>
-    </tr>
-    
-    
-    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_HEIGHT">DEFAULT_HEIGHT</a></td>
         <td class="jd-descrcol" width="100%">Default graph height
@@ -624,7 +577,7 @@ Summary:
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_IMAGE_FORMAT">DEFAULT_IMAGE_FORMAT</a></td>
         <td class="jd-descrcol" width="100%">Default image format
@@ -632,50 +585,10 @@ Summary:
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol">float</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_IMAGE_QUALITY">DEFAULT_IMAGE_QUALITY</a></td>
         <td class="jd-descrcol" width="100%">Default image quality, used only for jpeg graphs
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Font.html">Font</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_LARGE_FONT">DEFAULT_LARGE_FONT</a></td>
-        <td class="jd-descrcol" width="100%">Default graph large font
-</td>
-    </tr>
-    
-    
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_MGRID_COLOR">DEFAULT_MGRID_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default major grid color
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_SHADEA_COLOR">DEFAULT_SHADEA_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default top-left graph shade color
-</td>
-    </tr>
-    
-    
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_SHADEB_COLOR">DEFAULT_SHADEB_COLOR</a></td>
-        <td class="jd-descrcol" width="100%">Default bottom-right graph shade color
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Font.html">Font</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_SMALL_FONT">DEFAULT_SMALL_FONT</a></td>
-        <td class="jd-descrcol" width="100%">Default graph small font
 </td>
     </tr>
     
@@ -706,24 +619,8 @@ Summary:
     
     <tr class=" api apilevel-" >
         <td class="jd-typecol">int</td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#FIRST_DAY_OF_WEEK">FIRST_DAY_OF_WEEK</a></td>
-        <td class="jd-descrcol" width="100%">Default first day of the week (obtained from the default locale)
-</td>
-    </tr>
-    
-    
-    <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#FRIDAY">FRIDAY</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent Friday
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Font.html">Font</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#GATOR_FONT">GATOR_FONT</a></td>
-        <td class="jd-descrcol" width="100%">Font for the Gator
 </td>
     </tr>
     
@@ -737,14 +634,6 @@ Summary:
     
     
     <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Stroke.html">Stroke</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#GRID_STROKE">GRID_STROKE</a></td>
-        <td class="jd-descrcol" width="100%">Stroke used to draw grid
-</td>
-    </tr>
-    
-    
-    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#HOUR">HOUR</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent hour
@@ -752,7 +641,7 @@ Summary:
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#IN_MEMORY_IMAGE">IN_MEMORY_IMAGE</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent in-memory image name
@@ -760,7 +649,7 @@ Summary:
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol">double</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#LEGEND_BOX">LEGEND_BOX</a></td>
         <td class="jd-descrcol" width="100%">Used internally
@@ -768,7 +657,7 @@ Summary:
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">double</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#LEGEND_BOX_SPACE">LEGEND_BOX_SPACE</a></td>
         <td class="jd-descrcol" width="100%">Used internally
@@ -776,7 +665,7 @@ Summary:
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#LEGEND_INTERSPACING">LEGEND_INTERSPACING</a></td>
         <td class="jd-descrcol" width="100%">Used internally
@@ -784,7 +673,7 @@ Summary:
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">double</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#LEGEND_LEADING">LEGEND_LEADING</a></td>
         <td class="jd-descrcol" width="100%">Used internally
@@ -792,17 +681,9 @@ Summary:
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol">double</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#LEGEND_LEADING_SMALL">LEGEND_LEADING_SMALL</a></td>
-        <td class="jd-descrcol" width="100%">Used internally
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String[]</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#MARKERS">MARKERS</a></td>
         <td class="jd-descrcol" width="100%">Used internally
 </td>
     </tr>
@@ -937,14 +818,6 @@ Summary:
     
     
     <tr class="alt-color api apilevel-" >
-        <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Stroke.html">Stroke</a></td>
-        <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#TICK_STROKE">TICK_STROKE</a></td>
-        <td class="jd-descrcol" width="100%">Stroke used to draw ticks
-</td>
-    </tr>
-    
-    
-    <tr class=" api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#TUESDAY">TUESDAY</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent Tuesday
@@ -952,7 +825,7 @@ Summary:
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a></td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#VERTICAL_SPACING_MARKER">VERTICAL_SPACING_MARKER</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent vertical spacing marker
@@ -960,7 +833,7 @@ Summary:
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#WEDNESDAY">WEDNESDAY</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent Wednesday
@@ -968,7 +841,7 @@ Summary:
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#WEEK">WEEK</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent week
@@ -976,7 +849,7 @@ Summary:
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol">int</td>
         <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#YEAR">YEAR</a></td>
         <td class="jd-descrcol" width="100%">Constant to represent year
@@ -996,6 +869,244 @@ Summary:
 
 
 
+
+
+<!-- =========== FIELD SUMMARY =========== -->
+<table id="inhfields" class="jd-sumtable"><tr><th>
+  <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
+  <div style="clear:left;">Inherited Fields</div></th></tr>
+
+
+
+
+<tr class="api apilevel-" >
+<td colspan="12">
+
+  <a href="#" onclick="return toggleInherited(this, null)" id="inherited-fields-org.rrd4j.graph.RrdGraphConstants" class="jd-expando-trigger closed"
+          ><img id="inherited-fields-org.rrd4j.graph.RrdGraphConstants-trigger"
+          src="../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>From interface
+<a href="../../../org/rrd4j/graph/RrdGraphConstants.html">org.rrd4j.graph.RrdGraphConstants</a>
+<div id="inherited-fields-org.rrd4j.graph.RrdGraphConstants">
+  <div id="inherited-fields-org.rrd4j.graph.RrdGraphConstants-list"
+        class="jd-inheritedlinks">
+  </div>
+  <div id="inherited-fields-org.rrd4j.graph.RrdGraphConstants-summary" style="display: none;">
+    <table class="jd-sumtable-expando">
+    
+
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String[]</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#COLOR_NAMES">COLOR_NAMES</a></td>
+          <td class="jd-descrcol" width="100%">Allowed color names which can be used in <code><a href="../../../org/rrd4j/graph/RrdGraphDef.html#setColor(java.lang.String, java.awt.Paint)">setColor(String, java.awt.Paint)</a></code> method
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_ARROW_COLOR">DEFAULT_ARROW_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default arrow color
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_BACK_COLOR">DEFAULT_BACK_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default graph background color
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_CANVAS_COLOR">DEFAULT_CANVAS_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default graph canvas color
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_FONT_COLOR">DEFAULT_FONT_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default font color
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_FRAME_COLOR">DEFAULT_FRAME_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default frame color
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_GRID_COLOR">DEFAULT_GRID_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default minor grid color
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Font.html">Font</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_LARGE_FONT">DEFAULT_LARGE_FONT</a></td>
+          <td class="jd-descrcol" width="100%">Default graph large font
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_MGRID_COLOR">DEFAULT_MGRID_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default major grid color
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_SHADEA_COLOR">DEFAULT_SHADEA_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default top-left graph shade color
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Color.html">Color</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_SHADEB_COLOR">DEFAULT_SHADEB_COLOR</a></td>
+          <td class="jd-descrcol" width="100%">Default bottom-right graph shade color
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Font.html">Font</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#DEFAULT_SMALL_FONT">DEFAULT_SMALL_FONT</a></td>
+          <td class="jd-descrcol" width="100%">Default graph small font
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          int</nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#FIRST_DAY_OF_WEEK">FIRST_DAY_OF_WEEK</a></td>
+          <td class="jd-descrcol" width="100%">Default first day of the week (obtained from the default locale)
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Font.html">Font</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#GATOR_FONT">GATOR_FONT</a></td>
+          <td class="jd-descrcol" width="100%">Font for the Gator
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Stroke.html">Stroke</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#GRID_STROKE">GRID_STROKE</a></td>
+          <td class="jd-descrcol" width="100%">Stroke used to draw grid
+</td>
+      </tr>
+      
+    
+      <tr class=" api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String[]</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#MARKERS">MARKERS</a></td>
+          <td class="jd-descrcol" width="100%">Used internally
+</td>
+      </tr>
+      
+    
+      <tr class="alt-color api apilevel-" >
+          <td class="jd-typecol"><nobr>
+          public
+          static
+          final
+          <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Stroke.html">Stroke</a></nobr></td>
+          <td class="jd-linkcol"><a href="../../../org/rrd4j/graph/RrdGraphConstants.html#TICK_STROKE">TICK_STROKE</a></td>
+          <td class="jd-descrcol" width="100%">Stroke used to draw ticks
+</td>
+      </tr>
+      
+    
+</table>
+  </div>
+</div>
+</td></tr>
+
+
+</table>
 
 
 
@@ -1067,9 +1178,10 @@ Summary:
             void</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#comment(java.lang.String)">comment</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> text)</nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#area(java.lang.String, java.awt.Paint)">area</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</nobr>
         
-        <div class="jd-descrdiv">Comment to be printed on the graph.</div>
+        <div class="jd-descrdiv">Plots requested data in the form of the filled area starting from zero, using
+ the color specified.</div>
   
   </td></tr>
 
@@ -1085,15 +1197,33 @@ Summary:
             void</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#datasource(java.lang.String, java.lang.String, org.rrd4j.ConsolFun)">datasource</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> defName, <a href="../../../org/rrd4j/ConsolFun.html">ConsolFun</a> consolFun)</nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#comment(java.lang.String)">comment</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> text)</nobr>
         
-        <div class="jd-descrdiv">Creates a new (static) virtual datasouce.</div>
+        <div class="jd-descrdiv">Comment to be printed on the graph.</div>
   
   </td></tr>
 
 
 	 
     <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#datasource(java.lang.String, java.lang.String, org.rrd4j.ConsolFun)">datasource</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> defName, <a href="../../../org/rrd4j/ConsolFun.html">ConsolFun</a> consolFun)</nobr>
+        
+        <div class="jd-descrdiv">Creates a new (static) virtual datasource.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1111,7 +1241,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1130,7 +1260,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1148,7 +1278,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1161,6 +1291,24 @@ Summary:
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#datasource(java.lang.String, org.rrd4j.data.Plottable)">datasource</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="../../../org/rrd4j/data/Plottable.html">Plottable</a> plottable)</nobr>
         
         <div class="jd-descrdiv">Creates a new (plottable) datasource.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#datasource(java.lang.String, org.rrd4j.core.FetchData)">datasource</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="../../../org/rrd4j/core/FetchData.html">FetchData</a> fetchData)</nobr>
+        
+        <div class="jd-descrdiv">Creates a new 'fetched' datasource.</div>
   
   </td></tr>
 
@@ -1197,7 +1345,7 @@ Summary:
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#hrule(double, java.awt.Paint, java.lang.String)">hrule</a></span>(double value, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> legend)</nobr>
         
-        <div class="jd-descrdiv">Draws a horizontal rule into the graph and optionally adds a legend</div>
+        <div class="jd-descrdiv">Draws a horizontal rule into the graph and optionally adds a legend.</div>
   
   </td></tr>
 
@@ -1213,9 +1361,9 @@ Summary:
             void</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#hrule(double, java.awt.Paint, java.lang.String, float)">hrule</a></span>(double value, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> legend, float width)</nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#hrule(double, java.awt.Paint)">hrule</a></span>(double value, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</nobr>
         
-        <div class="jd-descrdiv">Draws a horizontal rule into the graph and optionally adds a legend</div>
+        <div class="jd-descrdiv">Draws a horizontal rule into the graph.</div>
   
   </td></tr>
 
@@ -1231,7 +1379,43 @@ Summary:
             void</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#hrule(double, java.awt.Paint, java.lang.String, float)">hrule</a></span>(double value, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> legend, float width)</nobr>
+        
+        <div class="jd-descrdiv">Draws a horizontal rule into the graph and optionally adds a legend.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#line(java.lang.String, java.awt.Paint, java.lang.String, float)">line</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> legend, float width)</nobr>
+        
+        <div class="jd-descrdiv">Plots requested data as a line, using the color and the line width specified.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#line(java.lang.String, java.awt.Paint, float)">line</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color, float width)</nobr>
         
         <div class="jd-descrdiv">Plots requested data as a line, using the color and the line width specified.</div>
   
@@ -1267,6 +1451,60 @@ Summary:
             void</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#line(java.lang.String, java.awt.Paint)">line</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</nobr>
+        
+        <div class="jd-descrdiv">Plots requested data as a line, using the color specified.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#percentile(java.lang.String, java.lang.String)">percentile</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> defName)</nobr>
+        
+        <div class="jd-descrdiv">Create a new virtual datasource to get the 95th percentile value from another datasource</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#percentile(java.lang.String, java.lang.String, double)">percentile</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> defName, double percent)</nobr>
+        
+        <div class="jd-descrdiv">Create a new virtual datasource to get a percentile value from another datasource</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#print(java.lang.String, org.rrd4j.ConsolFun, java.lang.String)">print</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="../../../org/rrd4j/ConsolFun.html">ConsolFun</a> consolFun, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> format)</nobr>
         
         <div class="jd-descrdiv">Calculates the chosen consolidation function CF over the given datasource
@@ -1276,7 +1514,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1295,7 +1533,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1314,7 +1552,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1332,7 +1570,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1350,7 +1588,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1368,7 +1606,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1386,7 +1624,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1404,7 +1642,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1422,7 +1660,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1440,7 +1678,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1458,7 +1696,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1476,7 +1714,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1494,7 +1732,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1512,7 +1750,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1530,7 +1768,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1549,7 +1787,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1567,7 +1805,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1585,7 +1823,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1603,7 +1841,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1621,7 +1859,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1634,13 +1872,13 @@ Summary:
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#setInterlaced(boolean)">setInterlaced</a></span>(boolean interlaced)</nobr>
         
         <div class="jd-descrdiv">Creates interlaced GIF image (currently not supported,
- method is present only for RRDTool comaptibility).</div>
+ method is present only for RRDTool compatibility).</div>
   
   </td></tr>
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1658,7 +1896,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1676,7 +1914,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1694,7 +1932,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1713,7 +1951,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1731,7 +1969,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1749,7 +1987,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1767,7 +2005,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1779,13 +2017,13 @@ Summary:
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#setOnlyGraph(boolean)">setOnlyGraph</a></span>(boolean onlyGraph)</nobr>
         
-        <div class="jd-descrdiv">Suppresses anything but the graph, works only for height < 64.</div>
+        <div class="jd-descrdiv">Suppresses anything but the graph.</div>
   
   </td></tr>
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1803,7 +2041,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1821,7 +2059,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1839,7 +2077,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1857,7 +2095,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1875,7 +2113,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1893,7 +2131,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1911,7 +2149,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1929,7 +2167,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1947,7 +2185,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1965,7 +2203,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -1983,7 +2221,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2001,7 +2239,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2019,7 +2257,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2037,7 +2275,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2056,7 +2294,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2074,7 +2312,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2092,7 +2330,7 @@ Summary:
 
 
 	 
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2105,6 +2343,26 @@ Summary:
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#setWidth(int)">setWidth</a></span>(int width)</nobr>
         
         <div class="jd-descrdiv">Sets width of the drawing area within the graph.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#stack(java.lang.String, java.awt.Paint)">stack</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</nobr>
+        
+        <div class="jd-descrdiv">Does the same as <code><a href="../../../org/rrd4j/graph/RrdGraphDef.html#line(java.lang.String, java.awt.Paint)">line(String, java.awt.Paint)</a></code>,
+ but the graph gets stacked on top of the
+ previous LINE, AREA or STACK graph.</div>
   
   </td></tr>
 
@@ -2140,6 +2398,24 @@ Summary:
             void</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#vrule(long, java.awt.Paint)">vrule</a></span>(long timestamp, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</nobr>
+        
+        <div class="jd-descrdiv">Draws a vertical rule into the graph.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            void</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../org/rrd4j/graph/RrdGraphDef.html#vrule(long, java.awt.Paint, java.lang.String)">vrule</a></span>(long timestamp, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> legend)</nobr>
         
         <div class="jd-descrdiv">Draws a vertical rule into the graph and optionally adds a legend</div>
@@ -2148,7 +2424,7 @@ Summary:
 
 
 	 
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-typecol"><nobr>
             
             
@@ -2515,6 +2791,52 @@ From class
 </div>
 
 
+<A NAME="area(java.lang.String, java.awt.Paint)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">area</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Plots requested data in the form of the filled area starting from zero, using
+ the color specified.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>srcName</td>
+          <td>Virtual source name.</td>
+        </tr>
+        <tr>
+          <th>color</td>
+          <td>Color of the filled area.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
 <A NAME="comment(java.lang.String)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -2581,7 +2903,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Creates a new (static) virtual datasouce. The value of the datasource is constant. This value is
+  <div class="jd-tagdata jd-tagdescr"><p>Creates a new (static) virtual datasource. The value of the datasource is constant. This value is
  evaluated by applying the given consolidation function to another virtual datasource.</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
@@ -2812,6 +3134,52 @@ From class
 </div>
 
 
+<A NAME="datasource(java.lang.String, org.rrd4j.core.FetchData)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">datasource</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="../../../org/rrd4j/core/FetchData.html">FetchData</a> fetchData)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Creates a new 'fetched' datasource. Datasource values are obtained from the
+ given <code><a href="../../../org/rrd4j/core/FetchData.html">FetchData</a></code> object.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>name</td>
+          <td>Source name.</td>
+        </tr>
+        <tr>
+          <th>fetchData</td>
+          <td>FetchData object.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
 <A NAME="gprint(java.lang.String, org.rrd4j.ConsolFun, java.lang.String)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -2887,7 +3255,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Draws a horizontal rule into the graph and optionally adds a legend</p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>Draws a horizontal rule into the graph and optionally adds a legend.</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
       <table class="jd-tagtable">
@@ -2902,6 +3270,51 @@ From class
         <tr>
           <th>legend</td>
           <td>Legend text. If null, legend text will be omitted.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="hrule(double, java.awt.Paint)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">hrule</span>
+      <span class="normal">(double value, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Draws a horizontal rule into the graph.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>value</td>
+          <td>Position of the rule</td>
+        </tr>
+        <tr>
+          <th>color</td>
+          <td>Rule color
 </td>
         </tr>
       </table>
@@ -2936,7 +3349,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Draws a horizontal rule into the graph and optionally adds a legend</p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>Draws a horizontal rule into the graph and optionally adds a legend.</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
       <table class="jd-tagtable">
@@ -3017,6 +3430,55 @@ From class
 </div>
 
 
+<A NAME="line(java.lang.String, java.awt.Paint, float)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">line</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color, float width)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Plots requested data as a line, using the color and the line width specified.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>srcName</td>
+          <td>Virtual source name</td>
+        </tr>
+        <tr>
+          <th>color</td>
+          <td>Line color</td>
+        </tr>
+        <tr>
+          <th>width</td>
+          <td>Line width (default: 1.0F)
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
 <A NAME="line(java.lang.String, java.awt.Paint, java.lang.String)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -3067,6 +3529,146 @@ From class
 </div>
 
 
+<A NAME="line(java.lang.String, java.awt.Paint)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">line</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Plots requested data as a line, using the color specified. Line width is assumed to be
+ 1.0F.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>srcName</td>
+          <td>Virtual source name</td>
+        </tr>
+        <tr>
+          <th>color</td>
+          <td>Line color
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="percentile(java.lang.String, java.lang.String)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">percentile</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> defName)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Create a new virtual datasource to get the 95th percentile value from another datasource</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>name</td>
+          <td>Source name.</td>
+        </tr>
+        <tr>
+          <th>defName</td>
+          <td>Other source name.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="percentile(java.lang.String, java.lang.String, double)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">percentile</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> name, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> defName, double percent)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Create a new virtual datasource to get a percentile value from another datasource</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>name</td>
+          <td>Source name.</td>
+        </tr>
+        <tr>
+          <th>defName</td>
+          <td>Other source name.</td>
+        </tr>
+        <tr>
+          <th>percent</td>
+          <td>The percent value
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
 <A NAME="print(java.lang.String, org.rrd4j.ConsolFun, java.lang.String)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -3099,14 +3701,13 @@ From class
  <p/>
  If an additional '%s' is found AFTER the marker, the value will be
  scaled and an appropriate SI magnitude unit will be printed in
- place of the '%s' marker. The scaling will take the '--base' argu-
- ment into consideration!
+ place of the '%s' marker. The scaling will take the '--base' argument into consideration!
  <p/>
  If a '%S' is used instead of a '%s', then instead of calculating
  the appropriate SI magnitude unit for this value, the previously
  calculated SI magnitude unit will be used.  This is useful if you
- want all the values in a print statement to have the same SI magni-
- tude unit.  If there was no previous SI magnitude calculation made,
+ want all the values in a print statement to have the same SI magnitude unit.
+ If there was no previous SI magnitude calculation made,
  then '%S' behaves like a '%s', unless the value is 0, in which case
  it does not remember a SI magnitude unit and a SI magnitude unit
  will only be calculated when the next '%s' is seen or the next '%S'
@@ -4011,7 +4612,7 @@ From class
     <div class="jd-details-descr">
       
   <div class="jd-tagdata jd-tagdescr"><p>Creates interlaced GIF image (currently not supported,
- method is present only for RRDTool comaptibility).</p></div>
+ method is present only for RRDTool compatibility).</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
       <table class="jd-tagtable">
@@ -4099,7 +4700,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>lazy</td>
-          <td>true, if graph should be 'lazy', false otherwise (defualt)
+          <td>true, if graph should be 'lazy', false otherwise (default)
 </td>
         </tr>
       </table>
@@ -4347,7 +4948,7 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p>Suppresses anything but the graph, works only for height < 64.</p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>Suppresses anything but the graph.</p></div>
   <div class="jd-tagdata">
       <h5 class="jd-tagtitle">Parameters</h5>
       <table class="jd-tagtable">
@@ -4481,7 +5082,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>rigid</td>
-          <td>true if uper and lower limits should not be expanded to accomodate
+          <td>true if upper and lower limits should not be expanded to accommodate
               values outside of the specified range. False otherwise (default).
 </td>
         </tr>
@@ -4565,7 +5166,7 @@ From class
       <table class="jd-tagtable">
         <tr>
           <th>smallFont</td>
-          <td>Default font for graphing. Use only monospaced fonths.
+          <td>Default font for graphing. Use only monospaced fonts.
 </td>
         </tr>
       </table>
@@ -5002,10 +5603,10 @@ From class
  values will be scaled to the appropriate units (k, M, etc.). However
  you may wish to display units always in k (Kilo, 10e3) even if
  the data is in the M (Mega, 10e6) range for instance.  Value should
- be an integer which is a multiple of 3 between -18 and 18, inclu-
- sive. It is the exponent on the units you which to use.  For example,
- use 3 to display the y-axis values in k (Kilo, 10e3, thou-
- sands), use -6 to display the y-axis values in u (Micro, 10e-6,
+ be an integer which is a multiple of 3 between -18 and 18, inclusive.
+ It is the exponent on the units you which to use.  For example,
+ use 3 to display the y-axis values in k (Kilo, 10e3, thousands),
+ use -6 to display the y-axis values in µ (Micro, 10e-6,
  millionths). Use a value of 0 to prevent any scaling of the y-axis
  values.</p></div>
 
@@ -5188,6 +5789,69 @@ From class
 </div>
 
 
+<A NAME="stack(java.lang.String, java.awt.Paint)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">stack</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/String.html">String</a> srcName, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Does the same as <code><a href="../../../org/rrd4j/graph/RrdGraphDef.html#line(java.lang.String, java.awt.Paint)">line(String, java.awt.Paint)</a></code>,
+ but the graph gets stacked on top of the
+ previous LINE, AREA or STACK graph. Depending on the type of the
+ previous graph, the STACK will be either a LINE or an AREA.  This
+ obviously implies that the first STACK must be preceded by an AREA
+ or LINE.
+ <p/>
+ Note, that when you STACK onto *UNKNOWN* data, Rrd4j will not
+ draw any graphics ... *UNKNOWN* is not zero.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>srcName</td>
+          <td>Virtual source name</td>
+        </tr>
+        <tr>
+          <th>color</td>
+          <td>Stacked graph color</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Throws</h5>
+      <table class="jd-tagtable">  
+        <tr>
+            <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/IllegalArgumentException.html">IllegalArgumentException</a></td>
+            <td>Thrown if this STACK has no previously defined AREA, STACK or LINE
+                                  graph bellow it.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
 <A NAME="stack(java.lang.String, java.awt.Paint, java.lang.String)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -5246,6 +5910,51 @@ From class
             <th><a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/IllegalArgumentException.html">IllegalArgumentException</a></td>
             <td>Thrown if this STACK has no previously defined AREA, STACK or LINE
                                   graph bellow it.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="vrule(long, java.awt.Paint)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">vrule</span>
+      <span class="normal">(long timestamp, <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/awt/Paint.html">Paint</a> color)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Draws a vertical rule into the graph.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>timestamp</td>
+          <td>Position of the rule (seconds since epoch)</td>
+        </tr>
+        <tr>
+          <th>color</td>
+          <td>Rule color
 </td>
         </tr>
       </table>
@@ -5378,7 +6087,7 @@ Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
 </div> <!-- end body-content --> 
 
 <script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
+init(); /* initialize doclava-developer-docs.js */
 </script>
 
 </body>

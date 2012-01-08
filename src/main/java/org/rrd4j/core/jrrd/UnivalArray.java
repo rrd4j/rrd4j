@@ -10,10 +10,18 @@ import java.nio.ByteOrder;
  * @author Fabrice Bacchella <fbacchella@spamcop.net>
  *
  */
-public class UnivalArray {
-    private ByteBuffer buffer;
+class UnivalArray {
+    private final ByteBuffer buffer;
+    private final int sizeoflong;
 
+    /**
+     * Read an UnivalArray from a rrd native file at the current position
+     * @param file the RRdFile
+     * @param size the numer of elements in the array
+     * @throws IOException
+     */
     public UnivalArray(RRDFile file, int size) throws IOException {
+        sizeoflong = file.getBits();
         buffer = ByteBuffer.allocate(size * 8);
         if(file.isBigEndian())
             buffer.order(ByteOrder.BIG_ENDIAN);
@@ -21,10 +29,13 @@ public class UnivalArray {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
         file.read(buffer);
     }
-    
+
     public long getLong(Enum<?> e) {
         buffer.position(8 * e.ordinal());
-        return buffer.getLong();
+        if(sizeoflong == 64)
+            return buffer.getLong();
+        else
+            return buffer.getInt();
     }
 
     public double getDouble(Enum<?> e) {

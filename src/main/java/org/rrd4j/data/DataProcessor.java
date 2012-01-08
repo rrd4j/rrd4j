@@ -197,7 +197,7 @@ public class DataProcessor {
      * when this method is called internally by this DataProcessor. If this method is never called, fetch
      * request resolution defaults to 1 (smallest possible archive step will be chosen automatically).
      *
-     * @param fetchRequestResolution Desired archive step (fetch resoltuion) in seconds.
+     * @param fetchRequestResolution Desired archive step (fetch resolution) in seconds.
      */
     public void setFetchRequestResolution(long fetchRequestResolution) {
         this.fetchRequestResolution = fetchRequestResolution;
@@ -413,7 +413,7 @@ public class DataProcessor {
      * rrdgraph man page</a>.</p>
      *
      * @param name          source name.
-     * @param rpnExpression RPN expression containig comma (or space) delimited simple and complex
+     * @param rpnExpression RPN expression containing comma (or space) delimited simple and complex
      *                      source names, RPN constants, functions and operators.
      */
     public void addDatasource(String name, String rpnExpression) {
@@ -603,7 +603,7 @@ public class DataProcessor {
     }
 
     /**
-     * Dumps timestamps and values of all datasources in a tabelar form. Very useful for debugging.
+     * Dumps timestamps and values of all datasources in a tabular form. Very useful for debugging.
      *
      * @return Dumped object content.
      */

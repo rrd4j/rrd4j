@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -21,14 +20,14 @@ public class Archive {
 
     static private enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha};
 
-    RRDatabase db;
-    long offset;
+    final RRDatabase db;
+    final long offset;
     long dataOffset;
     long size;
-    ConsolidationFunctionType type;
-    int rowCount;
-    int pdpCount;
-    double xff;
+    final ConsolidationFunctionType type;
+    final int rowCount;
+    final int pdpCount;
+    final double xff;
     List<CDPStatusBlock> cdpStatusBlocks;
     int currentRow;
 
@@ -42,9 +41,17 @@ public class Archive {
 
         offset = file.getFilePointer();
         type = ConsolidationFunctionType.valueOf(file.readString(Constants.CF_NAM_SIZE).toUpperCase());
-        file.align();
-        rowCount = file.readInt();
-        pdpCount = file.readInt();
+        if(file.getBits() == 32) {
+            rowCount = file.readInt();
+            pdpCount = file.readInt();
+            file.align();
+        }
+        //64 bits
+        else {
+            file.align();
+            rowCount = file.readLong();
+            pdpCount = file.readLong();
+        }
 
         UnivalArray par = file.getUnivalArray(10);
         xff = par.getDouble(rra_par_en.RRA_cdp_xff_val);
@@ -91,7 +98,7 @@ public class Archive {
     }
 
     void loadCurrentRow(RRDFile file) throws IOException {
-        currentRow = file.readInt();
+        currentRow = file.readLong();
     }
 
     void loadData(RRDFile file, int dsCount) throws IOException {
@@ -102,19 +109,7 @@ public class Archive {
         file.skipBytes(8 * rowCount * dsCount);
     }
 
-    DataChunk loadData(DataChunk chunk) throws IOException {
-
-        Calendar end = Calendar.getInstance();
-        Calendar start = (Calendar) end.clone();
-
-        start.add(Calendar.DATE, -1);
-
-        loadData(chunk, start.getTime().getTime() / 1000,
-                end.getTime().getTime() / 1000);
-        return chunk;
-    }
-
-    void loadData(DataChunk chunk, long startTime, long endTime)
+    void loadData(DataChunk chunk)
             throws IOException {
 
         long pointer;
@@ -126,7 +121,7 @@ public class Archive {
             pointer = currentRow + chunk.start + 1;
         }
 
-        db.rrdFile.ras.seek(dataOffset + (pointer * 8));
+        db.rrdFile.ras.seek(dataOffset + (chunk.dsCount * pointer * 8));
 
         double[][] data = chunk.data;
 
@@ -149,7 +144,7 @@ public class Archive {
                 if (pointer >= rowCount) {
                     pointer -= rowCount;
 
-                    db.rrdFile.ras.seek(dataOffset + (pointer * 8));
+                    db.rrdFile.ras.seek(dataOffset + (chunk.dsCount * pointer * 8));
                 }
 
                 for (int ii = 0; ii < chunk.dsCount; ii++) {
@@ -359,7 +354,7 @@ public class Archive {
         sb.append(", currentRow=");
         sb.append(currentRow);
         sb.append("]");
-        
+
         for(CDPStatusBlock cdp: cdpStatusBlocks) {
             sb.append("\n\t\t");
             sb.append(cdp.toString());

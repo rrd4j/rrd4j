@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * <p>Main class used to create and manipulate round robin databases (RRDs). Use this class to perform
- * update and fetch operations on exisiting RRDs, to create new RRD from
+ * update and fetch operations on existing RRDs, to create new RRD from
  * the definition (object of class {@link org.rrd4j.core.RrdDef RrdDef}) or
  * from XML file (dumped content of RRDTool's or Rrd4j's RRD file).</p>
  * <p/>
@@ -34,7 +34,7 @@ import java.util.Date;
  * <a href="../../../../man/rrdgraph.html" target="man">rrdgraph</a>.
  * For RRDTool's advanced graphing capabilities (RPN extensions), also supported in Rrd4j,
  * there is an excellent
- * <a href="http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/tutorial/cdeftutorial.html" target="man">CDEF tutorial</a>.
+ * <a href="http://oss.oetiker.ch/rrdtool/tut/cdeftutorial.en.html" target="man">CDEF tutorial</a>.
  * </p>
  *
  * @see RrdBackend
@@ -105,7 +105,7 @@ public class RrdDb implements RrdUpdater {
      * Constructor used to create new RRD object from the definition object but with a storage
      * (backend) different from default.
      *
-     * <p>Rrd4j uses <i>factories</i> to create RRD backend objecs. There are three different
+     * <p>Rrd4j uses <i>factories</i> to create RRD backend objects. There are three different
      * backend factories supplied with Rrd4j, and each factory has its unique name:</p>
      * <p/>
      * <ul>

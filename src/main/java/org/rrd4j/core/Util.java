@@ -144,7 +144,7 @@ public class Util {
 
     /**
      * Formats double as a string using exponential notation (RRDTool like). Used for debugging
-     * throught the project.
+     * through the project.
      *
      * @param x value to be formatted
      * @return string like "+1.234567E+02"

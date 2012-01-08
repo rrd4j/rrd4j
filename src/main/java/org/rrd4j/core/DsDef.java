@@ -8,7 +8,7 @@ import org.rrd4j.DsType;
  * <p/>
  * <ul>
  * <li>data source name
- * <li>data soruce type
+ * <li>data source type
  * <li>heartbeat
  * <li>minimal value
  * <li>maximal value

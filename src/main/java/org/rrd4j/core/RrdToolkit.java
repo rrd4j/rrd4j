@@ -148,7 +148,7 @@ public class RrdToolkit {
 
     /**
      * <p>Removes single datasource from a RRD file.</p>
-     * <p>WARNING: This method is potentialy dangerous! It will modify your RRD file.
+     * <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
      * It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
      * should be set to <code>true</code>). The backup file will be created in the same
      * directory as the original one with <code>.bak</code> extension added to the
@@ -260,7 +260,7 @@ public class RrdToolkit {
 
     /**
      * <p>Adds one more archive to a RRD file.</p>
-     * <p>WARNING: This method is potentialy dangerous! It will modify your RRD file.
+     * <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
      * It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
      * should be set to <code>true</code>). The backup file will be created in the same
      * directory as the original one with <code>.bak</code> extension added to the
@@ -314,7 +314,7 @@ public class RrdToolkit {
 
     /**
      * <p>Removes one archive from a RRD file.</p>
-     * <p>WARNING: This method is potentialy dangerous! It will modify your RRD file.
+     * <p>WARNING: This method is potentially dangerous! It will modify your RRD file.
      * It is highly recommended to preserve the original RRD file (<i>saveBackup</i>
      * should be set to <code>true</code>). The backup file will be created in the same
      * directory as the original one with <code>.bak</code> extension added to the
@@ -365,7 +365,7 @@ public class RrdToolkit {
     /**
      * Sets datasource heartbeat to a new value.
      *
-     * @param sourcePath     Path to exisiting RRD file (will be updated)
+     * @param sourcePath     Path to existing RRD file (will be updated)
      * @param datasourceName Name of the datasource in the specified RRD file
      * @param newHeartbeat   New datasource heartbeat
      * @throws IOException Thrown in case of I/O error
@@ -383,7 +383,7 @@ public class RrdToolkit {
     /**
      * Sets datasource heartbeat to a new value.
      *
-     * @param sourcePath   Path to exisiting RRD file (will be updated)
+     * @param sourcePath   Path to existing RRD file (will be updated)
      * @param dsIndex      Index of the datasource in the specified RRD file
      * @param newHeartbeat New datasource heartbeat
      * @throws IOException Thrown in case of I/O error
@@ -401,7 +401,7 @@ public class RrdToolkit {
     /**
      * Sets datasource min value to a new value
      *
-     * @param sourcePath           Path to exisiting RRD file (will be updated)
+     * @param sourcePath           Path to existing RRD file (will be updated)
      * @param datasourceName       Name of the datasource in the specified RRD file
      * @param newMinValue          New min value for the datasource
      * @param filterArchivedValues set to <code>true</code> if archived values less than
@@ -422,7 +422,7 @@ public class RrdToolkit {
     /**
      * Sets datasource max value to a new value.
      *
-     * @param sourcePath           Path to exisiting RRD file (will be updated)
+     * @param sourcePath           Path to existing RRD file (will be updated)
      * @param datasourceName       Name of the datasource in the specified RRD file
      * @param newMaxValue          New max value for the datasource
      * @param filterArchivedValues set to <code>true</code> if archived values greater than
@@ -443,7 +443,7 @@ public class RrdToolkit {
     /**
      * Updates valid value range for the given datasource.
      *
-     * @param sourcePath           Path to exisiting RRD file (will be updated)
+     * @param sourcePath           Path to existing RRD file (will be updated)
      * @param datasourceName       Name of the datasource in the specified RRD file
      * @param newMinValue          New min value for the datasource
      * @param newMaxValue          New max value for the datasource
@@ -468,7 +468,7 @@ public class RrdToolkit {
      *
      * @param sourcePath Path to existing RRD file (will be updated)
      * @param consolFun  Consolidation function of the target archive
-     * @param steps      Number of sptes of the target archive
+     * @param steps      Number of steps of the target archive
      * @param newXff     New X-files factor for the target archive
      * @throws IOException Thrown in case of I/O error
      */

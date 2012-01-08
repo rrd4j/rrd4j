@@ -9,7 +9,7 @@ import java.util.Map;
  * in a multithreaded environment. This class should be also used to prevent opening of
  * too many RRD files at the same time (thus avoiding operating system limits).
  */
-public class RrdDbPoolOld extends RrdDbPool {
+class RrdDbPoolOld extends RrdDbPool {
 
     private int capacity = INITIAL_CAPACITY;
     private Map<String, RrdEntry> rrdMap = new HashMap<String, RrdEntry>(INITIAL_CAPACITY);

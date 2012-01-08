@@ -42,9 +42,9 @@ public class Header implements Constants {
             throw new RuntimeException("This RRD was created on another architecture");
         }
 
-        dsCount = file.readInt();
-        rraCount = file.readInt();
-        pdpStep = file.readInt();
+        dsCount = file.readLong();
+        rraCount = file.readLong();
+        pdpStep = file.readLong();
 
         // Skip rest of stat_head_t.par
         file.align();

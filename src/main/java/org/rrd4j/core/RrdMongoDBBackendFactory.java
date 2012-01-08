@@ -11,7 +11,7 @@ import com.mongodb.MongoException;
 
 /**
  * {@link RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
- * MongoDB {#link DBCollection} and pass it via the constructor.
+ * MongoDB {@link com.mongodb.DBCollection} and pass it via the constructor.
  *
  * @author Mathias Bogaert
  */
@@ -19,10 +19,18 @@ import com.mongodb.MongoException;
 public class RrdMongoDBBackendFactory extends RrdBackendFactory {
     private DBCollection rrdCollection;
 
+    /**
+	 * Set the mongodb collection to use.
+     *
+     * Make sure that the passed {@link com.mongodb.DBCollection} has a safe write
+     * concern, is capped (if needed) and slaveOk() called if applicable.
+     *
+     * @param rrdCollection the collection to use for storing RRD byte data
+     */
     public void setDBCollection(DBCollection rrdCollection) {
         this.rrdCollection = rrdCollection;
     }
-    
+
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackendFactory#doStart()
      */

@@ -125,8 +125,8 @@ public class LinearInterpolator extends Plottable {
      * necessarily pass through all data points. The slope of the best-fit line will be chosen so that the
      * total square distance of real data points from from the best-fit line is at minimum.<p>
      *
-     * The full explanation of this inteprolation method can be found
-     * <a href="http://www.tufts.edu/~gdallal/slr.htm">here</a>.<p>
+     * The full explanation of this interpolation method can be found
+     * <a href="http://www.JerryDallal.com/LHSP/slr.htm">here</a>.<p>
      *
      * @param interpolationMethod Should be <code>INTERPOLATE_LEFT</code>,
      *                            <code>INTERPOLATE_RIGHT</code>, <code>INTERPOLATE_LINEAR</code> or
@@ -178,11 +178,11 @@ public class LinearInterpolator extends Plottable {
     }
 
     /**
-     * Method overriden from the base class. This method will be called by the framework. Call
+     * Method overridden from the base class. This method will be called by the framework. Call
      * this method only if you need interpolated values in your code.
      *
      * @param timestamp timestamp in seconds
-     * @return inteprolated datasource value
+     * @return interpolated datasource value
      */
     public double getValue(long timestamp) {
         if (interpolationMethod == INTERPOLATE_REGRESSION) {

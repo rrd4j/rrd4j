@@ -8,7 +8,14 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RrdDbPoolNew extends RrdDbPool {
+/**
+ * This class should be used to synchronize access to RRD files
+ * in a multithreaded environment. This class should be also used to prevent opening of
+ * too many RRD files at the same time (thus avoiding operating system limits).
+ * <p>
+ * It's much more scalable than the previous pool
+ */
+class RrdDbPoolNew extends RrdDbPool {
     static private class RrdEntry {
         volatile RrdDb rrdDb = null;
         final AtomicInteger count = new AtomicInteger(0);
