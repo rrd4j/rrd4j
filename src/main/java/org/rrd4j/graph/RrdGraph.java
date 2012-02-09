@@ -103,7 +103,7 @@ public class RrdGraph implements RrdGraphConstants {
             }
         }
         if (gdef.imageInfo != null) {
-            info.imgInfo = Util.sprintf(gdef.imageInfo, gdef.filename, im.xgif, im.ygif);
+            info.imgInfo = Util.sprintf(gdef.locale, gdef.imageInfo, gdef.filename, im.xgif, im.ygif);
         }
     }
 
@@ -516,7 +516,7 @@ public class RrdGraph implements RrdGraphConstants {
     private void resolveTextElements() {
         ValueScaler valueScaler = new ValueScaler(gdef.base);
         for (CommentText comment : gdef.comments) {
-            comment.resolveText(dproc, valueScaler);
+            comment.resolveText(gdef.locale, dproc, valueScaler);
         }
     }
 

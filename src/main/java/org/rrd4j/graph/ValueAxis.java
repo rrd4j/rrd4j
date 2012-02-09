@@ -69,10 +69,10 @@ class ValueAxis implements RrdGraphConstants {
                 }
                 int fractionals = (int) Math.floor(Math.log10(range));
                 if (fractionals < 0) /* small amplitude. */ {
-                    labfmt = Util.sprintf("%%%d.%df", decimals - fractionals + 1, -fractionals + 1);
+                    labfmt = Util.sprintf(gdef.locale, "%%%d.%df", decimals - fractionals + 1, -fractionals + 1);
                 }
                 else {
-                    labfmt = Util.sprintf("%%%d.1f", decimals + 1);
+                    labfmt = Util.sprintf(gdef.locale, "%%%d.1f", decimals + 1);
                 }
                 gridstep = Math.pow(10, fractionals);
                 if (gridstep == 0) /* range is one -> 0.1 is reasonable scale */ {
@@ -124,22 +124,22 @@ class ValueAxis implements RrdGraphConstants {
                     if (i == 0 || im.symbol == ' ') {
                         if (scaledstep < 1) {
                             if (i != 0 && gdef.altYGrid) {
-                                graph_label = Util.sprintf(labfmt, scaledstep * i);
+                                graph_label = Util.sprintf(gdef.locale, labfmt, scaledstep * i);
                             }
                             else {
-                                graph_label = Util.sprintf("%4.1f", scaledstep * i);
+                                graph_label = Util.sprintf(gdef.locale, "%4.1f", scaledstep * i);
                             }
                         }
                         else {
-                            graph_label = Util.sprintf("%4.0f", scaledstep * i);
+                            graph_label = Util.sprintf(gdef.locale, "%4.0f", scaledstep * i);
                         }
                     }
                     else {
                         if (scaledstep < 1) {
-                            graph_label = Util.sprintf("%4.1f %c", scaledstep * i, im.symbol);
+                            graph_label = Util.sprintf(gdef.locale, "%4.1f %c", scaledstep * i, im.symbol);
                         }
                         else {
-                            graph_label = Util.sprintf("%4.0f %c", scaledstep * i, im.symbol);
+                            graph_label = Util.sprintf(gdef.locale, "%4.0f %c", scaledstep * i, im.symbol);
                         }
                     }
                     int length = (int) (worker.getStringWidth(graph_label, font));

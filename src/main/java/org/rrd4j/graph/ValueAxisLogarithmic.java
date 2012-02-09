@@ -91,7 +91,7 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
                 worker.drawLine(x0 - 2, y, x0 + 2, y, mGridColor, TICK_STROKE);
                 worker.drawLine(x1 - 2, y, x1 + 2, y, mGridColor, TICK_STROKE);
                 worker.drawLine(x0, y, x1, y, mGridColor, GRID_STROKE);
-                String graph_label = Util.sprintf("%3.0e", value * yloglab[majoridx][i]);
+                String graph_label = Util.sprintf(gdef.locale, "%3.0e", value * yloglab[majoridx][i]);
                 int length = (int) (worker.getStringWidth(graph_label, font));
                 worker.drawString(graph_label, x0 - length - PADDING_VLABEL, y + labelOffset, font, fontColor);
             }

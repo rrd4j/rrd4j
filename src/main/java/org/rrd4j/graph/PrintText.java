@@ -4,6 +4,7 @@ import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +27,8 @@ class PrintText extends CommentText {
         return !includedInGraph;
     }
 
-    void resolveText(DataProcessor dproc, ValueScaler valueScaler) {
-        super.resolveText(dproc, valueScaler);
+    void resolveText(Locale l, DataProcessor dproc, ValueScaler valueScaler) {
+        super.resolveText(l, dproc, valueScaler);
         if (resolvedText != null) {
             double value = dproc.getAggregate(srcName, consolFun);
             Matcher matcher = UNIT_PATTERN.matcher(resolvedText);
@@ -38,7 +39,7 @@ class PrintText extends CommentText {
                         matcher.group(1) + scaled.unit + resolvedText.substring(matcher.end());
                 value = scaled.value;
             }
-            resolvedText = Util.sprintf(resolvedText, value);
+            resolvedText = Util.sprintf(l, resolvedText, value);
             trimIfGlue();
         }
     }

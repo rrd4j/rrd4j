@@ -8,7 +8,10 @@ import org.rrd4j.data.Plottable;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Class which should be used to define new Rrd4j graph. Once constructed and populated with data
@@ -90,6 +93,8 @@ public class RrdGraphDef implements RrdGraphConstants {
     boolean drawXGrid = true; // ok
     boolean drawYGrid = true; // ok
     int firstDayOfWeek = FIRST_DAY_OF_WEEK; // ok
+    Locale locale = Locale.getDefault();
+    TimeZone tz = TimeZone.getDefault();
     boolean showSignature = true;
 
     final List<Source> sources = new ArrayList<Source>();
@@ -1032,7 +1037,25 @@ public class RrdGraphDef implements RrdGraphConstants {
         this.firstDayOfWeek = firstDayOfWeek;
     }
 
-    // helper methods
+    /**
+     * Set the locale used for the legend.<p/>
+     * 
+     * It overides the firstDayOfWeek
+     * @param locale the locale to set
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+        this.firstDayOfWeek = Calendar.getInstance(Locale.getDefault()).getFirstDayOfWeek();
+    }
+
+    /**
+     * Set the time zone used for the legend.
+     * 
+     * @param tz the time zone to set
+     */
+    public void setTimeZone(TimeZone tz) {
+        this.tz = tz;
+    }
 
     int printStatementCount() {
         int count = 0;

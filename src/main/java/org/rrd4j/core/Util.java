@@ -734,8 +734,8 @@ public class Util {
      * @param args   Arbitrary list of arguments
      * @return Formatted string
      */
-    public static String sprintf(String format, Object... args) {
+    public static String sprintf(Locale l, String format, Object... args) {
         String fmt = format.replaceAll("([^%]|^)%([^a-zA-Z%]*)l(f|g|e)", "$1%$2$3");
-        return String.format(fmt, args);
+        return String.format(l, fmt, args);
     }
 }

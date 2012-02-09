@@ -33,7 +33,7 @@ class ValueAxisMrtg implements RrdGraphConstants {
             labfmt = "%5.2f";
         }
         else {
-            labfmt = Util.sprintf("%%4.%df", 1 - ((im.scaledstep / im.magfact > 10.0 || Math.ceil(im.scaledstep / im.magfact) == im.scaledstep / im.magfact) ? 1 : 0));
+            labfmt = Util.sprintf(gdef.locale, "%%4.%df", 1 - ((im.scaledstep / im.magfact > 10.0 || Math.ceil(im.scaledstep / im.magfact) == im.scaledstep / im.magfact) ? 1 : 0));
         }
         if (im.symbol != ' ' || im.unit != null) {
             labfmt += " ";
@@ -47,7 +47,7 @@ class ValueAxisMrtg implements RrdGraphConstants {
         for (int i = 0; i <= 4; i++) {
             int y = im.yorigin - im.ysize * i / 4;
             if (y >= im.yorigin - im.ysize && y <= im.yorigin) {
-                String graph_label = Util.sprintf(labfmt, im.scaledstep / im.magfact * (i - im.quadrant));
+                String graph_label = Util.sprintf(gdef.locale, labfmt, im.scaledstep / im.magfact * (i - im.quadrant));
                 int length = (int) (worker.getStringWidth(graph_label, font));
                 worker.drawString(graph_label, xLeft - length - PADDING_VLABEL, y + labelOffset, font, fontColor);
                 worker.drawLine(xLeft - 2, y, xLeft + 2, y, mGridColor, TICK_STROKE);

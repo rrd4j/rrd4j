@@ -9,6 +9,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Random;
 
 import static org.rrd4j.ConsolFun.*;
@@ -149,6 +150,7 @@ public class Demo {
         println("Creating graph " + Util.getLapTime());
         println("== Creating graph from the second file");
         RrdGraphDef gDef = new RrdGraphDef();
+        gDef.setLocale(Locale.US);
         gDef.setWidth(IMG_WIDTH);
         gDef.setHeight(IMG_HEIGHT);
         gDef.setFilename(imgPath);

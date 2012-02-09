@@ -1,6 +1,7 @@
 package org.rrd4j.graph;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Paint;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +34,7 @@ class TimeAxis implements RrdGraphConstants {
     TimeAxis(RrdGraph rrdGraph) {
         this.rrdGraph = rrdGraph;
         this.secPerPix = (rrdGraph.im.end - rrdGraph.im.start) / (double) rrdGraph.im.xsize;
-        this.calendar = Calendar.getInstance(Locale.getDefault());
+        this.calendar = Calendar.getInstance(rrdGraph.gdef.tz, rrdGraph.gdef.locale);
         this.calendar.setFirstDayOfWeek(rrdGraph.gdef.firstDayOfWeek);
     }
 
@@ -87,7 +88,7 @@ class TimeAxis implements RrdGraphConstants {
         adjustStartingTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
         int y = rrdGraph.im.yorigin + (int) rrdGraph.worker.getFontHeight(font) + 2;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
-            String label = formatLabel(labelFormat, calendar.getTime());
+            String label = formatLabel(rrdGraph.gdef.locale, labelFormat, calendar.getTime());
             long time = calendar.getTime().getTime() / 1000L;
             int x1 = rrdGraph.mapper.xtr(time);
             int x2 = rrdGraph.mapper.xtr(time + tickSetting.labelSpan);
@@ -100,14 +101,14 @@ class TimeAxis implements RrdGraphConstants {
         }
     }
 
-    private static String formatLabel(String format, Date date) {
+    private static String formatLabel(Locale l, String format, Date date) {
         if (format.contains("%")) {
             // strftime like format string
-            return String.format(format, date);
+            return String.format(l, format, date);
         }
         else {
             // simple date format
-            return new SimpleDateFormat(format).format(date);
+            return new SimpleDateFormat(format, l).format(date);
         }
     }
 
