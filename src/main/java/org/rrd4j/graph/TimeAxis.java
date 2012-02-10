@@ -5,31 +5,30 @@ import java.awt.Paint;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 class TimeAxis implements RrdGraphConstants {
     private static final TimeAxisSetting[] tickSettings = {
-            new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, "HH:mm"),
-            new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, "HH:mm"),
-            new TimeAxisSetting(5, MINUTE, 2, MINUTE, 10, MINUTE, 10, 0, "HH:mm"),
-            new TimeAxisSetting(10, MINUTE, 5, MINUTE, 20, MINUTE, 20, 0, "HH:mm"),
-            new TimeAxisSetting(30, MINUTE, 10, HOUR, 1, HOUR, 1, 0, "HH:mm"),
-            new TimeAxisSetting(60, MINUTE, 30, HOUR, 2, HOUR, 2, 0, "HH:mm"),
-            new TimeAxisSetting(180, HOUR, 1, HOUR, 6, HOUR, 6, 0, "HH:mm"),
-            new TimeAxisSetting(600, HOUR, 6, DAY, 1, DAY, 1, 24 * 3600, "EEE"),
-            new TimeAxisSetting(1800, HOUR, 12, DAY, 1, DAY, 2, 24 * 3600, "EEE"),
-            new TimeAxisSetting(3600, DAY, 1, WEEK, 1, WEEK, 1, 7 * 24 * 3600, "'Week 'w"),
-            new TimeAxisSetting(3 * 3600, WEEK, 1, MONTH, 1, WEEK, 2, 7 * 24 * 3600, "'Week 'w"),
-            new TimeAxisSetting(6 * 3600, MONTH, 1, MONTH, 1, MONTH, 1, 30 * 24 * 3600, "MMM"),
-            new TimeAxisSetting(48 * 3600, MONTH, 1, MONTH, 3, MONTH, 3, 30 * 24 * 3600, "MMM"),
-            new TimeAxisSetting(10 * 24 * 3600, YEAR, 1, YEAR, 1, YEAR, 1, 365 * 24 * 3600, "yy"),
-            new TimeAxisSetting(-1, MONTH, 0, MONTH, 0, MONTH, 0, 0, "")
+        new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, "HH:mm"),
+        new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, "HH:mm"),
+        new TimeAxisSetting(5, MINUTE, 2, MINUTE, 10, MINUTE, 10, 0, "HH:mm"),
+        new TimeAxisSetting(10, MINUTE, 5, MINUTE, 20, MINUTE, 20, 0, "HH:mm"),
+        new TimeAxisSetting(30, MINUTE, 10, HOUR, 1, HOUR, 1, 0, "HH:mm"),
+        new TimeAxisSetting(60, MINUTE, 30, HOUR, 2, HOUR, 2, 0, "HH:mm"),
+        new TimeAxisSetting(180, HOUR, 1, HOUR, 6, HOUR, 6, 0, "HH:mm"),
+        new TimeAxisSetting(600, HOUR, 6, DAY, 1, DAY, 1, 24 * 3600, "EEE"),
+        new TimeAxisSetting(1800, HOUR, 12, DAY, 1, DAY, 2, 24 * 3600, "EEE"),
+        new TimeAxisSetting(3600, DAY, 1, WEEK, 1, WEEK, 1, 7 * 24 * 3600, "'Week 'w"),
+        new TimeAxisSetting(3 * 3600, WEEK, 1, MONTH, 1, WEEK, 2, 7 * 24 * 3600, "'Week 'w"),
+        new TimeAxisSetting(6 * 3600, MONTH, 1, MONTH, 1, MONTH, 1, 30 * 24 * 3600, "MMM"),
+        new TimeAxisSetting(48 * 3600, MONTH, 1, MONTH, 3, MONTH, 3, 30 * 24 * 3600, "MMM"),
+        new TimeAxisSetting(10 * 24 * 3600, YEAR, 1, YEAR, 1, YEAR, 1, 365 * 24 * 3600, "yy"),
+        new TimeAxisSetting(-1, MONTH, 0, MONTH, 0, MONTH, 0, 0, "")
     };
 
     private TimeAxisSetting tickSetting;
-    private RrdGraph rrdGraph;
-    private double secPerPix;
-    private Calendar calendar;
+    private final RrdGraph rrdGraph;
+    private final double secPerPix;
+    private final Calendar calendar;
 
     TimeAxis(RrdGraph rrdGraph) {
         this.rrdGraph = rrdGraph;
@@ -88,7 +87,7 @@ class TimeAxis implements RrdGraphConstants {
         adjustStartingTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
         int y = rrdGraph.im.yorigin + (int) rrdGraph.worker.getFontHeight(font) + 2;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
-            String label = formatLabel(rrdGraph.gdef.locale, labelFormat, calendar.getTime());
+            String label = formatLabel(labelFormat, calendar.getTime());
             long time = calendar.getTime().getTime() / 1000L;
             int x1 = rrdGraph.mapper.xtr(time);
             int x2 = rrdGraph.mapper.xtr(time + tickSetting.labelSpan);
@@ -101,40 +100,43 @@ class TimeAxis implements RrdGraphConstants {
         }
     }
 
-    private static String formatLabel(Locale l, String format, Date date) {
+    private String formatLabel(String format, Date date) {
+        Calendar c = (Calendar) calendar.clone();
+        c.setTime(date);
         if (format.contains("%")) {
             // strftime like format string
-            return String.format(l, format, date);
+            return String.format(rrdGraph.gdef.locale, format, c);
         }
         else {
-            // simple date format
-            return new SimpleDateFormat(format, l).format(date);
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            sdf.setCalendar(c);
+            return sdf.format(date);
         }
     }
 
     private void findNextTime(int timeUnit, int timeUnitCount) {
         switch (timeUnit) {
-            case SECOND:
-                calendar.add(Calendar.SECOND, timeUnitCount);
-                break;
-            case MINUTE:
-                calendar.add(Calendar.MINUTE, timeUnitCount);
-                break;
-            case HOUR:
-                calendar.add(Calendar.HOUR_OF_DAY, timeUnitCount);
-                break;
-            case DAY:
-                calendar.add(Calendar.DAY_OF_MONTH, timeUnitCount);
-                break;
-            case WEEK:
-                calendar.add(Calendar.DAY_OF_MONTH, 7 * timeUnitCount);
-                break;
-            case MONTH:
-                calendar.add(Calendar.MONTH, timeUnitCount);
-                break;
-            case YEAR:
-                calendar.add(Calendar.YEAR, timeUnitCount);
-                break;
+        case SECOND:
+            calendar.add(Calendar.SECOND, timeUnitCount);
+            break;
+        case MINUTE:
+            calendar.add(Calendar.MINUTE, timeUnitCount);
+            break;
+        case HOUR:
+            calendar.add(Calendar.HOUR_OF_DAY, timeUnitCount);
+            break;
+        case DAY:
+            calendar.add(Calendar.DAY_OF_MONTH, timeUnitCount);
+            break;
+        case WEEK:
+            calendar.add(Calendar.DAY_OF_MONTH, 7 * timeUnitCount);
+            break;
+        case MONTH:
+            calendar.add(Calendar.MONTH, timeUnitCount);
+            break;
+        case YEAR:
+            calendar.add(Calendar.YEAR, timeUnitCount);
+            break;
         }
     }
 
@@ -146,48 +148,48 @@ class TimeAxis implements RrdGraphConstants {
     private void adjustStartingTime(int timeUnit, int timeUnitCount) {
         calendar.setTime(new Date(rrdGraph.im.start * 1000L));
         switch (timeUnit) {
-            case SECOND:
-                calendar.add(Calendar.SECOND, -(calendar.get(Calendar.SECOND) % timeUnitCount));
-                break;
-            case MINUTE:
-                calendar.set(Calendar.SECOND, 0);
-                calendar.add(Calendar.MINUTE, -(calendar.get(Calendar.MINUTE) % timeUnitCount));
-                break;
-            case HOUR:
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.add(Calendar.HOUR_OF_DAY, -(calendar.get(Calendar.HOUR_OF_DAY) % timeUnitCount));
-                break;
-            case DAY:
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.HOUR_OF_DAY, 0);
-                break;
-            case WEEK:
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.HOUR_OF_DAY, 0);
-                int diffDays = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
-                if (diffDays < 0) {
-                    diffDays += 7;
-                }
-                calendar.add(Calendar.DAY_OF_MONTH, -diffDays);
-                break;
-            case MONTH:
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.HOUR_OF_DAY, 0);
-                calendar.set(Calendar.DAY_OF_MONTH, 1);
-                calendar.add(Calendar.MONTH, -(calendar.get(Calendar.MONTH) % timeUnitCount));
-                break;
-            case YEAR:
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.HOUR_OF_DAY, 0);
-                calendar.set(Calendar.DAY_OF_MONTH, 1);
-                calendar.set(Calendar.MONTH, 0);
-                calendar.add(Calendar.YEAR, -(calendar.get(Calendar.YEAR) % timeUnitCount));
-                break;
+        case SECOND:
+            calendar.add(Calendar.SECOND, -(calendar.get(Calendar.SECOND) % timeUnitCount));
+            break;
+        case MINUTE:
+            calendar.set(Calendar.SECOND, 0);
+            calendar.add(Calendar.MINUTE, -(calendar.get(Calendar.MINUTE) % timeUnitCount));
+            break;
+        case HOUR:
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.add(Calendar.HOUR_OF_DAY, -(calendar.get(Calendar.HOUR_OF_DAY) % timeUnitCount));
+            break;
+        case DAY:
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            break;
+        case WEEK:
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            int diffDays = calendar.get(Calendar.DAY_OF_WEEK) - calendar.getFirstDayOfWeek();
+            if (diffDays < 0) {
+                diffDays += 7;
+            }
+            calendar.add(Calendar.DAY_OF_MONTH, -diffDays);
+            break;
+        case MONTH:
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.MONTH, -(calendar.get(Calendar.MONTH) % timeUnitCount));
+            break;
+        case YEAR:
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.set(Calendar.MONTH, 0);
+            calendar.add(Calendar.YEAR, -(calendar.get(Calendar.YEAR) % timeUnitCount));
+            break;
         }
     }
 
