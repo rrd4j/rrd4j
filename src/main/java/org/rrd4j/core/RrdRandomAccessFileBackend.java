@@ -31,7 +31,6 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * @throws IOException Thrown in case of I/O error
      */
     public void close() throws IOException {
-        rafile.getFD().sync();
         rafile.close();
     }
 
