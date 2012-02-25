@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -27,28 +26,22 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      */
     public static final int DEFAULT_SYNC_CORE_POOL_SIZE = 6;
 
+    private static int syncPoolSize = DEFAULT_SYNC_CORE_POOL_SIZE;
+
     /**
      * The {@link java.util.concurrent.ScheduledExecutorService} used to periodically sync the mapped file to disk with.
      */
-    private final ScheduledExecutorService syncExecutor;
+    private volatile ScheduledExecutorService syncExecutor;
 
-    public RrdNioBackendFactory() {
-        syncExecutor = Executors.newScheduledThreadPool(DEFAULT_SYNC_CORE_POOL_SIZE, new DaemonThreadFactory("RRD4J Sync"));
-
-        // Add a shutdown hook to stop the thread pool gracefully when the application exits
-        Runtime.getRuntime().addShutdownHook(new Thread("RRD4J Sync-ThreadPool-Shutdown") {
-            @Override
-            public void run() {
-                try {
-                    // Progress and failure logging arising from the following code cannot be logged, since the
-                    // behavior of logging is undefined in shutdown hooks.
-                    syncExecutor.shutdown();
-                    syncExecutor.awaitTermination(120, TimeUnit.SECONDS);
-                } catch (InterruptedException ignored) {
-                    // Shutting down...so ignore.
-                }
-            }
-        });
+    /* (non-Javadoc)
+     * @see java.lang.Object#finalize()
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if(syncExecutor != null) {
+            syncExecutor.shutdown();
+        }
     }
 
     /**
@@ -72,6 +65,27 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     }
 
     /**
+     * Returns the number of synchronizing threads. If not changed via
+     * {@link #setSyncPoolSize(int)} method call, defaults to {@link #DEFAULT_SYNC_CORE_POOL_SIZE}.
+     * See {@link #setSyncPoolSize(int)} for more information.
+     *
+     * @return Number of synchronizing threads.
+     */
+    public static int getSyncPoolSize() {
+        return syncPoolSize;
+    }
+
+    /**
+     * Sets the number of synchronizing threads. It must be set before the first use of this factory.
+     * It will not have any effect afterward.
+     *
+     * @param syncPoolSize Number of synchronizing threads.
+     */
+    public static void setSyncPoolSize(int syncPoolSize) {
+        RrdNioBackendFactory.syncPoolSize = syncPoolSize;
+    }
+
+    /**
      * Creates RrdNioBackend object for the given file path.
      *
      * @param path     File path
@@ -81,6 +95,12 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @throws IOException Thrown in case of I/O error.
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
+        if(syncExecutor == null) {
+            synchronized(this) {
+                if(syncExecutor == null)
+                    syncExecutor = Executors.newScheduledThreadPool(syncPoolSize, new DaemonThreadFactory("RRD4J Sync"));
+            }
+        }
         return new RrdNioBackend(path, readOnly, syncExecutor, syncPeriod);
     }
 
