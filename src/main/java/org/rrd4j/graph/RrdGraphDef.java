@@ -96,6 +96,8 @@ public class RrdGraphDef implements RrdGraphConstants {
     Locale locale = Locale.getDefault();
     TimeZone tz = TimeZone.getDefault();
     boolean showSignature = true;
+    Stroke gridStroke = GRID_STROKE;
+    Stroke tickStroke = TICK_STROKE;
 
     final List<Source> sources = new ArrayList<Source>();
     final List<CommentText> comments = new ArrayList<CommentText>();
@@ -1055,6 +1057,22 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void setTimeZone(TimeZone tz) {
         this.tz = tz;
+    }
+    
+    /**
+     * Set the Stroke used to draw grid
+     * @param gridStroke
+     */
+    public void setGrideStroke(Stroke gridStroke) {
+        this.gridStroke = gridStroke;
+    }
+
+    /**
+     * Set the stroke used to draw ticks
+     * @param tickStroke
+     */
+    public void setTickStroke(Stroke tickStroke) {
+        this.tickStroke = tickStroke;
     }
 
     int printStatementCount() {

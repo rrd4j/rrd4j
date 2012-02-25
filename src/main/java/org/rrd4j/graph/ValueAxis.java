@@ -144,14 +144,14 @@ class ValueAxis implements RrdGraphConstants {
                     }
                     int length = (int) (worker.getStringWidth(graph_label, font));
                     worker.drawString(graph_label, x0 - length - PADDING_VLABEL, y + labelOffset, font, fontColor);
-                    worker.drawLine(x0 - 2, y, x0 + 2, y, mGridColor, TICK_STROKE);
-                    worker.drawLine(x1 - 2, y, x1 + 2, y, mGridColor, TICK_STROKE);
-                    worker.drawLine(x0, y, x1, y, mGridColor, GRID_STROKE);
+                    worker.drawLine(x0 - 2, y, x0 + 2, y, mGridColor, gdef.tickStroke);
+                    worker.drawLine(x1 - 2, y, x1 + 2, y, mGridColor, gdef.tickStroke);
+                    worker.drawLine(x0, y, x1, y, mGridColor, gdef.gridStroke);
                 }
                 else if (!(gdef.noMinorGrid)) {
-                    worker.drawLine(x0 - 1, y, x0 + 1, y, gridColor, TICK_STROKE);
-                    worker.drawLine(x1 - 1, y, x1 + 1, y, gridColor, TICK_STROKE);
-                    worker.drawLine(x0, y, x1, y, gridColor, GRID_STROKE);
+                    worker.drawLine(x0 - 1, y, x0 + 1, y, gridColor, gdef.tickStroke);
+                    worker.drawLine(x1 - 1, y, x1 + 1, y, gridColor, gdef.tickStroke);
+                    worker.drawLine(x0, y, x1, y, gridColor, gdef.gridStroke);
                 }
             }
         }

@@ -56,8 +56,8 @@ class TimeAxis implements RrdGraphConstants {
                 if (status == 0) {
                     long time = calendar.getTime().getTime() / 1000L;
                     int x = rrdGraph.mapper.xtr(time);
-                    rrdGraph.worker.drawLine(x, y0 - 1, x, y0 + 1, color, TICK_STROKE);
-                    rrdGraph.worker.drawLine(x, y0, x, y1, color, GRID_STROKE);
+                    rrdGraph.worker.drawLine(x, y0 - 1, x, y0 + 1, color, rrdGraph.gdef.tickStroke);
+                    rrdGraph.worker.drawLine(x, y0, x, y1, color, rrdGraph.gdef.gridStroke);
                 }
                 findNextTime(tickSetting.minorUnit, tickSetting.minorUnitCount);
             }
@@ -72,8 +72,8 @@ class TimeAxis implements RrdGraphConstants {
             if (status == 0) {
                 long time = calendar.getTime().getTime() / 1000L;
                 int x = rrdGraph.mapper.xtr(time);
-                rrdGraph.worker.drawLine(x, y0 - 2, x, y0 + 2, color, TICK_STROKE);
-                rrdGraph.worker.drawLine(x, y0, x, y1, color, GRID_STROKE);
+                rrdGraph.worker.drawLine(x, y0 - 2, x, y0 + 2, color, rrdGraph.gdef.tickStroke);
+                rrdGraph.worker.drawLine(x, y0, x, y1, color, rrdGraph.gdef.gridStroke);
             }
             findNextTime(tickSetting.majorUnit, tickSetting.majorUnitCount);
         }

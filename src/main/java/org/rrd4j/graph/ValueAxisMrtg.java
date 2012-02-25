@@ -50,9 +50,9 @@ class ValueAxisMrtg implements RrdGraphConstants {
                 String graph_label = Util.sprintf(gdef.locale, labfmt, im.scaledstep / im.magfact * (i - im.quadrant));
                 int length = (int) (worker.getStringWidth(graph_label, font));
                 worker.drawString(graph_label, xLeft - length - PADDING_VLABEL, y + labelOffset, font, fontColor);
-                worker.drawLine(xLeft - 2, y, xLeft + 2, y, mGridColor, TICK_STROKE);
-                worker.drawLine(xRight - 2, y, xRight + 2, y, mGridColor, TICK_STROKE);
-                worker.drawLine(xLeft, y, xRight, y, mGridColor, GRID_STROKE);
+                worker.drawLine(xLeft - 2, y, xLeft + 2, y, mGridColor, gdef.tickStroke);
+                worker.drawLine(xRight - 2, y, xRight + 2, y, mGridColor, gdef.tickStroke);
+                worker.drawLine(xLeft, y, xRight, y, mGridColor, gdef.gridStroke);
             }
         }
         return true;
