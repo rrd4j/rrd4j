@@ -1063,7 +1063,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * Set the Stroke used to draw grid
      * @param gridStroke
      */
-    public void setGrideStroke(Stroke gridStroke) {
+    public void setGridStroke(Stroke gridStroke) {
         this.gridStroke = gridStroke;
     }
 
