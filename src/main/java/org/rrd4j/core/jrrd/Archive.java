@@ -41,17 +41,9 @@ public class Archive {
 
         offset = file.getFilePointer();
         type = ConsolidationFunctionType.valueOf(file.readString(Constants.CF_NAM_SIZE).toUpperCase());
-        if(file.getBits() == 32) {
-            rowCount = file.readInt();
-            pdpCount = file.readInt();
-            file.align();
-        }
-        //64 bits
-        else {
-            file.align();
-            rowCount = file.readLong();
-            pdpCount = file.readLong();
-        }
+        file.align(file.getBits() / 8);
+        rowCount = file.readLong();
+        pdpCount = file.readLong();
 
         UnivalArray par = file.getUnivalArray(10);
         xff = par.getDouble(rra_par_en.RRA_cdp_xff_val);

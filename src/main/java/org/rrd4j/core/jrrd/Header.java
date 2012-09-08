@@ -47,7 +47,6 @@ public class Header implements Constants {
         pdpStep = file.readLong();
 
         // Skip rest of stat_head_t.par
-        file.align();
         @SuppressWarnings("unused")
         UnivalArray par = file.getUnivalArray(10);
 

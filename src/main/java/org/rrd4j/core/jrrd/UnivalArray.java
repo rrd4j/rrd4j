@@ -27,6 +27,7 @@ class UnivalArray {
             buffer.order(ByteOrder.BIG_ENDIAN);
         else
             buffer.order(ByteOrder.LITTLE_ENDIAN);
+        file.align();
         file.read(buffer);
     }
 
