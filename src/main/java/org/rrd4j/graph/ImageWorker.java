@@ -1,15 +1,23 @@
 package org.rrd4j.graph;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
 
 class ImageWorker {
     private static final String DUMMY_TEXT = "Dummy";
@@ -165,23 +173,7 @@ class ImageWorker {
     }
 
     void saveImage(OutputStream stream, String type, float quality) throws IOException {
-        if (type.equalsIgnoreCase("png")) {
-            ImageIO.write(img, "png", stream);
-        }
-        else if (type.equalsIgnoreCase("gif")) {
-            GifEncoder gifEncoder = new GifEncoder(img);
-            gifEncoder.encode(stream);
-        }
-        else if (type.equalsIgnoreCase("jpg") || type.equalsIgnoreCase("jpeg")) {
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(stream);
-            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(img);
-            param.setQuality(quality, false);
-            encoder.setJPEGEncodeParam(param);
-            encoder.encode(img);
-        }
-        else {
-            throw new IOException("Unsupported image format: " + type);
-        }
+        ImageIO.write(img, type, stream);
         stream.flush();
     }
 

@@ -406,7 +406,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     /**
      * Sets image format.
      *
-     * @param imageFormat "PNG", "GIF" or "JPG".
+     * @param imageFormat Any value as return by {@link javax.imageio.ImageIO#getReaderFormatNames}
      */
     public void setImageFormat(String imageFormat) {
         this.imageFormat = imageFormat;
