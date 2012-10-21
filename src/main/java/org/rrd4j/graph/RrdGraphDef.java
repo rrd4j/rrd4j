@@ -837,6 +837,56 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * Draws a horizontal span into the graph.
+     *
+     * @param start Starting value of the span
+     * @param end   Ending value of the span
+     * @param color Rule color
+     */
+    public void hspan(double start, double end, Paint color) {
+        hspan(start, end, color, null);
+    }
+
+    /**
+     * Draws a horizontal span into the graph and optionally adds a legend.
+     *
+     * @param start     Starting value of the span
+     * @param end       Ending value of the span
+     * @param color     Rule color
+     * @param legend    Legend text. Use null to omit the text.
+     */
+    public void hspan(double start, double end, Paint color, String legend) {
+        LegendText legendText = new LegendText(color, legend);
+        comments.add(legendText);
+        plotElements.add(new HSpan(start, end, color, legendText));
+    }
+
+    /**
+     * Draws a vertical span into the graph.
+     *
+     * @param start     Start time for the span (seconds since epoch)
+     * @param end       End time for the span (seconds since epoch)
+     * @param color     Rule color
+     */
+    public void vspan(long start, long end, Paint color) {
+        vspan(start, end, color, null);
+    }
+
+    /**
+     * Draws a vertical span into the graph and optionally adds a legend.
+     *
+     * @param start     Start time for the span (seconds since epoch)
+     * @param end       End time for the span (seconds since epoch)
+     * @param color     Rule color
+     * @param legend    Legend text. Use null to omit the text.
+     */
+    public void vspan(long start, long end, Paint color, String legend) {
+        LegendText legendText = new LegendText(color, legend);
+        comments.add(legendText);
+        plotElements.add(new VSpan(start, end, color, legendText));
+    }
+
+    /**
      * Plots requested data as a line, using the color specified. Line width is assumed to be
      * 1.0F.
      *
@@ -1058,7 +1108,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     public void setTimeZone(TimeZone tz) {
         this.tz = tz;
     }
-    
+
     /**
      * Set the Stroke used to draw grid
      * @param gridStroke
