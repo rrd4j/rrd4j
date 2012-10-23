@@ -3,8 +3,14 @@ package org.rrd4j.core;
 import org.rrd4j.ConsolFun;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.nio.channels.FileChannel;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class used to perform various complex operations on RRD files. Use an instance of the
@@ -349,7 +355,27 @@ public class RrdToolkit {
         }
         deleteFile(dest);
         if (!source.renameTo(dest)) {
-            throw new IOException("Could not create file " + destPath + " from " + sourcePath);
+            //Rename failed so try to copy and erase
+            FileChannel sourceStream = null;
+            FileChannel destinationStream = null;
+            try {
+                sourceStream = new FileInputStream(source).getChannel();
+                destinationStream = new FileOutputStream(dest).getChannel();
+                long count = 0;
+                final long size = sourceStream.size();
+                while(count < size) {
+                    count += destinationStream.transferFrom(sourceStream, count, size-count);
+                }
+                deleteFile(source);
+            }
+            finally {
+                if(sourceStream != null) {
+                    sourceStream.close();
+                }
+                if(destinationStream != null) {
+                    destinationStream.close();
+                }
+            }
         }
     }
 
@@ -409,7 +435,7 @@ public class RrdToolkit {
      * @throws IOException Thrown in case of I/O error
      */
     public static void setDsMinValue(String sourcePath, String datasourceName,
-                                     double newMinValue, boolean filterArchivedValues) throws IOException {
+            double newMinValue, boolean filterArchivedValues) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
@@ -430,7 +456,7 @@ public class RrdToolkit {
      * @throws IOException Thrown in case of I/O error
      */
     public static void setDsMaxValue(String sourcePath, String datasourceName,
-                                     double newMaxValue, boolean filterArchivedValues) throws IOException {
+            double newMaxValue, boolean filterArchivedValues) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
@@ -452,8 +478,8 @@ public class RrdToolkit {
      * @throws IOException Thrown in case of I/O error
      */
     public static void setDsMinMaxValue(String sourcePath, String datasourceName,
-                                        double newMinValue, double newMaxValue, boolean filterArchivedValues)
-            throws IOException {
+            double newMinValue, double newMaxValue, boolean filterArchivedValues)
+                    throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
@@ -473,7 +499,7 @@ public class RrdToolkit {
      * @throws IOException Thrown in case of I/O error
      */
     public static void setArcXff(String sourcePath, ConsolFun consolFun, int steps,
-                                 double newXff) throws IOException {
+            double newXff) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Archive arc = rrd.getArchive(consolFun, steps);
@@ -496,7 +522,7 @@ public class RrdToolkit {
      * @throws IOException Thrown in case of I/O error
      */
     public static void resizeArchive(String sourcePath, String destPath, ConsolFun consolFun,
-                                     int numSteps, int newRows) throws IOException {
+            int numSteps, int newRows) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException("Source and destination paths are the same");
         }
@@ -536,7 +562,7 @@ public class RrdToolkit {
      * @throws IOException Thrown in case of I/O error
      */
     public static void resizeArchive(String sourcePath, ConsolFun consolFun,
-                                     int numSteps, int newRows, boolean saveBackup) throws IOException {
+            int numSteps, int newRows, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
         resizeArchive(sourcePath, destPath, consolFun, numSteps, newRows);
         copyFile(destPath, sourcePath, saveBackup);
