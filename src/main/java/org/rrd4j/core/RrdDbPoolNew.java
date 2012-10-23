@@ -209,6 +209,9 @@ class RrdDbPoolNew extends RrdDbPool {
         } catch (IOException e) {
             capacity.release();
             throw e;
+        } catch (IllegalArgumentException e) { //new RrdDb(rrdDef) can also throw IllegalArgumentException
+            capacity.release();
+            throw e;
         } finally {
             ref.rlock.release();
         }
