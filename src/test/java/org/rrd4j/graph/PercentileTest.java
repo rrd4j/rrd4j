@@ -1,6 +1,7 @@
 package org.rrd4j.graph;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import org.rrd4j.core.Sample;
 public class PercentileTest {
     static final private String backend = "MEMORY";
     static final private String fileName = "foobar.rrd";
-    
+
     @Test
     public void testSampleVDEFPercentile() throws Exception {
         Double[] vals = {
@@ -25,7 +26,7 @@ public class PercentileTest {
         int startTime = (int)(System.currentTimeMillis() / 1000);
         startTime -= (startTime % 300); 
         int endTime = startTime +  200 * 300;
-        
+
         updateDb(db, (startTime + 300 ), 0.0);
         int sampleTime = startTime + 600;
         for (double val : vals) {
@@ -39,6 +40,7 @@ public class PercentileTest {
         graphDef.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
         graphDef.percentile("nfp", "baz", 95);
         graphDef.print("nfp", ConsolFun.AVERAGE, "%le");
+        graphDef.setLocale(Locale.ENGLISH);
 
         RrdGraph graph = new RrdGraph(graphDef);
         Assert.assertNotNull("graph object", graph);
@@ -51,15 +53,15 @@ public class PercentileTest {
         Assert.assertEquals("graph printLines size", 1, printLines.length);
         Assert.assertEquals("graph printLines item 0", "9.571000e+03", printLines[0]);
     }
-    
+
     public RrdDb createRrdFile(String fileName) throws Exception {
         RrdDef def = new RrdDef(fileName, 300);
-        
+
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 2016);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
-        
+
         RrdDb db = new RrdDb(def, RrdBackendFactory.getFactory(backend));
-        
+
         return db;
     }
 
