@@ -218,7 +218,7 @@ public class Archive {
             int counter = 0;
             int row = currentRow;
 
-            db.rrdFile.ras.seek(dataOffset + (row + 1) * 16);
+            db.rrdFile.ras.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
 
             long lastUpdate = db.lastUpdate.getTime() / 1000;
             int pdpStep = db.header.pdpStep;
