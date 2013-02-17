@@ -3,7 +3,6 @@ package org.rrd4j.core;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +31,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      * @param syncPeriod See {@link RrdNioBackendFactory#setSyncPeriod(int)} for explanation
      * @throws IOException Thrown in case of I/O error
      */
-    protected RrdNioBackend(String path, boolean readOnly, ScheduledExecutorService syncExecutor, int syncPeriod) throws IOException {
+    protected RrdNioBackend(String path, boolean readOnly, RrdSyncThreadPool threadPool, int syncPeriod) throws IOException {
         super(path, readOnly);
         try {
             mapFile();
@@ -47,7 +46,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
         }
         try {
             if (!readOnly) {
-                syncRunnableHandle = syncExecutor.scheduleWithFixedDelay(syncRunnable, syncPeriod, syncPeriod, TimeUnit.SECONDS);
+                syncRunnableHandle = threadPool.scheduleWithFixedDelay(syncRunnable, syncPeriod, syncPeriod, TimeUnit.SECONDS);
             }
         } catch (RuntimeException rte) {
             unmapFile();
@@ -60,7 +59,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
         long length = getLength();
         if (length > 0) {
             FileChannel.MapMode mapMode =
-                readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
+                    readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
             byteBuffer = rafile.getChannel().map(mapMode, 0, length);
         }
     }

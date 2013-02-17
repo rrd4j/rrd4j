@@ -1,14 +1,16 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Factory class which creates actual {@link RrdNioBackend} objects. This is the default factory since
- * 1.4.0 version
+ * 1.4.0 version.
+ * <h3>Managing the thread pool</h3>
+ * Each RrdNioBackendFactory is backed by a {@link RrdSyncThreadPool}, which it uses to sync the memory-mapped files to
+ * disk. In order to avoid having these threads live longer than they should, it is recommended that clients create and
+ * destroy thread pools at the appropriate time in their application's life time. Failure to manage thread pools
+ * appropriately may lead to the thread pool hanging around longer than necessary, which in turn may cause memory leaks.
  */
 public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
@@ -29,20 +31,9 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     private static int syncPoolSize = DEFAULT_SYNC_CORE_POOL_SIZE;
 
     /**
-     * The {@link java.util.concurrent.ScheduledExecutorService} used to periodically sync the mapped file to disk with.
+     * The thread pool to pass to newly-created RrdNioBackend instances.
      */
-    private volatile ScheduledExecutorService syncExecutor;
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#finalize()
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if(syncExecutor != null) {
-            syncExecutor.shutdown();
-        }
-    }
+    private RrdSyncThreadPool syncThreadPool;
 
     /**
      * Returns time between two consecutive background synchronizations. If not changed via
@@ -86,6 +77,32 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     }
 
     /**
+     * Creates a new RrdNioBackendFactory. One should call {@link #setSyncThreadPool(RrdSyncThreadPool syncThreadPool)}
+     * or {@link #setSyncThreadPool(RrdSyncThreadPool syncThreadPool)} before the first call to 
+     * {@link #open(String path, boolean readOnly)}.
+     * Failure to do so will lead to memory leaks in anything but the simplest applications because the underlying thread pool will not
+     * be shut down cleanly. Read the Javadoc for this class to understand why using this constructor is discouraged.
+     * <p/>
+     */
+    public RrdNioBackendFactory() {
+        super();
+    }
+
+    /**
+     * @param syncThreadPool the RrdSyncThreadPool to use to sync the memory-mapped files.
+     */
+    public void setSyncThreadPool(RrdSyncThreadPool syncThreadPool) {
+        this.syncThreadPool = syncThreadPool;
+    }
+
+    /**
+     * @param syncThreadPool the ScheduledExecutorService that will back the RrdSyncThreadPool  used to sync the memory-mapped files.
+     */
+    public void setSyncThreadPool(ScheduledExecutorService syncThreadPool) {
+        this.syncThreadPool = new RrdSyncThreadPool(syncThreadPool);
+    }
+
+    /**
      * Creates RrdNioBackend object for the given file path.
      *
      * @param path     File path
@@ -95,13 +112,11 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @throws IOException Thrown in case of I/O error.
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
-        if(syncExecutor == null) {
-            synchronized(this) {
-                if(syncExecutor == null)
-                    syncExecutor = Executors.newScheduledThreadPool(syncPoolSize, new DaemonThreadFactory("RRD4J Sync"));
-            }
-        }
-        return new RrdNioBackend(path, readOnly, syncExecutor, syncPeriod);
+        // Instantiate a thread pool if none was provided
+        if(syncThreadPool == null)
+            syncThreadPool = DefaultSyncThreadPool.INSTANCE;
+
+        return new RrdNioBackend(path, readOnly, syncThreadPool, syncPeriod);
     }
 
     public String getName() {
@@ -109,32 +124,18 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     }
 
     /**
-     * Daemon thread factory used by the monitor executors.
-     * <p>
-     * This factory creates all new threads used by an Executor in the same ThreadGroup.
-     * If there is a SecurityManager, it uses the group of System.getSecurityManager(), else the group
-     * of the thread instantiating this DaemonThreadFactory. Each new thread is created as a daemon thread
-     * with priority Thread.NORM_PRIORITY. New threads have names accessible via Thread.getName()
-     * of "<pool-name> Pool [Thread-M]", where M is the sequence number of the thread created by this factory.
+     * This is a holder class as per the "initialisation on demand" Java idiom. The only purpose of this holder class is
+     * to ensure that the thread pool is created lazily the first time that it is needed, and not before.
+     * <p/>
+     * In practice this thread pool will be used if clients rely on the factory returned by {@link
+     * org.rrd4j.core.RrdBackendFactory#getDefaultFactory()}, but not if clients provide their own backend instance when
+     * creating {@code RrdDb} instances.
      */
-    static class DaemonThreadFactory implements ThreadFactory {
-        final ThreadGroup group;
-        final AtomicInteger threadNumber = new AtomicInteger(1);
-        final String namePrefix;
-        final String nameSuffix = "]";
-
-        DaemonThreadFactory(String poolName) {
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            namePrefix = poolName + " Pool [Thread-";
-        }
-
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement() + nameSuffix);
-            t.setDaemon(true);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
-                t.setPriority(Thread.NORM_PRIORITY);
-            return t;
-        }
+    private static class DefaultSyncThreadPool
+    {
+        /**
+         * The default thread pool used to periodically sync the mapped file to disk with.
+         */
+        static RrdSyncThreadPool INSTANCE = new RrdSyncThreadPool(syncPoolSize);
     }
 }
