@@ -106,7 +106,6 @@ class ImageWorker {
                 yDev[ix2] = (int) yBottom[i];
             }
             g2d.fillPolygon(xDev, yDev, xDev.length);
-            g2d.drawPolygon(xDev, yDev, xDev.length);
         }
     }
 

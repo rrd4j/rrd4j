@@ -564,9 +564,6 @@ public class RrdGraph implements RrdGraphConstants {
             src.requestData(dproc);
         }
         dproc.processData();
-        //long[] t = dproc.getTimestamps();
-        //im.start = t[0];
-        //im.end = t[t.length - 1];
         im.start = gdef.startTime;
         im.end = gdef.endTime;
     }
@@ -593,6 +590,7 @@ public class RrdGraph implements RrdGraphConstants {
                     if (c instanceof LegendText) {
                         // draw with BOX
                         worker.fillRect(x, y - box, box, box, gdef.colors[COLOR_FRAME]);
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_CANVAS]);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_BACK]);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, ((LegendText) c).legendColor);
                         worker.drawString(c.resolvedText, x + boxSpace, y, gdef.smallFont, gdef.colors[COLOR_FONT]);
@@ -659,22 +657,16 @@ public class RrdGraph implements RrdGraphConstants {
     }
 
     double[] ytr(double[] values) {
-        /*
-          double[] valuesDev = new double[values.length];
-          for (int i = 0; i < values.length; i++) {
-              if (Double.isNaN(values[i])) {
-                  valuesDev[i] = Double.NaN;
-              }
-              else {
-                  valuesDev[i] = mapper.ytr(values[i]);
-              }
-          }
-          return valuesDev;
-         */
         double[] valuesDev = new double[2 * values.length - 1];
         for (int i = 0, j = 0; i < values.length; i += 1, j += 2) {
             if (Double.isNaN(values[i])) {
                 valuesDev[j] = Double.NaN;
+            }
+            else if (values[i] > im.maxval) {
+                valuesDev[j] = mapper.ytr(im.maxval);
+            }
+            else if (values[i] < im.minval) {
+                valuesDev[j] = mapper.ytr(im.minval);
             }
             else {
                 valuesDev[j] = mapper.ytr(values[i]);
