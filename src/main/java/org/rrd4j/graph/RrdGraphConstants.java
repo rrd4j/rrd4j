@@ -113,12 +113,16 @@ public interface RrdGraphConstants {
      * Index of the arrow color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
     int COLOR_ARROW = 8;
+    /**
+     * Index of the x-axis color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
+     */
+    int COLOR_XAXIS = 9;
 
     /**
      * Allowed color names which can be used in {@link RrdGraphDef#setColor(String, java.awt.Paint)} method
      */
     String[] COLOR_NAMES = {
-            "canvas", "back", "shadea", "shadeb", "grid", "mgrid", "font", "frame", "arrow"
+            "canvas", "back", "shadea", "shadeb", "grid", "mgrid", "font", "frame", "arrow", "xaxis"
     };
 
     /**
@@ -162,6 +166,10 @@ public interface RrdGraphConstants {
      * Default arrow color
      */
     Color DEFAULT_ARROW_COLOR = Color.RED;
+    /**
+     * Default x-axis color
+     */
+    Color DEFAULT_XAXIS_COLOR = Color.BLACK;
 
     /**
      * Constant to represent left alignment marker

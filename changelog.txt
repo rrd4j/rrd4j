@@ -6,8 +6,11 @@ Changes in version 2.2 - 6 Dec 2011
 * Fixed Issue 29: add support for horizontal and vertical spans
 * Fixed Issue 31: improve support for logarithmic axis
 * Fixed Issue 32: Error adding datasources when rrd file is not is the the same filesystem as /tmp
+* Fixed Issue 34: add option to set x-axis color
 * Fixed Issue 37: when stacking data sources, having data with NaN creates a broken graph
 * Fixed Issue 38: Data Wrong in XML
+* Fixed Issue 39: Data Wrong in XML
+* Fixed Issue 39: RPN TIME operator does not return the time for the timeslot.
 * A few improvements to graph rendering
 
 Changes in version 2.1.1 - 6 Dec 2011

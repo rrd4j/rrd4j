@@ -81,7 +81,8 @@ public class RrdGraphDef implements RrdGraphConstants {
             DEFAULT_MGRID_COLOR,
             DEFAULT_FONT_COLOR,
             DEFAULT_FRAME_COLOR,
-            DEFAULT_ARROW_COLOR
+            DEFAULT_ARROW_COLOR,
+            DEFAULT_XAXIS_COLOR
     };
     boolean noLegend = false; // ok
     boolean onlyGraph = false; // ok
@@ -512,6 +513,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * colorTag must be one of the following constants defined in the {@link RrdGraphConstants}:
      * {@link RrdGraphConstants#COLOR_BACK COLOR_BACK}ground,
      * {@link RrdGraphConstants#COLOR_CANVAS COLOR_CANVAS},
+     * {@link RrdGraphConstants#COLOR_XAXIS COLOR_XAXIS},
      * {@link RrdGraphConstants#COLOR_SHADEA COLOR_SHADEA} left/top border,
      * {@link RrdGraphConstants#COLOR_SHADEB COLOR_SHADEB} right/bottom border,
      * {@link RrdGraphConstants#COLOR_GRID COLOR_GRID},
