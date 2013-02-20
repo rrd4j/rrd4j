@@ -445,7 +445,7 @@ class RpnCalculator {
                         push(Util.getTime());
                         break;
                     case TKN_TIME:
-                        push((long) Math.round(timestamps[slot]));
+                        push(timestamps[slot]);
                         break;
                     case TKN_PI:
                         push(Math.PI);
