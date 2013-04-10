@@ -1,8 +1,10 @@
 <project name="rrd4j" default="rrd4j" basedir=".">
     <description>RRD4J Build File</description>
 
-    <!-- VARIABLES -->
-    <property name="version" value="2.1.1"/>
+	<property file="build.properties" />
+	
+	<!-- VARIABLES -->
+    <property name="version" value="${buildVersion}"/>
     <property name="who" value="Mathias Bogaert &lt;mathias.bogaert@gmail.com&gt;"/>
 
     <property name="classes" value="classes"/>
@@ -45,8 +47,9 @@
                destdir="${classes}"
                classpathref="class.path"
                compiler="modern"
-        	   encoding="UTF-8"         	 
-               source="1.5"/>
+        	   encoding="${buildSourceEncoding}"         	 
+               source="${buildSource}"
+        	   target="${buildTarget}"/>
         <copy todir="${classes}">
             <fileset dir="${resources}"/>
         </copy>
@@ -92,7 +95,7 @@
                  destdir="${javadoc}"
                  packagenames="org.rrd4j.cmd.*,org.rrd4j.converter.*,org.rrd4j.core.*,org.rrd4j.data.*,org.rrd4j.demo.*,org.rrd4j.graph.*,org.rrd4j.inspector.*,org.rrd4j.*"
                  excludepackagenames="org.rrd4j.core.jrrd.*"
-                 source="1.6"
+                 source="${buildSource}"
                  sourcepath="${src}"
                  access="protected">
                  <classpath refid="class.path"/>

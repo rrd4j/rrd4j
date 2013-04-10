@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>2.2</version>
+    <version>${buildVersion}</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>http://code.google.com/p/rrd4j/</url>
     <!-- Use the Sonatype parent to be able to sync to central. -->
@@ -17,7 +17,7 @@
     </parent>
     <properties>
         <!-- The project should have a source encoding set. -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>${buildSourceEncoding}</project.build.sourceEncoding>
         <!-- The javadoc plugin version is set here to avoid duplication. -->
         <mavenJavadocPluginVersion>2.8</mavenJavadocPluginVersion>
     </properties>
@@ -55,6 +55,11 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -74,8 +79,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${buildSource}</source>
+                    <target>${buildTarget}</target>
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
@@ -170,6 +175,24 @@
                 <configuration>
                     <tagBase>https://rrd4j.googlecode.com/svn/tags</tagBase>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${basedir}/build.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <pluginManagement>

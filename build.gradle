@@ -1,8 +1,13 @@
 apply plugin: 'java'
 
-sourceCompatibility = 1.5
-version = '2.1.1'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+Properties props = new Properties() 
+props.load(new FileInputStream("build.properties")) 
+project.ext.set('props', props)
+
+sourceCompatibility = project.props.buildSource
+targetCompatibility = project.props.buildTarget
+version = project.props.buildVersion
+[compileJava, compileTestJava]*.options*.encoding = project.props.buildSourceEncoding
 
 jar {
   manifest {
