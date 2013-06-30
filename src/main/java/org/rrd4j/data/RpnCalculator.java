@@ -15,6 +15,7 @@ class RpnCalculator {
     private static final byte TKN_MULT = 4;
     private static final byte TKN_DIV = 5;
     private static final byte TKN_MOD = 6;
+    private static final byte TKN_ADDNAN = 57;
 
     private static final byte TKN_SIN = 7;
     private static final byte TKN_COS = 8;
@@ -285,6 +286,9 @@ class RpnCalculator {
         else if (parsedText.equals("RND")) {
             token.id = TKN_RND;
         }
+        else if (parsedText.equals("ADDNAN")) {
+            token.id = TKN_ADDNAN;
+        }
         else {
             token.id = TKN_VAR;
             token.variable = parsedText;
@@ -507,6 +511,11 @@ class RpnCalculator {
                         break;
                     case TKN_RND:
                         push(Math.floor(pop() * Math.random()));
+                        break;
+                    case TKN_ADDNAN:
+                        x1 = pop();
+                        x2 = pop();
+                        push(Double.isNaN(x1) ? x2 : (Double.isNaN(x2) ? x1 : x1 + x2));
                         break;
                     default:
                         throw new IllegalArgumentException("Unexpected RPN token encountered, token.id=" + token.id);
