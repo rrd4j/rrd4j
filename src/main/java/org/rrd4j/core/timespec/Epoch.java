@@ -60,7 +60,7 @@ public class Epoch extends JFrame {
         }
         tooltipBuff.append("<b>AT-style time specification</b><br>");
         tooltipBuff.append("timestamp<br><br>");
-        tooltipBuff.append("Copyright 2010 Sasa Markovic and Mathias Bogaert. Licensed under the Apache License, Version 2.0.</html>");
+        tooltipBuff.append("Copyright (c) 2013 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc. Licensed under the Apache License, Version 2.0.</html>");
         helpText = tooltipBuff.toString();
     }
 

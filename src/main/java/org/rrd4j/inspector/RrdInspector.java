@@ -30,7 +30,7 @@ public class RrdInspector extends JFrame {
     static final Dimension INFO_PANE_SIZE = new Dimension(450, 400);
 
     static final String ABOUT = "RRD4J\nRRD File Inspector\n" +
-            "Copyright 2010 Sasa Markovic and Mathias Bogaert. Licensed under the Apache License, Version 2.0.";
+            "Copyright (c) 2013 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc. Licensed under the Apache License, Version 2.0.";
 
     JTabbedPane tabbedPane = new JTabbedPane();
     private JTree mainTree = new JTree();

@@ -299,20 +299,9 @@
                     <quiet>true</quiet>
                     <detectLinks>true</detectLinks>
                     <detectJavaApiLink>true</detectJavaApiLink>
-                    <javaApiLinks>
-                        <!-- These links have changed recently, so we define the new ones here. -->
-                        <property>
-                            <name>api_1.5</name>
-                            <value>http://docs.oracle.com/javase/1.5.0/docs/api/</value>
-                        </property>
-                        <property>
-                            <name>api_1.6</name>
-                            <value>http://docs.oracle.com/javase/6/docs/api/index.html</value>
-                        </property>
-                    </javaApiLinks>
                     <excludePackageNames>org.rrd4j.core.jrrd</excludePackageNames>
                     <show>protected</show>
-                    <bottom>Copyright 2011 The RRD4J Authors.</bottom>
+                    <bottom>Copyright (c) ${year} The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) ${year} The OpenNMS Group, Inc.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
