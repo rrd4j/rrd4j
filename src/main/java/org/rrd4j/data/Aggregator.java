@@ -1,7 +1,5 @@
 package org.rrd4j.data;
 
-import org.rrd4j.core.Util;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,46 +8,81 @@ class Aggregator {
     private final long timestamps[], step;
     private final double[] values;
 
-    Aggregator(long[] timestamps, double[] values) {
-        assert timestamps.length == values.length : "Incompatible timestamps/values arrays (unequal lengths)";
-        assert timestamps.length >= 2 : "At least two timestamps must be supplied";
-        this.timestamps = timestamps;
-        this.values = values;
+    Aggregator(Source s) {
+        this.timestamps = s.getTimestamps();
+        this.values = s.getValues();
         this.step = timestamps[1] - timestamps[0];
     }
 
+    // The calculation are always made, some micro-benchmark show no real difference
     Aggregates getAggregates(long tStart, long tEnd) {
         Aggregates agg = new Aggregates();
         long totalSeconds = 0;
-        boolean firstFound = false;
-        double sum = 0;
+        int cnt = 0;
+        int lslstep = 0;
+        double SUMx = 0.0;
+        double SUMy = 0.0;
+        double SUMxy = 0.0;
+        double SUMxx = 0.0;
+        double SUMyy = 0.0;
+        double stdevM = 0.0;
+        double stdevS = 0.0;
+
         for (int i = 0; i < timestamps.length; i++) {
             long left = Math.max(timestamps[i] - step, tStart);
             long right = Math.min(timestamps[i], tEnd);
             long delta = right - left;
 
-            // delta is only > 0 when the timestamp for a given buck is within the range of tStart and tEnd
+            // delta is only > 0 when the time stamp for a given buck is within the range of tStart and tEnd
             if (delta > 0) {
                 double value = values[i];
-                agg.min = Util.min(agg.min, value);
-                agg.max = Util.max(agg.max, value);
-                agg.total = Util.sum(agg.total, value);
-
-                if (!firstFound) {
-                    agg.first = value;
-                    firstFound = true;
-                    agg.last = value;
-                } else if (delta >= step) {  // an entire bucket is included in this range
-                    agg.last = value;
-                }
 
                 if (!Double.isNaN(value)) {
-                    sum = Util.sum(sum, delta * value);
                     totalSeconds += delta;
+                    cnt++;
+
+                    SUMx += lslstep;
+                    SUMxx += lslstep * lslstep;
+                    SUMy  += value;
+                    SUMxy += lslstep * value;
+                    SUMyy += value * value;
+
+                    if (cnt == 1) {
+                        agg.last = agg.first = agg.total = agg.min = agg.max = value;
+                        stdevM = value;
+                        stdevS = 0;
+                    }
+                    else {
+                        if (delta >= step) {  // an entire bucket is included in this range
+                            agg.last = value;
+                        }
+
+                        agg.min = Math.min(agg.min, value);
+                        agg.max = Math.max(agg.max, value);
+                        agg.total += value;
+
+                        // See Knuth TAOCP vol 2, 3rd edition, page 232 and http://www.johndcook.com/standard_deviation.html
+                        double ds = value - stdevM;                            
+                        stdevM += ds/cnt;
+                        stdevS += stdevS + ds*(value - stdevM);
+                    }
                 }
+                lslstep++;
             }
         }
-        agg.average = totalSeconds > 0 ? (sum / totalSeconds) : Double.NaN;
+
+        if(cnt > 0) {
+            agg.average = SUMy / totalSeconds;
+            agg.stdev = Math.sqrt(( (cnt > 1) ? stdevS/(cnt - 1) : 0.0 ));
+
+            /* Bestfit line by linear least squares method */
+            agg.lslslope = (SUMx * SUMy - cnt * SUMxy) / (SUMx * SUMx - cnt * SUMxx);
+            agg.lslint = (SUMy - agg.lslslope * SUMx) / cnt;
+            agg.lslcorrel =
+                    (SUMxy - (SUMx * SUMy) / cnt) /
+                    Math.sqrt((SUMxx - (SUMx * SUMx) / cnt) * (SUMyy - (SUMy * SUMy) / cnt));            
+        }
+
         return agg;
     }
 

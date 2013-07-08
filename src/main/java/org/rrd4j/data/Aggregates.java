@@ -14,6 +14,8 @@ public class Aggregates {
     double min = Double.NaN, max = Double.NaN;
     double first = Double.NaN, last = Double.NaN;
     double average = Double.NaN, total = Double.NaN;
+    double stdev = Double.NaN;
+    double lslslope = Double.NaN, lslint = Double.NaN, lslcorrel = Double.NaN;
 
     Aggregates() {
         // NOP;
@@ -74,6 +76,33 @@ public class Aggregates {
     }
 
     /**
+     * Returns Least Squares Line Slope value
+     *
+     * @return lslslope value
+     */
+    public double getLSLSlope() {
+        return stdev;
+    }
+
+    /**
+     * Returns Least Squares Line y-intercept value
+     *
+     * @return lslint value
+     */
+    public double getLSLInt() {
+        return lslint;
+    }
+
+    /**
+     * Returns Least Squares Line Correlation Coefficient
+     *
+     * @return lslcorrel value
+     */
+    public double getLSLCorrel() {
+        return lslcorrel;
+    }
+
+    /**
      * Returns single aggregated value for the give consolidation function
      *
      * @param consolFun Consolidation function: MIN, MAX, FIRST, LAST, AVERAGE, TOTAL. These constants
@@ -83,18 +112,26 @@ public class Aggregates {
      */
     public double getAggregate(ConsolFun consolFun) {
         switch (consolFun) {
-            case AVERAGE:
-                return average;
-            case FIRST:
-                return first;
-            case LAST:
-                return last;
-            case MAX:
-                return max;
-            case MIN:
-                return min;
-            case TOTAL:
-                return total;
+        case AVERAGE:
+            return average;
+        case FIRST:
+            return first;
+        case LAST:
+            return last;
+        case MAX:
+            return max;
+        case MIN:
+            return min;
+        case TOTAL:
+            return total;
+        case STDEV:
+            return stdev;
+        case LSLSLOPE:
+            return lslslope;
+        case LSLINT:
+            return lslint;
+        case LSLCORREL:
+            return lslcorrel;
         }
         throw new IllegalArgumentException("Unknown consolidation function: " + consolFun);
     }
@@ -105,8 +142,10 @@ public class Aggregates {
      * @return String containing all aggregated values
      */
     public String dump() {
-        return "MIN=" + Util.formatDouble(min) + ", MAX=" + Util.formatDouble(max) + "\n" +
-                "FIRST=" + Util.formatDouble(first) + ", LAST=" + Util.formatDouble(last) + "\n" +
-                "AVERAGE=" + Util.formatDouble(average) + ", TOTAL=" + Util.formatDouble(total);
+        StringBuilder bl = new StringBuilder();
+        for(ConsolFun cf: ConsolFun.values()) {
+            bl.append(cf.name() + '=' + Util.formatDouble(this.getAggregate(cf)));
+        }
+        return bl.toString();
     }
 }

@@ -34,5 +34,25 @@ public enum ConsolFun {
     /**
      * The total of the data points is stored.
      */
-    TOTAL
+    TOTAL,
+
+    /**
+     * The standard deviation.
+     */
+    STDEV,
+
+    /**
+     * The least squares line, slope.
+     */
+    LSLSLOPE,
+
+    /**
+     * The least squares line, y-intercept.
+     */
+    LSLINT,
+
+    /**
+     * The least squares line, correlation coefficient.
+     */
+    LSLCORREL
 }
