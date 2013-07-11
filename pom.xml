@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>${buildVersion}</version>
+    <version>2.3-SNAPSHOT</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>http://code.google.com/p/rrd4j/</url>
     <!-- Use the Sonatype parent to be able to sync to central. -->
@@ -15,11 +15,19 @@
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
+    <prerequisites>
+        <maven>2.2.1</maven>
+    </prerequisites>
     <properties>
         <!-- The project should have a source encoding set. -->
-        <project.build.sourceEncoding>${buildSourceEncoding}</project.build.sourceEncoding>
-        <!-- The javadoc plugin version is set here to avoid duplication. -->
-        <mavenJavadocPluginVersion>2.8</mavenJavadocPluginVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mavenJavadocPluginVersion>2.9</mavenJavadocPluginVersion>
+        <mavenResourcesPlugin>2.6</mavenResourcesPlugin>
+        <junitVersion>4.10</junitVersion>
+        <buildSource>1.6</buildSource>
+        <buildTarget>1.6</buildTarget>
+        <!-- current year. -->
+        <year>2013</year>
     </properties>
     <licenses>
         <license>
@@ -52,14 +60,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>${junitVersion}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>properties-maven-plugin</artifactId>
-            <version>1.0-alpha-2</version>
-        </dependency>
+        <!-- <dependency> <groupId>org.codehaus.mojo</groupId> <artifactId>properties-maven-plugin</artifactId> 
+            <version>1.0-alpha-2</version> </dependency> -->
     </dependencies>
     <build>
         <resources>
@@ -77,7 +82,9 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
                 <configuration>
                     <source>${buildSource}</source>
                     <target>${buildTarget}</target>
@@ -85,7 +92,9 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>default-jar</id>
@@ -147,7 +156,9 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${mavenJavadocPluginVersion}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -159,7 +170,9 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-source</id>
@@ -171,29 +184,38 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagBase>https://rrd4j.googlecode.com/svn/tags</tagBase>
-                </configuration>
+                <version>2.4.1</version>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${mavenResourcesPlugin}</version>
                 <executions>
                     <execution>
-                        <phase>initialize</phase>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>process-sources</phase>
                         <goals>
-                            <goal>read-project-properties</goal>
+                            <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <files>
-                                <file>${basedir}/build.properties</file>
-                            </files>
+                            <outputDirectory>${basedir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/non-packaged-resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <!-- <plugin> <groupId>org.kuali.maven.plugins</groupId> <artifactId>properties-maven-plugin</artifactId> 
+                <version>2.0.1</version> <executions> <execution> <phase>initialize</phase> <goals> <goal>read-project-properties</goal> 
+                </goals> <configuration> <locations> <param>${basedir}/build.properties</param> </locations> </configuration> 
+                </execution> </executions> </plugin> -->
         </plugins>
         <pluginManagement>
             <!-- Set all plugin versions here, make sure all used plugins have a version set. -->
@@ -203,12 +225,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.4.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.5.1</version>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -234,18 +251,8 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.4.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>${mavenResourcesPlugin}</version>
                     <configuration>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
@@ -254,11 +261,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -283,6 +285,7 @@
                             <link>http://docs.oracle.com/javase/6/docs/api</link>
                             <link>http://api.mongodb.org/java/current/</link>
                             <link>http://download.oracle.com/docs/cd/E17277_02/html/java</link>
+                            <link>http://www.junit.org/junit/javadoc/${junitVersion}</link>
                         </links>
                         <bootclasspath>${sun.boot.class.path}</bootclasspath>
                     </configuration>
@@ -293,6 +296,11 @@
     <reporting>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+            <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${mavenJavadocPluginVersion}</version>
                 <configuration>
@@ -301,7 +309,8 @@
                     <detectJavaApiLink>true</detectJavaApiLink>
                     <excludePackageNames>org.rrd4j.core.jrrd</excludePackageNames>
                     <show>protected</show>
-                    <bottom>Copyright (c) ${year} The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) ${year} The OpenNMS Group, Inc.</bottom>
+                    <bottom>Copyright (c) ${year} The RRD4J Authors. Copyright (c) 2001-2005 Sasa
+                        Markovic and Ciaran Treanor. Copyright (c) ${year} The OpenNMS Group, Inc.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -322,6 +331,10 @@
             <name>Oracle Released Java Packages</name>
             <url>http://download.oracle.com/maven</url>
             <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots />
         </repository>
     </repositories>
     <developers>
