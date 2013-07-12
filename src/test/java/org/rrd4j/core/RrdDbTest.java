@@ -7,6 +7,7 @@ import static org.rrd4j.DsType.GAUGE;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Random;
 
 import junit.framework.Assert;
@@ -99,5 +100,40 @@ public class RrdDbTest {
         URL url = getClass().getResource("/rrdtool/rrdtool3.xml"); 
         RrdDb rrd = new RrdDb("test", "xml:/" + url.getFile(), RrdBackendFactory.getFactory("MEMORY"));
         org.rrd4j.TestsUtils.testRrdDb(rrd);
+    }
+    
+    @Test
+    public void testSpike() throws IOException {
+        RrdDef rrdDef = new RrdDef(testFolder.newFile("testSpike.rrd").getCanonicalPath(), 0, 60);
+        rrdDef.setVersion(2);
+        rrdDef.addDatasource("ds", GAUGE, 3600, -5, 30);
+        rrdDef.addArchive(AVERAGE, 0.5, 60, 999);
+        RrdDb rrdDb = new RrdDb(rrdDef);
+        
+        Calendar testTime = Calendar.getInstance();
+        testTime.set(Calendar.MINUTE, 0);
+        testTime.set(Calendar.SECOND, 0);
+        testTime.set(Calendar.MILLISECOND, 0);
+        System.out.println(testTime);
+        //testTime.add(Calendar.HOUR, -1);
+        long start =  Util.getTimestamp(testTime);
+        long timeStamp = start;
+        
+        for(int i = 0; i < 180; i++) {
+            long  sampleTime = timeStamp;
+            if(i == 117) {
+                sampleTime += -1;
+            }
+            rrdDb.createSample(sampleTime).setValue("ds", 30).update();
+            timeStamp += 60;
+        }
+        long end = timeStamp;
+        FetchData f = rrdDb.createFetchRequest(AVERAGE, start, end).fetchData();
+        System.out.println(f.dump());
+        double[] values = f.getValues("ds");
+        Assert.assertEquals("Data before first entry", Double.NaN, values[0]);
+        Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);
+        Assert.assertEquals("Bad average in point 2", 30, values[2], 1e-3);
+        Assert.assertEquals("Data after last entry", Double.NaN, values[3]);
     }
 }

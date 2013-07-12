@@ -18,9 +18,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-/**
- *
- */
+
 public class AggregatorTest {
 
     @Rule
@@ -28,7 +26,7 @@ public class AggregatorTest {
 
     public double testCf(ConsolFun cf) throws IOException {
         long startTime = Util.normalize(Util.getTimestamp(new Date()), 60);
-        
+
         File rrd = new File(testFolder.getRoot(), "testAggregator.rrd");
         RrdDef rrdDef = new RrdDef(rrd.getAbsolutePath(), startTime, 60);
         rrdDef.addArchive(ConsolFun.AVERAGE, 0, 1, 10);
@@ -52,7 +50,7 @@ public class AggregatorTest {
         sample.update();
 
         FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, startTime, startTime + 240);
-        
+
         return  fetchRequest.fetchData().getAggregate("total", cf);
 
     }

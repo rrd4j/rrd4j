@@ -187,4 +187,36 @@ public class RpnCalculatorTest {
         dp.addDatasource("source2", new Myplottable(1.0, Double.NaN, 1.0, Double.NaN));
         expected(dp, "source1, source2, ADDNAN", 2.0, 1.0, 1.0, Double.NaN);
     }
+    
+    @Test
+    public void testCOUNT() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 4);
+        expected(dp, "COUNT", 1.0, 2.0, 3.0, 4.0);
+    }
+
+    @Test
+    public void testAVG() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, "1,2,3,4,4,AVG", 2.5);
+    }
+    
+    @Test
+    public void testSORT() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, "4,3,2,1,4,SORT,POP, 3, AVG", 2.0);
+    }
+
+    @Test
+    public void testREV() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, "4,3,2,1,4,REV,POP, 3, AVG", 2.0);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testInvalid() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, "nothing, 1, +");
+    }
+
+
 }
