@@ -16,13 +16,21 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Locale;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageOutputStream;
 
 class ImageWorker {
     private static final String DUMMY_TEXT = "Dummy";
 
     static final int IMG_BUFFER_CAPACITY = 10000; // bytes
+    static private final String GifProvider = ImageIO.getImageWritersBySuffix("gif").next().getOriginatingProvider().getDescription(Locale.US);
 
     private BufferedImage img;
     private Graphics2D g2d;
@@ -172,7 +180,51 @@ class ImageWorker {
     }
 
     void saveImage(OutputStream stream, String type, float quality) throws IOException {
-        ImageIO.write(img, type, stream);
+        //The first writer is arbitratry choosen
+        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(type);
+        ImageWriter writer = iter.next();
+        BufferedImage outputImage = img; 
+        ImageWriteParam iwp = writer.getDefaultWriteParam();
+
+        ImageWriterSpi imgProvider = writer.getOriginatingProvider();
+        String imgProviderDescription = imgProvider.getDescription(Locale.US);
+
+        // GIF can't manage transparency, 
+        if(GifProvider.equals(imgProviderDescription))  {
+            int w = img.getWidth();
+            int h = img.getHeight();
+
+            outputImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
+        }
+        //Some format can't manage 16M colors images
+        else if(! imgProvider.canEncodeImage(outputImage)) {
+            int w = img.getWidth();
+            int h = img.getHeight();
+            outputImage = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
+            outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
+            if(! imgProvider.canEncodeImage(outputImage)) {
+                throw new RuntimeException("Invalid image type");
+            }            
+        }
+
+        //If losssy compression, use the quality
+        if(! imgProvider.isFormatLossless()) {
+            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            iwp.setCompressionQuality(quality);
+        }
+
+        ImageOutputStream imageStream = ImageIO.createImageOutputStream(stream);
+        writer.setOutput(imageStream);
+
+        try {
+            writer.write(null, new IIOImage(outputImage, null, null), iwp);
+        } catch (IOException e) {
+            writer.abort();
+            throw e;
+        }
+        writer.dispose();
+
         stream.flush();
     }
 
