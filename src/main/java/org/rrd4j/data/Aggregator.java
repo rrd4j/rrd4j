@@ -8,9 +8,11 @@ class Aggregator {
     private final long timestamps[], step;
     private final double[] values;
 
-    Aggregator(Source s) {
-        this.timestamps = s.getTimestamps();
-        this.values = s.getValues();
+    Aggregator(long[] timestamps, double[] values) {
+        assert timestamps.length == values.length : "Incompatible timestamps/values arrays (unequal lengths)";
+        assert timestamps.length >= 2 : "At least two timestamps must be supplied";
+        this.timestamps = timestamps;
+        this.values = values;
         this.step = timestamps[1] - timestamps[0];
     }
 
@@ -117,3 +119,4 @@ class Aggregator {
         return Double.NaN;
     }
 }
+
