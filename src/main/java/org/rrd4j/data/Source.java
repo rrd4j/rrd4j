@@ -31,12 +31,12 @@ abstract class Source {
     }
 
     Aggregates getAggregates(long tStart, long tEnd) {
-        Aggregator agg = new Aggregator(timestamps, values);
+        Aggregator agg = new Aggregator(this);
         return agg.getAggregates(tStart, tEnd);
     }
 
     double getPercentile(long tStart, long tEnd, double percentile) {
-        Aggregator agg = new Aggregator(timestamps, values);
+        Aggregator agg = new Aggregator(this);
         return agg.getPercentile(tStart, tEnd, percentile);
     }
 }
