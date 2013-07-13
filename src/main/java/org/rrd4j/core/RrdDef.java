@@ -45,7 +45,8 @@ public class RrdDef {
      */
     public static final long DEFAULT_INITIAL_SHIFT = -10L;
 
-    static public final int DEFAULTVERSION = 1;
+    /** Constant <code>DEFAULTVERSION=2</code> */
+    static public final int DEFAULTVERSION = 2;
 
     private String path;
     private long startTime = Util.getTime() + DEFAULT_INITIAL_SHIFT;
@@ -147,7 +148,7 @@ public class RrdDef {
 
     /**
      * Returns the RRD file version
-     * 
+     *
      * @return the version
      */
     public int getVersion() {
@@ -201,7 +202,7 @@ public class RrdDef {
 
     /**
      * Sets RRD's file version.
-     * 
+     *
      * @param version the version to set
      */
     public void setVersion(int version) {
@@ -659,9 +660,9 @@ public class RrdDef {
                 return false;
             }
         }
-		// everything matches
-		return true;
-	}
+        // everything matches
+        return true;
+    }
 
     /**
      * <p>hasDatasources.</p>
@@ -682,16 +683,16 @@ public class RrdDef {
     }
 
     /**
-	 * Removes all datasource definitions.
-	 */
-	public void removeDatasources() {
-		dsDefs.clear();
-	}
+     * Removes all datasource definitions.
+     */
+    public void removeDatasources() {
+        dsDefs.clear();
+    }
 
-	/**
-	 * Removes all RRA archive definitions.
-	 */
-	public void removeArchives() {
-		arcDefs.clear();
-	}
+    /**
+     * Removes all RRA archive definitions.
+     */
+    public void removeArchives() {
+        arcDefs.clear();
+    }
 }
