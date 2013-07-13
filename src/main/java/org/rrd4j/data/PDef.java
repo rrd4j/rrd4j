@@ -8,6 +8,7 @@ class PDef extends Source implements NonRrdSource  {
         this.plottable = plottable;
     }
 
+    /** {@inheritDoc} */
     public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
         long[] times = getTimestamps();
         double[] vals = new double[times.length];

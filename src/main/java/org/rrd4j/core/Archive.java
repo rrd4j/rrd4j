@@ -86,7 +86,7 @@ public class Archive implements RrdUpdater {
      * multiplied with the number of archive steps.
      *
      * @return Archive time step in seconds
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public long getArcStep() throws IOException {
         return parentDb.getHeader().getStep() * steps.get();
@@ -185,7 +185,7 @@ public class Archive implements RrdUpdater {
      * Returns archive consolidation function ("AVERAGE", "MIN", "MAX", "FIRST", "LAST" or "TOTAL").
      *
      * @return Archive consolidation function.
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public ConsolFun getConsolFun() throws IOException {
         return ConsolFun.valueOf(consolFun.get());
@@ -195,7 +195,7 @@ public class Archive implements RrdUpdater {
      * Returns archive X-files factor.
      *
      * @return Archive X-files factor (between 0 and 1).
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public double getXff() throws IOException {
         return xff.get();
@@ -205,7 +205,7 @@ public class Archive implements RrdUpdater {
      * Returns the number of archive steps.
      *
      * @return Number of archive steps.
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public int getSteps() throws IOException {
         return steps.get();
@@ -215,7 +215,7 @@ public class Archive implements RrdUpdater {
      * Returns the number of archive rows.
      *
      * @return Number of archive rows.
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public int getRows() throws IOException {
         return rows.get();
@@ -225,7 +225,7 @@ public class Archive implements RrdUpdater {
      * Returns current starting timestamp. This value is not constant.
      *
      * @return Timestamp corresponding to the first archive row
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public long getStartTime() throws IOException {
         long endTime = getEndTime();
@@ -238,7 +238,7 @@ public class Archive implements RrdUpdater {
      * Returns current ending timestamp. This value is not constant.
      *
      * @return Timestamp corresponding to the last archive row
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public long getEndTime() throws IOException {
         long arcStep = getArcStep();
@@ -346,10 +346,9 @@ public class Archive implements RrdUpdater {
     }
 
     /**
-     * Copies object's internal state to another Archive object.
+     * {@inheritDoc}
      *
-     * @param other New Archive object to copy state to
-     * @throws IOException Thrown in case of I/O error
+     * Copies object's internal state to another Archive object.
      */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Archive)) {
@@ -377,7 +376,7 @@ public class Archive implements RrdUpdater {
      * Sets X-files factor to a new value.
      *
      * @param xff New X-files factor value. Must be >= 0 and < 1.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public void setXff(double xff) throws IOException {
         if (xff < 0D || xff >= 1D) {

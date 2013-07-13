@@ -51,7 +51,7 @@ public class LinearInterpolator extends Plottable {
      *
      * @param timestamps timestamps in seconds
      * @param values     corresponding datasource values
-     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
+     * @throws java.lang.IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
      *                                  timestamps are not ordered, or array lengths are not equal.
      */
     public LinearInterpolator(long[] timestamps, double[] values) {
@@ -65,7 +65,7 @@ public class LinearInterpolator extends Plottable {
      *
      * @param dates  Array of Date objects
      * @param values corresponding datasource values
-     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
+     * @throws java.lang.IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
      *                                  timestamps are not ordered, or array lengths are not equal.
      */
     public LinearInterpolator(Date[] dates, double[] values) {
@@ -82,7 +82,7 @@ public class LinearInterpolator extends Plottable {
      *
      * @param dates  array of GregorianCalendar objects
      * @param values corresponding datasource values
-     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
+     * @throws java.lang.IllegalArgumentException Thrown if supplied arrays do not contain at least two values, or if
      *                                  timestamps are not ordered, or array lengths are not equal.
      */
     public LinearInterpolator(Calendar[] dates, double[] values) {
@@ -178,11 +178,10 @@ public class LinearInterpolator extends Plottable {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Method overridden from the base class. This method will be called by the framework. Call
      * this method only if you need interpolated values in your code.
-     *
-     * @param timestamp timestamp in seconds
-     * @return interpolated datasource value
      */
     public double getValue(long timestamp) {
         if (interpolationMethod == INTERPOLATE_REGRESSION) {

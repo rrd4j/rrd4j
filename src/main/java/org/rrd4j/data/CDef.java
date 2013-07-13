@@ -12,6 +12,7 @@ class CDef extends Source implements NonRrdSource {
         return rpnExpression;
     }
     
+    /** {@inheritDoc} */
     public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
         RpnCalculator calc = new RpnCalculator(rpnExpression, getName(), dataProcessor);
         setValues(calc.calculateValues());

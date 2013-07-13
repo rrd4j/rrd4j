@@ -1,5 +1,7 @@
 package org.rrd4j.graph;
 
+import java.util.Locale;
+
 import org.rrd4j.data.DataProcessor;
 
 class CommentText implements RrdGraphConstants {
@@ -14,7 +16,7 @@ class CommentText implements RrdGraphConstants {
         this.text = text;
     }
 
-    void resolveText(DataProcessor dproc, ValueScaler valueScaler) {
+    void resolveText(Locale l, DataProcessor dproc, ValueScaler valueScaler) {
         resolvedText = text;
         marker = "";
         if (resolvedText != null) {

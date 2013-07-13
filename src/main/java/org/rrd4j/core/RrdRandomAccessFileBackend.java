@@ -6,6 +6,7 @@ import java.io.RandomAccessFile;
 /**
  * Backend which is used to store RRD data to ordinary files on the disk. This was the
  * default factory before 1.4.0 version. This backend is based on the RandomAccessFile class (java.io.* package).
+ *
  */
 public class RrdRandomAccessFileBackend extends  RrdFileBackend {
     /**
@@ -18,7 +19,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      *
      * @param path     Path to a file
      * @param readOnly True, if file should be open in a read-only mode. False otherwise
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     protected RrdRandomAccessFileBackend(String path, boolean readOnly) throws IOException {
         super(path, readOnly);
@@ -28,10 +29,9 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
     /**
      * Closes the underlying RRD file.
      *
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public void close() throws IOException {
-        rafile.getFD().sync();
         rafile.close();
     }
 
@@ -40,7 +40,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      *
      * @param offset Starting file offset
      * @param b      Bytes to be written.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     protected void write(long offset, byte[] b) throws IOException {
         rafile.seek(offset);
@@ -52,7 +52,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      *
      * @param offset Starting file offset
      * @param b      Buffer which receives bytes read from the file.
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     protected void read(long offset, byte[] b) throws IOException {
         rafile.seek(offset);
@@ -62,13 +62,12 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Sets length of the underlying RRD file. This method is called only once, immediately
      * after a new RRD file gets created.
-     *
-     * @param length Length of the RRD file
-     * @throws IOException Thrown in case of I/O error.
      */
     protected void setLength(long length) throws IOException {
         rafile.setLength(length);
-	}
+    }
 }

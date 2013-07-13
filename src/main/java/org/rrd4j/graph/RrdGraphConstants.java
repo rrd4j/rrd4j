@@ -113,12 +113,16 @@ public interface RrdGraphConstants {
      * Index of the arrow color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
     int COLOR_ARROW = 8;
+    /**
+     * Index of the x-axis color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
+     */
+    int COLOR_XAXIS = 9;
 
     /**
      * Allowed color names which can be used in {@link RrdGraphDef#setColor(String, java.awt.Paint)} method
      */
     String[] COLOR_NAMES = {
-            "canvas", "back", "shadea", "shadeb", "grid", "mgrid", "font", "frame", "arrow"
+            "canvas", "back", "shadea", "shadeb", "grid", "mgrid", "font", "frame", "arrow", "xaxis"
     };
 
     /**
@@ -162,6 +166,10 @@ public interface RrdGraphConstants {
      * Default arrow color
      */
     Color DEFAULT_ARROW_COLOR = Color.RED;
+    /**
+     * Default x-axis color
+     */
+    Color DEFAULT_XAXIS_COLOR = Color.BLACK;
 
     /**
      * Constant to represent left alignment marker
@@ -237,6 +245,12 @@ public interface RrdGraphConstants {
      * Font constructor, to use embedded fonts
      */
     static class FontConstructor {
+        /**
+         * Return the default RRD4J's default font for the given strength
+         * @param type {@link java.awt.Font#BOLD} for a bold fond, any other value return plain style.
+         * @param size the size for the new Font
+         * @return a new {@link java.awt.Font} instance
+         */
         static public Font getFont(int type, int size) {
             String fontPath;
             if (type == Font.BOLD)
@@ -246,7 +260,7 @@ public interface RrdGraphConstants {
 
             InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath);
             try {
-                return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type, size);
+                return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type == Font.BOLD ? Font.BOLD : Font.PLAIN, size);
             } catch (FontFormatException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {

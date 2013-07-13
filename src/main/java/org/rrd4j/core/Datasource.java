@@ -79,7 +79,7 @@ public class Datasource implements RrdUpdater {
      * Returns datasource name.
      *
      * @return Datasource name
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public String getName() throws IOException {
         return dsName.get();
@@ -89,7 +89,7 @@ public class Datasource implements RrdUpdater {
      * Returns datasource type (GAUGE, COUNTER, DERIVE, ABSOLUTE).
      *
      * @return Datasource type.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public DsType getType() throws IOException {
         return DsType.valueOf(dsType.get());
@@ -99,9 +99,8 @@ public class Datasource implements RrdUpdater {
      * Returns datasource heartbeat
      *
      * @return Datasource heartbeat
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
-
     public long getHeartbeat() throws IOException {
         return heartbeat.get();
     }
@@ -110,7 +109,7 @@ public class Datasource implements RrdUpdater {
      * Returns minimal allowed value for this datasource.
      *
      * @return Minimal value allowed.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public double getMinValue() throws IOException {
         return minValue.get();
@@ -120,7 +119,7 @@ public class Datasource implements RrdUpdater {
      * Returns maximal allowed value for this datasource.
      *
      * @return Maximal value allowed.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public double getMaxValue() throws IOException {
         return maxValue.get();
@@ -130,7 +129,7 @@ public class Datasource implements RrdUpdater {
      * Returns last known value of the datasource.
      *
      * @return Last datasource value.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public double getLastValue() throws IOException {
         return lastValue.get();
@@ -140,7 +139,7 @@ public class Datasource implements RrdUpdater {
      * Returns value this datasource accumulated so far.
      *
      * @return Accumulated datasource value.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public double getAccumValue() throws IOException {
         return accumValue.get();
@@ -150,7 +149,7 @@ public class Datasource implements RrdUpdater {
      * Returns the number of accumulated NaN seconds.
      *
      * @return Accumulated NaN seconds.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getNanSeconds() throws IOException {
         return nanSeconds.get();
@@ -275,10 +274,9 @@ public class Datasource implements RrdUpdater {
     }
 
     /**
-     * Copies object's internal state to another Datasource object.
+     * {@inheritDoc}
      *
-     * @param other New Datasource object to copy state to
-     * @throws IOException Thrown in case of I/O error
+     * Copies object's internal state to another Datasource object.
      */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Datasource)) {
@@ -301,7 +299,7 @@ public class Datasource implements RrdUpdater {
      * Returns index of this Datasource object in the RRD.
      *
      * @return Datasource index in the RRD.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public int getDsIndex() throws IOException {
         try {
@@ -316,8 +314,8 @@ public class Datasource implements RrdUpdater {
      * Sets datasource heartbeat to a new value.
      *
      * @param heartbeat New heartbeat value
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown if invalid (non-positive) heartbeat value is specified.
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown if invalid (non-positive) heartbeat value is specified.
      */
     public void setHeartbeat(long heartbeat) throws IOException {
         if (heartbeat < 1L) {
@@ -330,7 +328,7 @@ public class Datasource implements RrdUpdater {
      * Sets datasource name to a new value
      *
      * @param newDsName New datasource name
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public void setDsName(String newDsName) throws IOException {
         if (newDsName != null && newDsName.length() > RrdString.STRING_LENGTH) {
@@ -343,6 +341,12 @@ public class Datasource implements RrdUpdater {
         this.dsName.set(newDsName);
     }
 
+    /**
+     * <p>Setter for the field <code>dsType</code>.</p>
+     *
+     * @param newDsType a {@link org.rrd4j.DsType} object.
+     * @throws java.io.IOException if any.
+     */
     public void setDsType(DsType newDsType) throws IOException {
         // set datasource type
         this.dsType.set(newDsType.name());
@@ -366,8 +370,8 @@ public class Datasource implements RrdUpdater {
      *                             value should be set
      * @param filterArchivedValues true, if archived datasource values should be fixed;
      *                             false, otherwise.
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown if invalid minValue was supplied (not less then maxValue)
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown if invalid minValue was supplied (not less then maxValue)
      */
     public void setMinValue(double minValue, boolean filterArchivedValues) throws IOException {
         double maxValue = this.maxValue.get();
@@ -394,8 +398,8 @@ public class Datasource implements RrdUpdater {
      *                             value should be set.
      * @param filterArchivedValues true, if archived datasource values should be fixed;
      *                             false, otherwise.
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown if invalid maxValue was supplied (not greater then minValue)
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown if invalid maxValue was supplied (not greater then minValue)
      */
     public void setMaxValue(double maxValue, boolean filterArchivedValues) throws IOException {
         double minValue = this.minValue.get();
@@ -424,8 +428,8 @@ public class Datasource implements RrdUpdater {
      *                             value should be set.
      * @param filterArchivedValues true, if archived datasource values should be fixed;
      *                             false, otherwise.
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown if invalid min/max values were supplied
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown if invalid min/max values were supplied
      */
     public void setMinMaxValue(double minValue, double maxValue, boolean filterArchivedValues) throws IOException {
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {

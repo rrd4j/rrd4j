@@ -16,14 +16,25 @@ class HeaderTableModel extends AbstractTableModel {
 
     private Object[] values;
 
+    /**
+     * <p>getRowCount.</p>
+     *
+     * @return a int.
+     */
     public int getRowCount() {
         return DESCRIPTIONS.length;
     }
 
+    /**
+     * <p>getColumnCount.</p>
+     *
+     * @return a int.
+     */
     public int getColumnCount() {
         return COLUMN_NAMES.length;
     }
 
+    /** {@inheritDoc} */
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
             return DESCRIPTIONS[rowIndex];
@@ -39,6 +50,7 @@ class HeaderTableModel extends AbstractTableModel {
         return null;
     }
 
+    /** {@inheritDoc} */
     public String getColumnName(int column) {
         return COLUMN_NAMES[column];
     }

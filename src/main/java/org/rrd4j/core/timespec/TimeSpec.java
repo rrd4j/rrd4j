@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
  * Simple class to represent time obtained by parsing at-style date specification (described
  * in detail on the rrdfetch man page. See javadoc for {@link org.rrd4j.core.timespec.TimeParser}
  * for more information.
+ *
  */
 public class TimeSpec {
     static final int TYPE_ABSOLUTE = 0;

@@ -3,8 +3,14 @@ package org.rrd4j.core;
 import org.rrd4j.ConsolFun;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.nio.channels.FileChannel;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class used to perform various complex operations on RRD files. Use an instance of the
@@ -22,8 +28,14 @@ import java.util.*;
  *
  * <p><b><u>IMPORTANT</u></b>: NEVER use methods found in this class on 'live' RRD files
  * (files which are currently in use).</p>
+ *
  */
 public class RrdToolkit {
+
+    private RrdToolkit() {
+
+    }
+
     /**
      * Creates a new RRD file with one more datasource in it. RRD file is created based on the
      * existing one (the original RRD file is not modified at all). All data from
@@ -32,7 +44,7 @@ public class RrdToolkit {
      * @param sourcePath    path to a RRD file to import data from (will not be modified)
      * @param destPath      path to a new RRD file (will be created)
      * @param newDatasource Datasource definition to be added to the new RRD file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addDatasource(String sourcePath, String destPath, DsDef newDatasource)
             throws IOException {
@@ -47,7 +59,7 @@ public class RrdToolkit {
      * @param sourcePath     path to a RRD file to import data from (will not be modified)
      * @param destPath       path to a new RRD file (will be created)
      * @param newDatasources Datasource definitions to be added to the new RRD file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addDatasources(String sourcePath, String destPath, Iterable<DsDef> newDatasources)
             throws IOException {
@@ -86,7 +98,7 @@ public class RrdToolkit {
      * @param newDatasource Datasource definition to be added to the RRD file
      * @param saveBackup    true, if backup of the original file should be created;
      *                      false, otherwise
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addDatasource(String sourcePath, DsDef newDatasource, boolean saveBackup) throws IOException {
         addDatasources(sourcePath, Collections.singleton(newDatasource), saveBackup);
@@ -106,7 +118,7 @@ public class RrdToolkit {
      * @param newDatasources Datasource definitions to be added to the RRD file
      * @param saveBackup    true, if backup of the original file should be created;
      *                      false, otherwise
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addDatasources(String sourcePath, Iterable<DsDef> newDatasources, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
@@ -122,7 +134,7 @@ public class RrdToolkit {
      * @param sourcePath path to a RRD file to import data from (will not be modified)
      * @param destPath   path to a new RRD file (will be created)
      * @param dsName     Name of the Datasource to be removed from the new RRD file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void removeDatasource(String sourcePath, String destPath, String dsName)
             throws IOException {
@@ -160,7 +172,7 @@ public class RrdToolkit {
      * @param dsName     Name of the Datasource to be removed from the RRD file
      * @param saveBackup true, if backup of the original file should be created;
      *                   false, otherwise
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void removeDatasource(String sourcePath, String dsName, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
@@ -174,7 +186,7 @@ public class RrdToolkit {
      * @param sourcePath Path to a RRD file
      * @param oldDsName  Old datasource name
      * @param newDsName  New datasource name
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void renameDatasource(String sourcePath, String oldDsName, String newDsName) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
@@ -199,7 +211,7 @@ public class RrdToolkit {
      * @param sourcePath Path to a RRD file
      * @param dsName     Datasource name or null if you want to rename all datasources
      * @return Number of datasources successfully renamed
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static int forceZerosForNans(String sourcePath, String dsName) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
@@ -236,7 +248,7 @@ public class RrdToolkit {
      * @param sourcePath path to a RRD file to import data from (will not be modified)
      * @param destPath   path to a new RRD file (will be created)
      * @param newArchive Archive definition to be added to the new RRD file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addArchive(String sourcePath, String destPath, ArcDef newArchive) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
@@ -272,7 +284,7 @@ public class RrdToolkit {
      * @param newArchive Archive definition to be added to the RRD file
      * @param saveBackup true, if backup of the original file should be created;
      *                   false, otherwise
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void addArchive(String sourcePath, ArcDef newArchive, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
@@ -289,7 +301,7 @@ public class RrdToolkit {
      * @param destPath   path to a new RRD file (will be created)
      * @param consolFun  Consolidation function of Archive which should be removed
      * @param steps      Number of steps for Archive which should be removed
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void removeArchive(String sourcePath, String destPath, ConsolFun consolFun, int steps) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
@@ -327,7 +339,7 @@ public class RrdToolkit {
      * @param steps      Number of steps for Archive which should be removed
      * @param saveBackup true, if backup of the original file should be created;
      *                   false, otherwise
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void removeArchive(String sourcePath, ConsolFun consolFun, int steps, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
@@ -349,7 +361,27 @@ public class RrdToolkit {
         }
         deleteFile(dest);
         if (!source.renameTo(dest)) {
-            throw new IOException("Could not create file " + destPath + " from " + sourcePath);
+            //Rename failed so try to copy and erase
+            FileChannel sourceStream = null;
+            FileChannel destinationStream = null;
+            try {
+                sourceStream = new FileInputStream(source).getChannel();
+                destinationStream = new FileOutputStream(dest).getChannel();
+                long count = 0;
+                final long size = sourceStream.size();
+                while(count < size) {
+                    count += destinationStream.transferFrom(sourceStream, count, size-count);
+                }
+                deleteFile(source);
+            }
+            finally {
+                if(sourceStream != null) {
+                    sourceStream.close();
+                }
+                if(destinationStream != null) {
+                    destinationStream.close();
+                }
+            }
         }
     }
 
@@ -368,7 +400,7 @@ public class RrdToolkit {
      * @param sourcePath     Path to existing RRD file (will be updated)
      * @param datasourceName Name of the datasource in the specified RRD file
      * @param newHeartbeat   New datasource heartbeat
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsHeartbeat(String sourcePath, String datasourceName, long newHeartbeat) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
@@ -386,7 +418,7 @@ public class RrdToolkit {
      * @param sourcePath   Path to existing RRD file (will be updated)
      * @param dsIndex      Index of the datasource in the specified RRD file
      * @param newHeartbeat New datasource heartbeat
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsHeartbeat(String sourcePath, int dsIndex, long newHeartbeat) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
@@ -406,10 +438,10 @@ public class RrdToolkit {
      * @param newMinValue          New min value for the datasource
      * @param filterArchivedValues set to <code>true</code> if archived values less than
      *                             <code>newMinValue</code> should be set to NaN; set to false, otherwise.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsMinValue(String sourcePath, String datasourceName,
-                                     double newMinValue, boolean filterArchivedValues) throws IOException {
+            double newMinValue, boolean filterArchivedValues) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
@@ -427,10 +459,10 @@ public class RrdToolkit {
      * @param newMaxValue          New max value for the datasource
      * @param filterArchivedValues set to <code>true</code> if archived values greater than
      *                             <code>newMaxValue</code> should be set to NaN; set to false, otherwise.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsMaxValue(String sourcePath, String datasourceName,
-                                     double newMaxValue, boolean filterArchivedValues) throws IOException {
+            double newMaxValue, boolean filterArchivedValues) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
@@ -449,11 +481,11 @@ public class RrdToolkit {
      * @param newMaxValue          New max value for the datasource
      * @param filterArchivedValues set to <code>true</code> if archived values outside
      *                             of the specified min/max range should be replaced with NaNs.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsMinMaxValue(String sourcePath, String datasourceName,
-                                        double newMinValue, double newMaxValue, boolean filterArchivedValues)
-            throws IOException {
+            double newMinValue, double newMaxValue, boolean filterArchivedValues)
+                    throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Datasource ds = rrd.getDatasource(datasourceName);
@@ -470,10 +502,10 @@ public class RrdToolkit {
      * @param consolFun  Consolidation function of the target archive
      * @param steps      Number of steps of the target archive
      * @param newXff     New X-files factor for the target archive
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setArcXff(String sourcePath, ConsolFun consolFun, int steps,
-                                 double newXff) throws IOException {
+            double newXff) throws IOException {
         RrdDb rrd = new RrdDb(sourcePath);
         try {
             Archive arc = rrd.getArchive(consolFun, steps);
@@ -493,10 +525,10 @@ public class RrdToolkit {
      * @param consolFun  Consolidation function of the archive to be resized
      * @param numSteps   Number of steps of the archive to be resized
      * @param newRows    New archive size (number of archive rows)
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void resizeArchive(String sourcePath, String destPath, ConsolFun consolFun,
-                                     int numSteps, int newRows) throws IOException {
+            int numSteps, int newRows) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException("Source and destination paths are the same");
         }
@@ -533,10 +565,10 @@ public class RrdToolkit {
      * @param newRows    New archive size (number of archive rows)
      * @param saveBackup true, if backup of the original file should be created;
      *                   false, otherwise
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void resizeArchive(String sourcePath, ConsolFun consolFun,
-                                     int numSteps, int newRows, boolean saveBackup) throws IOException {
+            int numSteps, int newRows, boolean saveBackup) throws IOException {
         String destPath = Util.getTmpFilename();
         resizeArchive(sourcePath, destPath, consolFun, numSteps, newRows);
         copyFile(destPath, sourcePath, saveBackup);
@@ -556,7 +588,7 @@ public class RrdToolkit {
      * named 'in-traffic.rrd' and 'out-traffic.rrd'.
      *
      * @param sourcePath Path to a RRD file with multiple datasources defined
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void split(String sourcePath) throws IOException {
         RrdDb rrdSource = new RrdDb(sourcePath);
@@ -587,7 +619,7 @@ public class RrdToolkit {
      * @param extension File extension (like ".rrd", ".jrb", ".rrd.jrb")
      * @param resursive true if all subdirectories should be traversed for the same extension, false otherwise
      * @return Array of sorted canonical file names with the given extension
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static String[] getCanonicalPaths(String directory, final String extension, boolean resursive)
             throws IOException {

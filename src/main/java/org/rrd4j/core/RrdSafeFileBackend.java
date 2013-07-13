@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * parts of a RRD file in memory. Therefore, this backend is safe to be used when RRD files should
  * be shared between several JVMs at the same time. However, this backend is a little bit slow
  * since it does not use fast java.nio.* package (it's still based on the RandomAccessFile class).
+ *
  */
 public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
     private static final Counters counters = new Counters();
@@ -21,7 +22,9 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
      * Creates RrdFileBackend object for the given file path, backed by RandomAccessFile object.
      *
      * @param path Path to a file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
+     * @param lockWaitTime a long.
+     * @param lockRetryPeriod a long.
      */
     public RrdSafeFileBackend(String path, long lockWaitTime, long lockRetryPeriod)
             throws IOException {
@@ -62,6 +65,11 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
                 "] after " + lockWaitTime + " milliseconds");
     }
 
+    /**
+     * <p>close.</p>
+     *
+     * @throws java.io.IOException if any.
+     */
     public void close() throws IOException {
         try {
             if (lock != null) {
@@ -84,6 +92,11 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
         return false;
     }
 
+    /**
+     * <p>getLockInfo.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public static String getLockInfo() {
         return counters.getInfo();
     }

@@ -20,7 +20,7 @@ public interface Robin extends RrdUpdater {
      * Fetches all archived values.
      *
      * @return Array of double archive values, starting from the oldest one.
-     * @throws IOException Thrown in case of I/O specific error.
+     * @throws java.io.IOException Thrown in case of I/O specific error.
      */
     double[] getValues() throws IOException;
 
@@ -28,8 +28,8 @@ public interface Robin extends RrdUpdater {
      * Updates archived values in bulk.
      *
      * @param newValues Array of double values to be stored in the archive
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown if the length of the input array is different from the length of
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown if the length of the input array is different from the length of
      *                                  this archive
      */
     void setValues(double... newValues) throws IOException;
@@ -38,7 +38,7 @@ public interface Robin extends RrdUpdater {
      * (Re)sets all values in this archive to the same value.
      *
      * @param newValue New value
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     void setValues(double newValue) throws IOException;
 
@@ -47,7 +47,7 @@ public interface Robin extends RrdUpdater {
      *
      * @param index Value index
      * @return Value stored in the i-th position (the oldest value has zero index)
-     * @throws IOException Thrown in case of I/O specific error.
+     * @throws java.io.IOException Thrown in case of I/O specific error.
      */
     double getValue(int index) throws IOException;
 
@@ -56,7 +56,7 @@ public interface Robin extends RrdUpdater {
      *
      * @param index index in the archive (the oldest value has zero index)
      * @param value value to be stored
-     * @throws IOException Thrown in case of I/O specific error.
+     * @throws java.io.IOException Thrown in case of I/O specific error.
      */
     void setValue(int index, double value) throws IOException;
 
@@ -75,10 +75,9 @@ public interface Robin extends RrdUpdater {
     int getSize();
 
     /**
-     * Copies object's internal state to another Robin object.
+     * {@inheritDoc}
      *
-     * @param other New Robin object to copy state to
-     * @throws IOException Thrown in case of I/O error
+     * Copies object's internal state to another Robin object.
      */
     void copyStateTo(RrdUpdater other) throws IOException;
 
@@ -89,7 +88,7 @@ public interface Robin extends RrdUpdater {
      *
      * @param minValue lower boundary
      * @param maxValue upper boundary
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     void filterValues(double minValue, double maxValue) throws IOException;
 
@@ -108,13 +107,46 @@ public interface Robin extends RrdUpdater {
      */
     RrdAllocator getRrdAllocator();
 
+    /**
+     * <p>update.</p>
+     *
+     * @param newValues an array of double.
+     * @throws java.io.IOException if any.
+     */
     void update(double[] newValues) throws IOException;
 
+    /**
+     * <p>dump.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     String dump() throws IOException;
 
+    /**
+     * <p>store.</p>
+     *
+     * @param newValue a double.
+     * @throws java.io.IOException if any.
+     */
     void store(double newValue) throws IOException;
 
+    /**
+     * <p>bulkStore.</p>
+     *
+     * @param newValue a double.
+     * @param bulkCount a int.
+     * @throws java.io.IOException if any.
+     */
     void bulkStore(double newValue, int bulkCount) throws IOException;
 
+    /**
+     * <p>getValues.</p>
+     *
+     * @param index a int.
+     * @param count a int.
+     * @return an array of double.
+     * @throws java.io.IOException if any.
+     */
     double[] getValues(int index, int count) throws IOException;
 }

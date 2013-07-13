@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.rrd4j</groupId>
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.3-SNAPSHOT</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>http://code.google.com/p/rrd4j/</url>
-
     <!-- Use the Sonatype parent to be able to sync to central. -->
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
-
+    <prerequisites>
+        <maven>2.2.1</maven>
+    </prerequisites>
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- The javadoc plugin version is set here to avoid duplication. -->
-        <mavenJavadocPluginVersion>2.8</mavenJavadocPluginVersion>
+        <mavenJavadocPluginVersion>2.9.1</mavenJavadocPluginVersion>
+        <mavenResourcesPlugin>2.6</mavenResourcesPlugin>
+        <mavenSurefirePlugin>2.15</mavenSurefirePlugin>
+        <junitVersion>4.10</junitVersion>
+        <buildSource>1.6</buildSource>
+        <buildTarget>1.6</buildTarget>
+        <!-- current year. -->
+        <year>2013</year>
     </properties>
-
     <licenses>
         <license>
             <name>Apache License Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-
     <scm>
         <!-- See http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html -->
         <!-- for how to perform a release from the connection below. -->
@@ -38,30 +43,28 @@
         <developerConnection>scm:git:https://code.google.com/p/rrd4j/</developerConnection>
         <url>http://code.google.com/p/rrd4j/source/browse/</url>
     </scm>
-
     <dependencies>
         <!-- Dependencies for optional backends should have optional=true. -->
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>4.1.7</version>
+            <version>4.0.92</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>2.6.5</version>
+            <version>2.11.1</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.9</version>
+            <version>${junitVersion}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <resources>
             <resource>
@@ -76,19 +79,21 @@
                 </includes>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>${buildSource}</source>
+                    <target>${buildTarget}</target>
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>default-jar</id>
@@ -149,9 +154,10 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${mavenJavadocPluginVersion}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -162,9 +168,10 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-source</id>
@@ -175,25 +182,36 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <tagBase>https://rrd4j.googlecode.com/svn/tags</tagBase>
-                </configuration>
+                <version>2.4.1</version>
             </plugin>
             <plugin>
-                      <groupId>org.codehaus.mojo</groupId>
-                      <artifactId>findbugs-maven-plugin</artifactId>
-                      <version>2.0.1</version>
-                      <configuration>
-                         <findbugsXmlOutput>true</findbugsXmlOutput>
-                         <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                         <xmlOutput>true</xmlOutput>
-                      </configuration>
-                   </plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${mavenResourcesPlugin}</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/non-packaged-resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-
         <pluginManagement>
             <!-- Set all plugin versions here, make sure all used plugins have a version set. -->
             <!-- Use "mvn versions:display-plugin-updates" to check for new plugin versions. -->
@@ -202,12 +220,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.4.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -224,34 +237,17 @@
                         <keyname>RRD4J Build</keyname>
                         <useAgent>true</useAgent>
                         <mavenExecutorId>forked-path</mavenExecutorId>
-                        <!-- <executable>gpg2</executable>
-                        <skip>true</skip>  -->
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>2.3.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.3.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${mavenJavadocPluginVersion}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
+                    <version>2.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>${mavenResourcesPlugin}</version>
                     <configuration>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
@@ -259,53 +255,58 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
+                    <version>3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.10</version>
-					<configuration>
-						<systemProperties>
-							<property>
-								<name>java.awt.headless</name>
-								<value>true</value>
-							</property>
-						</systemProperties>
-					</configuration>
+                    <version>${mavenSurefirePlugin}</version>
+                    <configuration>
+                        <systemProperties>
+                            <property>
+                                <name>java.awt.headless</name>
+                                <value>true</value>
+                            </property>
+                        </systemProperties>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${mavenJavadocPluginVersion}</version>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <detectLinks/>
+                        <links>
+                            <link>http://docs.oracle.com/javase/6/docs/api/</link>
+                            <link>http://api.mongodb.org/java/current/</link>
+                            <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
+                            <link>http://junit.sourceforge.net/javadoc/</link>
+                            <link>http://api.mongodb.org/java/current/</link>
+                        </links>
+                        <bootclasspath>${sun.boot.class.path}</bootclasspath>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
     <reporting>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${mavenJavadocPluginVersion}</version>
                 <configuration>
-                    <quiet>true</quiet>
+                    <quiet>false</quiet>
                     <detectLinks>true</detectLinks>
                     <detectJavaApiLink>true</detectJavaApiLink>
-                    <javaApiLinks>
-                        <!-- These links have changed recently, so we define the new ones here. -->
-                        <property>
-                            <name>api_1.5</name>
-                            <value>http://download.oracle.com/javase/1.5.0/docs/api/</value>
-                        </property>
-                        <property>
-                            <name>api_1.6</name>
-                            <value>http://download.oracle.com/javase/6/docs/api/</value>
-                        </property>
-                    </javaApiLinks>
-                    <excludePackageNames>org.rrd4j.core.jrrd</excludePackageNames>
                     <show>protected</show>
-                    <bottom>Copyright 2011 The RRD4J Authors.</bottom>
+                    <bottom>Copyright (c) ${year} The RRD4J Authors. Copyright (c) 2001-2005 Sasa
+                        Markovic and Ciaran Treanor. Copyright (c) ${year} The OpenNMS Group, Inc.</bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -317,9 +318,13 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${mavenSurefirePlugin}</version>
+            </plugin>
         </plugins>
     </reporting>
-
     <repositories>
         <repository>
             <!-- The BerkeleyDB dependency is found here. -->
@@ -327,9 +332,12 @@
             <name>Oracle Released Java Packages</name>
             <url>http://download.oracle.com/maven</url>
             <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots />
         </repository>
     </repositories>
-
     <developers>
         <developer>
             <name>Sasa Markovic</name>

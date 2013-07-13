@@ -100,6 +100,11 @@ class RrdToolReader extends DataImporter {
         }
     }
 
+    /**
+     * <p>finalize.</p>
+     *
+     * @throws java.lang.Throwable if any.
+     */
     protected void finalize() throws Throwable {
         release();
     }

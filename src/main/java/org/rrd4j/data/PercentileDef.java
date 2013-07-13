@@ -11,6 +11,7 @@ class PercentileDef extends SDef {
         this.defName = defName;
     }
     
+    /** {@inheritDoc} */
     public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
         Source source = dataProcessor.getSource(defName);
         setValue(source.getPercentile(tStart, tEnd, percentile));

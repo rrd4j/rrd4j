@@ -41,17 +41,9 @@ public class Archive {
 
         offset = file.getFilePointer();
         type = ConsolidationFunctionType.valueOf(file.readString(Constants.CF_NAM_SIZE).toUpperCase());
-        if(file.getBits() == 32) {
-            rowCount = file.readInt();
-            pdpCount = file.readInt();
-            file.align();
-        }
-        //64 bits
-        else {
-            file.align();
-            rowCount = file.readLong();
-            pdpCount = file.readLong();
-        }
+        file.align(file.getBits() / 8);
+        rowCount = file.readLong();
+        pdpCount = file.readLong();
 
         UnivalArray par = file.getUnivalArray(10);
         xff = par.getDouble(rra_par_en.RRA_cdp_xff_val);
@@ -226,7 +218,7 @@ public class Archive {
             int counter = 0;
             int row = currentRow;
 
-            db.rrdFile.ras.seek(dataOffset + (row + 1) * 16);
+            db.rrdFile.ras.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
 
             long lastUpdate = db.lastUpdate.getTime() / 1000;
             int pdpStep = db.header.pdpStep;
@@ -281,6 +273,12 @@ public class Archive {
         }
     }
 
+    /**
+     * <p>Getter for the field <code>values</code>.</p>
+     *
+     * @return an array of double.
+     * @throws java.io.IOException if any.
+     */
     public double[][] getValues() throws IOException {
         if (values != null) {
             return values;

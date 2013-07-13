@@ -18,10 +18,10 @@ import org.rrd4j.data.DataProcessor;
  */
 public class RrdGraph implements RrdGraphConstants {
     private static final double[] SENSIBLE_VALUES = {
-            1000.0, 900.0, 800.0, 750.0, 700.0, 600.0, 500.0, 400.0, 300.0, 250.0, 200.0, 125.0, 100.0,
-            90.0, 80.0, 75.0, 70.0, 60.0, 50.0, 40.0, 30.0, 25.0, 20.0, 10.0,
-            9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.5, 3.0, 2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
-            0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
+        1000.0, 900.0, 800.0, 750.0, 700.0, 600.0, 500.0, 400.0, 300.0, 250.0, 200.0, 125.0, 100.0,
+        90.0, 80.0, 75.0, 70.0, 60.0, 50.0, 40.0, 30.0, 25.0, 20.0, 10.0,
+        9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.5, 3.0, 2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
+        0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
     };
 
     private static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'µ', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
@@ -34,10 +34,10 @@ public class RrdGraph implements RrdGraphConstants {
     RrdGraphInfo info = new RrdGraphInfo();
 
     /**
-     * Creates graph from the corresponding {@link RrdGraphDef} object.
+     * Creates graph from the corresponding {@link org.rrd4j.graph.RrdGraphDef} object.
      *
      * @param gdef Graph definition
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdGraph(RrdGraphDef gdef) throws IOException {
         this.gdef = gdef;
@@ -72,6 +72,7 @@ public class RrdGraph implements RrdGraphConstants {
                 identifySiUnit();
                 expandValueRange();
                 removeOutOfRangeRules();
+                removeOutOfRangeSpans();
                 initializeLimits();
                 placeLegends();
                 createImageWorker();
@@ -82,6 +83,7 @@ public class RrdGraph implements RrdGraphConstants {
                 drawText();
                 drawLegend();
                 drawRules();
+                drawSpans();
                 gator();
                 drawOverlay();
                 saveImage();
@@ -103,7 +105,7 @@ public class RrdGraph implements RrdGraphConstants {
             }
         }
         if (gdef.imageInfo != null) {
-            info.imgInfo = Util.sprintf(gdef.imageInfo, gdef.filename, im.xgif, im.ygif);
+            info.imgInfo = Util.sprintf(gdef.locale, gdef.imageInfo, gdef.filename, im.xgif, im.ygif);
         }
     }
 
@@ -151,6 +153,26 @@ public class RrdGraph implements RrdGraphConstants {
                     int x = mapper.xtr(vr.timestamp);
                     worker.drawLine(x, im.yorigin, x, im.yorigin - im.ysize, vr.color, new BasicStroke(vr.width));
                 }
+            }
+        }
+        worker.reset();
+    }
+
+    private void drawSpans() {
+        worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+        for (PlotElement pe : gdef.plotElements) {
+            if (pe instanceof HSpan) {
+                HSpan hr = (HSpan) pe;
+                int ys = mapper.ytr(hr.start);
+                int ye = mapper.ytr(hr.end);
+                int height = ys - ye;
+                worker.fillRect(im.xorigin, ys - height, im.xsize, height, hr.color);
+            }
+            else if (pe instanceof VSpan) {
+                VSpan vr = (VSpan) pe;
+                int xs = mapper.xtr(vr.start);
+                int xe = mapper.xtr(vr.end);
+                worker.fillRect(xs, im.yorigin - im.ysize, xe - xs, im.ysize, vr.color);
             }
         }
         worker.reset();
@@ -258,7 +280,7 @@ public class RrdGraph implements RrdGraphConstants {
     private void drawAxis() {
         if (!gdef.onlyGraph) {
             Paint gridColor = gdef.colors[COLOR_GRID];
-            Paint fontColor = gdef.colors[COLOR_FONT];
+            Paint xaxisColor = gdef.colors[COLOR_XAXIS];
             Paint arrowColor = gdef.colors[COLOR_ARROW];
             Stroke stroke = new BasicStroke(1);
             worker.drawLine(im.xorigin + im.xsize, im.yorigin, im.xorigin + im.xsize, im.yorigin - im.ysize,
@@ -266,7 +288,7 @@ public class RrdGraph implements RrdGraphConstants {
             worker.drawLine(im.xorigin, im.yorigin - im.ysize, im.xorigin + im.xsize, im.yorigin - im.ysize,
                     gridColor, stroke);
             worker.drawLine(im.xorigin - 4, im.yorigin, im.xorigin + im.xsize + 4, im.yorigin,
-                    fontColor, stroke);
+                    xaxisColor, stroke);
             worker.drawLine(im.xorigin, im.yorigin, im.xorigin, im.yorigin - im.ysize,
                     gridColor, stroke);
             worker.drawLine(im.xorigin + im.xsize + 4, im.yorigin - 3, im.xorigin + im.xsize + 4, im.yorigin + 3,
@@ -348,6 +370,17 @@ public class RrdGraph implements RrdGraphConstants {
         }
     }
 
+    private void removeOutOfRangeSpans() {
+        for (PlotElement plotElement : gdef.plotElements) {
+            if (plotElement instanceof HSpan) {
+                ((HSpan) plotElement).setLegendVisibility(im.minval, im.maxval, gdef.forceRulesLegend);
+            }
+            else if (plotElement instanceof VSpan) {
+                ((VSpan) plotElement).setLegendVisibility(im.start, im.end, gdef.forceRulesLegend);
+            }
+        }
+    }
+
     private void expandValueRange() {
         im.ygridstep = (gdef.valueAxisSetting != null) ? gdef.valueAxisSetting.gridStep : Double.NaN;
         im.ylabfact = (gdef.valueAxisSetting != null) ? gdef.valueAxisSetting.labelFactor : 0;
@@ -364,24 +397,24 @@ public class RrdGraph implements RrdGraphConstants {
                         }
                     }
                     switch (im.quadrant) {
-                        case 2:
-                            im.scaledstep = Math.ceil(50 * Math.pow(10, -(im.decimals)) * Math.max(Math.abs(im.maxval),
-                                    Math.abs(im.minval))) * Math.pow(10, im.decimals - 2);
-                            scaled_min = -2 * im.scaledstep;
-                            scaled_max = 2 * im.scaledstep;
-                            break;
-                        case 4:
-                            im.scaledstep = Math.ceil(25 * Math.pow(10,
-                                    -(im.decimals)) * Math.abs(im.minval)) * Math.pow(10, im.decimals - 2);
-                            scaled_min = -4 * im.scaledstep;
-                            scaled_max = 0;
-                            break;
-                        default: /* quadrant 0 */
-                            im.scaledstep = Math.ceil(25 * Math.pow(10, -(im.decimals)) * im.maxval) *
-                                    Math.pow(10, im.decimals - 2);
-                            scaled_min = 0;
-                            scaled_max = 4 * im.scaledstep;
-                            break;
+                    case 2:
+                        im.scaledstep = Math.ceil(50 * Math.pow(10, -(im.decimals)) * Math.max(Math.abs(im.maxval),
+                                Math.abs(im.minval))) * Math.pow(10, im.decimals - 2);
+                        scaled_min = -2 * im.scaledstep;
+                        scaled_max = 2 * im.scaledstep;
+                        break;
+                    case 4:
+                        im.scaledstep = Math.ceil(25 * Math.pow(10,
+                                -(im.decimals)) * Math.abs(im.minval)) * Math.pow(10, im.decimals - 2);
+                        scaled_min = -4 * im.scaledstep;
+                        scaled_max = 0;
+                        break;
+                    default: /* quadrant 0 */
+                        im.scaledstep = Math.ceil(25 * Math.pow(10, -(im.decimals)) * im.maxval) *
+                        Math.pow(10, im.decimals - 2);
+                        scaled_min = 0;
+                        scaled_max = 4 * im.scaledstep;
+                        break;
                     }
                     im.minval = scaled_min;
                     im.maxval = scaled_max;
@@ -516,7 +549,7 @@ public class RrdGraph implements RrdGraphConstants {
     private void resolveTextElements() {
         ValueScaler valueScaler = new ValueScaler(gdef.base);
         for (CommentText comment : gdef.comments) {
-            comment.resolveText(dproc, valueScaler);
+            comment.resolveText(gdef.locale, dproc, valueScaler);
         }
     }
 
@@ -531,9 +564,6 @@ public class RrdGraph implements RrdGraphConstants {
             src.requestData(dproc);
         }
         dproc.processData();
-        //long[] t = dproc.getTimestamps();
-        //im.start = t[0];
-        //im.end = t[t.length - 1];
         im.start = gdef.startTime;
         im.end = gdef.endTime;
     }
@@ -560,6 +590,7 @@ public class RrdGraph implements RrdGraphConstants {
                     if (c instanceof LegendText) {
                         // draw with BOX
                         worker.fillRect(x, y - box, box, box, gdef.colors[COLOR_FRAME]);
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_CANVAS]);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_BACK]);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, ((LegendText) c).legendColor);
                         worker.drawString(c.resolvedText, x + boxSpace, y, gdef.smallFont, gdef.colors[COLOR_FONT]);
@@ -614,7 +645,7 @@ public class RrdGraph implements RrdGraphConstants {
               timestampsDev[i] = mapper.xtr(timestamps[i]);
           }
           return timestampsDev;
-          */
+         */
         double[] timestampsDev = new double[2 * timestamps.length - 1];
         for (int i = 0, j = 0; i < timestamps.length; i += 1, j += 2) {
             timestampsDev[j] = mapper.xtr(timestamps[i]);
@@ -626,22 +657,16 @@ public class RrdGraph implements RrdGraphConstants {
     }
 
     double[] ytr(double[] values) {
-        /*
-          double[] valuesDev = new double[values.length];
-          for (int i = 0; i < values.length; i++) {
-              if (Double.isNaN(values[i])) {
-                  valuesDev[i] = Double.NaN;
-              }
-              else {
-                  valuesDev[i] = mapper.ytr(values[i]);
-              }
-          }
-          return valuesDev;
-          */
         double[] valuesDev = new double[2 * values.length - 1];
         for (int i = 0, j = 0; i < values.length; i += 1, j += 2) {
             if (Double.isNaN(values[i])) {
                 valuesDev[j] = Double.NaN;
+            }
+            else if (values[i] > im.maxval) {
+                valuesDev[j] = mapper.ytr(im.maxval);
+            }
+            else if (values[i] < im.minval) {
+                valuesDev[j] = mapper.ytr(im.minval);
             }
             else {
                 valuesDev[j] = mapper.ytr(values[i]);

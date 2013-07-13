@@ -62,10 +62,10 @@ public class JrrdTest {
     //big endian
     //32 bits
     //alignement on long
-    @Test
-    public void test_1_b_32_8() throws IOException {
-        testFile("/rrdtool/0001b328.rrd", "0001");
-    }
+    //@Test
+    //public void test_1_b_32_8() throws IOException {
+    //    testFile("/rrdtool/0001b328.rrd", "0001");
+    //}
 
     @Test
     public void test_1_l_32_4() throws IOException {

@@ -4,19 +4,39 @@ import java.io.IOException;
 
 /**
  * Abstract byte array based backend.
+ *
  */
 public abstract class RrdByteArrayBackend extends RrdBackend {
     protected byte[] buffer;
 
+    /**
+     * <p>Constructor for RrdByteArrayBackend.</p>
+     *
+     * @param path a {@link java.lang.String} object.
+     */
     protected RrdByteArrayBackend(String path) {
         super(path);
     }
 
+    /**
+     * <p>write.</p>
+     *
+     * @param offset a long.
+     * @param bytes an array of byte.
+     * @throws java.io.IOException if any.
+     */
     protected synchronized void write(long offset, byte[] bytes) throws IOException {
         int pos = (int) offset;
         System.arraycopy(bytes, 0, buffer, pos, bytes.length);
     }
 
+    /**
+     * <p>read.</p>
+     *
+     * @param offset a long.
+     * @param bytes an array of byte.
+     * @throws java.io.IOException if any.
+     */
     protected synchronized void read(long offset, byte[] bytes) throws IOException {
         int pos = (int) offset;
         if (pos + bytes.length <= buffer.length) {
@@ -37,10 +57,9 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
     }
 
     /**
-     * Reserves a memory section as a RRD storage.
+     * {@inheritDoc}
      *
-     * @param length Number of bytes held in memory.
-     * @throws IOException Thrown in case of I/O error.
+     * Reserves a memory section as a RRD storage.
      */
     protected void setLength(long length) throws IOException {
         if (length > Integer.MAX_VALUE) {
@@ -53,6 +72,8 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
     /**
      * This method is required by the base class definition, but it does not
      * releases any memory resources at all.
+     *
+     * @throws java.io.IOException if any.
      */
     public void close() throws IOException {
         // NOP

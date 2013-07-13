@@ -1,87 +1,640 @@
 package org.rrd4j.data;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
 import org.rrd4j.core.Util;
 
-import java.util.Calendar;
-import java.util.StringTokenizer;
-
 class RpnCalculator {
-    private static final byte TKN_VAR = 0;
-    private static final byte TKN_NUM = 1;
+    private enum Token_Symbol {
+        TKN_VAR("") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(s.token.values[s.slot]);
+                s.token_rpi = s.rpi;
+            }
+        },
+        TKN_NUM("") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(s.token.number);
+            }            
+        },
 
-    // Arithmetics
-    private static final byte TKN_PLUS = 2;
-    private static final byte TKN_MINUS = 3;
-    private static final byte TKN_MULT = 4;
-    private static final byte TKN_DIV = 5;
-    private static final byte TKN_MOD = 6;
+        // Arithmetics
+        TKN_PLUS("+") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.pop() + c.pop());
+            }
+        },
+        TKN_ADDNAN("ADDNAN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x1 = c.pop();
+                double x2 = c.pop();
+                c.push(Double.isNaN(x1) ? x2 : (Double.isNaN(x2) ? x1 : x1 + x2));
+            }
+        },
+        TKN_MINUS("-") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 - x2);
+            }
+        },
+        TKN_MULT("*") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.pop() * c.pop());
+            }
+        },
+        TKN_DIV("/") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 / x2);
+            }
+        },
+        TKN_MOD("%") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 % x2);
+            }
+        },
 
-    private static final byte TKN_SIN = 7;
-    private static final byte TKN_COS = 8;
-    private static final byte TKN_LOG = 9;
-    private static final byte TKN_EXP = 10;
-    private static final byte TKN_SQRT = 11;
-    private static final byte TKN_ATAN = 12;
-    private static final byte TKN_ATAN2 = 13;
+        TKN_SIN("SIN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.sin(c.pop()));
+            }
+        },
+        TKN_COS("COS") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.cos(c.pop()));
+            }
+        },
+        TKN_LOG("LOG") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.log(c.pop()));
+            }
+        },
+        TKN_EXP("EXP") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.exp(c.pop()));
+            }
+        },
+        TKN_SQRT("SQRT") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.sqrt(c.pop()));
+            }
+        },
+        TKN_ATAN("ATAN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.atan(c.pop()));
+            }
+        },
+        TKN_ATAN2("ATAN2") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(Math.atan2(x1, x2));
+            }
+        },
 
-    private static final byte TKN_FLOOR = 14;
-    private static final byte TKN_CEIL = 15;
+        TKN_FLOOR("FLOOR") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.floor(c.pop()));
+            }
+        },
+        TKN_CEIL("CEIL") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.ceil(c.pop()));
+            }
+        },
 
-    private static final byte TKN_DEG2RAD = 16;
-    private static final byte TKN_RAD2DEG = 17;
-    private static final byte TKN_ROUND = 18;
-    private static final byte TKN_POW = 19;
-    private static final byte TKN_ABS = 20;
-    private static final byte TKN_RANDOM = 21;
+        TKN_DEG2RAD("DEG2RAD") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.toRadians(c.pop()));
+            }
+        },
+        TKN_RAD2DEG("RAD2DEG") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.toDegrees(c.pop()));
+            }
+        },
+        TKN_ROUND("ROUND") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.round(c.pop()));
+            }
+        },
+        TKN_POW("POW") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(Math.pow(x1, x2));
+            }
+        },
+        TKN_ABS("ABS") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.abs(c.pop()));
+            }
+        },
+        TKN_RANDOM("RANDOM") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.random());
+            }
+        },
+        TKN_RND("RND") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.floor(c.pop() * Math.random()));
+            }
+        },
 
-    // Boolean operators
-    private static final byte TKN_LT = 22;
-    private static final byte TKN_LE = 23;
-    private static final byte TKN_GT = 24;
-    private static final byte TKN_GE = 25;
-    private static final byte TKN_EQ = 26;
-    private static final byte TKN_NE = 27;
-    private static final byte TKN_IF = 28;
+        // Boolean operators
+        TKN_UN("UN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Double.isNaN(c.pop()) ? 1 : 0);
+            }
+        },
+        TKN_ISINF("ISINF") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Double.isInfinite(c.pop()) ? 1 : 0);
+            }            
+        },
+        TKN_LT("LT") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 < x2 ? 1 : 0);
+            }
+        },
+        TKN_LE("LE") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 <= x2 ? 1 : 0);
+            }
+        },
+        TKN_GT("GT") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 > x2 ? 1 : 0);
+            }
+        },
+        TKN_GE("GE") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 >= x2 ? 1 : 0);
+            }
+        },
+        TKN_EQ("EQ") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 == x2 ? 1 : 0);
+            }
+        },
+        TKN_NE("NE") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 != x2 ? 1 : 0);
+            }
+        },
+        TKN_IF("IF") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x3 = c.pop();
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 != 0 ? x2 : x3);
+            }
+        },
 
-    // Comparing values
-    private static final byte TKN_MIN = 29;
-    private static final byte TKN_MAX = 30;
-    private static final byte TKN_LIMIT = 31;
+        // Comparing values
+        TKN_MIN("MIN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.min(c.pop(), c.pop()));
+            }
+        },
+        TKN_MAX("MAX") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.max(c.pop(), c.pop()));                
+            }
+        },
+        TKN_LIMIT("LIMIT") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x3 = c.pop();
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x1 < x2 || x1 > x3 ? Double.NaN : x1);
+            }
+        },
 
-    // Processing the stack directly
-    private static final byte TKN_DUP = 32;
-    private static final byte TKN_EXC = 33;
-    private static final byte TKN_POP = 34;
+        // Processing the stack directly
+        TKN_DUP("DUP") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.peek());
+            }
+        },
+        TKN_EXC("EXC") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(x2);
+                c.push(x1);
+            }
+        },
+        TKN_POP("POP") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.pop();
+            }
+        },
 
-    // Special values
-    private static final byte TKN_UN = 35;
-    private static final byte TKN_UNKN = 36;
-    private static final byte TKN_NOW = 37;
+        // Special values
+        TKN_UNKN("UNKN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Double.NaN);
+            }
+        },
+        TKN_PI("PI") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.PI);
+            }
+        },
+        TKN_E("E") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Math.E);
+            }
+        },
+        TKN_INF("INF") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Double.POSITIVE_INFINITY);
+            }
+        },
+        TKN_NEGINF("NEGINF") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Double.NEGATIVE_INFINITY);
+            }
+        },
 
-    private static final byte TKN_TIME = 38;
-    private static final byte TKN_PI = 39;
-    private static final byte TKN_E = 40;
+        // Logical operator
+        TKN_AND("AND") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push((x1 != 0 && x2 != 0) ? 1 : 0);
+            }
+        },
+        TKN_OR("OR") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push((x1 != 0 || x2 != 0) ? 1 : 0);
+            }
+        },
+        TKN_XOR("XOR") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x2 = c.pop();
+                double x1 = c.pop();
+                c.push(((x1 != 0 && x2 == 0) || (x1 == 0 && x2 != 0)) ? 1 : 0);
+            }
+        },
 
-    private static final byte TKN_AND = 41;
-    private static final byte TKN_OR = 42;
-    private static final byte TKN_XOR = 43;
+        TKN_PREV("PREV") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push((s.slot == 0) ? Double.NaN : s.token.values[s.slot - 1]);
+            }
+        },
+        
+        //Time and date operator
+        TKN_STEP("STEP") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.timeStep);
+            }
+        },
+        TKN_NOW("NOW") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(Util.getTime());
+            }
+        },
+        TKN_TIME("TIME") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.timestamps[s.slot]);
+            }
+        },
+        TKN_LTIME("LTIME") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.timestamps[s.slot] + (long) (s.tz.getOffset(c.timestamps[s.slot]) / 1000L));
+            }
+        },
+        TKN_YEAR("YEAR") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.getCalendarField(c.pop(), Calendar.YEAR));
+            }
+        },
+        TKN_MONTH("MONTH") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.getCalendarField(c.pop(), Calendar.MONTH));
+            }
+        },
+        TKN_DATE("DATE") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.getCalendarField(c.pop(), Calendar.DAY_OF_MONTH));
+            }
+        },
+        TKN_HOUR("HOUR") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.getCalendarField(c.pop(), Calendar.HOUR_OF_DAY));
+            }
+        },
+        TKN_MINUTE("MINUTE") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.getCalendarField(c.pop(), Calendar.MINUTE));
+            }
+        },
+        TKN_SECOND("SECOND") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.getCalendarField(c.pop(), Calendar.SECOND));
+            }
+        },
+        TKN_WEEK("WEEK") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(c.getCalendarField(c.pop(), Calendar.WEEK_OF_YEAR));
+            }
+        },
+        TKN_SIGN("SIGN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x1 = c.pop();
+                c.push(Double.isNaN(x1) ? Double.NaN : x1 > 0 ? +1 : x1 < 0 ? -1 : 0);
+            }
+        },
+        TKN_SORT("SORT") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                int n = (int) c.pop();
+                double[] array = new double[n];
+                for(int i = 0; i < n; i++) {
+                    array[i] = c.pop();
+                }
+                Arrays.sort(array);
+                for (int i = 0; i < n; i++) {
+                    c.push(array[i]);
+                }
+            }
+        },
+        TKN_REV("REV") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                int n = (int) c.pop();
+                double[] array = new double[n];
+                for(int i = 0; i < n; i++) {
+                    array[i] = c.pop();
+                }
+                for (int i = 0; i < n; i++) {
+                    c.push(array[i]);
+                }
+            }
+        },
+        TKN_AVG("AVG"){
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                int count = 0;
+                int n = (int) c.pop();
+                double sum = 0.0;
+                while (n > 0) {
+                    double x1 = c.pop();
+                    n--;
 
-    private static final byte TKN_PREV = 44;
-    private static final byte TKN_INF = 45;
-    private static final byte TKN_NEGINF = 46;
-    private static final byte TKN_STEP = 47;
+                    if (Double.isNaN(x1)) {
+                        continue;
+                    }
+                    sum += x1;
+                    count++;
+                }
+                if (count > 0) {
+                    c.push(sum / count);
+                } else {
+                    c.push(Double.NaN);
+                }
+            }
+        },
+        TKN_COUNT("COUNT") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.push(s.slot+1);
+            }
+        },
+        TKN_TREND("TREND") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                int dur = (int) c.pop();
+                c.pop();
+                /*
+                 * OK, so to match the output from rrdtool, we have to go *forward* 2 timeperiods.
+                 * So at t[59] we use the average of t[1]..t[61]
+                 *
+                 */
 
-    private static final byte TKN_YEAR = 48;
-    private static final byte TKN_MONTH = 49;
-    private static final byte TKN_DATE = 50;
-    private static final byte TKN_HOUR = 51;
-    private static final byte TKN_MINUTE = 52;
-    private static final byte TKN_SECOND = 53;
-    private static final byte TKN_WEEK = 54;
+                if ((s.slot+1) < Math.ceil(dur / c.timeStep)) {
+                    c.push(Double.NaN);
+                } else {
+                    double[] vals = c.dataProcessor.getValues(c.tokens[s.token_rpi].variable);
+                    boolean ignorenan = s.token.id == TKN_TRENDNAN;
+                    double accum = 0.0;
+                    int count = 0;
 
-    private static final byte TKN_SIGN = 55;
-    private static final byte TKN_RND = 56;
+                    int start = (int) (Math.ceil(dur / c.timeStep));
+                    int row = 2;
+                    while ((s.slot + row) > vals.length) {
+                        row --;
+                    }
 
+                    for(; start > 0; start--) {
+                        double val = vals[s.slot + row - start];
+                        if (ignorenan || !Double.isNaN(val)) {
+                            accum = Util.sum(accum, val);
+                            ++count;
+                        }
+                    }
+                    c.push((count == 0) ? Double.NaN : (accum / count));
+                }
+            }
+        },
+        TKN_TRENDNAN("TRENDNAN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                TKN_TREND.do_method(c, s);
+            }
+        },
+        TKN_PREDICT("PREDICT") {
+
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                c.pop(); // Clear the value of our variable
+
+                /* the local averaging window (similar to trend, but better here, as we get better statistics thru numbers)*/
+                int locstepsize = (int) c.pop();
+                /* the number of shifts and range-checking*/
+                int num_shifts = (int) c.pop();
+                double[] multipliers;
+
+                // handle negative shifts special
+                if (num_shifts < 0) {
+                    multipliers = new double[1];
+                    multipliers[0] = c.pop();
+                } else {
+                    multipliers = new double[num_shifts];
+                    for(int i = 0; i < num_shifts; i++) {
+                        multipliers[i] = c.pop();
+                    }
+                }
+
+                /* the real calculation */
+                double val = Double.NaN;
+
+                /* the info on the datasource */
+                double[] vals = c.dataProcessor.getValues(c.tokens[s.rpi-1].variable);
+
+                int locstep = (int) Math.ceil((float) locstepsize / (float) c.timeStep);
+
+                /* the sums */
+                double sum = 0;
+                double sum2 = 0;
+                int count = 0;
+
+                /* now loop for each position */
+                int doshifts = Math.abs(num_shifts);
+                for (int loop = 0; loop < doshifts; loop++) {
+                    /* calculate shift step */
+                    int shiftstep = 1;
+                    if (num_shifts < 0) {
+                        shiftstep = loop * (int) multipliers[0];
+                    } else {
+                        shiftstep = (int) multipliers[loop];
+                    }
+                    if (shiftstep < 0) {
+                        throw new RuntimeException("negative shift step not allowed: " + shiftstep);
+                    }
+                    shiftstep = (int) Math.ceil((float) shiftstep / (float) c.timeStep);
+                    /* loop all local shifts */
+                    for (int i = 0; i <= locstep; i++) {
+                        int offset = shiftstep + i;
+                        if ((offset >= 0) && (offset < s.slot)) {
+                            /* get the value */
+                            val = vals[s.slot - offset];
+
+                            /* and handle the non NAN case only*/
+                            if (!Double.isNaN(val)) {
+                                sum = Util.sum(sum, val);
+                                sum2 = Util.sum(sum2, val * val);
+                                count++;
+                            }
+                        }
+                    }
+                }
+                /* do the final calculations */
+                val = Double.NaN;
+                if (s.token.id == TKN_PREDICT) {  /* the average */
+                    if (count > 0) {
+                        val = sum / (double) count;
+                    }
+                } else {
+                    if (count > 1) { /* the sigma case */
+                        val = count * sum2 - sum * sum;
+                        if (val < 0) {
+                            val = Double.NaN;
+                        } else {
+                            val = Math.sqrt(val / ((float) count * ((float) count - 1.0)));
+                        }
+                    }
+                }
+                c.push(val);
+            }
+
+        },
+        TKN_PREDICTSIGMA("PREDICTSIGMA") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                TKN_PREDICT.do_method(c, s);
+            }
+        };
+
+        public final String token_string;
+        Token_Symbol(String token_string) {
+            this.token_string = token_string;
+        }
+        abstract void do_method(RpnCalculator c, State s);
+    }
+
+    static private final Map<String, Token_Symbol> symbols = new HashMap<String, Token_Symbol>(Token_Symbol.values().length);
+    {
+        for(Token_Symbol s: Token_Symbol.values()) {
+            if(! s.token_string.isEmpty())
+                symbols.put(s.token_string, s);
+        }
+    }
     private final String rpnExpression;
     private final String sourceName;
     private final DataProcessor dataProcessor;
@@ -91,6 +644,7 @@ class RpnCalculator {
     private final double[] calculatedValues;
     private final long[] timestamps;
     private final double timeStep;
+    private final List<String> sourcesNames;
 
     RpnCalculator(String rpnExpression, String sourceName, DataProcessor dataProcessor) {
         this.rpnExpression = rpnExpression;
@@ -99,418 +653,55 @@ class RpnCalculator {
         this.timestamps = dataProcessor.getTimestamps();
         this.timeStep = this.timestamps[1] - this.timestamps[0];
         this.calculatedValues = new double[this.timestamps.length];
-
-        StringTokenizer st = new StringTokenizer(rpnExpression, ", ");
-        tokens = new Token[st.countTokens()];
-        for (int i = 0; st.hasMoreTokens(); i++) {
-            tokens[i] = createToken(st.nextToken());
+        this.sourcesNames = Arrays.asList(dataProcessor.getSourceNames());
+        String[] tokensString = rpnExpression.split(" *, *");
+        tokens = new Token[tokensString.length];
+        for (int i = 0; i < tokensString.length; i++) {
+            tokens[i] = createToken(tokensString[i].trim());
         }
     }
 
     private Token createToken(String parsedText) {
         Token token = new Token();
-        if (Util.isDouble(parsedText)) {
-            token.id = TKN_NUM;
-            token.number = Util.parseDouble(parsedText);
-        }
-        else if (parsedText.equals("+")) {
-            token.id = TKN_PLUS;
-        }
-        else if (parsedText.equals("-")) {
-            token.id = TKN_MINUS;
-        }
-        else if (parsedText.equals("*")) {
-            token.id = TKN_MULT;
-        }
-        else if (parsedText.equals("/")) {
-            token.id = TKN_DIV;
-        }
-        else if (parsedText.equals("%")) {
-            token.id = TKN_MOD;
-        }
-        else if (parsedText.equals("SIN")) {
-            token.id = TKN_SIN;
-        }
-        else if (parsedText.equals("COS")) {
-            token.id = TKN_COS;
-        }
-        else if (parsedText.equals("LOG")) {
-            token.id = TKN_LOG;
-        }
-        else if (parsedText.equals("EXP")) {
-            token.id = TKN_EXP;
-        }
-        else if (parsedText.equals("ATAN")) {
-            token.id = TKN_ATAN;
-        }
-        else if (parsedText.equals("ATAN2")) {
-            token.id = TKN_ATAN2;
-        }
-        else if (parsedText.equals("FLOOR")) {
-            token.id = TKN_FLOOR;
-        }
-        else if (parsedText.equals("CEIL")) {
-            token.id = TKN_CEIL;
-        }
-        else if (parsedText.equals("DEG2RAD")) {
-            token.id = TKN_DEG2RAD;
-        }
-        else if (parsedText.equals("RAD2DEG")) {
-            token.id = TKN_RAD2DEG;
-        }
-        else if (parsedText.equals("ROUND")) {
-            token.id = TKN_ROUND;
-        }
-        else if (parsedText.equals("POW")) {
-            token.id = TKN_POW;
-        }
-        else if (parsedText.equals("ABS")) {
-            token.id = TKN_ABS;
-        }
-        else if (parsedText.equals("SQRT")) {
-            token.id = TKN_SQRT;
-        }
-        else if (parsedText.equals("RANDOM")) {
-            token.id = TKN_RANDOM;
-        }
-        else if (parsedText.equals("LT")) {
-            token.id = TKN_LT;
-        }
-        else if (parsedText.equals("LE")) {
-            token.id = TKN_LE;
-        }
-        else if (parsedText.equals("GT")) {
-            token.id = TKN_GT;
-        }
-        else if (parsedText.equals("GE")) {
-            token.id = TKN_GE;
-        }
-        else if (parsedText.equals("EQ")) {
-            token.id = TKN_EQ;
-        }
-        else if (parsedText.equals("NE")) {
-            token.id = TKN_NE;
-        }
-        else if (parsedText.equals("IF")) {
-            token.id = TKN_IF;
-        }
-        else if (parsedText.equals("MIN")) {
-            token.id = TKN_MIN;
-        }
-        else if (parsedText.equals("MAX")) {
-            token.id = TKN_MAX;
-        }
-        else if (parsedText.equals("LIMIT")) {
-            token.id = TKN_LIMIT;
-        }
-        else if (parsedText.equals("DUP")) {
-            token.id = TKN_DUP;
-        }
-        else if (parsedText.equals("EXC")) {
-            token.id = TKN_EXC;
-        }
-        else if (parsedText.equals("POP")) {
-            token.id = TKN_POP;
-        }
-        else if (parsedText.equals("UN")) {
-            token.id = TKN_UN;
-        }
-        else if (parsedText.equals("UNKN")) {
-            token.id = TKN_UNKN;
-        }
-        else if (parsedText.equals("NOW")) {
-            token.id = TKN_NOW;
-        }
-        else if (parsedText.equals("TIME")) {
-            token.id = TKN_TIME;
-        }
-        else if (parsedText.equals("PI")) {
-            token.id = TKN_PI;
-        }
-        else if (parsedText.equals("E")) {
-            token.id = TKN_E;
-        }
-        else if (parsedText.equals("AND")) {
-            token.id = TKN_AND;
-        }
-        else if (parsedText.equals("OR")) {
-            token.id = TKN_OR;
-        }
-        else if (parsedText.equals("XOR")) {
-            token.id = TKN_XOR;
+        if (symbols.containsKey(parsedText)){
+            token.id = symbols.get(parsedText);
         }
         else if (parsedText.equals("PREV")) {
-            token.id = TKN_PREV;
+            token.id = Token_Symbol.TKN_PREV;
             token.variable = sourceName;
             token.values = calculatedValues;
         }
         else if (parsedText.startsWith("PREV(") && parsedText.endsWith(")")) {
-            token.id = TKN_PREV;
+            token.id = Token_Symbol.TKN_PREV;
             token.variable = parsedText.substring(5, parsedText.length() - 1);
             token.values = dataProcessor.getValues(token.variable);
         }
-        else if (parsedText.equals("INF")) {
-            token.id = TKN_INF;
+        else if (Util.isDouble(parsedText)) {
+            token.id = Token_Symbol.TKN_NUM;
+            token.number = Util.parseDouble(parsedText);
         }
-        else if (parsedText.equals("NEGINF")) {
-            token.id = TKN_NEGINF;
-        }
-        else if (parsedText.equals("STEP")) {
-            token.id = TKN_STEP;
-        }
-        else if (parsedText.equals("YEAR")) {
-            token.id = TKN_YEAR;
-        }
-        else if (parsedText.equals("MONTH")) {
-            token.id = TKN_MONTH;
-        }
-        else if (parsedText.equals("DATE")) {
-            token.id = TKN_DATE;
-        }
-        else if (parsedText.equals("HOUR")) {
-            token.id = TKN_HOUR;
-        }
-        else if (parsedText.equals("MINUTE")) {
-            token.id = TKN_MINUTE;
-        }
-        else if (parsedText.equals("SECOND")) {
-            token.id = TKN_SECOND;
-        }
-        else if (parsedText.equals("WEEK")) {
-            token.id = TKN_WEEK;
-        }
-        else if (parsedText.equals("SIGN")) {
-            token.id = TKN_SIGN;
-        }
-        else if (parsedText.equals("RND")) {
-            token.id = TKN_RND;
-        }
-        else {
-            token.id = TKN_VAR;
+        else if (sourcesNames.contains(parsedText)){
+            token.id = Token_Symbol.TKN_VAR;
             token.variable = parsedText;
             token.values = dataProcessor.getValues(token.variable);
+        }
+        else {
+            throw new IllegalArgumentException("Unexpected RPN token encountered: " +  parsedText);
         }
         return token;
     }
 
     double[] calculateValues() {
+        State s = new State();
         for (int slot = 0; slot < timestamps.length; slot++) {
             resetStack();
-            for (Token token : tokens) {
-                double x1, x2, x3;
-                switch (token.id) {
-                    case TKN_NUM:
-                        push(token.number);
-                        break;
-                    case TKN_VAR:
-                        push(token.values[slot]);
-                        break;
-                    case TKN_PLUS:
-                        push(pop() + pop());
-                        break;
-                    case TKN_MINUS:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 - x2);
-                        break;
-                    case TKN_MULT:
-                        push(pop() * pop());
-                        break;
-                    case TKN_DIV:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 / x2);
-                        break;
-                    case TKN_MOD:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 % x2);
-                        break;
-                    case TKN_SIN:
-                        push(Math.sin(pop()));
-                        break;
-                    case TKN_COS:
-                        push(Math.cos(pop()));
-                        break;
-                    case TKN_LOG:
-                        push(Math.log(pop()));
-                        break;
-                    case TKN_EXP:
-                        push(Math.exp(pop()));
-                        break;
-                    case TKN_ATAN:
-                        push(Math.atan(pop()));
-                        break;
-                    case TKN_ATAN2:
-                        x2 = pop();
-                        x1 = pop();
-                        push(Math.atan2(x1, x2));
-                        break;
-                    case TKN_FLOOR:
-                        push(Math.floor(pop()));
-                        break;
-                    case TKN_CEIL:
-                        push(Math.ceil(pop()));
-                        break;
-                    case TKN_DEG2RAD:
-                        push(Math.toRadians(pop()));
-                        break;
-                    case TKN_RAD2DEG:
-                        push(Math.toDegrees(pop()));
-                        break;
-                    case TKN_ROUND:
-                        push(Math.round(pop()));
-                        break;
-                    case TKN_POW:
-                        x2 = pop();
-                        x1 = pop();
-                        push(Math.pow(x1, x2));
-                        break;
-                    case TKN_ABS:
-                        push(Math.abs(pop()));
-                        break;
-                    case TKN_SQRT:
-                        push(Math.sqrt(pop()));
-                        break;
-                    case TKN_RANDOM:
-                        push(Math.random());
-                        break;
-                    case TKN_LT:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 < x2 ? 1 : 0);
-                        break;
-                    case TKN_LE:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 <= x2 ? 1 : 0);
-                        break;
-                    case TKN_GT:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 > x2 ? 1 : 0);
-                        break;
-                    case TKN_GE:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 >= x2 ? 1 : 0);
-                        break;
-                    case TKN_EQ:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 == x2 ? 1 : 0);
-                        break;
-                    case TKN_NE:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 != x2 ? 1 : 0);
-                        break;
-                    case TKN_IF:
-                        x3 = pop();
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 != 0 ? x2 : x3);
-                        break;
-                    case TKN_MIN:
-                        push(Math.min(pop(), pop()));
-                        break;
-                    case TKN_MAX:
-                        push(Math.max(pop(), pop()));
-                        break;
-                    case TKN_LIMIT:
-                        x3 = pop();
-                        x2 = pop();
-                        x1 = pop();
-                        push(x1 < x2 || x1 > x3 ? Double.NaN : x1);
-                        break;
-                    case TKN_DUP:
-                        push(peek());
-                        break;
-                    case TKN_EXC:
-                        x2 = pop();
-                        x1 = pop();
-                        push(x2);
-                        push(x1);
-                        break;
-                    case TKN_POP:
-                        pop();
-                        break;
-                    case TKN_UN:
-                        push(Double.isNaN(pop()) ? 1 : 0);
-                        break;
-                    case TKN_UNKN:
-                        push(Double.NaN);
-                        break;
-                    case TKN_NOW:
-                        push(Util.getTime());
-                        break;
-                    case TKN_TIME:
-                        push((long) Math.round(timestamps[slot]));
-                        break;
-                    case TKN_PI:
-                        push(Math.PI);
-                        break;
-                    case TKN_E:
-                        push(Math.E);
-                        break;
-                    case TKN_AND:
-                        x2 = pop();
-                        x1 = pop();
-                        push((x1 != 0 && x2 != 0) ? 1 : 0);
-                        break;
-                    case TKN_OR:
-                        x2 = pop();
-                        x1 = pop();
-                        push((x1 != 0 || x2 != 0) ? 1 : 0);
-                        break;
-                    case TKN_XOR:
-                        x2 = pop();
-                        x1 = pop();
-                        push(((x1 != 0 && x2 == 0) || (x1 == 0 && x2 != 0)) ? 1 : 0);
-                        break;
-                    case TKN_PREV:
-                        push((slot == 0) ? Double.NaN : token.values[slot - 1]);
-                        break;
-                    case TKN_INF:
-                        push(Double.POSITIVE_INFINITY);
-                        break;
-                    case TKN_NEGINF:
-                        push(Double.NEGATIVE_INFINITY);
-                        break;
-                    case TKN_STEP:
-                        push(timeStep);
-                        break;
-                    case TKN_YEAR:
-                        push(getCalendarField(pop(), Calendar.YEAR));
-                        break;
-                    case TKN_MONTH:
-                        push(getCalendarField(pop(), Calendar.MONTH));
-                        break;
-                    case TKN_DATE:
-                        push(getCalendarField(pop(), Calendar.DAY_OF_MONTH));
-                        break;
-                    case TKN_HOUR:
-                        push(getCalendarField(pop(), Calendar.HOUR_OF_DAY));
-                        break;
-                    case TKN_MINUTE:
-                        push(getCalendarField(pop(), Calendar.MINUTE));
-                        break;
-                    case TKN_SECOND:
-                        push(getCalendarField(pop(), Calendar.SECOND));
-                        break;
-                    case TKN_WEEK:
-                        push(getCalendarField(pop(), Calendar.WEEK_OF_YEAR));
-                        break;
-                    case TKN_SIGN:
-                        x1 = pop();
-                        push(Double.isNaN(x1) ? Double.NaN : x1 > 0 ? +1 : x1 < 0 ? -1 : 0);
-                        break;
-                    case TKN_RND:
-                        push(Math.floor(pop() * Math.random()));
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unexpected RPN token encountered, token.id=" + token.id);
-                }
+            s.rpi = 0;
+            s.token_rpi = -1;
+            for (Token token: tokens) {
+                s.token = token;
+                s.slot = slot;
+                token.id.do_method(this, s);
+                s.rpi++;
             }
             calculatedValues[slot] = pop();
             // check if stack is empty only on the first try
@@ -527,7 +718,7 @@ class RpnCalculator {
         return calendar.get(field);
     }
 
-    private void push(double x) {
+    private void push(final double x) {
         stack.push(x);
     }
 
@@ -582,10 +773,18 @@ class RpnCalculator {
         }
     }
 
+    private static final class State {
+        public int token_rpi;
+        int rpi;
+        Token token;
+        int slot;
+        final TimeZone tz = TimeZone.getDefault();
+    }
+
     private static final class Token {
-        byte id = -1;
+        Token_Symbol id;
         double number = Double.NaN;
-        String variable = null;
+        String variable = "";
         double[] values = null;
     }
 }

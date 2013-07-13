@@ -9,6 +9,12 @@ import java.io.*;
 import java.awt.*;
 
 class MinMax {
+    /**
+     * <p>main.</p>
+     *
+     * @param args an array of {@link java.lang.String} objects.
+     * @throws java.io.IOException if any.
+     */
     public static void main(String[] args) throws IOException {
         long start = Util.getTime(), end = start + 300 * 300;
         String rrdFile = Util.getRrd4jDemoPath("minmax.rrd");

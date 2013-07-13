@@ -13,7 +13,7 @@ import java.util.Arrays;
  * <p>To update a RRD with Rrd4j use the following procedure:</p>
  * <p/>
  * <ol>
- * <li>Obtain empty Sample object by calling method {@link RrdDb#createSample(long)
+ * <li>Obtain empty Sample object by calling method {@link org.rrd4j.core.RrdDb#createSample(long)
  * createSample()} on respective {@link RrdDb RrdDb} object.
  * <li>Adjust Sample timestamp if necessary (see {@link #setTime(long) setTime()} method).
  * <li>Supply data source values (see {@link #setValue(String, double) setValue()}).
@@ -51,7 +51,7 @@ public class Sample {
      * @param dsName Data source name.
      * @param value  Data source value.
      * @return This <code>Sample</code> object
-     * @throws IllegalArgumentException Thrown if invalid data source name is supplied.
+     * @throws java.lang.IllegalArgumentException Thrown if invalid data source name is supplied.
      */
     public Sample setValue(String dsName, double value) {
         for (int i = 0; i < values.length; i++) {
@@ -70,7 +70,7 @@ public class Sample {
      * @param i     Data source index
      * @param value Data source values
      * @return This <code>Sample</code> object
-     * @throws IllegalArgumentException Thrown if data source index is invalid.
+     * @throws java.lang.IllegalArgumentException Thrown if data source index is invalid.
      */
     public Sample setValue(int i, double value) {
         if (i < values.length) {
@@ -86,7 +86,7 @@ public class Sample {
      *
      * @param values Data source values.
      * @return This <code>Sample</code> object
-     * @throws IllegalArgumentException Thrown if the number of supplied values is zero or greater
+     * @throws java.lang.IllegalArgumentException Thrown if the number of supplied values is zero or greater
      *                                  than the number of data sources defined in the RRD.
      */
     public Sample setValues(double... values) {
@@ -155,7 +155,7 @@ public class Sample {
      *                      Method will throw an exception if timestamp is invalid (cannot be parsed as Long, and is not 'N'
      *                      or 'NOW'). Datasource value which cannot be parsed as 'double' will be silently set to NaN.<p>
      * @return This <code>Sample</code> object
-     * @throws IllegalArgumentException Thrown if too many datasource values are supplied
+     * @throws java.lang.IllegalArgumentException Thrown if too many datasource values are supplied
      */
     public Sample set(String timeAndValues) {
         StringTokenizer tokenizer = new StringTokenizer(timeAndValues, ":", false);
@@ -191,7 +191,7 @@ public class Sample {
      * Stores sample in the corresponding RRD. If the update operation succeeds,
      * all datasource values in the sample will be set to Double.NaN (unknown) values.
      *
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public void update() throws IOException {
         parentDb.store(this);
@@ -211,7 +211,7 @@ public class Sample {
      *                      data source values delmited with colons. For example:<br>
      *                      <code>1005234132:12.2:35.6:U:24.5</code><br>
      *                      <code>NOW:12.2:35.6:U:24.5</code>
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public void setAndUpdate(String timeAndValues) throws IOException {
         set(timeAndValues);

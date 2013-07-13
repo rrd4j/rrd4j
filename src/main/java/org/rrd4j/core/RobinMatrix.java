@@ -33,13 +33,14 @@ class RobinMatrix implements Robin {
      * Fetches all archived values.
      *
      * @return Array of double archive values, starting from the oldest one.
-     * @throws IOException Thrown in case of I/O specific error.
+     * @throws java.io.IOException Thrown in case of I/O specific error.
      */
     public double[] getValues() throws IOException {
         return getValues(0, rows);
     }
 
     // stores single value
+    /** {@inheritDoc} */
     public void store(double newValue) throws IOException {
         int position = pointer.get();
         values.set(column, position, newValue);
@@ -47,6 +48,7 @@ class RobinMatrix implements Robin {
     }
 
     // stores the same value several times
+    /** {@inheritDoc} */
     public void bulkStore(double newValue, int bulkCount) throws IOException {
         assert bulkCount <= rows: "Invalid number of bulk updates: " + bulkCount + " rows=" + rows;
 
@@ -66,6 +68,12 @@ class RobinMatrix implements Robin {
         }
     }
 
+    /**
+     * <p>update.</p>
+     *
+     * @param newValues an array of double.
+     * @throws java.io.IOException if any.
+     */
     public void update(double[] newValues) throws IOException {
         assert rows == newValues.length: "Invalid number of robin values supplied (" + newValues.length +
         "), exactly " + rows + " needed";
@@ -74,12 +82,9 @@ class RobinMatrix implements Robin {
     }
 
     /**
-     * Updates archived values in bulk.
+     * {@inheritDoc}
      *
-     * @param newValues Array of double values to be stored in the archive
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown if the length of the input array is different from the length of
-     *                                  this archive
+     * Updates archived values in bulk.
      */
     public void setValues(double... newValues) throws IOException {
         if (rows != newValues.length) {
@@ -90,10 +95,9 @@ class RobinMatrix implements Robin {
     }
 
     /**
-     * (Re)sets all values in this archive to the same value.
+     * {@inheritDoc}
      *
-     * @param newValue New value
-     * @throws IOException Thrown in case of I/O error
+     * (Re)sets all values in this archive to the same value.
      */
     public void setValues(double newValue) throws IOException {
         double[] values = new double[rows];
@@ -103,6 +107,12 @@ class RobinMatrix implements Robin {
         update(values);
     }
 
+    /**
+     * <p>dump.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     public String dump() throws IOException {
         StringBuilder buffer = new StringBuilder("Robin " + pointer.get() + "/" + rows + ": ");
         double[] values = getValues();
@@ -114,11 +124,9 @@ class RobinMatrix implements Robin {
     }
 
     /**
-     * Returns the i-th value from the Robin archive.
+     * {@inheritDoc}
      *
-     * @param index Value index
-     * @return Value stored in the i-th position (the oldest value has zero index)
-     * @throws IOException Thrown in case of I/O specific error.
+     * Returns the i-th value from the Robin archive.
      */
     public double getValue(int index) throws IOException {
         int arrayIndex = (pointer.get() + index) % rows;
@@ -126,17 +134,16 @@ class RobinMatrix implements Robin {
     }
 
     /**
-     * Sets the i-th value in the Robin archive.
+     * {@inheritDoc}
      *
-     * @param index index in the archive (the oldest value has zero index)
-     * @param value value to be stored
-     * @throws IOException Thrown in case of I/O specific error.
+     * Sets the i-th value in the Robin archive.
      */
     public void setValue(int index, double value) throws IOException {
         int arrayIndex = (pointer.get() + index) % rows;
         values.set(column, arrayIndex, value);
     }
 
+    /** {@inheritDoc} */
     public double[] getValues(int index, int count) throws IOException {
         assert count <= rows: "Too many values requested: " + count + " rows=" + rows;
 
@@ -180,10 +187,9 @@ class RobinMatrix implements Robin {
     }
 
     /**
-     * Copies object's internal state to another Robin object.
+     * {@inheritDoc}
      *
-     * @param other New Robin object to copy state to
-     * @throws IOException Thrown in case of I/O error
+     * Copies object's internal state to another Robin object.
      */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Robin)) {
@@ -199,13 +205,11 @@ class RobinMatrix implements Robin {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Filters values stored in this archive based on the given boundary.
      * Archived values found to be outside of <code>[minValue, maxValue]</code> interval (inclusive)
      * will be silently replaced with <code>NaN</code>.
-     *
-     * @param minValue lower boundary
-     * @param maxValue upper boundary
-     * @throws IOException Thrown in case of I/O error
      */
     public void filterValues(double minValue, double maxValue) throws IOException {
         for (int i = 0; i < rows; i++) {

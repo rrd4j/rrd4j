@@ -93,7 +93,7 @@ public class Converter {
      * </pre>
      * <p>...and enjoy the show.</p>
      *
-     * @param args
+     * @param args an array of {@link java.lang.String} objects.
      */
     public static void main(String[] args) {
         if (args.length == 0) {

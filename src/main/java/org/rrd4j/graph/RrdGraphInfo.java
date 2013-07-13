@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Class to represent successfully created Rrd4j graph. Objects of this class are created by method
- * {@link RrdGraph#getRrdGraphInfo()}.
+ * {@link org.rrd4j.graph.RrdGraph#getRrdGraphInfo()}.
  */
 public class RrdGraphInfo {
     String filename;
@@ -59,7 +59,7 @@ public class RrdGraphInfo {
     }
 
     /**
-     * Returns PRINT lines requested by {@link RrdGraphDef#print(String, org.rrd4j.ConsolFun, String)} method.
+     * Returns PRINT lines requested by {@link org.rrd4j.graph.RrdGraphDef#print(String, org.rrd4j.ConsolFun, String)} method.
      *
      * @return An array of formatted PRINT lines
      */
@@ -68,7 +68,7 @@ public class RrdGraphInfo {
     }
 
     /**
-     * Returns image information requested by {@link RrdGraphDef#setImageInfo(String)} method
+     * Returns image information requested by {@link org.rrd4j.graph.RrdGraphDef#setImageInfo(String)} method
      *
      * @return Image information
      */
@@ -103,8 +103,8 @@ public class RrdGraphInfo {
         else {
             for (int i = 0; i < plines.length; i++) {
                 b.append("print[").append(i).append("] = \"").append(plines[i]).append("\"\n");
-			}
-		}
-		return b.toString();
-	}
+            }
+        }
+        return b.toString();
+    }
 }

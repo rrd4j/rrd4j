@@ -94,6 +94,11 @@ class TimeScanner {
 
     TimeToken[] specials = WORDS;
 
+    /**
+     * <p>Constructor for TimeScanner.</p>
+     *
+     * @param dateString The date as {@link java.lang.String} to parse.
+     */
     public TimeScanner(String dateString) {
         this.dateString = dateString;
     }

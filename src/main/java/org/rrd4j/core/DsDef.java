@@ -14,7 +14,7 @@ import org.rrd4j.DsType;
  * <li>maximal value
  * </ul>
  * <p>For the complete explanation of all source definition parameters, see RRDTool's
- * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a>.</p>
+ * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html" target="man">rrdcreate man page</a>.</p>
  *
  * @author Sasa Markovic
  */
@@ -28,11 +28,11 @@ public class DsDef {
 
     /**
      * <p>Creates new data source definition object. This object should be passed as argument
-     * to {@link RrdDef#addDatasource(DsDef) addDatasource()}
+     * to {@link org.rrd4j.core.RrdDef#addDatasource(DsDef) addDatasource()}
      * method of {@link RrdDb RrdDb} object.</p>
      * <p/>
      * <p>For the complete explanation of all source definition parameters, see RRDTool's
-     * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a></p>
+     * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html" target="man">rrdcreate man page</a></p>
      * <p/>
      * <p><b>IMPORTANT NOTE:</b> If datasource name ends with '!', corresponding archives will never
      * store NaNs as datasource values. In that case, NaN datasource values will be silently
@@ -132,13 +132,11 @@ public class DsDef {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Checks if two datasource definitions are equal.
      * Source definitions are treated as equal if they have the same source name.
      * It is not possible to create RRD with two equal archive definitions.
-     *
-     * @param obj Archive definition to compare with.
-     * @return <code>true</code> if archive definitions are equal,
-     *         <code>false</code> otherwise.
      */
     public boolean equals(Object obj) {
         if (obj instanceof DsDef) {

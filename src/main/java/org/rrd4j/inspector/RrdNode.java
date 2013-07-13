@@ -39,6 +39,11 @@ class RrdNode {
         return arcIndex;
     }
 
+    /**
+     * <p>toString.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String toString() {
         return label;
     }

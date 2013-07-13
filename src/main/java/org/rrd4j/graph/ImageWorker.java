@@ -1,20 +1,36 @@
 package org.rrd4j.graph;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Locale;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageOutputStream;
 
 class ImageWorker {
     private static final String DUMMY_TEXT = "Dummy";
 
     static final int IMG_BUFFER_CAPACITY = 10000; // bytes
+    static private final String GifProvider = ImageIO.getImageWritersBySuffix("gif").next().getOriginatingProvider().getDescription(Locale.US);
 
     private BufferedImage img;
     private Graphics2D g2d;
@@ -39,8 +55,8 @@ class ImageWorker {
 
         setAntiAliasing(false);
 
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     }
 
     void clip(int x, int y, int width, int height) {
@@ -98,7 +114,6 @@ class ImageWorker {
                 yDev[ix2] = (int) yBottom[i];
             }
             g2d.fillPolygon(xDev, yDev, xDev.length);
-            g2d.drawPolygon(xDev, yDev, xDev.length);
         }
     }
 
@@ -165,23 +180,51 @@ class ImageWorker {
     }
 
     void saveImage(OutputStream stream, String type, float quality) throws IOException {
-        if (type.equalsIgnoreCase("png")) {
-            ImageIO.write(img, "png", stream);
+        //The first writer is arbitratry choosen
+        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(type);
+        ImageWriter writer = iter.next();
+        BufferedImage outputImage = img; 
+        ImageWriteParam iwp = writer.getDefaultWriteParam();
+
+        ImageWriterSpi imgProvider = writer.getOriginatingProvider();
+        String imgProviderDescription = imgProvider.getDescription(Locale.US);
+
+        // GIF can't manage transparency, 
+        if(GifProvider.equals(imgProviderDescription))  {
+            int w = img.getWidth();
+            int h = img.getHeight();
+
+            outputImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
         }
-        else if (type.equalsIgnoreCase("gif")) {
-            GifEncoder gifEncoder = new GifEncoder(img);
-            gifEncoder.encode(stream);
+        //Some format can't manage 16M colors images
+        else if(! imgProvider.canEncodeImage(outputImage)) {
+            int w = img.getWidth();
+            int h = img.getHeight();
+            outputImage = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
+            outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
+            if(! imgProvider.canEncodeImage(outputImage)) {
+                throw new RuntimeException("Invalid image type");
+            }            
         }
-        else if (type.equalsIgnoreCase("jpg") || type.equalsIgnoreCase("jpeg")) {
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(stream);
-            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(img);
-            param.setQuality(quality, false);
-            encoder.setJPEGEncodeParam(param);
-            encoder.encode(img);
+
+        //If lossy compression, use the quality
+        if(! imgProvider.isFormatLossless()) {
+            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            iwp.setCompressionQuality(quality);
         }
-        else {
-            throw new IOException("Unsupported image format: " + type);
+
+        ImageOutputStream imageStream = ImageIO.createImageOutputStream(stream);
+        writer.setOutput(imageStream);
+
+        try {
+            writer.write(null, new IIOImage(outputImage, null, null), iwp);
+        } catch (IOException e) {
+            writer.abort();
+            throw e;
         }
+        writer.dispose();
+
         stream.flush();
     }
 
@@ -209,6 +252,12 @@ class ImageWorker {
         }
     }
 
+    /**
+     * <p>loadImage.</p>
+     *
+     * @param imageFile a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     public void loadImage(String imageFile) throws IOException {
         BufferedImage wpImage = ImageIO.read(new File(imageFile));
         TexturePaint paint = new TexturePaint(wpImage, new Rectangle(0, 0, wpImage.getWidth(), wpImage.getHeight()));

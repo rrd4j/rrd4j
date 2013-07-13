@@ -86,6 +86,7 @@ public class XmlWriter {
      *
      * @param tag   XML tag name
      * @param value value to be placed between <code>&lt;tag&gt</code> and <code>&lt;/tag&gt;</code>
+     * @param nanString a {@link java.lang.String} object.
      */
     public void writeTag(String tag, double value, String nanString) {
         writeTag(tag, Util.formatDouble(value, nanString, true));
@@ -165,6 +166,9 @@ public class XmlWriter {
         writer.flush();
     }
 
+    /**
+     * <p>finalize.</p>
+     */
     protected void finalize() {
         writer.close();
     }

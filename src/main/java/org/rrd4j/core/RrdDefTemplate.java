@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Calendar;
 
 /**
- * Class used to create an arbitrary number of {@link RrdDef} (RRD definition) objects
+ * Class used to create an arbitrary number of {@link org.rrd4j.core.RrdDef} (RRD definition) objects
  * from a single XML template. XML template can be supplied as an XML InputSource,
  * XML file or XML formatted string.<p>
  *
@@ -56,7 +56,7 @@ import java.util.Calendar;
  * Notes on the template syntax:<p>
  * <ul>
  * <li>There is a strong relation between the XML template syntax and the syntax of
- * {@link RrdDef} class methods. If you are not sure what some XML tag means, check javadoc
+ * {@link org.rrd4j.core.RrdDef} class methods. If you are not sure what some XML tag means, check javadoc
  * for the corresponding class.
  * <li>starting timestamp can be supplied either as a long integer
  * (like: 1000243567) or as an ISO formatted string (like: 2004-02-21 12:25:45)
@@ -68,7 +68,7 @@ import java.util.Calendar;
  * Any template value (text between <code>&lt;some_tag&gt;</code> and
  * <code>&lt;/some_tag&gt;</code>) can be replaced with
  * a variable of the following form: <code>${variable_name}</code>. Use
- * {@link XmlTemplate#setVariable(String, String) setVariable()}
+ * {@link org.rrd4j.core.XmlTemplate#setVariable(String, String) setVariable()}
  * methods from the base class to replace template variables with real values
  * at runtime.<p>
  *
@@ -105,6 +105,7 @@ import java.util.Calendar;
  * object can be reused to create as many RrdDef objects as needed, with different values
  * specified for template variables. XML syntax check is performed only once - the first
  * definition object gets created relatively slowly, but it will be created much faster next time.
+ *
  */
 public class RrdDefTemplate extends XmlTemplate {
     /**
@@ -112,8 +113,8 @@ public class RrdDefTemplate extends XmlTemplate {
      * for this class to find an example of a properly formatted RrdDef XML source.
      *
      * @param xmlInputSource Xml input source
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
      */
     public RrdDefTemplate(InputSource xmlInputSource) throws IOException {
         super(xmlInputSource);
@@ -124,8 +125,8 @@ public class RrdDefTemplate extends XmlTemplate {
      * Read general information for this class to see an example of a properly formatted XML source.
      *
      * @param xmlString String containing XML template
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
      */
     public RrdDefTemplate(String xmlString) throws IOException {
         super(xmlString);
@@ -136,8 +137,8 @@ public class RrdDefTemplate extends XmlTemplate {
      * Read general information for this class to see an example of a properly formatted XML source.
      *
      * @param xmlFile File object representing file with XML template
-     * @throws IOException              Thrown in case of I/O error
-     * @throws IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
+     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.lang.IllegalArgumentException Thrown in case of XML related error (parsing error, for example)
      */
     public RrdDefTemplate(File xmlFile) throws IOException {
         super(xmlFile);
@@ -147,15 +148,15 @@ public class RrdDefTemplate extends XmlTemplate {
      * Returns RrdDef object constructed from the underlying XML template. Before this method
      * is called, values for all non-optional placeholders must be supplied. To specify
      * placeholder values at runtime, use some of the overloaded
-     * {@link XmlTemplate#setVariable(String, String) setVariable()} methods. Once this method
+     * {@link org.rrd4j.core.XmlTemplate#setVariable(String, String) setVariable()} methods. Once this method
      * returns, all placeholder values are preserved. To remove them all, call inherited
-     * {@link XmlTemplate#clearValues() clearValues()} method explicitly.<p>
+     * {@link org.rrd4j.core.XmlTemplate#clearValues() clearValues()} method explicitly.<p>
      *
      * @return RrdDef object constructed from the underlying XML template,
      *         with all placeholders replaced with real values. This object can be passed to the constructor
      *         of the new RrdDb object.
-     * @throws IllegalArgumentException Thrown (in most cases) if the value for some placeholder
-     *                                  was not supplied through {@link XmlTemplate#setVariable(String, String) setVariable()}
+     * @throws java.lang.IllegalArgumentException Thrown (in most cases) if the value for some placeholder
+     *                                  was not supplied through {@link org.rrd4j.core.XmlTemplate#setVariable(String, String) setVariable()}
      *                                  method call
      */
     public RrdDef getRrdDef() {

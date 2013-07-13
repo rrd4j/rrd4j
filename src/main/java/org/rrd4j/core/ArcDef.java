@@ -13,7 +13,7 @@ import org.rrd4j.ConsolFun;
  * <li>number of rows.
  * </ul>
  * <p>For the complete explanation of all archive definition parameters, see RRDTool's
- * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a>
+ * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html" target="man">rrdcreate man page</a>
  * </p>
  *
  * @author Sasa Markovic
@@ -26,15 +26,15 @@ public class ArcDef {
 
     /**
      * <p>Creates new archive definition object. This object should be passed as argument to
-     * {@link RrdDef#addArchive(ArcDef) addArchive()} method of
+     * {@link org.rrd4j.core.RrdDef#addArchive(ArcDef) addArchive()} method of
      * {@link RrdDb RrdDb} object.</p>
      *
      * <p>For the complete explanation of all archive definition parameters, see RRDTool's
-     * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a></p>
+     * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html" target="man">rrdcreate man page</a></p>
      *
      * @param consolFun Consolidation function. Allowed values are "AVERAGE", "MIN",
      *                  "MAX", "LAST" and "TOTAL" (these string constants are conveniently defined in the
-     *                  {@link ConsolFun} class).
+     *                  {@link org.rrd4j.ConsolFun} class).
      * @param xff       X-files factor, between 0 and 1.
      * @param steps     Number of archive steps.
      * @param rows      Number of archive rows.
@@ -103,14 +103,12 @@ public class ArcDef {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Checks if two archive definitions are equal.
      * Archive definitions are considered equal if they have the same number of steps
      * and the same consolidation function. It is not possible to create RRD with two
      * equal archive definitions.
-     *
-     * @param obj Archive definition to compare with.
-     * @return <code>true</code> if archive definitions are equal,
-     *         <code>false</code> otherwise.
      */
     public boolean equals(Object obj) {
         if (obj instanceof ArcDef) {

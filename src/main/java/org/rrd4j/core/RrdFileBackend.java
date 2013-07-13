@@ -8,15 +8,22 @@ import java.io.IOException;
  * <p>
  * Every backend storing RRD data as ordinary files should inherit from it, some check are done
  * in the code for instanceof.
+ *
  */
 public abstract class RrdFileBackend extends RrdBackend {
     /**
      * Read/write file status.
      */
     protected final boolean readOnly;
-    
+
     protected final File file;
 
+    /**
+     * <p>Constructor for RrdFileBackend.</p>
+     *
+     * @param path a {@link java.lang.String} object.
+     * @param readOnly a boolean.
+     */
     protected RrdFileBackend(String path, boolean readOnly) {
         super(path);
         this.readOnly = readOnly;
@@ -28,7 +35,7 @@ public abstract class RrdFileBackend extends RrdBackend {
      *
      * @param path File path
      * @return Canonical file path
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public static String getCanonicalPath(String path) throws IOException {
         return Util.getCanonicalPath(path);
@@ -38,7 +45,7 @@ public abstract class RrdFileBackend extends RrdBackend {
      * Returns canonical path to the file on the disk.
      *
      * @return Canonical file path
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public String getCanonicalPath() throws IOException {
         return RrdRandomAccessFileBackend.getCanonicalPath(getPath());
@@ -47,15 +54,14 @@ public abstract class RrdFileBackend extends RrdBackend {
     /**
      * Closes the underlying RRD file.
      *
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     abstract public void close() throws IOException;
 
-        /**
-     * Returns RRD file length.
+    /**
+     * {@inheritDoc}
      *
-     * @return File length.
-     * @throws IOException Thrown in case of I/O error.
+     * Returns RRD file length.
      */
     @Override
     public long getLength() throws IOException {

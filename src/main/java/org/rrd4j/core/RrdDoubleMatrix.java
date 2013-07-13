@@ -26,6 +26,14 @@ class RrdDoubleMatrix extends RrdPrimitive {
             writeDouble(i, value);
     }
 
+    /**
+     * <p>set.</p>
+     *
+     * @param column a int.
+     * @param index a int.
+     * @param newValues an array of double.
+     * @throws java.io.IOException if any.
+     */
     public void set(int column, int index, double[] newValues) throws IOException {
         int count = newValues.length;
         // rollovers not allowed!
@@ -50,12 +58,20 @@ class RrdDoubleMatrix extends RrdPrimitive {
         return values;
     }
 
-    /** @return the column. */
+    /**
+     * <p>Getter for the field <code>columns</code>.</p>
+     *
+     * @return a int.
+     */
     public int getColumns() {
         return columns;
     }
 
-    /** @return the row. */
+    /**
+     * <p>Getter for the field <code>rows</code>.</p>
+     *
+     * @return a int.
+     */
     public int getRows() {
         return rows;
     }

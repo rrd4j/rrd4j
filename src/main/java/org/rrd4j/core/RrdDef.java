@@ -45,7 +45,8 @@ public class RrdDef {
      */
     public static final long DEFAULT_INITIAL_SHIFT = -10L;
 
-    static public final int DEFAULTVERSION = 1;
+    /** Constant <code>DEFAULTVERSION=2</code> */
+    static public final int DEFAULTVERSION = 2;
 
     private String path;
     private long startTime = Util.getTime() + DEFAULT_INITIAL_SHIFT;
@@ -147,7 +148,7 @@ public class RrdDef {
 
     /**
      * Returns the RRD file version
-     * 
+     *
      * @return the version
      */
     public int getVersion() {
@@ -201,7 +202,7 @@ public class RrdDef {
 
     /**
      * Sets RRD's file version.
-     * 
+     *
      * @param version the version to set
      */
     public void setVersion(int version) {
@@ -233,11 +234,11 @@ public class RrdDef {
      * @param dsName    Data source name.
      * @param dsType    Data source type. Valid types are "COUNTER",
      *                  "GAUGE", "DERIVE" and "ABSOLUTE" (these string constants are conveniently defined in
-     *                  the {@link DsType} class).
+     *                  the {@link org.rrd4j.DsType} class).
      * @param heartbeat Data source heartbeat.
      * @param minValue  Minimal acceptable value. Use <code>Double.NaN</code> if unknown.
      * @param maxValue  Maximal acceptable value. Use <code>Double.NaN</code> if unknown.
-     * @throws IllegalArgumentException Thrown if new datasource definition uses already used data
+     * @throws java.lang.IllegalArgumentException Thrown if new datasource definition uses already used data
      *                                  source name.
      */
     public void addDatasource(String dsName, DsType dsType, long heartbeat, double minValue, double maxValue) {
@@ -259,7 +260,7 @@ public class RrdDef {
      * man page.<p>
      *
      * @param rrdToolDsDef Datasource definition string with the syntax borrowed from RRDTool.
-     * @throws IllegalArgumentException Thrown if invalid string is supplied.
+     * @throws java.lang.IllegalArgumentException Thrown if invalid string is supplied.
      */
     public void addDatasource(String rrdToolDsDef) {
         IllegalArgumentException illArgException = new IllegalArgumentException(
@@ -323,7 +324,7 @@ public class RrdDef {
      * Adds single archive definition represented with object of class <code>ArcDef</code>.
      *
      * @param arcDef Archive definition.
-     * @throws IllegalArgumentException Thrown if archive with the same consolidation function
+     * @throws java.lang.IllegalArgumentException Thrown if archive with the same consolidation function
      *                                  and the same number of steps is already added.
      */
     public void addArchive(ArcDef arcDef) {
@@ -337,7 +338,7 @@ public class RrdDef {
      * Adds archive definitions to RRD definition in bulk.
      *
      * @param arcDefs Array of archive definition objects
-     * @throws IllegalArgumentException Thrown if RRD definition already contains archive with
+     * @throws java.lang.IllegalArgumentException Thrown if RRD definition already contains archive with
      *                                  the same consolidation function and the same number of steps.
      */
     public void addArchive(ArcDef... arcDefs) {
@@ -356,7 +357,7 @@ public class RrdDef {
      * @param xff       X-files factor. Valid values are between 0 and 1.
      * @param steps     Number of archive steps
      * @param rows      Number of archive rows
-     * @throws IllegalArgumentException Thrown if archive with the same consolidation function
+     * @throws java.lang.IllegalArgumentException Thrown if archive with the same consolidation function
      *                                  and the same number of steps is already added.
      */
     public void addArchive(ConsolFun consolFun, double xff, int steps, int rows) {
@@ -378,7 +379,7 @@ public class RrdDef {
      * man page.<p>
      *
      * @param rrdToolArcDef Archive definition string with the syntax borrowed from RRDTool.
-     * @throws IllegalArgumentException Thrown if invalid string is supplied.
+     * @throws java.lang.IllegalArgumentException Thrown if invalid string is supplied.
      */
     public void addArchive(String rrdToolArcDef) {
         IllegalArgumentException illArgException = new IllegalArgumentException(
@@ -519,7 +520,7 @@ public class RrdDef {
 
     /**
      * Exports RrdDef object to output stream in XML format. Generated XML code can be parsed
-     * with {@link RrdDefTemplate} class.
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.
      *
      * @param out Output stream
      */
@@ -555,7 +556,7 @@ public class RrdDef {
 
     /**
      * Exports RrdDef object to string in XML format. Generated XML string can be parsed
-     * with {@link RrdDefTemplate} class.
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.
      *
      * @return XML formatted string representing this RrdDef object
      */
@@ -567,9 +568,10 @@ public class RrdDef {
 
     /**
      * Exports RrdDef object to a file in XML format. Generated XML code can be parsed
-     * with {@link RrdDefTemplate} class.
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.
      *
      * @param filePath Path to the file
+     * @throws java.io.IOException if any.
      */
     public void exportXmlTemplate(String filePath) throws IOException {
         FileOutputStream out = new FileOutputStream(filePath, false);
@@ -602,6 +604,8 @@ public class RrdDef {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Compares the current RrdDef with another. RrdDefs are considered equal if:<p>
      * <ul>
      * <li>RRD steps match
@@ -610,9 +614,6 @@ public class RrdDef {
      * <li>all archives have exactly the same definition in both RrdDef objects (archive consolidation
      * functions, X-file factors, step and row counts must match)
      * </ul>
-     *
-     * @param obj The second RrdDef object
-     * @return true if RrdDefs match exactly, false otherwise
      */
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof RrdDef)) {
@@ -659,29 +660,39 @@ public class RrdDef {
                 return false;
             }
         }
-		// everything matches
-		return true;
-	}
+        // everything matches
+        return true;
+    }
 
+    /**
+     * <p>hasDatasources.</p>
+     *
+     * @return a boolean.
+     */
     public boolean hasDatasources() {
         return !dsDefs.isEmpty();
     }
 
+    /**
+     * <p>hasArchives.</p>
+     *
+     * @return a boolean.
+     */
     public boolean hasArchives() {
         return !arcDefs.isEmpty();
     }
 
     /**
-	 * Removes all datasource definitions.
-	 */
-	public void removeDatasources() {
-		dsDefs.clear();
-	}
+     * Removes all datasource definitions.
+     */
+    public void removeDatasources() {
+        dsDefs.clear();
+    }
 
-	/**
-	 * Removes all RRA archive definitions.
-	 */
-	public void removeArchives() {
-		arcDefs.clear();
-	}
+    /**
+     * Removes all RRA archive definitions.
+     */
+    public void removeArchives() {
+        arcDefs.clear();
+    }
 }

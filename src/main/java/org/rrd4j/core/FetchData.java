@@ -30,6 +30,8 @@ import java.io.OutputStream;
  * the number of datasources and {@link #getValues(int) getValues(i)} method to obtain
  * all values for the i-th datasource. Returned datasource values correspond to
  * the values returned with {@link #getTimestamps() getTimestamps()} method.<p>
+ *
+ * @author Sasa Markovic
  */
 public class FetchData {
     // anything fuuny will do
@@ -146,12 +148,12 @@ public class FetchData {
     /**
      * Returns a set of values created by applying RPN expression to the fetched data.
      * For example, if you have two datasources named <code>x</code> and <code>y</code>
-     * in this FetchData and you want to calculate values for <code>(x+y)/2<code> use something like: <p>
+     * in this FetchData and you want to calculate values for <code>(x+y)/2</code> use something like: <p>
      * <code>getRpnValues("x,y,+,2,/");</code><p>
      *
      * @param rpnExpression RRDTool-like RPN expression
      * @return Calculated values
-     * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
+     * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      */
     public double[] getRpnValues(String rpnExpression) {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
@@ -225,6 +227,8 @@ public class FetchData {
 
     /**
      * Dumps the content of the whole FetchData object. Useful for debugging.
+     *
+     * @return a {@link java.lang.String} object.
      */
     public String dump() {
         StringBuilder buffer = new StringBuilder();
@@ -283,10 +287,9 @@ public class FetchData {
      * @param dsName    Datasource name
      * @param consolFun Consolidation function to be applied to fetched datasource values.
      *                  Valid consolidation functions are "MIN", "MAX", "LAST", "FIRST", "AVERAGE" and "TOTAL"
-     *                  (these string constants are conveniently defined in the {@link ConsolFun} class)
-     * @return MIN, MAX, LAST, FIRST, AVERAGE or TOTAL value calculated from the fetched data
-     *         for the given datasource name
-     * @throws IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data.
+     *                  (these string constants are conveniently defined in the {@link org.rrd4j.ConsolFun} class)
+     * @throws java.lang.IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data.
+     * @return a double.
      */
     public double getAggregate(String dsName, ConsolFun consolFun) {
         DataProcessor dp = createDataProcessor(null);
@@ -296,13 +299,13 @@ public class FetchData {
     /**
      * Returns aggregated value for a set of values calculated by applying an RPN expression to the
      * fetched data. For example, if you have two datasources named <code>x</code> and <code>y</code>
-     * in this FetchData and you want to calculate MAX value of <code>(x+y)/2<code> use something like: <p>
+     * in this FetchData and you want to calculate MAX value of <code>(x+y)/2</code> use something like: <p>
      * <code>getRpnAggregate("x,y,+,2,/", "MAX");</code><p>
      *
      * @param rpnExpression RRDTool-like RPN expression
      * @param consolFun     Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
      * @return Aggregated value
-     * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
+     * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      */
     public double getRpnAggregate(String rpnExpression, ConsolFun consolFun) {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
@@ -315,7 +318,7 @@ public class FetchData {
      *
      * @param dsName Datasource name.
      * @return Simple object containing all aggregated values.
-     * @throws IllegalArgumentException Thrown if the given datasource name cannot be found in the fetched data.
+     * @throws java.lang.IllegalArgumentException Thrown if the given datasource name cannot be found in the fetched data.
      */
     public Aggregates getAggregates(String dsName) {
         DataProcessor dataProcessor = createDataProcessor(null);
@@ -326,12 +329,13 @@ public class FetchData {
      * Returns all aggregated values for a set of values calculated by applying an RPN expression to the
      * fetched data. For example, if you have two datasources named <code>x</code> and <code>y</code>
      * in this FetchData and you want to calculate MIN, MAX, LAST, FIRST, AVERAGE and TOTAL value
-     * of <code>(x+y)/2<code> use something like: <p>
+     * of <code>(x+y)/2</code> use something like: <p>
      * <code>getRpnAggregates("x,y,+,2,/");</code><p>
      *
      * @param rpnExpression RRDTool-like RPN expression
      * @return Object containing all aggregated values
-     * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
+     * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
+     * @throws java.io.IOException if any.
      */
     public Aggregates getRpnAggregates(String rpnExpression) throws IOException {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
@@ -351,7 +355,7 @@ public class FetchData {
      *
      * @param dsName Datasource name
      * @return 95th percentile of fetched source values
-     * @throws IllegalArgumentException Thrown if invalid source name is supplied
+     * @throws java.lang.IllegalArgumentException Thrown if invalid source name is supplied
      */
     public double get95Percentile(String dsName) {
         DataProcessor dataProcessor = createDataProcessor(null);
@@ -364,7 +368,7 @@ public class FetchData {
      *
      * @param rpnExpression RRDTool-like RPN expression
      * @return 95-percentile
-     * @throws IllegalArgumentException Thrown if invalid RPN expression is supplied
+     * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      */
     public double getRpn95Percentile(String rpnExpression) {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
@@ -375,7 +379,7 @@ public class FetchData {
      * Dumps fetch data to output stream in XML format.
      *
      * @param outputStream Output stream to dump fetch data to
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public void exportXml(OutputStream outputStream) throws IOException {
         XmlWriter writer = new XmlWriter(outputStream);
@@ -415,7 +419,7 @@ public class FetchData {
      * Dumps fetch data to file in XML format.
      *
      * @param filepath Path to destination file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public void exportXml(String filepath) throws IOException {
         OutputStream outputStream = null;
@@ -434,7 +438,7 @@ public class FetchData {
      * Dumps fetch data in XML format.
      *
      * @return String containing XML formatted fetch data
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public String exportXml() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -467,14 +471,14 @@ public class FetchData {
         }
         if (rpnExpression != null) {
             dataProcessor.addDatasource(RPN_SOURCE_NAME, rpnExpression);
-            try {
-                dataProcessor.processData();
-            }
-            catch (IOException ioe) {
-				// highly unlikely, since all datasources have already calculated values
-				throw new RuntimeException("Impossible error: " + ioe);
-			}
-		}
-		return dataProcessor;
-	}
+        }
+        try {
+            dataProcessor.processData();
+        }
+        catch (IOException ioe) {
+            // highly unlikely, since all datasources have already calculated values
+            throw new RuntimeException("Impossible error: " + ioe);
+        }
+        return dataProcessor;
+    }
 }

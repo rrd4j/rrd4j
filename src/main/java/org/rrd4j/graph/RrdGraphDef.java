@@ -8,11 +8,14 @@ import org.rrd4j.data.Plottable;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Class which should be used to define new Rrd4j graph. Once constructed and populated with data
- * object of this class should be passed to the constructor of the {@link RrdGraph} class which
+ * object of this class should be passed to the constructor of the {@link org.rrd4j.graph.RrdGraph} class which
  * will actually create the graph.
  * <p/>
  * The text printed below the actual graph can be formated by appending
@@ -78,7 +81,8 @@ public class RrdGraphDef implements RrdGraphConstants {
             DEFAULT_MGRID_COLOR,
             DEFAULT_FONT_COLOR,
             DEFAULT_FRAME_COLOR,
-            DEFAULT_ARROW_COLOR
+            DEFAULT_ARROW_COLOR,
+            DEFAULT_XAXIS_COLOR
     };
     boolean noLegend = false; // ok
     boolean onlyGraph = false; // ok
@@ -90,7 +94,11 @@ public class RrdGraphDef implements RrdGraphConstants {
     boolean drawXGrid = true; // ok
     boolean drawYGrid = true; // ok
     int firstDayOfWeek = FIRST_DAY_OF_WEEK; // ok
+    Locale locale = Locale.getDefault();
+    TimeZone tz = TimeZone.getDefault();
     boolean showSignature = true;
+    Stroke gridStroke = GRID_STROKE;
+    Stroke tickStroke = TICK_STROKE;
 
     final List<Source> sources = new ArrayList<Source>();
     final List<CommentText> comments = new ArrayList<CommentText>();
@@ -211,10 +219,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param minorUnit        Minor grid unit. Minor grid, major grid and label units
      *                         can be one of the following constants defined in
-     *                         {@link RrdGraphConstants}: {@link RrdGraphConstants#SECOND SECOND},
-     *                         {@link RrdGraphConstants#MINUTE MINUTE}, {@link RrdGraphConstants#HOUR HOUR},
-     *                         {@link RrdGraphConstants#DAY DAY}, {@link RrdGraphConstants#WEEK WEEK},
-     *                         {@link RrdGraphConstants#MONTH MONTH}, {@link RrdGraphConstants#YEAR YEAR}.
+     *                         {@link org.rrd4j.graph.RrdGraphConstants}: {@link org.rrd4j.graph.RrdGraphConstants#SECOND SECOND},
+     *                         {@link org.rrd4j.graph.RrdGraphConstants#MINUTE MINUTE}, {@link org.rrd4j.graph.RrdGraphConstants#HOUR HOUR},
+     *                         {@link org.rrd4j.graph.RrdGraphConstants#DAY DAY}, {@link org.rrd4j.graph.RrdGraphConstants#WEEK WEEK},
+     *                         {@link org.rrd4j.graph.RrdGraphConstants#MONTH MONTH}, {@link org.rrd4j.graph.RrdGraphConstants#YEAR YEAR}.
      * @param minorUnitCount   Number of minor grid units between minor grid lines.
      * @param majorUnit        Major grid unit.
      * @param majorUnitCount   Number of major grid units between major grid lines.
@@ -317,7 +325,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * millionths). Use a value of 0 to prevent any scaling of the y-axis
      * values.
      *
-     * @param unitsExponent
+     * @param unitsExponent a int.
      */
     public void setUnitsExponent(int unitsExponent) {
         this.unitsExponent = unitsExponent;
@@ -399,7 +407,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     /**
      * Sets image format.
      *
-     * @param imageFormat "PNG", "GIF" or "JPG".
+     * @param imageFormat Any value as return by {@link javax.imageio.ImageIO#getReaderFormatNames}
      */
     public void setImageFormat(String imageFormat) {
         this.imageFormat = imageFormat;
@@ -502,16 +510,17 @@ public class RrdGraphDef implements RrdGraphConstants {
 
     /**
      * Overrides the colors for the standard elements of the graph. The
-     * colorTag must be one of the following constants defined in the {@link RrdGraphConstants}:
-     * {@link RrdGraphConstants#COLOR_BACK COLOR_BACK}ground,
-     * {@link RrdGraphConstants#COLOR_CANVAS COLOR_CANVAS},
-     * {@link RrdGraphConstants#COLOR_SHADEA COLOR_SHADEA} left/top border,
-     * {@link RrdGraphConstants#COLOR_SHADEB COLOR_SHADEB} right/bottom border,
-     * {@link RrdGraphConstants#COLOR_GRID COLOR_GRID},
-     * {@link RrdGraphConstants#COLOR_MGRID COLOR_MGRID} major grid,
-     * {@link RrdGraphConstants#COLOR_FONT COLOR_FONT},
-     * {@link RrdGraphConstants#COLOR_FRAME COLOR_FRAME} and axis of the graph or
-     * {@link RrdGraphConstants#COLOR_ARROW COLOR_ARROW}. This
+     * colorTag must be one of the following constants defined in the {@link org.rrd4j.graph.RrdGraphConstants}:
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_BACK COLOR_BACK}ground,
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_CANVAS COLOR_CANVAS},
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_XAXIS COLOR_XAXIS},
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_SHADEA COLOR_SHADEA} left/top border,
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_SHADEB COLOR_SHADEB} right/bottom border,
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_GRID COLOR_GRID},
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_MGRID COLOR_MGRID} major grid,
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_FONT COLOR_FONT},
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_FRAME COLOR_FRAME} and axis of the graph or
+     * {@link org.rrd4j.graph.RrdGraphConstants#COLOR_ARROW COLOR_ARROW}. This
      * method can be called multiple times to set several colors.
      *
      * @param colorTag Color tag, as explained above.
@@ -677,7 +686,7 @@ public class RrdGraphDef implements RrdGraphConstants {
 
     /**
      * Creates a new 'fetched' datasource. Datasource values are obtained from the
-     * given {@link FetchData} object.
+     * given {@link org.rrd4j.core.FetchData} object.
      *
      * @param name      Source name.
      * @param fetchData FetchData object.
@@ -727,7 +736,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * will only be calculated when the next '%s' is seen or the next '%S'
      * for a non-zero value.
      * <p/>
-     * Print results are collected in the {@link RrdGraphInfo} object which is retrieved
+     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
      * from the {@link RrdGraph object} once the graph is created.
      *
      * @param srcName   Virtual source name
@@ -830,6 +839,56 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * Draws a horizontal span into the graph.
+     *
+     * @param start Starting value of the span
+     * @param end   Ending value of the span
+     * @param color Rule color
+     */
+    public void hspan(double start, double end, Paint color) {
+        hspan(start, end, color, null);
+    }
+
+    /**
+     * Draws a horizontal span into the graph and optionally adds a legend.
+     *
+     * @param start     Starting value of the span
+     * @param end       Ending value of the span
+     * @param color     Rule color
+     * @param legend    Legend text. Use null to omit the text.
+     */
+    public void hspan(double start, double end, Paint color, String legend) {
+        LegendText legendText = new LegendText(color, legend);
+        comments.add(legendText);
+        plotElements.add(new HSpan(start, end, color, legendText));
+    }
+
+    /**
+     * Draws a vertical span into the graph.
+     *
+     * @param start     Start time for the span (seconds since epoch)
+     * @param end       End time for the span (seconds since epoch)
+     * @param color     Rule color
+     */
+    public void vspan(long start, long end, Paint color) {
+        vspan(start, end, color, null);
+    }
+
+    /**
+     * Draws a vertical span into the graph and optionally adds a legend.
+     *
+     * @param start     Start time for the span (seconds since epoch)
+     * @param end       End time for the span (seconds since epoch)
+     * @param color     Rule color
+     * @param legend    Legend text. Use null to omit the text.
+     */
+    public void vspan(long start, long end, Paint color, String legend) {
+        LegendText legendText = new LegendText(color, legend);
+        comments.add(legendText);
+        plotElements.add(new VSpan(start, end, color, legendText));
+    }
+
+    /**
      * Plots requested data as a line, using the color specified. Line width is assumed to be
      * 1.0F.
      *
@@ -918,7 +977,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param srcName Virtual source name
      * @param color   Stacked graph color
-     * @throws IllegalArgumentException Thrown if this STACK has no previously defined AREA, STACK or LINE
+     * @throws java.lang.IllegalArgumentException Thrown if this STACK has no previously defined AREA, STACK or LINE
      *                                  graph bellow it.
      */
     public void stack(String srcName, Paint color) {
@@ -939,7 +998,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param srcName Virtual source name
      * @param color   Stacked graph color
      * @param legend  Legend text
-     * @throws IllegalArgumentException Thrown if this STACK has no previously defined AREA, STACK or LINE
+     * @throws java.lang.IllegalArgumentException Thrown if this STACK has no previously defined AREA, STACK or LINE
      *                                  graph bellow it.
      */
     public void stack(String srcName, Paint color, String legend) {
@@ -1020,19 +1079,56 @@ public class RrdGraphDef implements RrdGraphConstants {
      * Sets first day of the week.
      *
      * @param firstDayOfWeek One of the following constants:
-     *                       {@link RrdGraphConstants#MONDAY MONDAY},
-     *                       {@link RrdGraphConstants#TUESDAY TUESDAY},
-     *                       {@link RrdGraphConstants#WEDNESDAY WEDNESDAY},
-     *                       {@link RrdGraphConstants#THURSDAY THURSDAY},
-     *                       {@link RrdGraphConstants#FRIDAY FRIDAY},
-     *                       {@link RrdGraphConstants#SATURDAY SATURDAY},
-     *                       {@link RrdGraphConstants#SUNDAY SUNDAY}
+     *                       {@link org.rrd4j.graph.RrdGraphConstants#MONDAY MONDAY},
+     *                       {@link org.rrd4j.graph.RrdGraphConstants#TUESDAY TUESDAY},
+     *                       {@link org.rrd4j.graph.RrdGraphConstants#WEDNESDAY WEDNESDAY},
+     *                       {@link org.rrd4j.graph.RrdGraphConstants#THURSDAY THURSDAY},
+     *                       {@link org.rrd4j.graph.RrdGraphConstants#FRIDAY FRIDAY},
+     *                       {@link org.rrd4j.graph.RrdGraphConstants#SATURDAY SATURDAY},
+     *                       {@link org.rrd4j.graph.RrdGraphConstants#SUNDAY SUNDAY}
      */
     public void setFirstDayOfWeek(int firstDayOfWeek) {
         this.firstDayOfWeek = firstDayOfWeek;
     }
 
-    // helper methods
+    /**
+     * Set the locale used for the legend.<p/>
+     *
+     * It overides the firstDayOfWeek
+     *
+     * @param locale the locale to set
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+        this.firstDayOfWeek = Calendar.getInstance(Locale.getDefault()).getFirstDayOfWeek();
+    }
+
+    /**
+     * Set the time zone used for the legend.
+     *
+     * @param tz the time zone to set
+     */
+    public void setTimeZone(TimeZone tz) {
+        this.tz = tz;
+    }
+
+    /**
+     * Set the Stroke used to draw grid
+     *
+     * @param gridStroke a {@link java.awt.Stroke} object.
+     */
+    public void setGridStroke(Stroke gridStroke) {
+        this.gridStroke = gridStroke;
+    }
+
+    /**
+     * Set the stroke used to draw ticks
+     *
+     * @param tickStroke a {@link java.awt.Stroke} object.
+     */
+    public void setTickStroke(Stroke tickStroke) {
+        this.tickStroke = tickStroke;
+    }
 
     int printStatementCount() {
         int count = 0;
