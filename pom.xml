@@ -306,10 +306,9 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${mavenJavadocPluginVersion}</version>
                 <configuration>
-                    <quiet>true</quiet>
+                    <quiet>false</quiet>
                     <detectLinks>true</detectLinks>
                     <detectJavaApiLink>true</detectJavaApiLink>
-                    <excludePackageNames>org.rrd4j.core.jrrd</excludePackageNames>
                     <show>protected</show>
                     <bottom>Copyright (c) ${year} The RRD4J Authors. Copyright (c) 2001-2005 Sasa
                         Markovic and Ciaran Treanor. Copyright (c) ${year} The OpenNMS Group, Inc.</bottom>
