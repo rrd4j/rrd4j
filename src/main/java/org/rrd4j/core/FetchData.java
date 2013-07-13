@@ -471,14 +471,14 @@ public class FetchData {
         }
         if (rpnExpression != null) {
             dataProcessor.addDatasource(RPN_SOURCE_NAME, rpnExpression);
-            try {
-                dataProcessor.processData();
-            }
-            catch (IOException ioe) {
-				// highly unlikely, since all datasources have already calculated values
-				throw new RuntimeException("Impossible error: " + ioe);
-			}
-		}
-		return dataProcessor;
-	}
+        }
+        try {
+            dataProcessor.processData();
+        }
+        catch (IOException ioe) {
+            // highly unlikely, since all datasources have already calculated values
+            throw new RuntimeException("Impossible error: " + ioe);
+        }
+        return dataProcessor;
+    }
 }
