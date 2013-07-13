@@ -6,8 +6,15 @@ import java.io.IOException;
 
 
 class Test {
+    /** Constant <code>LOADAVG_FILE="/proc/loadavg"</code> */
     public static final String LOADAVG_FILE = "/proc/loadavg";
 
+    /**
+     * <p>main.</p>
+     *
+     * @param args an array of {@link java.lang.String} objects.
+     * @throws java.io.IOException if any.
+     */
     public static void main(String[] args) throws IOException {
         BufferedReader r = new BufferedReader(new FileReader(LOADAVG_FILE));
         try {

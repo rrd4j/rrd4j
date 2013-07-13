@@ -7,18 +7,19 @@ import java.io.IOException;
  * <p>
  * Every backend factory storing RRD data as ordinary files should inherit from it, some check are done
  * in the code for instanceof.
+ *
  */
 public abstract class RrdFileBackendFactory extends RrdBackendFactory {
     /**
-     * Method to determine if a file with the given path already exists.
+     * {@inheritDoc}
      *
-     * @param path File path
-     * @return True, if such file exists, false otherwise.
+     * Method to determine if a file with the given path already exists.
      */
     protected boolean exists(String path) {
         return Util.fileExists(path);
     }
 
+    /** {@inheritDoc} */
     protected boolean shouldValidateHeader(String path) throws IOException {
         return true;
     }

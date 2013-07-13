@@ -35,6 +35,7 @@ public class DataProcessor {
      * no other value is specified with {@link #setStep(long) setStep()} method.
      */
     public static final int DEFAULT_PIXEL_COUNT = 600;
+    /** Constant <code>DEFAULT_PERCENTILE=95.0</code> */
     public static final double DEFAULT_PERCENTILE = 95.0; // %
 
     private int pixelCount = DEFAULT_PIXEL_COUNT;
@@ -181,7 +182,7 @@ public class DataProcessor {
     /**
      * Returns desired RRD archive step (resolution) in seconds to be used while fetching data
      * from RRD files. In other words, this value will used as the last parameter of
-     * {@link RrdDb#createFetchRequest(ConsolFun, long, long, long) RrdDb.createFetchRequest()} method
+     * {@link org.rrd4j.core.RrdDb#createFetchRequest(ConsolFun, long, long, long) RrdDb.createFetchRequest()} method
      * when this method is called internally by this DataProcessor.
      *
      * @return Desired archive step (fetch resolution) in seconds.
@@ -193,7 +194,7 @@ public class DataProcessor {
     /**
      * Sets desired RRD archive step in seconds to be used internally while fetching data
      * from RRD files. In other words, this value will used as the last parameter of
-     * {@link RrdDb#createFetchRequest(ConsolFun, long, long, long) RrdDb.createFetchRequest()} method
+     * {@link org.rrd4j.core.RrdDb#createFetchRequest(ConsolFun, long, long, long) RrdDb.createFetchRequest()} method
      * when this method is called internally by this DataProcessor. If this method is never called, fetch
      * request resolution defaults to 1 (smallest possible archive step will be chosen automatically).
      *
@@ -235,7 +236,7 @@ public class DataProcessor {
      *
      * @param sourceName Datasource name
      * @return an array of datasource values
-     * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
+     * @throws java.lang.IllegalArgumentException Thrown if invalid datasource name is specified,
      *                                  or if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
      */
@@ -254,12 +255,11 @@ public class DataProcessor {
      * @param sourceName Datasource name
      * @param consolFun  Consolidation function to be applied to fetched datasource values.
      *                   Valid consolidation functions are MIN, MAX, LAST, FIRST, AVERAGE and TOTAL
-     *                   (these string constants are conveniently defined in the {@link ConsolFun} class)
-     * @return MIN, MAX, LAST, FIRST, AVERAGE or TOTAL value calculated from the data
-     *         for the given datasource name
-     * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
+     *                   (these string constants are conveniently defined in the {@link org.rrd4j.ConsolFun} class)
+     * @throws java.lang.IllegalArgumentException Thrown if invalid datasource name is specified,
      *                                  or if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
+     * @return a aggregate value as a double calculated from the source.
      */
     public double getAggregate(String sourceName, ConsolFun consolFun) {
         Source source = getSource(sourceName);
@@ -271,7 +271,7 @@ public class DataProcessor {
      *
      * @param sourceName Datasource name
      * @return Object containing all aggregated values
-     * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
+     * @throws java.lang.IllegalArgumentException Thrown if invalid datasource name is specified,
      *                                  or if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
      */
@@ -352,7 +352,7 @@ public class DataProcessor {
      * @return All datasource values for all datasources. The first index is the index of the datasource,
      *         the second index is the index of the datasource value. The number of datasource values is equal
      *         to the number of timestamps returned with {@link #getTimestamps()}  method.
-     * @throws IllegalArgumentException Thrown if invalid datasource name is specified,
+     * @throws java.lang.IllegalArgumentException Thrown if invalid datasource name is specified,
      *                                  or if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
      */
@@ -400,20 +400,17 @@ public class DataProcessor {
      * <li>To define other complex sources.</li>
      * </ul>
      *
-     * <p>Rrd4j supports the following RPN functions, operators and constants: +, -, *, /,
-     * %, SIN, COS, LOG, EXP, FLOOR, CEIL, ROUND, POW, ABS, SQRT, RANDOM, LT, LE, GT, GE, EQ,
-     * IF, MIN, MAX, LIMIT, DUP, EXC, POP, UN, UNKN, NOW, TIME, PI, E,
-     * AND, OR, XOR, PREV, PREV(sourceName), INF, NEGINF, STEP, YEAR, MONTH, DATE,
-     * HOUR, MINUTE, SECOND, WEEK, SIGN and RND.</p>
+     * <p>The supported RPN functions, operators and constants are detailed at
+     * <a href="https://code.google.com/p/rrd4j/wiki/RPNFuncs" target="man">RRD4J's wiki</a>.</p>
      *
      * <p>Rrd4j does not force you to specify at least one simple source name as RRDTool.</p>
      *
      * <p>For more details on RPN see RRDTool's
-     * <a href="http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/manual/rrdgraph.html" target="man">
+     * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdgraph_rpn.en.html" target="man">
      * rrdgraph man page</a>.</p>
      *
      * @param name          source name.
-     * @param rpnExpression RPN expression containing comma (or space) delimited simple and complex
+     * @param rpnExpression RPN expression containing comma delimited simple and complex
      *                      source names, RPN constants, functions and operators.
      */
     public void addDatasource(String name, String rpnExpression) {
@@ -423,7 +420,7 @@ public class DataProcessor {
 
     /**
      * <p>Adds static source (<b>SDEF</b>). Static sources are the result of a consolidation function applied
-     * to *any* other source that has been defined previously.</p>
+     * to <em>any</em> other source that has been defined previously.</p>
      *
      * @param name      source name.
      * @param defName   Name of the datasource to calculate the value from.
@@ -474,11 +471,11 @@ public class DataProcessor {
 
     /**
      * Creates a datasource that performs a percentile calculation on an
-     * another named datasource to yield a single value.  
-     * 
+     * another named datasource to yield a single value.
+     *
      * Requires that the other datasource has already been defined; otherwise, it'll
      * end up with no data
-     * 
+     *
      * @param name - the new virtual datasource name
      * @param sourceName - the datasource from which to extract the percentile.  Must be a previously
      *                     defined virtual datasource
@@ -508,7 +505,7 @@ public class DataProcessor {
      * Method that should be called once all datasources are defined. Data will be fetched from
      * RRD files, RPN expressions will be calculated, etc.
      *
-     * @throws IOException Thrown in case of I/O error (while fetching data from RRD files)
+     * @throws java.io.IOException Thrown in case of I/O error (while fetching data from RRD files)
      */
     public void processData() throws IOException {
         extractDefs();
@@ -530,7 +527,7 @@ public class DataProcessor {
      * @param sourceName Datasource name
      * @param pixelCount Graph width
      * @return Per-pixel datasource values
-     * @throws IllegalArgumentException Thrown if datasource values are not yet calculated (method {@link #processData()}
+     * @throws java.lang.IllegalArgumentException Thrown if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
      */
     public double[] getValuesPerPixel(String sourceName, int pixelCount) {
@@ -546,7 +543,7 @@ public class DataProcessor {
      *
      * @param sourceName Datasource name
      * @return Per-pixel datasource values
-     * @throws IllegalArgumentException Thrown if datasource values are not yet calculated (method {@link #processData()}
+     * @throws java.lang.IllegalArgumentException Thrown if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
      */
     public double[] getValuesPerPixel(String sourceName) {
@@ -756,6 +753,7 @@ public class DataProcessor {
             }
         }
     }
+
     private RrdDb getRrd(Def def) throws IOException {
         String path = def.getPath(), backend = def.getBackend();
         if (poolUsed && backend == null) {
@@ -791,7 +789,7 @@ public class DataProcessor {
      * Cute little demo. Uses demo.rrd file previously created by basic Rrd4j demo.
      *
      * @param args Not used
-     * @throws IOException
+     * @throws java.io.IOException if any.
      */
     public static void main(String[] args) throws IOException {
         // time span

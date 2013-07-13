@@ -273,6 +273,12 @@ public class Archive {
         }
     }
 
+    /**
+     * <p>Getter for the field <code>values</code>.</p>
+     *
+     * @return an array of double.
+     * @throws java.io.IOException if any.
+     */
     public double[][] getValues() throws IOException {
         if (values != null) {
             return values;

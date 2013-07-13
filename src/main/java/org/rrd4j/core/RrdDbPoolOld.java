@@ -24,6 +24,13 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#requestRrdDb(java.lang.String)
       */
+    /**
+     * <p>requestRrdDb.</p>
+     *
+     * @param path a {@link java.lang.String} object.
+     * @return a {@link org.rrd4j.core.RrdDb} object.
+     * @throws java.io.IOException if any.
+     */
     public synchronized RrdDb requestRrdDb(String path) throws IOException {
         String canonicalPath = Util.getCanonicalPath(path);
         while (!rrdMap.containsKey(canonicalPath) && rrdMap.size() >= capacity) {
@@ -51,6 +58,7 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#requestRrdDb(org.rrd4j.core.RrdDef)
       */
+    /** {@inheritDoc} */
     public synchronized RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
         String canonicalPath = Util.getCanonicalPath(rrdDef.getPath());
         while (rrdMap.containsKey(canonicalPath) || rrdMap.size() >= capacity) {
@@ -69,6 +77,7 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#requestRrdDb(java.lang.String, java.lang.String)
       */
+    /** {@inheritDoc} */
     public synchronized RrdDb requestRrdDb(String path, String sourcePath) throws IOException {
         String canonicalPath = Util.getCanonicalPath(path);
         while (rrdMap.containsKey(canonicalPath) || rrdMap.size() >= capacity) {
@@ -87,6 +96,7 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#release(org.rrd4j.core.RrdDb)
       */
+    /** {@inheritDoc} */
     public synchronized void release(RrdDb rrdDb) throws IOException {
         // null pointer should not kill the thread, just ignore it
         if (rrdDb == null) {
@@ -108,6 +118,11 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#getCapacity()
       */
+    /**
+     * <p>Getter for the field <code>capacity</code>.</p>
+     *
+     * @return a int.
+     */
     public synchronized int getCapacity() {
         return capacity;
     }
@@ -115,6 +130,7 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#setCapacity(int)
       */
+    /** {@inheritDoc} */
     public synchronized void setCapacity(int capacity) {
         this.capacity = capacity;
     }
@@ -122,6 +138,11 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#getOpenFiles()
       */
+    /**
+     * <p>getOpenFiles.</p>
+     *
+     * @return an array of {@link java.lang.String} objects.
+     */
     public synchronized String[] getOpenFiles() {
         return rrdMap.keySet().toArray(new String[rrdMap.keySet().size()]);
     }
@@ -129,6 +150,11 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#getOpenFileCount()
       */
+    /**
+     * <p>getOpenFileCount.</p>
+     *
+     * @return a int.
+     */
     public synchronized int getOpenFileCount() {
         return rrdMap.size();
     }
@@ -136,6 +162,7 @@ class RrdDbPoolOld extends RrdDbPool {
     /* (non-Javadoc)
       * @see org.rrd4j.core.RrdDbPoolI#getOpenCount(org.rrd4j.core.RrdDb)
       */
+    /** {@inheritDoc} */
     @Override
     public synchronized int getOpenCount(RrdDb rrdDb) throws IOException {
         String canonicalPath = rrdDb.getCanonicalPath();
@@ -145,6 +172,7 @@ class RrdDbPoolOld extends RrdDbPool {
         return ref.count;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getOpenCount(String path) throws IOException {
         String canonicalPath = Util.getCanonicalPath(path);

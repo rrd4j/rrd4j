@@ -40,6 +40,11 @@ class EditDatasourceDialog extends JDialog {
         setVisible(true);
     }
 
+    /**
+     * <p>createRootPane.</p>
+     *
+     * @return a {@link javax.swing.JRootPane} object.
+     */
     protected JRootPane createRootPane() {
         ActionListener actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {

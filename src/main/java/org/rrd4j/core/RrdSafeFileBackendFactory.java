@@ -3,7 +3,8 @@ package org.rrd4j.core;
 import java.io.IOException;
 
 /**
- * Factory class which creates actual {@link RrdSafeFileBackend} objects.
+ * Factory class which creates actual {@link org.rrd4j.core.RrdSafeFileBackend} objects.
+ *
  */
 public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory {
     /**
@@ -19,17 +20,19 @@ public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory
     private static long lockRetryPeriod = LOCK_RETRY_PERIOD;
 
     /**
-     * Creates RrdSafeFileBackend object for the given file path.
+     * {@inheritDoc}
      *
-     * @param path     File path
-     * @param readOnly This parameter is ignored
-     * @return RrdSafeFileBackend object which handles all I/O operations for the given file path
-     * @throws IOException Thrown in case of I/O error.
+     * Creates RrdSafeFileBackend object for the given file path.
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         return new RrdSafeFileBackend(path, lockWaitTime, lockRetryPeriod);
     }
 
+    /**
+     * <p>getName.</p>
+     *
+     * @return The {@link java.lang.String} "SAFE".
+     */
     public String getName() {
         return "SAFE";
     }

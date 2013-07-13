@@ -16,9 +16,10 @@ class UnivalArray {
 
     /**
      * Read an UnivalArray from a rrd native file at the current position
+     *
      * @param file the RRdFile
      * @param size the numer of elements in the array
-     * @throws IOException
+     * @throws java.io.IOException if any.
      */
     public UnivalArray(RRDFile file, int size) throws IOException {
         sizeoflong = file.getBits();
@@ -31,6 +32,12 @@ class UnivalArray {
         file.read(buffer);
     }
 
+    /**
+     * <p>getLong.</p>
+     *
+     * @param e a {@link java.lang.Enum} object.
+     * @return a long.
+     */
     public long getLong(Enum<?> e) {
         buffer.position(8 * e.ordinal());
         if(sizeoflong == 64)
@@ -39,6 +46,12 @@ class UnivalArray {
             return buffer.getInt();
     }
 
+    /**
+     * <p>getDouble.</p>
+     *
+     * @param e a {@link java.lang.Enum} object.
+     * @return a double.
+     */
     public double getDouble(Enum<?> e) {
         buffer.position(8 * e.ordinal());
         return buffer.getDouble();

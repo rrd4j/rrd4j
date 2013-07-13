@@ -8,7 +8,8 @@ import org.rrd4j.core.Util;
  * don't need to create objects of this class directly. Objects of this class are returned from
  * <code>getAggregates()</code> method in
  * {@link org.rrd4j.core.FetchData#getAggregates(String) FetchData} and
- * {@link DataProcessor#getAggregates(String)} DataProcessor classes.
+ * {@link org.rrd4j.data.DataProcessor#getAggregates(String)} DataProcessor classes.
+ *
  */
 public class Aggregates {
     double min = Double.NaN, max = Double.NaN;
@@ -79,6 +80,7 @@ public class Aggregates {
      * Returns Least Squares Line Slope value
      *
      * @return lslslope value
+     * @since 2.3
      */
     public double getLSLSlope() {
         return stdev;
@@ -88,6 +90,7 @@ public class Aggregates {
      * Returns Least Squares Line y-intercept value
      *
      * @return lslint value
+     * @since 2.3
      */
     public double getLSLInt() {
         return lslint;
@@ -97,6 +100,7 @@ public class Aggregates {
      * Returns Least Squares Line Correlation Coefficient
      *
      * @return lslcorrel value
+     * @since 2.3
      */
     public double getLSLCorrel() {
         return lslcorrel;
@@ -108,7 +112,7 @@ public class Aggregates {
      * @param consolFun Consolidation function: MIN, MAX, FIRST, LAST, AVERAGE, TOTAL. These constants
      *                  are conveniently defined in the {@link org.rrd4j.ConsolFun ConsolFun} interface.
      * @return Aggregated value
-     * @throws IllegalArgumentException Thrown if unsupported consolidation function is supplied
+     * @throws java.lang.IllegalArgumentException Thrown if unsupported consolidation function is supplied
      */
     public double getAggregate(ConsolFun consolFun) {
         switch (consolFun) {

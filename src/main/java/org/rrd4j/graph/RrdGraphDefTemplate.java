@@ -186,7 +186,7 @@ import java.io.IOException;
  * Notes on the template syntax:<p>
  * <ul>
  * <li>There is a strong relation between the XML template syntax and the syntax of
- * {@link RrdGraphDef} class methods. If you are not sure what some XML tag means, check javadoc
+ * {@link org.rrd4j.graph.RrdGraphDef} class methods. If you are not sure what some XML tag means, check javadoc
  * for the corresponding class method.
  * <li>hard-coded timestamps in templates should be long integers
  * (like: 1000243567) or at-style formatted strings
@@ -203,7 +203,7 @@ import java.io.IOException;
  * Any template value (text between <code>&lt;some_tag&gt;</code> and
  * <code>&lt;/some_tag&gt;</code>) can be replaced with
  * a variable of the following form: <code>${variable_name}</code>. Use
- * {@link XmlTemplate#setVariable(String, String) setVariable()}
+ * {@link org.rrd4j.core.XmlTemplate#setVariable(String, String) setVariable()}
  * methods from the base class to replace
  * template variables with real values at runtime.<p>
  * <p/>
@@ -253,7 +253,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
      * Creates template object from any parsable XML source
      *
      * @param inputSource XML source
-     * @throws IOException thrown in case of I/O error
+     * @throws java.io.IOException thrown in case of I/O error
      */
     public RrdGraphDefTemplate(InputSource inputSource) throws IOException {
         super(inputSource);
@@ -263,7 +263,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
      * Creates template object from the file containing XML template code
      *
      * @param xmlFile file containing XML template
-     * @throws IOException thrown in case of I/O error
+     * @throws java.io.IOException thrown in case of I/O error
      */
     public RrdGraphDefTemplate(File xmlFile) throws IOException {
         super(xmlFile);
@@ -273,7 +273,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
      * Creates template object from the string containing XML template code
      *
      * @param xmlString string containing XML template
-     * @throws IOException thrown in case of I/O error
+     * @throws java.io.IOException thrown in case of I/O error
      */
     public RrdGraphDefTemplate(String xmlString) throws IOException {
         super(xmlString);
@@ -283,7 +283,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
      * Creates RrdGraphDef object which can be used to create RrdGraph
      * object (actual Rrd4j graphs). Before this method is called, all template variables (if any)
      * must be resolved (replaced with real values).
-     * See {@link XmlTemplate#setVariable(String, String) setVariable()} method information to
+     * See {@link org.rrd4j.core.XmlTemplate#setVariable(String, String) setVariable()} method information to
      * understand how to supply values for template variables.
      *
      * @return Graph definition which can be used to create RrdGraph object (actual Rrd4j graphs)

@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Thread pool used by {@link RrdNioBackend} instances to periodically sync the mapped file to disk. Note that instances
+ * Thread pool used by {@link org.rrd4j.core.RrdNioBackend} instances to periodically sync the mapped file to disk. Note that instances
  * of RrdSyncThreadPool must be disposed of by calling {@link #shutdown()}.
  * <p/>
  * For ease of use in standalone applications, clients may choose to register a shutdown hook by calling

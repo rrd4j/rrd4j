@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * {@link RrdBackendFactory} that uses
+ * {@link org.rrd4j.core.RrdBackendFactory} that uses
  * <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html">Oracle Berkeley DB Java Edition</a>
  * to read data. Construct a BerkeleyDB {@link com.sleepycat.je.Database} object and pass it via the constructor.
  *
@@ -18,12 +18,19 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
 
     private final Set<String> pathCache = new CopyOnWriteArraySet<String>();
 
+    /**
+     * <p>Constructor for RrdBerkeleyDbBackendFactory.</p>
+     *
+     * @param rrdDatabase a {@link com.sleepycat.je.Database} object.
+     */
     public RrdBerkeleyDbBackendFactory(Database rrdDatabase) {
         this.rrdDatabase = rrdDatabase;
         RrdBackendFactory.registerAndSetAsDefaultFactory(this);
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Creates new RrdBerkeleyDbBackend object for the given id (path).
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
@@ -45,6 +52,11 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         }
     }
 
+    /**
+     * <p>delete.</p>
+     *
+     * @param path a {@link java.lang.String} object.
+     */
     public void delete(String path) {
         try {
             rrdDatabase.delete(null, new DatabaseEntry(path.getBytes("UTF-8")));
@@ -60,6 +72,8 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Checks if the RRD with the given id (path) already exists in the database.
      */
     protected boolean exists(String path) throws IOException {
@@ -84,10 +98,16 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         }
     }
 
+    /** {@inheritDoc} */
     protected boolean shouldValidateHeader(String path) {
         return false;
     }
 
+    /**
+     * <p>getName.</p>
+     *
+     * @return The {@link java.lang.String} "BERKELEY".
+     */
     public String getName() {
         return "BERKELEY";
     }

@@ -7,7 +7,16 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 
+/**
+ * <p>HeartbeatFix class.</p>
+ */
 public class HeartbeatFix {
+    /**
+     * <p>main.</p>
+     *
+     * @param args an array of {@link java.lang.String} objects.
+     * @throws java.io.IOException if any.
+     */
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
             System.err.println("SYNTAX: HeartbeatFix <rrd directory> <heartbeat>");

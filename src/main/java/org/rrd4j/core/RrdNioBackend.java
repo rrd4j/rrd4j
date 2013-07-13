@@ -11,6 +11,7 @@ import sun.nio.ch.DirectBuffer;
 /**
  * Backend which is used to store RRD data to ordinary disk files
  * using java.nio.* package. This is the default backend engine.
+ *
  */
 public class RrdNioBackend extends RrdRandomAccessFileBackend {
     private MappedByteBuffer byteBuffer;
@@ -28,8 +29,9 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      *
      * @param path       Path to a file
      * @param readOnly   True, if file should be open in a read-only mode. False otherwise
-     * @param syncPeriod See {@link RrdNioBackendFactory#setSyncPeriod(int)} for explanation
-     * @throws IOException Thrown in case of I/O error
+     * @param syncPeriod See {@link org.rrd4j.core.RrdNioBackendFactory#setSyncPeriod(int)} for explanation
+     * @throws java.io.IOException Thrown in case of I/O error
+     * @param threadPool a {@link org.rrd4j.core.RrdSyncThreadPool} object.
      */
     protected RrdNioBackend(String path, boolean readOnly, RrdSyncThreadPool threadPool, int syncPeriod) throws IOException {
         super(path, readOnly);
@@ -74,11 +76,10 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Sets length of the underlying RRD file. This method is called only once, immediately
      * after a new RRD file gets created.
-     *
-     * @param newLength Length of the RRD file
-     * @throws IOException Thrown in case of I/O error.
      */
     protected synchronized void setLength(long newLength) throws IOException {
         unmapFile();
@@ -91,6 +92,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      *
      * @param offset Starting file offset
      * @param b      Bytes to be written.
+     * @throws java.io.IOException if any.
      */
     protected synchronized void write(long offset, byte[] b) throws IOException {
         if (byteBuffer != null) {
@@ -107,6 +109,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      *
      * @param offset Starting file offset
      * @param b      Buffer which receives bytes read from the file.
+     * @throws java.io.IOException if any.
      */
     protected synchronized void read(long offset, byte[] b) throws IOException {
         if (byteBuffer != null) {
@@ -121,7 +124,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
     /**
      * Closes the underlying RRD file.
      *
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public synchronized void close() throws IOException {
         // cancel synchronization

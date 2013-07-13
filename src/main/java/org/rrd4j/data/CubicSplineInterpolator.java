@@ -28,7 +28,7 @@ public class CubicSplineInterpolator extends Plottable {
      *
      * @param timestamps timestamps in seconds
      * @param values     corresponding datasource values
-     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
+     * @throws java.lang.IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
      *                                  timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
      */
     public CubicSplineInterpolator(long[] timestamps, double[] values) {
@@ -47,7 +47,7 @@ public class CubicSplineInterpolator extends Plottable {
      *
      * @param dates  Array of Date objects
      * @param values corresponding datasource values
-     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
+     * @throws java.lang.IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
      *                                  timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
      */
     public CubicSplineInterpolator(Date[] dates, double[] values) {
@@ -66,7 +66,7 @@ public class CubicSplineInterpolator extends Plottable {
      *
      * @param dates  Array of GregorianCalendar objects
      * @param values corresponding datasource values
-     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
+     * @throws java.lang.IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
      *                                  timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
      */
     public CubicSplineInterpolator(Calendar[] dates, double[] values) {
@@ -84,7 +84,7 @@ public class CubicSplineInterpolator extends Plottable {
      *
      * @param x x-axis point coordinates
      * @param y y-axis point coordinates
-     * @throws IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
+     * @throws java.lang.IllegalArgumentException Thrown if supplied arrays do not contain at least 3 values, or if
      *                                  timestamps are not ordered, or array lengths are not equal, or some datasource value is NaN.
      */
     public CubicSplineInterpolator(double[] x, double[] y) {
@@ -163,13 +163,12 @@ public class CubicSplineInterpolator extends Plottable {
                 ((a * a * a - a) * y2[klo] + (b * b * b - b) * y2[khi]) * (h * h) / 6.0;
     }
 
-    /**
-     * Method overridden from the base class. This method will be called by the framework. Call
-     * this method only if you need spline-interpolated values in your code.
-     *
-     * @param timestamp timestamp in seconds
-     * @return inteprolated datasource value
-     */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Method overridden from the base class. This method will be called by the framework. Call
+	 * this method only if you need spline-interpolated values in your code.
+	 */
 	public double getValue(long timestamp) {
 		return getValue((double)timestamp);
 	}

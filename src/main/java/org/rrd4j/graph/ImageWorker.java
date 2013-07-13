@@ -55,8 +55,8 @@ class ImageWorker {
 
         setAntiAliasing(false);
 
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     }
 
     void clip(int x, int y, int width, int height) {
@@ -208,7 +208,7 @@ class ImageWorker {
             }            
         }
 
-        //If losssy compression, use the quality
+        //If lossy compression, use the quality
         if(! imgProvider.isFormatLossless()) {
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             iwp.setCompressionQuality(quality);
@@ -252,6 +252,12 @@ class ImageWorker {
         }
     }
 
+    /**
+     * <p>loadImage.</p>
+     *
+     * @param imageFile a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     public void loadImage(String imageFile) throws IOException {
         BufferedImage wpImage = ImageIO.read(new File(imageFile));
         TexturePaint paint = new TexturePaint(wpImage, new Rectangle(0, 0, wpImage.getWidth(), wpImage.getHeight()));

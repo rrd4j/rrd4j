@@ -34,11 +34,18 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#getValues()
      */
+    /**
+     * <p>Getter for the field <code>values</code>.</p>
+     *
+     * @return an array of double.
+     * @throws java.io.IOException if any.
+     */
     public double[] getValues() throws IOException {
         return getValues(0, rows);
     }
 
     // stores single value
+    /** {@inheritDoc} */
     public void store(double newValue) throws IOException {
         int position = pointer.get();
         values.set(position, newValue);
@@ -46,6 +53,7 @@ class RobinArray implements Robin {
     }
 
     // stores the same value several times
+    /** {@inheritDoc} */
     public void bulkStore(double newValue, int bulkCount) throws IOException {
         assert bulkCount <= rows: "Invalid number of bulk updates: " + bulkCount + " rows=" + rows;
 
@@ -65,6 +73,12 @@ class RobinArray implements Robin {
         }
     }
 
+    /**
+     * <p>update.</p>
+     *
+     * @param newValues an array of double.
+     * @throws java.io.IOException if any.
+     */
     public void update(double[] newValues) throws IOException {
         assert rows == newValues.length: "Invalid number of robin values supplied (" + newValues.length +
         "), exactly " + rows + " needed";
@@ -75,6 +89,7 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#setValues(double)
      */
+    /** {@inheritDoc} */
     public void setValues(double... newValues) throws IOException {
         if (rows != newValues.length) {
             throw new IllegalArgumentException("Invalid number of robin values supplied (" + newValues.length +
@@ -86,6 +101,7 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#setValues(double)
      */
+    /** {@inheritDoc} */
     public void setValues(double newValue) throws IOException {
         double[] values = new double[rows];
         for (int i = 0; i < values.length; i++) {
@@ -94,6 +110,12 @@ class RobinArray implements Robin {
         update(values);
     }
 
+    /**
+     * <p>dump.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     public String dump() throws IOException {
         StringBuilder buffer = new StringBuilder("Robin " + pointer.get() + "/" + rows + ": ");
         double[] values = getValues();
@@ -107,6 +129,7 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#getValue(int)
      */
+    /** {@inheritDoc} */
     public double getValue(int index) throws IOException {
         int arrayIndex = (pointer.get() + index) % rows;
         return values.get(arrayIndex);
@@ -115,11 +138,13 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#setValue(int, double)
      */
+    /** {@inheritDoc} */
     public void setValue(int index, double value) throws IOException {
         int arrayIndex = (pointer.get() + index) % rows;
         values.set(arrayIndex, value);
     }
 
+    /** {@inheritDoc} */
     public double[] getValues(int index, int count) throws IOException {
         assert count <= rows: "Too many values requested: " + count + " rows=" + rows;
 
@@ -147,12 +172,22 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#getParent()
      */
+    /**
+     * <p>getParent.</p>
+     *
+     * @return a {@link org.rrd4j.core.Archive} object.
+     */
     public Archive getParent() {
         return parentArc;
     }
 
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#getSize()
+     */
+    /**
+     * <p>getSize.</p>
+     *
+     * @return a int.
      */
     public int getSize() {
         return rows;
@@ -161,6 +196,7 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#copyStateTo(org.rrd4j.core.RrdUpdater)
      */
+    /** {@inheritDoc} */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Robin)) {
             throw new IllegalArgumentException(
@@ -177,6 +213,7 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#filterValues(double, double)
      */
+    /** {@inheritDoc} */
     public void filterValues(double minValue, double maxValue) throws IOException {
         for (int i = 0; i < rows; i++) {
             double value = values.get(i);
@@ -192,12 +229,22 @@ class RobinArray implements Robin {
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#getRrdBackend()
      */
+    /**
+     * <p>getRrdBackend.</p>
+     *
+     * @return a {@link org.rrd4j.core.RrdBackend} object.
+     */
     public RrdBackend getRrdBackend() {
         return parentArc.getRrdBackend();
     }
 
     /* (non-Javadoc)
      * @see org.rrd4j.core.Robin#getRrdAllocator()
+     */
+    /**
+     * <p>getRrdAllocator.</p>
+     *
+     * @return a {@link org.rrd4j.core.RrdAllocator} object.
      */
     public RrdAllocator getRrdAllocator() {
         return parentArc.getRrdAllocator();

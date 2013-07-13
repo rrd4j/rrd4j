@@ -9,39 +9,40 @@ import java.util.concurrent.ConcurrentHashMap;
  * backend factories and defines abstract methods which must be implemented in
  * all concrete factory implementations.<p>
  *
- * Factory classes are used to create concrete {@link RrdBackend} implementations.
+ * Factory classes are used to create concrete {@link org.rrd4j.core.RrdBackend} implementations.
  * Each factory creates unlimited number of specific backend objects.
  *
  * Rrd4j supports four different backend types (backend factories) out of the box:<p>
  * <ul>
- * <li>{@link RrdRandomAccessFileBackend}: objects of this class are created from the
- * {@link RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
+ * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
  * Rrd4j releases before 1.4.0 release. It uses java.io.* package and RandomAccessFile class to store
  * RRD data in files on the disk.
  *
- * <li>{@link RrdSafeFileBackend}: objects of this class are created from the
- * {@link RrdSafeFileBackendFactory} class. It uses java.io.* package and RandomAccessFile class to store
+ * <li>{@link org.rrd4j.core.RrdSafeFileBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdSafeFileBackendFactory} class. It uses java.io.* package and RandomAccessFile class to store
  * RRD data in files on the disk. This backend is SAFE:
  * it locks the underlying RRD file during update/fetch operations, and caches only static
  * parts of a RRD file in memory. Therefore, this backend is safe to be used when RRD files should
  * be shared <b>between several JVMs</b> at the same time. However, this backend is *slow* since it does
  * not use fast java.nio.* package (it's still based on the RandomAccessFile class).
  *
- * <li>{@link RrdNioBackend}: objects of this class are created from the
- * {@link RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
+ * <li>{@link org.rrd4j.core.RrdNioBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
  * classes (mapped ByteBuffer) to store RRD data in files on the disk. This is the default backend
  * since 1.4.0 release.
  *
- * <li>{@link RrdMemoryBackend}: objects of this class are created from the
- * {@link RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
+ * <li>{@link org.rrd4j.core.RrdMemoryBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
  * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
  * </ul>
  *
  * Each backend factory is identified by its {@link #getName() name}. Constructors
- * are provided in the {@link RrdDb} class to create RrdDb objects (RRD databases)
+ * are provided in the {@link org.rrd4j.core.RrdDb} class to create RrdDb objects (RRD databases)
  * backed with a specific backend.<p>
  *
- * See javadoc for {@link RrdBackend} to find out how to create your custom backends.
+ * See javadoc for {@link org.rrd4j.core.RrdBackend} to find out how to create your custom backends.
+ *
  */
 public abstract class RrdBackendFactory {
     private static final Map<String, RrdBackendFactory> factories = new ConcurrentHashMap<String, RrdBackendFactory>();
@@ -119,7 +120,7 @@ public abstract class RrdBackendFactory {
 
     /**
      * Returns the default backend factory. This factory is used to construct
-     * {@link RrdDb} objects if no factory is specified in the RrdDb constructor.
+     * {@link org.rrd4j.core.RrdDb} objects if no factory is specified in the RrdDb constructor.
      *
      * @return Default backend factory.
      */
@@ -154,7 +155,7 @@ public abstract class RrdBackendFactory {
      * @param readOnly True, if the storage should be accessed in read/only mode.
      *                 False otherwise.
      * @return Backend object which handles all I/O operations for the given storage path
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     protected abstract RrdBackend open(String path, boolean readOnly) throws IOException;
 
@@ -162,7 +163,8 @@ public abstract class RrdBackendFactory {
      * Determines if a storage with the given path already exists.
      *
      * @param path Storage path
-     * @return True, if such storage exists, false otherwise.
+     * @return a boolean.
+     * @throws java.io.IOException if any.
      */
     protected abstract boolean exists(String path) throws IOException;
 
@@ -170,15 +172,15 @@ public abstract class RrdBackendFactory {
      * Determines if the header should be validated.
      *
      * @param path Storage path
-     * @return True, if the header should be validated for this factory
-     * @throws IOException if header validation fails
+     * @throws java.io.IOException if header validation fails
+     * @return a boolean.
      */
     protected abstract boolean shouldValidateHeader(String path) throws IOException;
 
-    /**
-     * Returns the name (primary ID) for the factory.
-     *
-     * @return Name of the factory.
-     */
+	/**
+	 * Returns the name (primary ID) for the factory.
+	 *
+	 * @return Name of the factory.
+	 */
 	public abstract String getName();
 }

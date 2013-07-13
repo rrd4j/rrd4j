@@ -42,7 +42,7 @@ public class ArcState implements RrdUpdater {
      * Returns the number of currently accumulated NaN steps.
      *
      * @return Number of currently accumulated NaN steps.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getNanSteps() throws IOException {
         return nanSteps.get();
@@ -56,7 +56,7 @@ public class ArcState implements RrdUpdater {
      * Returns the value accumulated so far.
      *
      * @return Accumulated value
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public double getAccumValue() throws IOException {
         return accumValue.get();
@@ -79,10 +79,9 @@ public class ArcState implements RrdUpdater {
     }
 
     /**
-     * Copies object's internal state to another ArcState object.
+     * {@inheritDoc}
      *
-     * @param other New ArcState object to copy state to
-     * @throws IOException Thrown in case of I/O error
+     * Copies object's internal state to another ArcState object.
      */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof ArcState)) {
@@ -110,5 +109,5 @@ public class ArcState implements RrdUpdater {
      */
     public RrdAllocator getRrdAllocator() {
         return parentArc.getRrdAllocator();
-	}
+    }
 }

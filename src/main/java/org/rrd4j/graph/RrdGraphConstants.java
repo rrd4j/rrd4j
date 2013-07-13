@@ -245,6 +245,12 @@ public interface RrdGraphConstants {
      * Font constructor, to use embedded fonts
      */
     static class FontConstructor {
+        /**
+         * Return the default RRD4J's default font for the given strength
+         * @param type {@link java.awt.Font#BOLD} for a bold fond, any other value return plain style.
+         * @param size the size for the new Font
+         * @return a new {@link java.awt.Font} instance
+         */
         static public Font getFont(int type, int size) {
             String fontPath;
             if (type == Font.BOLD)
@@ -254,7 +260,7 @@ public interface RrdGraphConstants {
 
             InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath);
             try {
-                return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type, size);
+                return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type == Font.BOLD ? Font.BOLD : Font.PLAIN, size);
             } catch (FontFormatException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {

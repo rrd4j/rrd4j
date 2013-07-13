@@ -32,12 +32,13 @@ import java.util.Date;
  * <li>HH:mm:ss yy-MM-dd
  * </ul>
  * The current timestamp is displayed in the title bar :)<p>
+ *
  */
 public class Epoch extends JFrame {
     private static final String[] supportedFormats = {
-            "MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
-            "dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
-            "HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
+        "MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
+        "dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
+        "HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
     };
 
     private static final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
@@ -162,5 +163,5 @@ public class Epoch extends JFrame {
      */
     public static void main(String[] args) {
         new Epoch();
-	}
+    }
 }

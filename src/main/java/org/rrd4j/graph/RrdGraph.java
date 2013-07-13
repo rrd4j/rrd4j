@@ -34,10 +34,10 @@ public class RrdGraph implements RrdGraphConstants {
     RrdGraphInfo info = new RrdGraphInfo();
 
     /**
-     * Creates graph from the corresponding {@link RrdGraphDef} object.
+     * Creates graph from the corresponding {@link org.rrd4j.graph.RrdGraphDef} object.
      *
      * @param gdef Graph definition
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdGraph(RrdGraphDef gdef) throws IOException {
         this.gdef = gdef;

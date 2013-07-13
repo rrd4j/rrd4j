@@ -8,6 +8,7 @@ import java.io.IOException;
  * too many RRD files at the same time (thus avoiding operating system limits).
  * <p>
  * The abstract wrapper for different implementations of the pools.
+ *
  */
 public abstract class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
@@ -19,7 +20,7 @@ public abstract class RrdDbPool {
      * or returns already existing one. Uses Initialization On Demand Holder idiom.
      *
      * @return Single instance of this class
-     * @throws RuntimeException Thrown if the default RRD backend is not derived from the {@link RrdFileBackendFactory}
+     * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.core.RrdFileBackendFactory}
      */
     public static RrdDbPool getInstance() {
         return RrdDbPoolSingletonHolder.instance;
@@ -44,7 +45,7 @@ public abstract class RrdDbPool {
      *
      * @param path Path to existing RRD file
      * @return reference for the give RRD file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public abstract RrdDb requestRrdDb(String path) throws IOException;
 
@@ -61,7 +62,7 @@ public abstract class RrdDbPool {
      *
      * @param rrdDef Definition of the RRD file to be created
      * @return Reference to the newly created RRD file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public abstract RrdDb requestRrdDb(RrdDef rrdDef) throws IOException;
 
@@ -80,7 +81,7 @@ public abstract class RrdDbPool {
      * @param path       Path to RRD file which should be created
      * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format
      * @return Reference to the newly created RRD file
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public abstract RrdDb requestRrdDb(String path, String sourcePath) throws IOException;
 
@@ -89,7 +90,7 @@ public abstract class RrdDbPool {
      * count is decremented by one. If usage count drops to zero, the underlying RRD file will be closed.
      *
      * @param rrdDb RrdDb reference to be returned to the pool
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public abstract void release(RrdDb rrdDb) throws IOException;
 
@@ -114,8 +115,8 @@ public abstract class RrdDbPool {
      */
     public abstract String[] getOpenFiles();
 
-    /**
-     * Returns the number of open RRD files.
+	/**
+	 * Returns the number of open RRD files.
 	 *
 	 * @return Number of currently open RRD files held in the pool.
 	 */
@@ -126,7 +127,7 @@ public abstract class RrdDbPool {
      *
      * @param rrdDb RrdDb reference for which informations is needed.
      * @return the number of request for this rrd
-     * @throws IOException
+     * @throws java.io.IOException if any.
      */
     public abstract int getOpenCount(RrdDb rrdDb) throws IOException;
 
@@ -135,7 +136,7 @@ public abstract class RrdDbPool {
      *
      * @param path RRD file for which informations is needed.
      * @return the number of request for this file
-     * @throws IOException
+     * @throws java.io.IOException if any.
      */
     public abstract int getOpenCount(String path) throws IOException;
 

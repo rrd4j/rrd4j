@@ -4,23 +4,23 @@ import java.io.IOException;
 
 /**
  * Base implementation class for all backend classes. Each Round Robin Database object
- * ({@link RrdDb} object) is backed with a single RrdBackend object which performs
+ * ({@link org.rrd4j.core.RrdDb} object) is backed with a single RrdBackend object which performs
  * actual I/O operations on the underlying storage. Rrd4j supports
  * multiple backends out of the box. E.g.:</p>
  * <ul>
- * <li>{@link RrdRandomAccessFileBackend}: objects of this class are created from the
- * {@link RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
+ * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
  * Rrd4j releases prior to 1.4.0. It uses java.io.* package and
  * RandomAccessFile class to store RRD data in files on the disk.
  *
- * <li>{@link RrdNioBackend}: objects of this class are created from the
- * {@link RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
+ * <li>{@link org.rrd4j.core.RrdNioBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
  * classes (mapped ByteBuffer) to store RRD data in files on the disk. This backend is fast, very fast,
  * but consumes a lot of memory (borrowed not from the JVM but from the underlying operating system
  * directly). <b>This is the default backend used in Rrd4j since 1.4.0 release.</b>
  *
- * <li>{@link RrdMemoryBackend}: objects of this class are created from the
- * {@link RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
+ * <li>{@link org.rrd4j.core.RrdMemoryBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
  * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
  * </ul>
  *
@@ -38,9 +38,11 @@ import java.io.IOException;
  * create custom backend objects when necessary.
  *
  * <li>Create instance of your custom RrdBackendFactory and register it as a regular
- * factory available to Rrd4j framework. See javadoc for {@link RrdBackendFactory} to
+ * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.core.RrdBackendFactory} to
  * find out how to do this.
  * </ul>
+ *
+ * @author Sasa Markovic
  */
 public abstract class RrdBackend {
     private static boolean instanceCreated = false;
@@ -73,7 +75,7 @@ public abstract class RrdBackend {
      *
      * @param offset Storage offset.
      * @param b      Array of bytes that should be copied to the underlying storage
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     protected abstract void write(long offset, byte[] b) throws IOException;
 
@@ -83,7 +85,7 @@ public abstract class RrdBackend {
      *
      * @param offset Storage offset.
      * @param b      Array which receives bytes from the underlying storage
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     protected abstract void read(long offset, byte[] b) throws IOException;
 
@@ -91,7 +93,7 @@ public abstract class RrdBackend {
      * Returns the number of RRD bytes in the underlying storage.
      *
      * @return Number of RRD bytes in the storage.
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public abstract long getLength() throws IOException;
 
@@ -100,14 +102,14 @@ public abstract class RrdBackend {
      * This method is called only once, immediately after a new RRD storage gets created.
      *
      * @param length Length of the underlying RRD storage in bytes.
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     protected abstract void setLength(long length) throws IOException;
 
     /**
      * Closes the underlying backend.
      *
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public void close() throws IOException {
     }
@@ -129,7 +131,7 @@ public abstract class RrdBackend {
      * Reads all RRD bytes from the underlying storage.
      *
      * @return RRD bytes
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public final byte[] readAll() throws IOException {
         byte[] b = new byte[(int) getLength()];

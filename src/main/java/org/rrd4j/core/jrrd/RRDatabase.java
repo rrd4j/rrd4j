@@ -37,7 +37,7 @@ public class RRDatabase {
      * Creates a database to read from.
      *
      * @param name the filename of the file to read from.
-     * @throws IOException if an I/O error occurs.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public RRDatabase(String name) throws IOException {
         this(new File(name));
@@ -47,7 +47,7 @@ public class RRDatabase {
      * Creates a database to read from.
      *
      * @param file the file to read from.
-     * @throws IOException if an I/O error occurs.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public RRDatabase(File file) throws IOException {
         /*
@@ -117,6 +117,11 @@ public class RRDatabase {
         return header;
     }
 
+    /**
+     * <p>getDataSourcesName.</p>
+     *
+     * @return a {@link java.util.Set} object.
+     */
     public Set<String> getDataSourcesName() {
         return nameindex.keySet();
     }
@@ -161,6 +166,12 @@ public class RRDatabase {
         return archives.get(index);
     }
 
+    /**
+     * <p>getArchive.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link org.rrd4j.core.jrrd.Archive} object.
+     */
     public Archive getArchive(String name) {
         return archives.get(nameindex.get(name));
     }
@@ -212,7 +223,7 @@ public class RRDatabase {
     /**
      * Closes this database stream and releases any associated system resources.
      *
-     * @throws IOException if an I/O error occurs.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public void close() throws IOException {
         rrdFile.close();
@@ -239,9 +250,9 @@ public class RRDatabase {
      * @param type the consolidation function that should have been applied to
      *             the data.
      * @return the raw data.
-     * @throws IllegalArgumentException if there was a problem locating a data archive with
+     * @throws java.lang.IllegalArgumentException if there was a problem locating a data archive with
      *                                  the requested consolidation function.
-     * @throws IOException              if there was a problem reading data from the database.
+     * @throws java.io.IOException              if there was a problem reading data from the database.
      */
     public DataChunk getData(ConsolidationFunctionType type) throws IOException {
         Calendar endCal = Calendar.getInstance();
@@ -263,9 +274,11 @@ public class RRDatabase {
      *             the data.
      * @param step the step size to use.
      * @return the raw data.
-     * @throws IllegalArgumentException if there was a problem locating a data archive with
+     * @throws java.lang.IllegalArgumentException if there was a problem locating a data archive with
      *                                  the requested consolidation function.
-     * @throws IOException              if there was a problem reading data from the database.
+     * @throws java.io.IOException              if there was a problem reading data from the database.
+     * @param startDate a {@link java.util.Date} object.
+     * @param endDate a {@link java.util.Date} object.
      */
     public DataChunk getData(ConsolidationFunctionType type, Date startDate, Date endDate, long step)
     throws IOException {
@@ -274,6 +287,16 @@ public class RRDatabase {
         return getData(type, start, end, step);
     }
 
+    /**
+     * <p>getData.</p>
+     *
+     * @param type a {@link org.rrd4j.core.jrrd.ConsolidationFunctionType} object.
+     * @param start a long.
+     * @param end a long.
+     * @param step a long.
+     * @return a {@link org.rrd4j.core.jrrd.DataChunk} object.
+     * @throws java.io.IOException if any.
+     */
     public DataChunk getData(ConsolidationFunctionType type, long start, long end, long step)
     throws IOException {
         

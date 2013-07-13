@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * Factory class which creates actual {@link RrdNioBackend} objects. This is the default factory since
+ * Factory class which creates actual {@link org.rrd4j.core.RrdNioBackend} objects. This is the default factory since
  * 1.4.0 version.
  * <h3>Managing the thread pool</h3>
- * Each RrdNioBackendFactory is backed by a {@link RrdSyncThreadPool}, which it uses to sync the memory-mapped files to
+ * Each RrdNioBackendFactory is backed by a {@link org.rrd4j.core.RrdSyncThreadPool}, which it uses to sync the memory-mapped files to
  * disk. In order to avoid having these threads live longer than they should, it is recommended that clients create and
  * destroy thread pools at the appropriate time in their application's life time. Failure to manage thread pools
  * appropriately may lead to the thread pool hanging around longer than necessary, which in turn may cause memory leaks.
+ *
  */
 public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
@@ -78,7 +79,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
 
     /**
      * Creates a new RrdNioBackendFactory. One should call {@link #setSyncThreadPool(RrdSyncThreadPool syncThreadPool)}
-     * or {@link #setSyncThreadPool(RrdSyncThreadPool syncThreadPool)} before the first call to 
+     * or {@link #setSyncThreadPool(RrdSyncThreadPool syncThreadPool)} before the first call to
      * {@link #open(String path, boolean readOnly)}.
      * Failure to do so will lead to memory leaks in anything but the simplest applications because the underlying thread pool will not
      * be shut down cleanly. Read the Javadoc for this class to understand why using this constructor is discouraged.
@@ -89,6 +90,8 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     }
 
     /**
+     * <p>Setter for the field <code>syncThreadPool</code>.</p>
+     *
      * @param syncThreadPool the RrdSyncThreadPool to use to sync the memory-mapped files.
      */
     public void setSyncThreadPool(RrdSyncThreadPool syncThreadPool) {
@@ -96,6 +99,8 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     }
 
     /**
+     * <p>Setter for the field <code>syncThreadPool</code>.</p>
+     *
      * @param syncThreadPool the ScheduledExecutorService that will back the RrdSyncThreadPool  used to sync the memory-mapped files.
      */
     public void setSyncThreadPool(ScheduledExecutorService syncThreadPool) {
@@ -103,13 +108,9 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     }
 
     /**
-     * Creates RrdNioBackend object for the given file path.
+     * {@inheritDoc}
      *
-     * @param path     File path
-     * @param readOnly True, if the file should be accessed in read/only mode.
-     *                 False otherwise.
-     * @return RrdNioBackend object which handles all I/O operations for the given file path
-     * @throws IOException Thrown in case of I/O error.
+     * Creates RrdNioBackend object for the given file path.
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         // Instantiate a thread pool if none was provided
@@ -119,6 +120,11 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
         return new RrdNioBackend(path, readOnly, syncThreadPool, syncPeriod);
     }
 
+    /**
+     * <p>getName.</p>
+     *
+     * @return The {@link java.lang.String} "NIO".
+     */
     public String getName() {
         return "NIO";
     }

@@ -6,6 +6,7 @@ import org.rrd4j.core.Util;
  * Class which parses at-style time specification (described in detail on the rrdfetch man page),
  * used in all RRDTool commands. This code is in most parts just a java port of Tobi's parsetime.c
  * code.
+ *
  */
 public class TimeParser {
     private static final int PREVIOUS_OP = -1;

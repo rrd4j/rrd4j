@@ -298,6 +298,12 @@ public class RrdInspector extends JFrame {
         JOptionPane.showMessageDialog(this, ABOUT, "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * <p>loadIcon.</p>
+     *
+     * @param fileName a {@link java.lang.String} object.
+     * @return a {@link javax.swing.Icon} object.
+     */
     public static Icon loadIcon(String fileName) {
         return new ImageIcon(RrdInspector.class.getResource("/" + fileName));
     }
@@ -573,7 +579,8 @@ public class RrdInspector extends JFrame {
      * java -cp rrd4j.jar org.rrd4j.inspector.RrdInspector [path to RRD file]
      * </pre>
      *
-     * @param args
+     * @param args an array of {@link java.lang.String} objects.
+     * @throws java.lang.Exception if any.
      */
     public static void main(String[] args) throws Exception {
         if (args.length > 1) {

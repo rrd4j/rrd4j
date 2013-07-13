@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Class to represent fetch request. For the complete explanation of all
  * fetch parameters consult RRDTool's
- * <a href="../../../../man/rrdfetch.html" target="man">rrdfetch man page</a>.
+ * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdfetch.en.html" target="man">rrdfetch man page</a>.
  *
  * You cannot create <code>FetchRequest</code> directly (no public constructor
  * is provided). Use {@link org.rrd4j.core.RrdDb#createFetchRequest(ConsolFun, long, long, long)
@@ -85,7 +85,7 @@ public class FetchRequest {
      * To fetch data for a single datasource only,
      * specify an array of datasource names as method argument.
      *
-     * @param filter Array of datasources (datasource names) to fetch data from.
+     * @param filter A single datasource (datasource name) to fetch data from.
      */
     public void setFilter(String filter) {
         this.filter = (filter == null) ? null : (new String[]{filter});
@@ -157,7 +157,7 @@ public class FetchRequest {
      * {@link org.rrd4j.core.FetchData FetchData} object.
      *
      * @return FetchData object filled with timestamps and datasource values.
-     * @throws IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public FetchData fetchData() throws IOException {
         return parentDb.fetchData(this);

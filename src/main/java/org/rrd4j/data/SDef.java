@@ -38,6 +38,7 @@ class SDef extends Source implements NonRrdSource  {
         return agg;
     }
 
+    /** {@inheritDoc} */
     public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
         String defName = getDefName();
         ConsolFun consolFun = getConsolFun();

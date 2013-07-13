@@ -38,7 +38,7 @@ public class Demo {
      * </pre>
      *
      * @param args the name of the backend factory to use (optional)
-     * @throws IOException Thrown
+     * @throws java.io.IOException Thrown
      */
     public static void main(String[] args) throws IOException {
         println("== Starting demo");

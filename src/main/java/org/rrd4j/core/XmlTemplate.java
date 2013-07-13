@@ -27,14 +27,32 @@ public abstract class XmlTemplate {
     private HashMap<String, Object> valueMap = new HashMap<String, Object>();
     private HashSet<Node> validatedNodes = new HashSet<Node>();
 
+    /**
+     * <p>Constructor for XmlTemplate.</p>
+     *
+     * @param xmlSource a {@link org.xml.sax.InputSource} object.
+     * @throws java.io.IOException if any.
+     */
     protected XmlTemplate(InputSource xmlSource) throws IOException {
         root = Util.Xml.getRootElement(xmlSource);
     }
 
+    /**
+     * <p>Constructor for XmlTemplate.</p>
+     *
+     * @param xmlString a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     protected XmlTemplate(String xmlString) throws IOException {
         root = Util.Xml.getRootElement(xmlString);
     }
 
+    /**
+     * <p>Constructor for XmlTemplate.</p>
+     *
+     * @param xmlFile a {@link java.io.File} object.
+     * @throws java.io.IOException if any.
+     */
     protected XmlTemplate(File xmlFile) throws IOException {
         root = Util.Xml.getRootElement(xmlFile);
     }
@@ -183,35 +201,90 @@ public abstract class XmlTemplate {
         return list.toArray(new String[list.size()]);
     }
 
+    /**
+     * <p>getChildNodes.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return an array of {@link org.w3c.dom.Node} objects.
+     */
     protected static Node[] getChildNodes(Node parentNode, String childName) {
         return Util.Xml.getChildNodes(parentNode, childName);
     }
 
+    /**
+     * <p>getChildNodes.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @return an array of {@link org.w3c.dom.Node} objects.
+     */
     protected static Node[] getChildNodes(Node parentNode) {
         return Util.Xml.getChildNodes(parentNode, null);
     }
 
+    /**
+     * <p>getFirstChildNode.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return a {@link org.w3c.dom.Node} object.
+     */
     protected static Node getFirstChildNode(Node parentNode, String childName) {
         return Util.Xml.getFirstChildNode(parentNode, childName);
     }
 
+    /**
+     * <p>hasChildNode.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return a boolean.
+     */
     protected boolean hasChildNode(Node parentNode, String childName) {
         return Util.Xml.hasChildNode(parentNode, childName);
     }
 
+    /**
+     * <p>getChildValue.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     protected String getChildValue(Node parentNode, String childName) {
         return getChildValue(parentNode, childName, true);
     }
 
+    /**
+     * <p>getChildValue.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @param trim a boolean.
+     * @return a {@link java.lang.String} object.
+     */
     protected String getChildValue(Node parentNode, String childName, boolean trim) {
         String value = Util.Xml.getChildValue(parentNode, childName, trim);
         return resolveMappings(value);
     }
 
+    /**
+     * <p>getValue.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @return a {@link java.lang.String} object.
+     */
     protected String getValue(Node parentNode) {
         return getValue(parentNode, true);
     }
 
+    /**
+     * <p>getValue.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param trim a boolean.
+     * @return a {@link java.lang.String} object.
+     */
     protected String getValue(Node parentNode, boolean trim) {
         String value = Util.Xml.getValue(parentNode, trim);
         return resolveMappings(value);
@@ -242,57 +315,127 @@ public abstract class XmlTemplate {
         return result.toString();
     }
 
+    /**
+     * <p>getChildValueAsInt.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return a int.
+     */
     protected int getChildValueAsInt(Node parentNode, String childName) {
         String valueStr = getChildValue(parentNode, childName);
         return Integer.parseInt(valueStr);
     }
 
+    /**
+     * <p>getValueAsInt.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @return a int.
+     */
     protected int getValueAsInt(Node parentNode) {
         String valueStr = getValue(parentNode);
         return Integer.parseInt(valueStr);
     }
 
+    /**
+     * <p>getChildValueAsLong.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return a long.
+     */
     protected long getChildValueAsLong(Node parentNode, String childName) {
         String valueStr = getChildValue(parentNode, childName);
         return Long.parseLong(valueStr);
     }
 
+    /**
+     * <p>getValueAsLong.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @return a long.
+     */
     protected long getValueAsLong(Node parentNode) {
         String valueStr = getValue(parentNode);
         return Long.parseLong(valueStr);
     }
 
+    /**
+     * <p>getChildValueAsDouble.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return a double.
+     */
     protected double getChildValueAsDouble(Node parentNode, String childName) {
         String valueStr = getChildValue(parentNode, childName);
         return Util.parseDouble(valueStr);
     }
 
+    /**
+     * <p>getValueAsDouble.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @return a double.
+     */
     protected double getValueAsDouble(Node parentNode) {
         String valueStr = getValue(parentNode);
         return Util.parseDouble(valueStr);
     }
 
+    /**
+     * <p>getChildValueAsBoolean.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param childName a {@link java.lang.String} object.
+     * @return a boolean.
+     */
     protected boolean getChildValueAsBoolean(Node parentNode, String childName) {
         String valueStr = getChildValue(parentNode, childName);
         return Util.parseBoolean(valueStr);
     }
 
+    /**
+     * <p>getValueAsBoolean.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @return a boolean.
+     */
     protected boolean getValueAsBoolean(Node parentNode) {
         String valueStr = getValue(parentNode);
         return Util.parseBoolean(valueStr);
     }
 
+    /**
+     * <p>getValueAsColor.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @return a {@link java.awt.Paint} object.
+     */
     protected Paint getValueAsColor(Node parentNode) {
         String rgbStr = getValue(parentNode);
         return Util.parseColor(rgbStr);
     }
 
+    /**
+     * <p>isEmptyNode.</p>
+     *
+     * @param node a {@link org.w3c.dom.Node} object.
+     * @return a boolean.
+     */
     protected boolean isEmptyNode(Node node) {
         // comment node or empty text node
         return node.getNodeName().equals("#comment") ||
                 (node.getNodeName().equals("#text") && node.getNodeValue().trim().length() == 0);
     }
 
+    /**
+     * <p>validateTagsOnlyOnce.</p>
+     *
+     * @param parentNode a {@link org.w3c.dom.Node} object.
+     * @param allowedChildNames an array of {@link java.lang.String} objects.
+     */
     protected void validateTagsOnlyOnce(Node parentNode, String[] allowedChildNames) {
         // validate node only once
         if (validatedNodes.contains(parentNode)) {

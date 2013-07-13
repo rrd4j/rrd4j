@@ -6,7 +6,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 
 /**
- * {@link RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
+ * {@link org.rrd4j.core.RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
  * MongoDB {@link com.mongodb.DBCollection} and pass it via the constructor.
  *
  * @author Mathias Bogaert
@@ -30,11 +30,13 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         RrdBackendFactory.registerAndSetAsDefaultFactory(this);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         return new RrdMongoDBBackend(path, rrdCollection);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean exists(String path) throws IOException {
         BasicDBObject query = new BasicDBObject();
@@ -42,11 +44,13 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         return rrdCollection.findOne(query) != null;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean shouldValidateHeader(String path) throws IOException {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getName() {
         return "MONGODB";

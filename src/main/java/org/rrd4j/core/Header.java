@@ -74,16 +74,28 @@ public class Header implements RrdUpdater {
      * of the form <b><i>Rrd4j, version x.x</i></b>.
      *
      * @return RRD signature
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public String getSignature() throws IOException {
         return signature.get();
     }
 
+    /**
+     * <p>getInfo.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     public String getInfo() throws IOException {
         return getSignature().substring(SIGNATURE_LENGTH);
     }
 
+    /**
+     * <p>setInfo.</p>
+     *
+     * @param info a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     public void setInfo(String info) throws IOException {
         if (info != null && info.length() > 0) {
             signature.set(SIGNATURE + info);
@@ -97,7 +109,7 @@ public class Header implements RrdUpdater {
      * Returns the last update time of the RRD.
      *
      * @return Timestamp (Unix epoch, no milliseconds) corresponding to the last update time.
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getLastUpdateTime() throws IOException {
         return lastUpdateTime.get();
@@ -107,7 +119,7 @@ public class Header implements RrdUpdater {
      * Returns primary RRD time step.
      *
      * @return Primary time step in seconds
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getStep() throws IOException {
         return step.get();
@@ -117,7 +129,7 @@ public class Header implements RrdUpdater {
      * Returns the number of datasources defined in the RRD.
      *
      * @return Number of datasources defined
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public int getDsCount() throws IOException {
         return dsCount.get();
@@ -127,7 +139,7 @@ public class Header implements RrdUpdater {
      * Returns the number of archives defined in the RRD.
      *
      * @return Number of archives defined
-     * @throws IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error
      */
     public int getArcCount() throws IOException {
         return arcCount.get();
@@ -156,10 +168,9 @@ public class Header implements RrdUpdater {
     }
 
     /**
-     * Copies object's internal state to another Header object.
+     * {@inheritDoc}
      *
-     * @param other New Header object to copy state to
-     * @throws IOException Thrown in case of I/O error
+     * Copies object's internal state to another Header object.
      */
     public void copyStateTo(RrdUpdater other) throws IOException {
         if (!(other instanceof Header)) {
@@ -183,9 +194,9 @@ public class Header implements RrdUpdater {
 
     /**
      * Return the RRD version.
-     * 
+     *
      * @return RRD version
-     * @throws IOException
+     * @throws java.io.IOException if any.
      */
     public int getVersion() throws IOException {
         if(version < 0) {

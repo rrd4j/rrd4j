@@ -28,10 +28,14 @@ import java.util.*;
  */
 public class Util {
 
+    /** Constant <code>MAX_LONG=Long.MAX_VALUE</code> */
     public static final long MAX_LONG = Long.MAX_VALUE;
+    /** Constant <code>MIN_LONG=-Long.MAX_VALUE</code> */
     public static final long MIN_LONG = -Long.MAX_VALUE;
 
+    /** Constant <code>MAX_DOUBLE=Double.MAX_VALUE</code> */
     public static final double MAX_DOUBLE = Double.MAX_VALUE;
+    /** Constant <code>MIN_DOUBLE=-Double.MAX_VALUE</code> */
     public static final double MIN_DOUBLE = -Double.MAX_VALUE;
 
     // pattern RRDTool uses to format doubles in XML files
@@ -47,10 +51,15 @@ public class Util {
         df.setPositivePrefix("+");
     }
 
+    private Util() {
+
+    }
+
     /**
      * Converts an array of long primitives to an array of doubles.
      *
      * @return Same array but with all values as double.
+     * @param array an array of long.
      */
     public static double[] toDoubleArray(final long[] array) {
         double[] values = new double[array.length];
@@ -328,7 +337,7 @@ public class Util {
      *
      * @param valueStr Input string, for example #FFAA24, #AABBCC33, 010203 or ABC13E4F
      * @return Paint object
-     * @throws IllegalArgumentException If the input string is not 6 or 8 characters long (without optional '#')
+     * @throws java.lang.IllegalArgumentException If the input string is not 6 or 8 characters long (without optional '#')
      */
     public static Paint parseColor(String valueStr) {
         String c = valueStr.startsWith("#") ? valueStr.substring(1) : valueStr;
@@ -463,6 +472,10 @@ public class Util {
      * Various DOM utility functions.
      */
     public static class Xml {
+        private Xml() {
+
+        }
+
         public static Node[] getChildNodes(Node parentNode) {
             return getChildNodes(parentNode, null);
         }
@@ -671,7 +684,7 @@ public class Util {
      *
      * @param path Absolute or relative file path
      * @return Canonical file path
-     * @throws IOException Thrown if canonical file path could not be resolved
+     * @throws java.io.IOException Thrown if canonical file path could not be resolved
      */
     public static String getCanonicalPath(String path) throws IOException {
         return new File(path).getCanonicalPath();
@@ -733,6 +746,7 @@ public class Util {
      * @param format Format string
      * @param args   Arbitrary list of arguments
      * @return Formatted string
+     * @param l a {@link java.util.Locale} object.
      */
     public static String sprintf(Locale l, String format, Object... args) {
         String fmt = format.replaceAll("([^%]|^)%([^a-zA-Z%]*)l(f|g|e)", "$1%$2$3");
