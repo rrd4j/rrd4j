@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * It's much more scalable than the previous pool
  */
-class RrdDbPool {
+public class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
         static final RrdDbPool instance = new RrdDbPool();
     }
