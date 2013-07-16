@@ -1,24 +1,22 @@
 package org.rrd4j.data;
 
-import org.rrd4j.ConsolFun;
-
 class SDef extends Source implements NonRrdSource  {
     private String defName;
-    private ConsolFun consolFun;
+    private AggregateFun aggregate;
     private double value;
 
-    SDef(String name, String defName, ConsolFun consolFun) {
+    SDef(String name, String defName, AggregateFun aggregate) {
         super(name);
         this.defName = defName;
-        this.consolFun = consolFun;
+        this.aggregate = aggregate;
     }
 
     String getDefName() {
         return defName;
     }
 
-    ConsolFun getConsolFun() {
-        return consolFun;
+    AggregateFun getAggregateFun() {
+        return aggregate;
     }
 
     void setValue(double value) {
@@ -41,9 +39,9 @@ class SDef extends Source implements NonRrdSource  {
     /** {@inheritDoc} */
     public void calculate(long tStart, long tEnd, DataProcessor dataProcessor) {
         String defName = getDefName();
-        ConsolFun consolFun = getConsolFun();
+        AggregateFun aggregate = getAggregateFun();
         Source source = dataProcessor.getSource(defName);
-        double value = source.getAggregates(tStart, tEnd).getAggregate(consolFun);
+        double value = source.getAggregates(tStart, tEnd).getAggregate(aggregate);
         setValue(value);
     }
 

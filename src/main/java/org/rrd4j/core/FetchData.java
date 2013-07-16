@@ -1,13 +1,13 @@
 package org.rrd4j.core;
 
-import org.rrd4j.data.Aggregates;
-import org.rrd4j.data.DataProcessor;
-import org.rrd4j.ConsolFun;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.rrd4j.data.AggregateFun;
+import org.rrd4j.data.Aggregates;
+import org.rrd4j.data.DataProcessor;
 
 /**
  * Class used to represent data fetched from the RRD.
@@ -285,15 +285,15 @@ public class FetchData {
      * Returns single aggregated value from the fetched data for a single datasource.
      *
      * @param dsName    Datasource name
-     * @param consolFun Consolidation function to be applied to fetched datasource values.
+     * @param aggregate Aggregate function to be applied to fetched datasource values.
      *                  Valid consolidation functions are "MIN", "MAX", "LAST", "FIRST", "AVERAGE" and "TOTAL"
-     *                  (these string constants are conveniently defined in the {@link org.rrd4j.ConsolFun} class)
+     *                  (these string constants are conveniently defined in the {@link AggregateFun} class)
      * @throws java.lang.IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data.
      * @return a double.
      */
-    public double getAggregate(String dsName, ConsolFun consolFun) {
+    public double getAggregate(String dsName, AggregateFun aggregate) {
         DataProcessor dp = createDataProcessor(null);
-        return dp.getAggregate(dsName, consolFun);
+        return dp.getAggregate(dsName, aggregate);
     }
 
     /**
@@ -303,13 +303,13 @@ public class FetchData {
      * <code>getRpnAggregate("x,y,+,2,/", "MAX");</code><p>
      *
      * @param rpnExpression RRDTool-like RPN expression
-     * @param consolFun     Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
+     * @param aggregate     Aggregate function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
      * @return Aggregated value
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      */
-    public double getRpnAggregate(String rpnExpression, ConsolFun consolFun) {
+    public double getRpnAggregate(String rpnExpression, AggregateFun aggregate) {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
-        return dataProcessor.getAggregate(RPN_SOURCE_NAME, consolFun);
+        return dataProcessor.getAggregate(RPN_SOURCE_NAME, aggregate);
     }
 
     /**

@@ -3,6 +3,7 @@ package org.rrd4j.graph;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.Util;
+import org.rrd4j.data.AggregateFun;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
 
@@ -386,7 +387,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * Creates additional image information.
      * After the image has been created, the graph function uses imageInfo
      * format string (printf-like) to create output similar to
-     * the {@link #print(String, ConsolFun, String)} function.
+     * the {@link #print(String, AggregateFun, String)} function.
      * The format string is supplied with the following parameters:
      * filename, xsize and ysize (in that particular order).
      * <p/>
@@ -624,7 +625,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     /**
      * Defines virtual datasource. This datasource can then be used
      * in other methods like {@link #datasource(String, String)} or
-     * {@link #gprint(String, ConsolFun, String)}.
+     * {@link #gprint(String, AggregateFun, String)}.
      *
      * @param name      Source name
      * @param rrdPath   Path to RRD file
@@ -638,7 +639,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     /**
      * Defines virtual datasource. This datasource can then be used
      * in other methods like {@link #datasource(String, String)} or
-     * {@link #gprint(String, ConsolFun, String)}.
+     * {@link #gprint(String, AggregateFun, String)}.
      *
      * @param name      Source name
      * @param rrdPath   Path to RRD file
@@ -667,10 +668,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param name      Source name
      * @param defName   Other source name
-     * @param consolFun Consolidation function to be applied to other datasource.
+     * @param aggregate Consolidation function to be applied to other datasource.
      */
-    public void datasource(String name, String defName, ConsolFun consolFun) {
-        sources.add(new SDef(name, defName, consolFun));
+    public void datasource(String name, String defName, AggregateFun aggregate) {
+        sources.add(new SDef(name, defName, aggregate));
     }
 
     /**
@@ -740,23 +741,23 @@ public class RrdGraphDef implements RrdGraphConstants {
      * from the {@link RrdGraph object} once the graph is created.
      *
      * @param srcName   Virtual source name
-     * @param consolFun Consolidation function to be applied to the source
+     * @param aggregate Consolidation function to be applied to the source
      * @param format    Format string (like "average = %10.3f %s")
      */
-    public void print(String srcName, ConsolFun consolFun, String format) {
-        comments.add(new PrintText(srcName, consolFun, format, false));
+    public void print(String srcName, AggregateFun aggregate, String format) {
+        comments.add(new PrintText(srcName, aggregate, format, false));
     }
 
     /**
-     * This method does basically the same thing as {@link #print(String, ConsolFun, String)},
+     * This method does basically the same thing as {@link #print(String, AggregateFun, String)},
      * but the result is printed on the graph itself, below the chart area.
      *
      * @param srcName   Virtual source name
-     * @param consolFun Consolidation function to be applied to the source
+     * @param aggregate Consolidation function to be applied to the source
      * @param format    Format string (like "average = %10.3f %s")
      */
-    public void gprint(String srcName, ConsolFun consolFun, String format) {
-        comments.add(new PrintText(srcName, consolFun, format, true));
+    public void gprint(String srcName, AggregateFun aggregate, String format) {
+        comments.add(new PrintText(srcName, aggregate, format, true));
     }
 
     /**

@@ -253,7 +253,7 @@ public class DataProcessor {
      * Returns single aggregated value for a single datasource.
      *
      * @param sourceName Datasource name
-     * @param consolFun  Consolidation function to be applied to fetched datasource values.
+     * @param aggregate  Consolidation function to be applied to fetched datasource values.
      *                   Valid consolidation functions are MIN, MAX, LAST, FIRST, AVERAGE and TOTAL
      *                   (these string constants are conveniently defined in the {@link org.rrd4j.ConsolFun} class)
      * @throws java.lang.IllegalArgumentException Thrown if invalid datasource name is specified,
@@ -261,9 +261,9 @@ public class DataProcessor {
      *                                  was not called)
      * @return a aggregate value as a double calculated from the source.
      */
-    public double getAggregate(String sourceName, ConsolFun consolFun) {
+    public double getAggregate(String sourceName, AggregateFun aggregate) {
         Source source = getSource(sourceName);
-        return source.getAggregates(tStart, tEnd).getAggregate(consolFun);
+        return source.getAggregates(tStart, tEnd).getAggregate(aggregate);
     }
 
     /**
@@ -424,10 +424,10 @@ public class DataProcessor {
      *
      * @param name      source name.
      * @param defName   Name of the datasource to calculate the value from.
-     * @param consolFun Consolidation function to use for value calculation
+     * @param aggregate Aggregate function to use for value calculation
      */
-    public void addDatasource(String name, String defName, ConsolFun consolFun) {
-        SDef sDef = new SDef(name, defName, consolFun);
+    public void addDatasource(String name, String defName, AggregateFun aggregate) {
+        SDef sDef = new SDef(name, defName, aggregate);
         sources.put(name, sDef);
     }
 
@@ -816,7 +816,7 @@ public class DataProcessor {
         dp.addDatasource("Z", "X,Y,+,2,/");
         dp.addDatasource("DERIVE[Z]", "Z,PREV(Z),-,STEP,/");
         dp.addDatasource("TREND[Z]", "DERIVE[Z],SIGN");
-        dp.addDatasource("AVG[Z]", "Z", ConsolFun.AVERAGE);
+        dp.addDatasource("AVG[Z]", "Z", AggregateFun.AVERAGE);
         dp.addDatasource("DELTA", "Z,AVG[Z],-");
 
         // action

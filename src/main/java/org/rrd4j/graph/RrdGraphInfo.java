@@ -59,7 +59,7 @@ public class RrdGraphInfo {
     }
 
     /**
-     * Returns PRINT lines requested by {@link org.rrd4j.graph.RrdGraphDef#print(String, org.rrd4j.ConsolFun, String)} method.
+     * Returns PRINT lines requested by {@link org.rrd4j.graph.RrdGraphDef#print(String, AggregateFun, String)} method.
      *
      * @return An array of formatted PRINT lines
      */

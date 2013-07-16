@@ -146,7 +146,7 @@ public abstract class RrdBackendFactory {
     /**
      * Registers new (custom) backend factory within the Rrd4j framework.
      *
-     * @param factory Factory to be registered
+     * @param factoryClass Factory class to be registered
      */
     public static String registerFactory(Class<? extends RrdBackendFactory> factoryClass) {
         RrdBackendMeta nameAnnotation = factoryClass.getAnnotation(RrdBackendMeta.class);
@@ -166,7 +166,7 @@ public abstract class RrdBackendFactory {
      * factory as the default.<p>
      * It will not start nor configure the factory.
      * 
-     * @param factory Factory to be registered and set as default
+     * @param factoryClass Factory class to be registered and set as default
      */
     public static void registerAndSetAsDefaultFactory(Class<? extends RrdBackendFactory> factoryClass) {
         String name = registerFactory(factoryClass);

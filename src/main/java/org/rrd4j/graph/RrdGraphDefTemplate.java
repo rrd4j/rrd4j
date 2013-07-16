@@ -3,6 +3,7 @@ package org.rrd4j.graph;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
 import org.rrd4j.core.XmlTemplate;
+import org.rrd4j.data.AggregateFun;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -410,7 +411,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     private void resolvePrint(Node parentNode, boolean isInGraph) {
         validateTagsOnlyOnce(parentNode, new String[]{"datasource", "cf", "format"});
         String datasource = null, format = null;
-        ConsolFun consolFun = null;
+        AggregateFun aggregate = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
@@ -418,18 +419,18 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 datasource = getValue(childNode);
             }
             else if (nodeName.equals("cf")) {
-                consolFun = ConsolFun.valueOf(getValue(childNode));
+                aggregate = AggregateFun.valueOf(getValue(childNode));
             }
             else if (nodeName.equals("format")) {
                 format = getValue(childNode);
             }
         }
-        if (datasource != null && consolFun != null && format != null) {
+        if (datasource != null && aggregate != null && format != null) {
             if (isInGraph) {
-                rrdGraphDef.gprint(datasource, consolFun, format);
+                rrdGraphDef.gprint(datasource, aggregate, format);
             }
             else {
-                rrdGraphDef.print(datasource, consolFun, format);
+                rrdGraphDef.print(datasource, aggregate, format);
             }
         }
         else {
@@ -551,7 +552,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     private void resolveSDef(Node parentNode) {
         validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf"});
         String name = null, source = null;
-        ConsolFun consolFun = null;
+        AggregateFun aggregate = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
@@ -562,11 +563,11 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 source = getValue(childNode);
             }
             else if (nodeName.equals("cf")) {
-                consolFun = ConsolFun.valueOf(getValue(childNode));
+                aggregate = AggregateFun.valueOf(getValue(childNode));
             }
         }
-        if (name != null && source != null && consolFun != null) {
-            rrdGraphDef.datasource(name, source, consolFun);
+        if (name != null && source != null && aggregate != null) {
+            rrdGraphDef.datasource(name, source, aggregate);
         }
         else {
             throw new IllegalArgumentException("Incomplete SDEF settings");

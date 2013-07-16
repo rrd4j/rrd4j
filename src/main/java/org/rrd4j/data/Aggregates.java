@@ -1,6 +1,5 @@
 package org.rrd4j.data;
 
-import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
 
 /**
@@ -109,13 +108,13 @@ public class Aggregates {
     /**
      * Returns single aggregated value for the give consolidation function
      *
-     * @param consolFun Consolidation function: MIN, MAX, FIRST, LAST, AVERAGE, TOTAL. These constants
-     *                  are conveniently defined in the {@link org.rrd4j.ConsolFun ConsolFun} interface.
+     * @param aggregate Consolidation function: MIN, MAX, FIRST, LAST, AVERAGE, TOTAL. These constants
+     *                  are conveniently defined in the {@link AggregateFun AggregateFun} interface.
      * @return Aggregated value
      * @throws java.lang.IllegalArgumentException Thrown if unsupported consolidation function is supplied
      */
-    public double getAggregate(ConsolFun consolFun) {
-        switch (consolFun) {
+    public double getAggregate(AggregateFun aggregate) {
+        switch (aggregate) {
         case AVERAGE:
             return average;
         case FIRST:
@@ -137,7 +136,7 @@ public class Aggregates {
         case LSLCORREL:
             return lslcorrel;
         }
-        throw new IllegalArgumentException("Unknown consolidation function: " + consolFun);
+        throw new IllegalArgumentException("Unknown consolidation function: " + aggregate);
     }
 
     /**
@@ -147,7 +146,7 @@ public class Aggregates {
      */
     public String dump() {
         StringBuilder bl = new StringBuilder();
-        for(ConsolFun cf: ConsolFun.values()) {
+        for(AggregateFun cf: AggregateFun.values()) {
             bl.append(cf.name() + '=' + Util.formatDouble(this.getAggregate(cf)));
         }
         return bl.toString();

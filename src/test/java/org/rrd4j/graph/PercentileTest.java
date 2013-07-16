@@ -11,6 +11,7 @@ import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
+import org.rrd4j.data.AggregateFun;
 
 public class PercentileTest {
     static final private String backend = "MEMORY";
@@ -39,7 +40,7 @@ public class PercentileTest {
         graphDef.setEndTime(endTime + 300);
         graphDef.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
         graphDef.percentile("nfp", "baz", 95);
-        graphDef.print("nfp", ConsolFun.AVERAGE, "%le");
+        graphDef.print("nfp", AggregateFun.AVERAGE, "%le");
         graphDef.setLocale(Locale.ENGLISH);
 
         RrdGraph graph = new RrdGraph(graphDef);

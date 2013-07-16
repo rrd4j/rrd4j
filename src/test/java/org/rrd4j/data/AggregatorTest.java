@@ -24,7 +24,7 @@ public class AggregatorTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    public double testCf(ConsolFun cf) throws IOException {
+    public double testCf(AggregateFun cf) throws IOException {
         long startTime = Util.normalize(Util.getTimestamp(new Date()), 60);
 
         File rrd = new File(testFolder.getRoot(), "testAggregator.rrd");
@@ -57,55 +57,55 @@ public class AggregatorTest {
 
     @Test
     public void testAggregatorTotal() throws IOException {
-        double total = testCf(ConsolFun.TOTAL);
+        double total = testCf(AggregateFun.TOTAL);
         assertEquals("The aggregate total should be equal to the total of the samples added", 1, total, 1e-15);
     }
 
     @Test
     public void testAggregatorAverage() throws IOException {
-        double total = testCf(ConsolFun.AVERAGE);
+        double total = testCf(AggregateFun.AVERAGE);
         assertEquals("The aggregate average should be equal to the total of the samples added", 0.005555555555555556, total, 1e-15);
     }
 
     @Test
     public void testAggregatorMin() throws IOException {
-        double total = testCf(ConsolFun.MIN);
+        double total = testCf(AggregateFun.MIN);
         assertEquals("The aggregate max should be equal to the total of the samples added", 0, total, 1e-15);
     }
 
     @Test
     public void testAggregatorMax() throws IOException {
-        double total = testCf(ConsolFun.MAX);
+        double total = testCf(AggregateFun.MAX);
         assertEquals("The aggregate min should be equal to the total of the samples added", 1, total, 1e-15);
     }
 
     @Test
     public void testAggregatorFirst() throws IOException {
-        double total = testCf(ConsolFun.FIRST);
+        double total = testCf(AggregateFun.FIRST);
         assertEquals("The aggregate first should be equal to the total of the samples added", 0, total, 1e-15);
     }
 
     @Test
     public void testAggregatorLast() throws IOException {
-        double total = testCf(ConsolFun.LAST);
+        double total = testCf(AggregateFun.LAST);
         assertEquals("The aggregate last should be equal to the total of the samples added", 0, total, 1e-15);
     }
 
     @Test
     public void testAggregatorLSLSlope() throws IOException {
-        double total = testCf(ConsolFun.LSLSLOPE);
+        double total = testCf(AggregateFun.LSLSLOPE);
         assertEquals("The aggregate LSL slope should be equal to the total of the samples added", 0, total, 1e-15);
     }
 
     @Test
     public void testAggregatorLSLIint() throws IOException {
-        double total = testCf(ConsolFun.LSLINT);
+        double total = testCf(AggregateFun.LSLINT);
         assertEquals("The aggregate lsol int should be equal to the total of the samples added", 0.3333333333333333, total, 1e-15);
     }
 
     @Test
     public void testAggregatorLSLCorrel() throws IOException {
-        double total = testCf(ConsolFun.LSLCORREL);
+        double total = testCf(AggregateFun.LSLCORREL);
         assertEquals("The aggregate LSL correl should be equal to the total of the samples added", 0, total, 1e-15);
     }
 

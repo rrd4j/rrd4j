@@ -1,7 +1,7 @@
 package org.rrd4j.graph;
 
-import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
+import org.rrd4j.data.AggregateFun;
 import org.rrd4j.data.DataProcessor;
 
 import java.util.Locale;
@@ -13,13 +13,13 @@ class PrintText extends CommentText {
     static final Pattern UNIT_PATTERN = Pattern.compile(UNIT_MARKER);
 
     private final String srcName;
-    private ConsolFun consolFun;
+    private AggregateFun aggregate;
     private final boolean includedInGraph;
 
-    PrintText(String srcName, ConsolFun consolFun, String text, boolean includedInGraph) {
+    PrintText(String srcName, AggregateFun aggregate, String text, boolean includedInGraph) {
         super(text);
         this.srcName = srcName;
-        this.consolFun = consolFun;
+        this.aggregate = aggregate;
         this.includedInGraph = includedInGraph;
     }
 
@@ -30,7 +30,7 @@ class PrintText extends CommentText {
     void resolveText(Locale l, DataProcessor dproc, ValueScaler valueScaler) {
         super.resolveText(l, dproc, valueScaler);
         if (resolvedText != null) {
-            double value = dproc.getAggregate(srcName, consolFun);
+            double value = dproc.getAggregate(srcName, aggregate);
             Matcher matcher = UNIT_PATTERN.matcher(resolvedText);
             if (matcher.find()) {
                 // unit specified

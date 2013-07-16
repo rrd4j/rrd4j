@@ -1,19 +1,19 @@
 package org.rrd4j.graph;
 
+import org.rrd4j.data.AggregateFun;
 import org.rrd4j.data.DataProcessor;
-import org.rrd4j.ConsolFun;
 
 class SDef extends Source {
     private String defName;
-    private ConsolFun consolFun;
+    private AggregateFun aggregate;
 
-    SDef(String name, String defName, ConsolFun consolFun) {
+    SDef(String name, String defName, AggregateFun aggregate) {
         super(name);
         this.defName = defName;
-        this.consolFun = consolFun;
+        this.aggregate = aggregate;
     }
 
     void requestData(DataProcessor dproc) {
-        dproc.addDatasource(name, defName, consolFun);
+        dproc.addDatasource(name, defName, aggregate);
     }
 }

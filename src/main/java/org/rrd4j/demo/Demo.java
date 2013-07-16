@@ -1,6 +1,7 @@
 package org.rrd4j.demo;
 
 import org.rrd4j.core.*;
+import org.rrd4j.data.AggregateFun;
 import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphDef;
 
@@ -176,10 +177,10 @@ public class Demo {
 
         gDef.comment("\\r");
 
-        gDef.gprint("sun", MAX, "maxSun = %.3f%s");
-        gDef.gprint("sun", AVERAGE, "avgSun = %.3f%S\\c");
-        gDef.gprint("shade", MAX, "maxShade = %.3f%S");
-        gDef.gprint("shade", AVERAGE, "avgShade = %.3f%S\\c");
+        gDef.gprint("sun", AggregateFun.MAX, "maxSun = %.3f%s");
+        gDef.gprint("sun", AggregateFun.AVERAGE, "avgSun = %.3f%S\\c");
+        gDef.gprint("shade", AggregateFun.MAX, "maxShade = %.3f%S");
+        gDef.gprint("shade", AggregateFun.AVERAGE, "avgShade = %.3f%S\\c");
 
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);
