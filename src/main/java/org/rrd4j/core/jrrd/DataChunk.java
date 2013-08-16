@@ -69,6 +69,20 @@ public class DataChunk {
     public double[][] getData() {
         return data;
     }
+    
+    /**
+     * <p>Getter for the time stamps values.</p>
+     *
+     * @return array of time stamps in seconds
+     */
+    public long[] getTimestamps() {
+        long[] date =  new long[rows];
+        long time = startTime;
+        for (int row = 0; row < rows; row++, time += step) {
+            date[row] = time;
+        }
+        return date;
+    }
 
     /**
      * Extract a datasource from the datachunck given is name as a Plottable
