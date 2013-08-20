@@ -16,6 +16,11 @@ class Def extends Source {
         setFetchData(fetchData);
     }
 
+    Def(String name, String dsName, FetchData fetchData) {
+        this(name, null, dsName, null, null);
+        setFetchData(fetchData);
+    }
+
     Def(String name, String path, String dsName, ConsolFun consolFunc) {
         this(name, path, dsName, consolFunc, null);
     }
