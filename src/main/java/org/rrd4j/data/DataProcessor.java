@@ -497,6 +497,20 @@ public class DataProcessor {
         sources.put(name, def);
     }
 
+    /**
+     * Adds DEF datasource with datasource values already available in the FetchData object. This method is
+     * used internally by Rrd4j and probably has no purpose outside of it.
+     * The values will be extracted from dsName in fetchData.
+     *
+     * @param name      Source name.
+     * @param dsName    Source name in the fetch data.
+     * @param fetchData Fetched data containing values for the given source name.
+     */
+    public void addDatasource(String name, String dsName, FetchData fetchData) {
+        Def def = new Def(name, dsName, fetchData);
+        sources.put(name, def);
+    }
+
     /////////////////////////////////////////////////////////////////
     // CALCULATIONS
     /////////////////////////////////////////////////////////////////
