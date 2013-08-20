@@ -170,6 +170,13 @@ public interface RrdGraphConstants {
      * Default x-axis color
      */
     Color DEFAULT_XAXIS_COLOR = Color.BLACK;
+    
+    
+    /**
+     * An transparent color
+     */
+    Color BLIND_COLOR = new Color(0, 0, 0, 0);
+    
 
     /**
      * Constant to represent left alignment marker

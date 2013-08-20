@@ -245,7 +245,6 @@ import java.io.IOException;
  * definition object gets created relatively slowly, but it will be created much faster next time.
  */
 public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstants {
-    static final Color BLIND_COLOR = new Color(0, 0, 0, 0);
 
     private RrdGraphDef rrdGraphDef;
 
@@ -549,9 +548,11 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveSDef(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf"});
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf", "percentile"});
         String name = null, source = null;
         ConsolFun consolFun = null;
+        boolean ispercentile = false;
+        double percentile = Double.NaN; 
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
@@ -562,11 +563,23 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 source = getValue(childNode);
             }
             else if (nodeName.equals("cf")) {
-                consolFun = ConsolFun.valueOf(getValue(childNode));
+                String cfName = getValue(childNode);
+                if("percent".equals(cfName)) {
+                    ispercentile = true;
+                }
+                else {
+                    consolFun = ConsolFun.valueOf(cfName);                    
+                }
+            }
+            else if(nodeName.equals("percentile")) {
+                percentile = getValueAsDouble(childNode);
             }
         }
         if (name != null && source != null && consolFun != null) {
             rrdGraphDef.datasource(name, source, consolFun);
+        }
+        else if(ispercentile && ! Double.isNaN(percentile)) {
+            rrdGraphDef.percentile(name, source, percentile);
         }
         else {
             throw new IllegalArgumentException("Incomplete SDEF settings");
@@ -961,5 +974,5 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             return RrdGraphConstants.YEAR;
         }
         throw new IllegalArgumentException("Unknown time unit specified: " + unit);
-	}
+    }
 }
