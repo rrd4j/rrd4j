@@ -47,6 +47,7 @@ import java.io.IOException;
 public abstract class RrdBackend {
     private static boolean instanceCreated = false;
     private final String path;
+    private RrdBackendFactory factory;
 
     /**
      * Creates backend for a RRD storage with the given path.
@@ -305,4 +306,18 @@ public abstract class RrdBackend {
 	static boolean isInstanceCreated() {
 		return instanceCreated;
 	}
+
+    /**
+     * @return the factory
+     */
+    public RrdBackendFactory getFactory() {
+        return factory;
+    }
+
+    /**
+     * @param factory the factory to set
+     */
+    public void setFactory(RrdBackendFactory factory) {
+        this.factory = factory;
+    }
 }

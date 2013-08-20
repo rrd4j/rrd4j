@@ -144,6 +144,7 @@ public class RrdDb implements RrdUpdater {
 
         String path = rrdDef.getPath();
         backend = factory.open(path, false);
+        backend.setFactory(factory);
         try {
             backend.setLength(rrdDef.getEstimatedSize());
             // create header
@@ -206,6 +207,7 @@ public class RrdDb implements RrdUpdater {
             throw new FileNotFoundException("Could not open " + path + " [non existent]");
         }
         backend = factory.open(path, readOnly);
+        backend.setFactory(factory);
         try {
             // restore header
             header = new Header(this, (RrdDef) null);
@@ -380,6 +382,7 @@ public class RrdDb implements RrdUpdater {
             reader = new XmlReader(externalPath);
         }
         backend = factory.open(rrdPath, false);
+        backend.setFactory(factory);
         try {
             backend.setLength(reader.getEstimatedSize());
             // create header
