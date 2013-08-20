@@ -909,7 +909,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param color   Line color
      */
     public void line(String srcName, Paint color) {
-        line(srcName, color, null, 1F);
+        line(srcName, color, null, 1F, false);
     }
 
     /**
@@ -921,7 +921,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param legend  Legend text
      */
     public void line(String srcName, Paint color, String legend) {
-        line(srcName, color, legend, 1F);
+        line(srcName, color, legend, 1F, false);
     }
 
 
@@ -933,7 +933,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param width   Line width (default: 1.0F)
      */
     public void line(String srcName, Paint color, float width) {
-        line(srcName, color, null, width);
+        line(srcName, color, null, width, false);
     }
 
     /**
@@ -945,10 +945,24 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param width   Line width (default: 1.0F)
      */
     public void line(String srcName, Paint color, String legend, float width) {
+        line(srcName, color, legend, width, false);
+    }
+
+    /**
+     * Plots requested data as a line, using the color and the line width specified.
+     *
+     * @param srcName Virtual source name
+     * @param color   Line color
+     * @param legend  Legend text
+     * @param width   Line width (default: 1.0F)
+     * @param boolean true if it will be stacked
+     */
+    public void line(String srcName, Paint color, String legend, float width, boolean stack) {
         if (legend != null) {
             comments.add(new LegendText(color, legend));
         }
-        plotElements.add(new Line(srcName, color, width));
+        SourcedPlotElement parent = stack ? findParent() : null;
+        plotElements.add(new Line(srcName, color, width, parent));
     }
 
     /**
@@ -959,7 +973,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param color   Color of the filled area.
      */
     public void area(String srcName, Paint color) {
-        area(srcName, color, null);
+        area(srcName, color, null, false);
     }
 
     /**
@@ -971,10 +985,24 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param legend  Legend text.
      */
     public void area(String srcName, Paint color, String legend) {
+        area(srcName, color, legend, false);
+    }
+
+    /**
+     * Plots requested data in the form of the filled area starting from zero, using
+     * the color specified.
+     *
+     * @param srcName Virtual source name.
+     * @param color   Color of the filled area.
+     * @param legend  Legend text.
+     * @param boolean true if it will be stacked
+     */
+    public void area(String srcName, Paint color, String legend, boolean stack) {
         if (legend != null) {
             comments.add(new LegendText(color, legend));
         }
-        plotElements.add(new Area(srcName, color));
+        SourcedPlotElement parent = stack ? findParent() : null;
+        plotElements.add(new Area(srcName, color, parent));
     }
 
     /**
@@ -1015,6 +1043,14 @@ public class RrdGraphDef implements RrdGraphConstants {
      *                                  graph bellow it.
      */
     public void stack(String srcName, Paint color, String legend) {
+        SourcedPlotElement parent = findParent();
+            if (legend != null) {
+                comments.add(new LegendText(color, legend));
+            }
+            plotElements.add(new Stack(parent, srcName, color));
+        }
+    
+    private SourcedPlotElement findParent() {
         // find parent AREA or LINE
         SourcedPlotElement parent = null;
         for (int i = plotElements.size() - 1; i >= 0; i--) {
@@ -1024,14 +1060,9 @@ public class RrdGraphDef implements RrdGraphConstants {
                 break;
             }
         }
-        if (parent == null) {
+        if (parent == null) 
             throw new IllegalArgumentException("You have to stack graph onto something (line or area)");
-        } else {
-            if (legend != null) {
-                comments.add(new LegendText(color, legend));
-            }
-            plotElements.add(new Stack(parent, srcName, color));
-        }
+        return parent;
     }
 
     /**

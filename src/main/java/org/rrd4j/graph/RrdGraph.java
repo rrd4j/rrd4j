@@ -247,11 +247,17 @@ public class RrdGraph implements RrdGraphConstants {
             if (plotElement instanceof SourcedPlotElement) {
                 SourcedPlotElement source = (SourcedPlotElement) plotElement;
                 double[] y = ytr(source.getValues());
-                if (source instanceof Line) {
+                if (Line.class.isAssignableFrom(source.getClass())) {
                     worker.drawPolyline(x, y, source.color, new BasicStroke(((Line) source).width));
                 }
-                else if (source instanceof Area) {
-                    worker.fillPolygon(x, areazero, y, source.color);
+                else if (Area.class.isAssignableFrom(source.getClass())) {
+                    if(source.parent == null) {
+                        worker.fillPolygon(x, areazero, y, source.color);                        
+                    }
+                    else {
+                        worker.fillPolygon(x, lastY, y, source.color);
+                        worker.drawPolyline(x, lastY, source.getParentColor(), new BasicStroke(0));                        
+                    }
                 }
                 else if (source instanceof Stack) {
                     Stack stack = (Stack) source;
