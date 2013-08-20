@@ -966,6 +966,18 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * Define a line like any other but with constant value, it can be stacked
+     * @param value
+     * @param color
+     * @param width
+     * @param stack
+     */
+    public void line(double value, Paint color, float width, boolean stack) {
+        SourcedPlotElement parent = stack ? findParent() : null;
+        plotElements.add(new ConstantLine(value, color, width, parent));
+    }
+
+    /**
      * Plots requested data in the form of the filled area starting from zero, using
      * the color specified.
      *
@@ -1003,6 +1015,17 @@ public class RrdGraphDef implements RrdGraphConstants {
         }
         SourcedPlotElement parent = stack ? findParent() : null;
         plotElements.add(new Area(srcName, color, parent));
+    }
+
+    /**
+     * Add a area like any other but with a constant value, it can be stacked like any other area
+     * @param value
+     * @param color
+     * @param stack
+     */
+    public void area(double value, Paint color, boolean stack) {
+        SourcedPlotElement parent = stack ? findParent() : null;
+        plotElements.add(new ConstantArea(value, color, parent));
     }
 
     /**
