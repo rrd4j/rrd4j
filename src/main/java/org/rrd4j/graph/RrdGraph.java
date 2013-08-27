@@ -239,7 +239,7 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void drawData() {
         worker.setAntiAliasing(gdef.antiAliasing);
-        worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+        worker.clip(im.xorigin, im.yorigin - gdef.height - 1, gdef.width, gdef.height + 2);
         double areazero = mapper.ytr((im.minval > 0.0) ? im.minval : (im.maxval < 0.0) ? im.maxval : 0.0);
         double[] x = xtr(dproc.getTimestamps()), lastY = null;
         // draw line, area and stack
