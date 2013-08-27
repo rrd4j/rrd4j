@@ -117,12 +117,16 @@ public interface RrdGraphConstants {
      * Index of the x-axis color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
     int COLOR_XAXIS = 9;
+    /**
+     * Index of the yaxis color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
+     */
+    int COLOR_YAXIS = 10;
 
     /**
      * Allowed color names which can be used in {@link RrdGraphDef#setColor(String, java.awt.Paint)} method
      */
     String[] COLOR_NAMES = {
-            "canvas", "back", "shadea", "shadeb", "grid", "mgrid", "font", "frame", "arrow", "xaxis"
+            "canvas", "back", "shadea", "shadeb", "grid", "mgrid", "font", "frame", "arrow", "xaxis", "yaxis"
     };
 
     /**
@@ -170,13 +174,15 @@ public interface RrdGraphConstants {
      * Default x-axis color
      */
     Color DEFAULT_XAXIS_COLOR = Color.BLACK;
-    
-    
+    /**
+     * Default x-axis color
+     */
+    Color DEFAULT_YAXIS_COLOR = DEFAULT_GRID_COLOR;
+
     /**
      * An transparent color
      */
     Color BLIND_COLOR = new Color(0, 0, 0, 0);
-    
 
     /**
      * Constant to represent left alignment marker

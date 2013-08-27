@@ -289,6 +289,7 @@ public class RrdGraph implements RrdGraphConstants {
         if (!gdef.onlyGraph) {
             Paint gridColor = gdef.colors[COLOR_GRID];
             Paint xaxisColor = gdef.colors[COLOR_XAXIS];
+            Paint yaxisColor = gdef.colors[COLOR_YAXIS];
             Paint arrowColor = gdef.colors[COLOR_ARROW];
             Stroke stroke = new BasicStroke(1);
             worker.drawLine(im.xorigin + im.xsize, im.yorigin, im.xorigin + im.xsize, im.yorigin - im.ysize,
@@ -298,7 +299,7 @@ public class RrdGraph implements RrdGraphConstants {
             worker.drawLine(im.xorigin - 4, im.yorigin, im.xorigin + im.xsize + 4, im.yorigin,
                     xaxisColor, stroke);
             worker.drawLine(im.xorigin, im.yorigin, im.xorigin, im.yorigin - im.ysize,
-                    gridColor, stroke);
+                    yaxisColor, stroke);
             worker.drawLine(im.xorigin + im.xsize + 4, im.yorigin - 3, im.xorigin + im.xsize + 4, im.yorigin + 3,
                     arrowColor, stroke);
             worker.drawLine(im.xorigin + im.xsize + 4, im.yorigin - 3, im.xorigin + im.xsize + 9, im.yorigin,

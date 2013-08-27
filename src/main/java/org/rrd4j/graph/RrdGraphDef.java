@@ -82,7 +82,8 @@ public class RrdGraphDef implements RrdGraphConstants {
             DEFAULT_FONT_COLOR,
             DEFAULT_FRAME_COLOR,
             DEFAULT_ARROW_COLOR,
-            DEFAULT_XAXIS_COLOR
+            DEFAULT_XAXIS_COLOR,
+            DEFAULT_YAXIS_COLOR
     };
     boolean noLegend = false; // ok
     boolean onlyGraph = false; // ok
