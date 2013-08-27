@@ -670,12 +670,6 @@ public class RrdGraph implements RrdGraphConstants {
             if (Double.isNaN(values[i])) {
                 valuesDev[j] = Double.NaN;
             }
-            else if (values[i] > im.maxval) {
-                valuesDev[j] = mapper.ytr(im.maxval);
-            }
-            else if (values[i] < im.minval) {
-                valuesDev[j] = mapper.ytr(im.minval);
-            }
             else {
                 valuesDev[j] = mapper.ytr(values[i]);
             }
