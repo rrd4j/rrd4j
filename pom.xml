@@ -276,7 +276,7 @@
                     <version>${mavenJavadocPluginVersion}</version>
                     <configuration>
                         <aggregate>true</aggregate>
-                        <detectLinks/>
+                        <detectLinks />
                         <links>
                             <link>http://docs.oracle.com/javase/6/docs/api/</link>
                             <link>http://api.mongodb.org/java/current/</link>
@@ -322,6 +322,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${mavenSurefirePlugin}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <findbugsXmlOutput>true</findbugsXmlOutput>
+                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
