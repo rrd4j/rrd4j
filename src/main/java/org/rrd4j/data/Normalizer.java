@@ -25,6 +25,8 @@ class Normalizer {
         // reset all normalized values to NaN
         double[] values = new double[count];
         Arrays.fill(values, Double.NaN);
+        double[] weights = new double[count];
+        Arrays.fill(weights, Double.NaN);
         for (int rawSeg = 0, seg = 0; rawSeg < rawCount && seg < count; rawSeg++) {
             double rawValue = rawValues[rawSeg];
             if (!Double.isNaN(rawValue)) {
@@ -39,6 +41,7 @@ class Normalizer {
                     long t2 = Math.min(rawTimestamps[rawSeg], timestamps[fillSeg]);
                     if (t1 < t2) {
                         values[fillSeg] = Util.sum(values[fillSeg], (t2 - t1) * rawValues[rawSeg]);
+                        weights[fillSeg] = Util.sum(weights[fillSeg], t2 - t1);
                     }
                     else {
                         overlap = false;
@@ -47,7 +50,9 @@ class Normalizer {
             }
         }
         for (int seg = 0; seg < count; seg++) {
-            values[seg] /= step;
+            if (!Double.isNaN(weights[seg])) {
+                values[seg] /= weights[seg];
+            }
         }
         return values;
     }
