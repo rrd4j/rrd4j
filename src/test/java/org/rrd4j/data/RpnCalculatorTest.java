@@ -189,6 +189,13 @@ public class RpnCalculatorTest {
     }
     
     @Test
+    public void testLIMIT() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 4);
+        dp.addDatasource("source1", new Myplottable(1.0, 2.0, 3.0, 4.0));
+        expected(dp, "source1, 2, 3, LIMIT", Double.NaN, 2.0, 3.0, Double.NaN);
+    }
+    
+    @Test
     public void testCOUNT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
         expected(dp, "COUNT", 1.0, 2.0, 3.0, 4.0);

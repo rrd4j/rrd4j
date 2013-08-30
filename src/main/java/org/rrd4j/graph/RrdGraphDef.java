@@ -1,17 +1,22 @@
 package org.rrd4j.graph;
 
-import org.rrd4j.ConsolFun;
-import org.rrd4j.core.FetchData;
-import org.rrd4j.core.Util;
-import org.rrd4j.data.DataProcessor;
-import org.rrd4j.data.Plottable;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Paint;
+import java.awt.Stroke;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import org.rrd4j.ConsolFun;
+import org.rrd4j.core.FetchData;
+import org.rrd4j.core.Util;
+import org.rrd4j.data.Variable;
+import org.rrd4j.data.DataProcessor;
+import org.rrd4j.data.Plottable;
 
 /**
  * Class which should be used to define new Rrd4j graph. Once constructed and populated with data
@@ -541,7 +546,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * See {@link #setColor(int, java.awt.Paint)} for full explanation.
      *
      * @param colorName One of the following strings: "BACK", "CANVAS", "SHADEA", "SHADEB",
-     *                  "GRID", "MGRID", "FONT", "FRAME", "ARROW"
+     *                  "GRID", "MGRID", "FONT", "FRAME", "ARROW", "XAXIS", "YAXIS"
      * @param color     Any color (paint) you like
      */
     public void setColor(String colorName, Paint color) {
@@ -672,7 +677,11 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param consolFun Consolidation function to be applied to other datasource.
      */
     public void datasource(String name, String defName, ConsolFun consolFun) {
-        sources.add(new SDef(name, defName, consolFun));
+        datasource(name, defName, consolFun.getVariable());
+    }
+
+    public void datasource(String name, String defName, Variable var) {
+        sources.add(new SDef(name, defName, var));
     }
 
     /**
@@ -728,7 +737,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param percent The percent value
      */
     public void percentile(String name, String defName, double percent) {
-        sources.add(new PercentileDef(name, defName, percent));
+        datasource(name, defName, new Variable.PERCENTILE(percent));
     }
 
     /**
@@ -759,7 +768,21 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param format    Format string (like "average = %10.3f %s")
      */
     public void print(String srcName, ConsolFun consolFun, String format) {
-        comments.add(new PrintText(srcName, consolFun, format, false));
+        print(srcName, consolFun.getVariable(), format, false);
+    }
+
+    public void print(String srcName, Variable var, String format) {
+        print(srcName, var, format, false);
+    }
+
+    public void print(String srcName, String format, boolean strftime) {
+        comments.add(new PrintText(srcName, format, false, strftime));
+    }
+
+    public void print(String srcName, Variable var, String format, boolean strftime) {
+        String tempName = srcName + "_" + var.hashCode();
+        this.datasource(tempName, srcName, var);
+        comments.add(new PrintText(tempName, format, false, strftime));
     }
 
     /**
@@ -771,7 +794,21 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param format    Format string (like "average = %10.3f %s")
      */
     public void gprint(String srcName, ConsolFun consolFun, String format) {
-        comments.add(new PrintText(srcName, consolFun, format, true));
+        gprint(srcName, consolFun.getVariable(), format, false);
+    }
+
+    public void gprint(String srcName, Variable var, String format) {
+        gprint(srcName, var, format, false);
+    }
+
+    public void gprint(String srcName, Variable var, String format, boolean strftime) {
+        String tempName = srcName + "_" + var.hashCode();
+        this.datasource(tempName, srcName, var);
+        comments.add(new PrintText(tempName, format, true, strftime));
+    }
+
+    public void gprint(String srcName, String format, boolean strftime) {
+         comments.add(new PrintText(srcName, format, true, strftime));
     }
 
     /**

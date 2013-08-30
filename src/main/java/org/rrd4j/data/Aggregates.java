@@ -15,12 +15,6 @@ public class Aggregates {
     double min = Double.NaN, max = Double.NaN;
     double first = Double.NaN, last = Double.NaN;
     double average = Double.NaN, total = Double.NaN;
-    double stdev = Double.NaN;
-    double lslslope = Double.NaN, lslint = Double.NaN, lslcorrel = Double.NaN;
-
-    Aggregates() {
-        // NOP;
-    }
 
     /**
      * Returns the minimal value
@@ -76,35 +70,6 @@ public class Aggregates {
         return total;
     }
 
-    /**
-     * Returns Least Squares Line Slope value
-     *
-     * @return lslslope value
-     * @since 2.3
-     */
-    public double getLSLSlope() {
-        return stdev;
-    }
-
-    /**
-     * Returns Least Squares Line y-intercept value
-     *
-     * @return lslint value
-     * @since 2.3
-     */
-    public double getLSLInt() {
-        return lslint;
-    }
-
-    /**
-     * Returns Least Squares Line Correlation Coefficient
-     *
-     * @return lslcorrel value
-     * @since 2.3
-     */
-    public double getLSLCorrel() {
-        return lslcorrel;
-    }
 
     /**
      * Returns single aggregated value for the give consolidation function
@@ -128,14 +93,6 @@ public class Aggregates {
             return min;
         case TOTAL:
             return total;
-        case STDEV:
-            return stdev;
-        case LSLSLOPE:
-            return lslslope;
-        case LSLINT:
-            return lslint;
-        case LSLCORREL:
-            return lslcorrel;
         }
         throw new IllegalArgumentException("Unknown consolidation function: " + consolFun);
     }

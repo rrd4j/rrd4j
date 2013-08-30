@@ -1,5 +1,7 @@
 package org.rrd4j;
 
+import org.rrd4j.data.Variable;
+
 /**
  * Enumeration of available consolidation functions. Note that data aggregation inevitably leads to
  * loss of precision and information. The trick is to pick the aggregate function such that the interesting
@@ -9,50 +11,62 @@ public enum ConsolFun {
     /**
      * The average of the data points is stored.
      */
-    AVERAGE,
+    AVERAGE {
+        @Override
+        public Variable getVariable() {
+            return new Variable.AVERAGE();
+        }
+    },
 
     /**
      * The smallest of the data points is stored.
      */
-    MIN,
+    MIN {
+        @Override
+        public Variable getVariable() {
+            return new Variable.MIN();
+        }
+    },
 
     /**
      * The largest of the data points is stored.
      */
-    MAX,
+    MAX {
+        @Override
+        public Variable getVariable() {
+            return new Variable.MAX();
+        }
+    },
 
     /**
      * The last data point is used.
      */
-    LAST,
+    LAST {
+        @Override
+        public Variable getVariable() {
+            return new Variable.LAST();
+        }
+    },
 
     /**
      * The fist data point is used.
      */
-    FIRST,
+    FIRST {
+        @Override
+        public Variable getVariable() {
+            return new Variable.FIRST();
+        }
+    },
 
     /**
      * The total of the data points is stored.
      */
-    TOTAL,
+    TOTAL {
+        @Override
+        public Variable getVariable() {
+            return new Variable.TOTAL();
+        }
+    };
 
-    /**
-     * The standard deviation.
-     */
-    STDEV,
-
-    /**
-     * The least squares line, slope.
-     */
-    LSLSLOPE,
-
-    /**
-     * The least squares line, y-intercept.
-     */
-    LSLINT,
-
-    /**
-     * The least squares line, correlation coefficient.
-     */
-    LSLCORREL
+    public abstract Variable getVariable();
 }

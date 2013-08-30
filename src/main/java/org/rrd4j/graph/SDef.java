@@ -1,19 +1,21 @@
 package org.rrd4j.graph;
 
+import org.rrd4j.core.XmlWriter;
+import org.rrd4j.data.Variable;
 import org.rrd4j.data.DataProcessor;
-import org.rrd4j.ConsolFun;
 
 class SDef extends Source {
-    private String defName;
-    private ConsolFun consolFun;
+    private final String defName;
+    private final Variable var;
 
-    SDef(String name, String defName, ConsolFun consolFun) {
+    SDef(String name, String defName, Variable var) {
         super(name);
         this.defName = defName;
-        this.consolFun = consolFun;
+        this.var = var;
     }
 
     void requestData(DataProcessor dproc) {
-        dproc.addDatasource(name, defName, consolFun);
+        dproc.addDatasource(name, defName, var);
     }
+
 }

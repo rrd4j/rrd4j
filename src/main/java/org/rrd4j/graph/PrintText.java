@@ -1,26 +1,28 @@
 package org.rrd4j.graph;
 
-import org.rrd4j.ConsolFun;
-import org.rrd4j.core.Util;
-import org.rrd4j.data.DataProcessor;
-
+import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.rrd4j.core.Util;
+import org.rrd4j.data.DataProcessor;
+import org.rrd4j.data.Variable;
+import org.rrd4j.data.Variable.Value;
 
 class PrintText extends CommentText {
     static final String UNIT_MARKER = "([^%]?)%(s|S)";
     static final Pattern UNIT_PATTERN = Pattern.compile(UNIT_MARKER);
 
     private final String srcName;
-    private ConsolFun consolFun;
     private final boolean includedInGraph;
+    private final boolean strftime;
 
-    PrintText(String srcName, ConsolFun consolFun, String text, boolean includedInGraph) {
+    PrintText(String srcName, String text, boolean includedInGraph, boolean strftime) {
         super(text);
         this.srcName = srcName;
-        this.consolFun = consolFun;
         this.includedInGraph = includedInGraph;
+        this.strftime = strftime;
     }
 
     boolean isPrint() {
@@ -29,8 +31,21 @@ class PrintText extends CommentText {
 
     void resolveText(Locale l, DataProcessor dproc, ValueScaler valueScaler) {
         super.resolveText(l, dproc, valueScaler);
-        if (resolvedText != null) {
-            double value = dproc.getAggregate(srcName, consolFun);
+        Value v = dproc.getVariable(srcName);
+        if(resolvedText == null) {
+            return;
+        }
+        else if(strftime) {
+            if(v != Variable.INVALIDVALUE) {
+                long time = v.timestamp;
+                resolvedText = String.format(l, resolvedText, new Date(time * 1000));                
+            }
+            else {
+                resolvedText = "-";                
+            }
+        }
+        else {
+            double value = v.value;
             Matcher matcher = UNIT_PATTERN.matcher(resolvedText);
             if (matcher.find()) {
                 // unit specified
@@ -40,7 +55,7 @@ class PrintText extends CommentText {
                 value = scaled.value;
             }
             resolvedText = Util.sprintf(l, resolvedText, value);
-            trimIfGlue();
         }
+        trimIfGlue();
     }
 }
