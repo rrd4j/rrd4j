@@ -681,7 +681,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     public void datasource(String name, String defName, Variable var) {
-        sources.add(new SDef(name, defName, var));
+        sources.add(new VDef(name, defName, var));
     }
 
     /**

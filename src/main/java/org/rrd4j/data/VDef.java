@@ -2,11 +2,11 @@ package org.rrd4j.data;
 
 import java.util.Arrays;
 
-class SDef extends Source implements NonRrdSource  {
+class VDef extends Source implements NonRrdSource  {
     private final String defName;
     private final Variable var;
 
-    SDef(String name, String defName, Variable aggr) {
+    VDef(String name, String defName, Variable aggr) {
         super(name);
         this.defName = defName;
         this.var = aggr;

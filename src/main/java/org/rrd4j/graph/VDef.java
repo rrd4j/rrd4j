@@ -4,11 +4,11 @@ import org.rrd4j.core.XmlWriter;
 import org.rrd4j.data.Variable;
 import org.rrd4j.data.DataProcessor;
 
-class SDef extends Source {
+class VDef extends Source {
     private final String defName;
     private final Variable var;
 
-    SDef(String name, String defName, Variable var) {
+    VDef(String name, String defName, Variable var) {
         super(name);
         this.defName = defName;
         this.var = var;

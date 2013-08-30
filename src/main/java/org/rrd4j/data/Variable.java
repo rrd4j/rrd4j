@@ -48,9 +48,9 @@ public abstract class Variable {
         if( first == -1 || last == -1) {
             throw new RuntimeException("Invalid range");
         }
-        if(s instanceof SDef) {
+        if(s instanceof VDef) {
             // Already a variable, just check if it fits
-            Value v = ((SDef) s).getValue();
+            Value v = ((VDef) s).getValue();
             // No time stamp, or not time stamped value, keep it
             if(v.timestamp == 0) {
                 val = v;

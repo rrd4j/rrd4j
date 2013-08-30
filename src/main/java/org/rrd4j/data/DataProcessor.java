@@ -292,8 +292,8 @@ public class DataProcessor {
      */
     public Variable.Value getVariable(String sourceName) {
         Source source = getSource(sourceName);
-        if( source instanceof SDef) {
-            return ((SDef) source).getValue();
+        if( source instanceof VDef) {
+            return ((VDef) source).getValue();
         }
         else {
             throw new IllegalArgumentException(String.format("%s is not a Variable source", source.getName()));            
@@ -451,7 +451,7 @@ public class DataProcessor {
      */
     @Deprecated
     public void addDatasource(String name, String defName, ConsolFun consolFun) {
-        SDef sDef = new SDef(name, defName, consolFun.getVariable());
+        VDef sDef = new VDef(name, defName, consolFun.getVariable());
         sources.put(name, sDef);
     }
 
@@ -469,7 +469,7 @@ public class DataProcessor {
      */
     @Deprecated
     public void addDatasource(String name, String sourceName, double percentile) {
-        sources.put(name, new SDef(name, sourceName, new Variable.PERCENTILE(percentile)));
+        sources.put(name, new VDef(name, sourceName, new Variable.PERCENTILE(percentile)));
     }
 
     /**
@@ -485,7 +485,7 @@ public class DataProcessor {
      * @param var - a new instance of a Variable used to do the calculation
      */
     public void addDatasource(String name, String defName, Variable var) {
-        SDef sDef = new SDef(name, defName, var);
+        VDef sDef = new VDef(name, defName, var);
         sources.put(name, sDef);
     }
 
