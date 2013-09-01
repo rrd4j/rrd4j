@@ -113,10 +113,10 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void saveImage() throws IOException {
         if (!gdef.filename.equals("-")) {
-            info.bytes = worker.saveImage(gdef.filename, gdef.imageFormat, gdef.imageQuality);
+            info.bytes = worker.saveImage(gdef.filename, gdef.imageFormat, gdef.imageQuality, gdef.interlaced);
         }
         else {
-            info.bytes = worker.getImageBytes(gdef.imageFormat, gdef.imageQuality);
+            info.bytes = worker.getImageBytes(gdef.imageFormat, gdef.imageQuality, gdef.interlaced);
         }
     }
 
