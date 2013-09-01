@@ -373,8 +373,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Creates interlaced GIF image (currently not supported,
-     * method is present only for RRDTool compatibility).
+     * Creates interlaced or progressive mode image.
      *
      * @param interlaced true, if GIF image should be interlaced.
      */
