@@ -675,6 +675,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param defName   Other source name
      * @param consolFun Consolidation function to be applied to other datasource.
      */
+    @Deprecated
     public void datasource(String name, String defName, ConsolFun consolFun) {
         datasource(name, defName, consolFun.getVariable());
     }
@@ -724,6 +725,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param name    Source name.
      * @param defName Other source name.
      */
+    @Deprecated
     public void percentile(String name, String defName) {
         percentile(name, defName, DataProcessor.DEFAULT_PERCENTILE);
     }
@@ -735,6 +737,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param defName Other source name.
      * @param percent The percent value
      */
+    @Deprecated
     public void percentile(String name, String defName, double percent) {
         datasource(name, defName, new Variable.PERCENTILE(percent));
     }
@@ -766,18 +769,72 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param consolFun Consolidation function to be applied to the source
      * @param format    Format string (like "average = %10.3f %s")
      */
+    @Deprecated
     public void print(String srcName, ConsolFun consolFun, String format) {
         print(srcName, consolFun.getVariable(), format, false);
     }
 
+    /**
+     * Calculates the chosen consolidation function CF over the given datasource
+     * and creates the result by using the given format string.  In
+     * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
+     * the place where the number should be printed.
+     * <p/>
+     * If an additional '%s' is found AFTER the marker, the value will be
+     * scaled and an appropriate SI magnitude unit will be printed in
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
+     * <p/>
+     * If a '%S' is used instead of a '%s', then instead of calculating
+     * the appropriate SI magnitude unit for this value, the previously
+     * calculated SI magnitude unit will be used.  This is useful if you
+     * want all the values in a print statement to have the same SI magnitude unit.
+     * If there was no previous SI magnitude calculation made,
+     * then '%S' behaves like a '%s', unless the value is 0, in which case
+     * it does not remember a SI magnitude unit and a SI magnitude unit
+     * will only be calculated when the next '%s' is seen or the next '%S'
+     * for a non-zero value.
+     * <p/>
+     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
+     * from the {@link RrdGraph object} once the graph is created.
+     *
+     * @param srcName   Virtual source name
+     * @param var       A new variable object, used to calculate the value
+     * @param format    Format string (like "average = %10.3f %s")
+     */
+    @Deprecated
     public void print(String srcName, Variable var, String format) {
         print(srcName, var, format, false);
     }
 
-    public void print(String srcName, String format, boolean strftime) {
-        comments.add(new PrintText(srcName, format, false, strftime));
-    }
-
+    /**
+     * Calculates the chosen consolidation function CF over the given datasource
+     * and creates the result by using the given format string.  In
+     * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
+     * the place where the number should be printed.
+     * <p/>
+     * If an additional '%s' is found AFTER the marker, the value will be
+     * scaled and an appropriate SI magnitude unit will be printed in
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
+     * <p/>
+     * If a '%S' is used instead of a '%s', then instead of calculating
+     * the appropriate SI magnitude unit for this value, the previously
+     * calculated SI magnitude unit will be used.  This is useful if you
+     * want all the values in a print statement to have the same SI magnitude unit.
+     * If there was no previous SI magnitude calculation made,
+     * then '%S' behaves like a '%s', unless the value is 0, in which case
+     * it does not remember a SI magnitude unit and a SI magnitude unit
+     * will only be calculated when the next '%s' is seen or the next '%S'
+     * for a non-zero value.
+     * <p/>
+     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
+     * from the {@link RrdGraph object} once the graph is created.
+     *
+     * @param srcName   Virtual source name
+     * @param var       A new variable object, used to calculate the value
+     * @param format    Format string (like "average = %10.3f %s")
+     * @param strftime  use the timestamp from the variable (true) or the numerical value (false)
+     */
+    @Deprecated
     public void print(String srcName, Variable var, String format, boolean strftime) {
         String tempName = srcName + "_" + var.hashCode();
         this.datasource(tempName, srcName, var);
@@ -785,6 +842,67 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * Read the value of a variable (VDEF) and prints the value by using the given format string.  In
+     * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
+     * the place where the number should be printed.
+     * <p/>
+     * If an additional '%s' is found AFTER the marker, the value will be
+     * scaled and an appropriate SI magnitude unit will be printed in
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
+     * <p/>
+     * If a '%S' is used instead of a '%s', then instead of calculating
+     * the appropriate SI magnitude unit for this value, the previously
+     * calculated SI magnitude unit will be used.  This is useful if you
+     * want all the values in a print statement to have the same SI magnitude unit.
+     * If there was no previous SI magnitude calculation made,
+     * then '%S' behaves like a '%s', unless the value is 0, in which case
+     * it does not remember a SI magnitude unit and a SI magnitude unit
+     * will only be calculated when the next '%s' is seen or the next '%S'
+     * for a non-zero value.
+     * <p/>
+     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
+     * from the {@link RrdGraph object} once the graph is created.
+     *
+     * @param srcName   Virtual source name
+     * @param format    Format string (like "average = %10.3f %s")
+     */
+    public void print(String srcName, String format) {
+        print(srcName, format, false);
+    }
+
+    /**
+     * Read the value of a variable (VDEF) and prints the the value or the time stamp, according to the strftime flag
+     * by using the given format string.  In
+     * and creates the result by using the given format string.  In
+     * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
+     * the place where the number should be printed.
+     * <p/>
+     * If an additional '%s' is found AFTER the marker, the value will be
+     * scaled and an appropriate SI magnitude unit will be printed in
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
+     * <p/>
+     * If a '%S' is used instead of a '%s', then instead of calculating
+     * the appropriate SI magnitude unit for this value, the previously
+     * calculated SI magnitude unit will be used.  This is useful if you
+     * want all the values in a print statement to have the same SI magnitude unit.
+     * If there was no previous SI magnitude calculation made,
+     * then '%S' behaves like a '%s', unless the value is 0, in which case
+     * it does not remember a SI magnitude unit and a SI magnitude unit
+     * will only be calculated when the next '%s' is seen or the next '%S'
+     * for a non-zero value.
+     * <p/>
+     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
+     * from the {@link RrdGraph object} once the graph is created.
+     *
+     * @param srcName   Virtual source name
+     * @param format    Format string (like "average = %10.3f %s")
+     * @param strftime  use the timestamp from the variable (true) or the numerical value (false)
+     */
+    public void print(String srcName, String format, boolean strftime) {
+        comments.add(new PrintText(srcName, format, false, strftime));
+    }
+
+   /**
      * This method does basically the same thing as {@link #print(String, ConsolFun, String)},
      * but the result is printed on the graph itself, below the chart area.
      *
@@ -792,20 +910,78 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param consolFun Consolidation function to be applied to the source
      * @param format    Format string (like "average = %10.3f %s")
      */
+    @Deprecated
     public void gprint(String srcName, ConsolFun consolFun, String format) {
         gprint(srcName, consolFun.getVariable(), format, false);
     }
 
+    @Deprecated
     public void gprint(String srcName, Variable var, String format) {
         gprint(srcName, var, format, false);
     }
 
+    @Deprecated
     public void gprint(String srcName, Variable var, String format, boolean strftime) {
         String tempName = srcName + "_" + var.hashCode();
         this.datasource(tempName, srcName, var);
         comments.add(new PrintText(tempName, format, true, strftime));
     }
 
+    /**
+     * Read the value of a variable (VDEF) and prints the value by using the given format string.  In
+     * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
+     * the place where the number should be printed.
+     * <p/>
+     * If an additional '%s' is found AFTER the marker, the value will be
+     * scaled and an appropriate SI magnitude unit will be printed in
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
+     * <p/>
+     * If a '%S' is used instead of a '%s', then instead of calculating
+     * the appropriate SI magnitude unit for this value, the previously
+     * calculated SI magnitude unit will be used.  This is useful if you
+     * want all the values in a print statement to have the same SI magnitude unit.
+     * If there was no previous SI magnitude calculation made,
+     * then '%S' behaves like a '%s', unless the value is 0, in which case
+     * it does not remember a SI magnitude unit and a SI magnitude unit
+     * will only be calculated when the next '%s' is seen or the next '%S'
+     * for a non-zero value.
+     * <p/>
+     * print results are added to the graph as a legend
+     *
+     * @param srcName   Virtual source name
+     * @param format    Format string (like "average = %10.3f %s")
+     */
+    public void gprint(String srcName, String format) {
+        gprint(srcName, format, false);
+   }
+
+    /**
+     * Read the value of a variable (VDEF) and prints the the value or the time stamp, according to the strftime flag
+     * by using the given format string.  In
+     * and creates the result by using the given format string.  In
+     * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
+     * the place where the number should be printed.
+     * <p/>
+     * If an additional '%s' is found AFTER the marker, the value will be
+     * scaled and an appropriate SI magnitude unit will be printed in
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
+     * <p/>
+     * If a '%S' is used instead of a '%s', then instead of calculating
+     * the appropriate SI magnitude unit for this value, the previously
+     * calculated SI magnitude unit will be used.  This is useful if you
+     * want all the values in a print statement to have the same SI magnitude unit.
+     * If there was no previous SI magnitude calculation made,
+     * then '%S' behaves like a '%s', unless the value is 0, in which case
+     * it does not remember a SI magnitude unit and a SI magnitude unit
+     * will only be calculated when the next '%s' is seen or the next '%S'
+     * for a non-zero value.
+     * <p/>
+     * print results are added to the graph as a legend
+     *
+     * @param srcName   Virtual source name
+     * @param format    Format string (like "average = %10.3f %s")
+     * @param strftime  use the timestamp from the variable (true) or the numerical value (false)
+     */
     public void gprint(String srcName, String format, boolean strftime) {
          comments.add(new PrintText(srcName, format, true, strftime));
     }

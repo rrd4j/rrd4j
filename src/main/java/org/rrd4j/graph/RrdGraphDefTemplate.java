@@ -3,6 +3,7 @@ package org.rrd4j.graph;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
 import org.rrd4j.core.XmlTemplate;
+import org.rrd4j.data.Variable;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -406,6 +407,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void resolvePrint(Node parentNode, boolean isInGraph) {
         validateTagsOnlyOnce(parentNode, new String[]{"datasource", "cf", "format"});
         String datasource = null, format = null;
@@ -425,10 +427,18 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
         if (datasource != null && consolFun != null && format != null) {
             if (isInGraph) {
-                rrdGraphDef.gprint(datasource, consolFun, format);
+                rrdGraphDef.gprint(datasource, consolFun.getVariable(), format);
             }
             else {
-                rrdGraphDef.print(datasource, consolFun, format);
+                rrdGraphDef.print(datasource, consolFun.getVariable(), format);
+            }
+        }
+        else if (datasource != null && format != null) {
+            if (isInGraph) {
+                rrdGraphDef.gprint(datasource, format);
+            }
+            else {
+                rrdGraphDef.print(datasource, format);
             }
         }
         else {
