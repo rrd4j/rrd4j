@@ -4,6 +4,7 @@ import static org.rrd4j.ConsolFun.AVERAGE;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -81,6 +82,7 @@ public class TestLSL {
         FetchRequest month = rrdDb.createFetchRequest(ConsolFun.AVERAGE, START, END);
 
         RrdGraphDef gdef = new RrdGraphDef();
+        gdef.setLocale(Locale.US);
         gdef.setFilename(testFolder.newFile("trend.png").getCanonicalPath());
         gdef.setStartTime(LASTWEEK);
         gdef.setEndTime(END);
@@ -139,10 +141,10 @@ public class TestLSL {
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
         System.out.println(graphinfo.dump());
         String[] lines = graphinfo.getPrintLines();
-        Assert.assertEquals("  Reach   90% at mer. avr. 28 10:30:00 CEST 2010 ", lines[0]);
-        Assert.assertEquals("  Reach   90% at mer. avr. 28 11:00:00 CEST 2010", lines[1]);
-        Assert.assertEquals("  Reach  100% at ven. avr. 30 23:30:00 CEST 2010 ", lines[2]);
-        Assert.assertEquals("  Reach  100% at ven. avr. 30 23:30:00 CEST 2010", lines[3]);
+        Assert.assertEquals("  Reach   90% at Wed Apr 28 10:30:00 CEST 2010 ", lines[0]);
+        Assert.assertEquals("  Reach   90% at Wed Apr 28 11:00:00 CEST 2010", lines[1]);
+        Assert.assertEquals("  Reach  100% at Fri Apr 30 23:30:00 CEST 2010 ", lines[2]);
+        Assert.assertEquals("  Reach  100% at Fri Apr 30 23:30:00 CEST 2010", lines[3]);
 
     }
 }
