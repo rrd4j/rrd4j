@@ -36,7 +36,7 @@ public class TestDemo {
     static final Random RANDOM = new Random(SEED);
     static final String FILE = "demo";
 
-    static final long START = Util.getTimestamp("0:0:0 1.");
+    static final long START = Util.getTimestamp(2010, 4, 1);
     static final long END = Util.getTimestamp(2010, 6, 1);
     static final int MAX_STEP = 300;
 
