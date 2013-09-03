@@ -316,7 +316,7 @@ public class RrdDbPool {
     /**
      * Sets the maximum number of simultaneously open RRD files.
      *
-     * @param capacity Maximum number of simultaneously open RRD files.
+     * @param newCapacity Maximum number of simultaneously open RRD files.
      */
     public void setCapacity(int newCapacity) {
         int available = capacity.drainPermits();

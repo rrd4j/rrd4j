@@ -88,7 +88,7 @@ public abstract class Variable {
      * @param values the actual values
      * @param start the start of the period
      * @param end the end of the period
-     * @return
+     * @return a filled Value object
      */
     abstract protected Value fill(long timestamps[], double[] values, long start, long end);
 

@@ -514,13 +514,11 @@ public class RrdDb implements RrdUpdater {
      * <code>FetchRequest</code> object and its {@link org.rrd4j.core.FetchRequest#fetchData() fetchData()}
      * method to actually fetch data from the RRD file.</p>
      *
-     * @param consolFun  Consolidation function to be used in fetch request. Allowed values are
-     *                   "AVERAGE", "MIN", "MAX" and "LAST" (these constants are conveniently defined in the
-     *                   {@link org.rrd4j.ConsolFun} class).
+     * @param consolFun  Consolidation function to be used in fetch request.
      * @param fetchStart Starting timestamp for fetch request.
      * @param fetchEnd   Ending timestamp for fetch request.
      * @param resolution Fetch resolution (see RRDTool's
-     *                   <a href="../../../../man/rrdfetch.html" target="man">rrdfetch man page</a> for an
+     *                   <a href="http://oss.oetiker.ch/rrdtool/doc/rrdfetch.en.html" target="man">rrdfetch man page</a> for an
      *                   explanation of this parameter.
      * @return Request object that should be used to actually fetch data from RRD
      */
@@ -533,11 +531,10 @@ public class RrdDb implements RrdUpdater {
      * <code>FetchRequest</code> object and its {@link org.rrd4j.core.FetchRequest#fetchData() fetchData()}
      * method to actually fetch data from this RRD. Data will be fetched with the smallest
      * possible resolution (see RRDTool's
-     * <a href="../../../../man/rrdfetch.html" target="man">rrdfetch man page</a>
+     * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdfetch.en.html" target="man">rrdfetch man page</a>
      * for the explanation of the resolution parameter).</p>
      *
-     * @param consolFun  Consolidation function to be used in fetch request. Allowed values are
-     *                   AVERAGE, MIN, MAX, FIRST, LAST and TOTAL (see {@link org.rrd4j.ConsolFun} enum).
+     * @param consolFun  Consolidation function to be used in fetch request.
      * @param fetchStart Starting timestamp for fetch request.
      * @param fetchEnd   Ending timestamp for fetch request.
      * @return Request object that should be used to actually fetch data from RRD.

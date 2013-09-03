@@ -480,7 +480,7 @@ public class DataProcessor {
      * end up with no data
      *
      * @param name - the new virtual datasource name
-     * @param sourceName - the datasource from which to extract the percentile.  Must be a previously
+     * @param defName - the datasource from which to extract the percentile. Must be a previously
      *                     defined virtual datasource
      * @param var - a new instance of a Variable used to do the calculation
      */
