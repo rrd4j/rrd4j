@@ -1,5 +1,6 @@
 package org.rrd4j.graph;
 
+import org.rrd4j.core.XmlWriter;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.ConsolFun;
 
@@ -27,4 +28,16 @@ class Def extends Source {
             dproc.addDatasource(name, rrdPath, dsName, consolFun, backend);
         }
     }
+    
+    @Override
+    void dotemplate(XmlWriter xml) {
+        xml.startTag("def");
+        xml.writeTag("name", this.name);
+        xml.writeTag("rrd", rrdPath);
+        xml.writeTag("source", dsName);
+        xml.writeTag("cf", consolFun);
+        xml.writeTag("backend", backend);
+        xml.closeTag();
+    }
+
 }

@@ -19,5 +19,9 @@ class TDef extends Source {
     void requestData(DataProcessor dproc) {
         dproc.addDatasource(name, dsName, fetchData);
     }
+    
+    @Override
+    void dotemplate(XmlWriter xml) {
+    }
 
 }

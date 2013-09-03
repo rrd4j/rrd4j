@@ -1,5 +1,6 @@
 package org.rrd4j.graph;
 
+import org.rrd4j.core.XmlWriter;
 import org.rrd4j.data.DataProcessor;
 
 abstract class Source {
@@ -10,4 +11,5 @@ abstract class Source {
     }
 
     abstract void requestData(DataProcessor dproc);
+    abstract void dotemplate(XmlWriter xml);
 }

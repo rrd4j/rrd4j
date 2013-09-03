@@ -14,6 +14,7 @@ import java.util.TimeZone;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.Util;
+import org.rrd4j.core.XmlWriter;
 import org.rrd4j.data.Variable;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
@@ -1169,7 +1170,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param color   Line color
      * @param legend  Legend text
      * @param width   Line width (default: 1.0F)
-     * @param boolean true if it will be stacked
+     * @param stack true if it will be stacked
      */
     public void line(String srcName, Paint color, String legend, float width, boolean stack) {
         if (legend != null) {
@@ -1221,7 +1222,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param srcName Virtual source name.
      * @param color   Color of the filled area.
      * @param legend  Legend text.
-     * @param boolean true if it will be stacked
+     * @param stack true if it will be stacked
      */
     public void area(String srcName, Paint color, String legend, boolean stack) {
         if (legend != null) {
@@ -1281,12 +1282,12 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void stack(String srcName, Paint color, String legend) {
         SourcedPlotElement parent = findParent();
-            if (legend != null) {
-                comments.add(new LegendText(color, legend));
-            }
-            plotElements.add(new Stack(parent, srcName, color));
+        if (legend != null) {
+            comments.add(new LegendText(color, legend));
         }
-    
+        plotElements.add(new Stack(parent, srcName, color));
+    }
+
     private SourcedPlotElement findParent() {
         // find parent AREA or LINE
         SourcedPlotElement parent = null;
@@ -1453,4 +1454,191 @@ public class RrdGraphDef implements RrdGraphConstants {
         }
         return false;
     }
+
+    /**
+     * Exports RrdDef object to output stream in XML format. Generated XML code can be parsed
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.
+     *
+     * @param out Output stream
+     */
+    public void exportXmlTemplate(OutputStream out) {
+        XmlWriter xml = new XmlWriter(out);
+        xml.startTag("rrd_graph_def");
+        xml.writeTag("filename", this.filename);
+        xml.startTag("span");
+        xml.writeTag("start", this.startTime);
+        xml.writeTag("end", this.endTime);
+        xml.closeTag(); // span
+        xml.startTag("options");
+        xml.writeTag("use_pool", this.poolUsed);
+        xml.writeTag("anti_aliasing", this.antiAliasing);
+        xml.startTag("time_grid");
+        xml.writeTag("show_grid", this.timeAxisSetting != null);
+        if(this.timeAxisSetting != null) {
+            xml.writeTag("minor_grid_unit", this.timeAxisSetting.minorUnit);
+            xml.writeTag("minor_grid_unit_count", this.timeAxisSetting.minorUnitCount);
+            xml.writeTag("major_grid_unit", this.timeAxisSetting.majorUnit);
+            xml.writeTag("major_grid_unit_count", this.timeAxisSetting.majorUnitCount);
+            xml.writeTag("label_unit", this.timeAxisSetting.labelUnit);
+            xml.writeTag("label_unit_count", this.timeAxisSetting.labelUnitCount);
+            xml.writeTag("label_span", this.timeAxisSetting.labelSpan);
+            xml.writeTag("label_format", this.timeAxisSetting.format);            
+        }
+        xml.closeTag(); // time_grid
+        xml.startTag("value_grid");
+        xml.writeTag("show_grid", this.valueAxisSetting != null);
+        if(this.valueAxisSetting != null) {
+            xml.writeTag("grid_step", this.valueAxisSetting.gridStep);
+            xml.writeTag("label_factor", this.valueAxisSetting.labelFactor);            
+        }
+        xml.closeTag(); // value_grid
+        xml.writeTag("no_minor_grid", this.noMinorGrid);
+        xml.writeTag("alt_y_grid", this.altYGrid);
+        xml.writeTag("alt_y_mrtg", this.altYMrtg);
+        xml.writeTag("alt_autoscale", this.altAutoscale);
+        xml.writeTag("alt_autoscale_max", this.altAutoscaleMax);
+        xml.writeTag("units_exponent", this.unitsExponent);
+        xml.writeTag("units_length", this.unitsLength);
+        xml.writeTag("vertical_label", this.verticalLabel);
+        xml.writeTag("width", this.width);
+        xml.writeTag("height", this.height);
+        xml.writeTag("interlaced", this.interlaced);
+        xml.writeTag("image_info", this.imageInfo);
+        xml.writeTag("image_format", this.imageFormat);
+        xml.writeTag("image_quality", this.imageQuality);
+        xml.writeTag("background_image", this.backgroundImage);
+        xml.writeTag("overlay_image", this.overlayImage);
+        xml.writeTag("unit", this.unit);
+        xml.writeTag("lazy", this.lazy);
+        xml.writeTag("min_value", this.minValue);
+        xml.writeTag("max_value", this.maxValue);
+        xml.writeTag("rigid", this.rigid);
+        xml.writeTag("base", this.base);
+        xml.writeTag("logarithmic", this.logarithmic);
+        xml.startTag("colors");
+        docolor(xml, "canvas", this.colors[COLOR_CANVAS]);
+        docolor(xml, "back", this.colors[COLOR_BACK]);
+        docolor(xml, "shadea", this.colors[COLOR_SHADEA]);
+        docolor(xml, "shadeb", this.colors[COLOR_SHADEB]);
+        docolor(xml, "grid", this.colors[COLOR_GRID]);
+        docolor(xml, "mgrid", this.colors[COLOR_MGRID]);
+        docolor(xml, "font", this.colors[COLOR_FONT]);
+        docolor(xml, "frame", this.colors[COLOR_FRAME]);
+        docolor(xml, "xaxis", this.colors[COLOR_XAXIS]);
+        docolor(xml, "yaxis", this.colors[COLOR_YAXIS]);
+        xml.closeTag(); // colors
+        xml.writeTag("no_legend", this.noLegend);
+        xml.writeTag("only_graph", this.onlyGraph);
+        xml.writeTag("force_rules_legend", this.forceRulesLegend);
+        xml.writeTag("title", this.title);
+        xml.writeTag("step", this.step);
+        xml.startTag("fonts");
+        xml.startTag("small_font");
+        dofont(xml, this.smallFont);
+        xml.closeTag(); // small_font
+        xml.startTag("large_font");
+        dofont(xml, this.largeFont);
+        xml.closeTag(); // large_font
+        xml.closeTag(); // fonts
+        String first_day_of_week = null;
+        switch(this.firstDayOfWeek) {
+        case SUNDAY:
+            first_day_of_week = "sunday";
+            break;
+        case MONDAY:
+            first_day_of_week = "monday";
+            break;
+        case TUESDAY:
+            first_day_of_week = "tuesday";
+            break;
+        case WEDNESDAY:
+            first_day_of_week = "wednesday";
+            break;
+        case THURSDAY:
+            first_day_of_week = "thursday";
+            break;
+        case FRIDAY:
+            first_day_of_week = "friday";
+            break;
+        case SATURDAY:
+            first_day_of_week = "saturday";
+            break;
+        }
+        xml.writeTag("first_day_of_week", first_day_of_week);
+        xml.closeTag(); // options
+        xml.startTag("datasources");
+        for(Source s: this.sources) {
+            s.dotemplate(xml);
+        }
+        xml.closeTag(); // datasources
+        xml.startTag("graph");
+        for(PlotElement p: this.plotElements) {
+            String plotClassName = p.getClass().getCanonicalName();
+            if (Line.class.getCanonicalName().equals(plotClassName)) {
+                Line l = (Line) p;
+                xml.startTag("line");
+                xml.writeTag("datasource", l.srcName);
+                xml.writeTag("width", l.width);
+                docolor(xml, "color", p.color);
+                xml.closeTag(); // options
+            }
+            else if (Area.class.getCanonicalName().equals(plotClassName)) {
+                xml.startTag("area");
+                xml.writeTag("datasource", ((SourcedPlotElement)p).srcName);
+                docolor(xml, "color", p.color);
+                xml.closeTag(); // options
+            }
+            else if (Stack.class.getCanonicalName().equals(plotClassName)) {
+                xml.startTag("area");
+                xml.writeTag("datasource", ((SourcedPlotElement)p).srcName);
+                xml.closeTag(); // options
+            }
+            else if (VSpan.class.getCanonicalName().equals(plotClassName)) {
+                xml.startTag("vspan");
+                xml.closeTag(); // options
+            }
+            else if (HSpan.class.getCanonicalName().equals(plotClassName)) {
+                xml.startTag("hspan");
+                xml.closeTag(); // options
+            }
+
+        }
+        //        for(CommentText c: this.comments) {
+        //        }
+        xml.closeTag(); // graph
+
+        xml.closeTag(); // rrd_graph_def
+        xml.flush();
+    }
+
+    private void dofont(XmlWriter xml, Font f) {
+        xml.writeTag("name", this.smallFont.getFontName());
+        if(f.isPlain()) {
+            xml.writeTag("style", "plain");
+        }
+        else {
+            StringBuffer buffer = new StringBuffer();
+            if(f.isBold()) {
+                buffer.append("bold ");
+            }
+            else if(f.isItalic()) {
+                buffer.append("italic ");
+            }
+            buffer.deleteCharAt(buffer.length() -1 );
+            xml.writeTag("style", buffer);
+        }
+        xml.writeTag("size", f.getSize());
+    }
+
+    private void docolor(XmlWriter xml, String type, Paint p) {
+        if(p instanceof Color) {
+            Color c = (Color) p;
+            int red = c.getRed();
+            int green = c.getGreen();
+            int blue = c.getBlue();
+            String colorString = String.format("#%02X%02X%02X", red, green, blue);
+            xml.writeTag(type, colorString);            
+        }
+    }
+
 }

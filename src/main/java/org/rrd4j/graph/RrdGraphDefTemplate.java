@@ -541,7 +541,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveDatasources(Node datasourcesNode) {
-        validateTagsOnlyOnce(datasourcesNode, new String[]{"def*", "cdef*", "sdef*"});
+        validateTagsOnlyOnce(datasourcesNode, new String[]{"def*", "cdef*", "sdef*", "vdef*"});
         Node[] childNodes = getChildNodes(datasourcesNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
@@ -552,15 +552,19 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 resolveCDef(childNode);
             }
             else if (nodeName.equals("sdef")) {
-                resolveSDef(childNode);
+                resolveVDef(childNode);
+            }
+            else if (nodeName.equals("sdef")) {
+                resolveVDef(childNode);
             }
         }
     }
 
-    private void resolveSDef(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf", "percentile"});
+    private void resolveVDef(Node parentNode) {
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf", "function", "percentile"});
         String name = null, source = null;
         ConsolFun consolFun = null;
+        Variable var = null;
         boolean ispercentile = false;
         double percentile = Double.NaN; 
         Node[] childNodes = getChildNodes(parentNode);
@@ -581,18 +585,30 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                     consolFun = ConsolFun.valueOf(cfName);                    
                 }
             }
+            else if (nodeName.equals("function")) {
+                String varName = getValue(childNode);
+                try {
+                    var = (Variable) this.getClass().getClassLoader().loadClass(varName.trim()).newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             else if(nodeName.equals("percentile")) {
                 percentile = getValueAsDouble(childNode);
             }
         }
-        if (name != null && source != null && consolFun != null) {
-            rrdGraphDef.datasource(name, source, consolFun);
+        if(name != null && source != null && var != null) {
+            rrdGraphDef.datasource(name, source, var);
+        }
+        else if (name != null && source != null && consolFun != null) {
+            rrdGraphDef.datasource(name, source, consolFun.getVariable());
         }
         else if(ispercentile && ! Double.isNaN(percentile)) {
-            rrdGraphDef.percentile(name, source, percentile);
+            Variable v = new Variable.PERCENTILE(percentile);
+            rrdGraphDef.datasource(name, source, v);
         }
         else {
-            throw new IllegalArgumentException("Incomplete SDEF settings");
+            throw new IllegalArgumentException("Incomplete VDEF settings for " + name);
         }
     }
 

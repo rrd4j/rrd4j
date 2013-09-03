@@ -1,5 +1,6 @@
 package org.rrd4j.graph;
 
+import org.rrd4j.core.XmlWriter;
 import org.rrd4j.data.DataProcessor;
 
 class CDef extends Source {
@@ -13,4 +14,13 @@ class CDef extends Source {
     void requestData(DataProcessor dproc) {
         dproc.addDatasource(name, rpnExpression);
     }
+
+    @Override
+    void dotemplate(XmlWriter xml) {
+        xml.startTag("cdef");
+        xml.writeTag("name", this.name);
+        xml.writeTag("rpn", rpnExpression);
+        xml.closeTag();
+    }
+
 }

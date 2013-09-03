@@ -1,5 +1,6 @@
 package org.rrd4j.graph;
 
+import org.rrd4j.core.XmlWriter;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
 
@@ -13,5 +14,9 @@ class PDef extends Source {
 
     void requestData(DataProcessor dproc) {
         dproc.addDatasource(name, plottable);
+    }
+
+    @Override
+    void dotemplate(XmlWriter xml) {
     }
 }
