@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.Locale;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -30,7 +29,6 @@ class ImageWorker {
     private static final String DUMMY_TEXT = "Dummy";
 
     static final int IMG_BUFFER_CAPACITY = 10000; // bytes
-    static private final String GifProvider = ImageIO.getImageWritersBySuffix("gif").next().getOriginatingProvider().getDescription(Locale.US);
 
     private BufferedImage img;
     private Graphics2D g2d;
@@ -54,8 +52,8 @@ class ImageWorker {
         initialAffineTransform = g2d.getTransform();
 
         setAntiAliasing(false);
+        setTextAntiAliasing(false);
 
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     }
 
@@ -116,7 +114,6 @@ class ImageWorker {
             g2d.fillPolygon(xDev, yDev, xDev.length);
         }
     }
-
 
     void drawLine(int x1, int y1, int x2, int y2, Paint paint, Stroke stroke) {
         g2d.setStroke(stroke);
@@ -179,7 +176,7 @@ class ImageWorker {
         g2d.dispose();
     }
 
-    void saveImage(OutputStream stream, String type, float quality) throws IOException {
+    void saveImage(OutputStream stream, String type, float quality, boolean interlaced) throws IOException {
         //The first writer is arbitratry choosen
         Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(type);
         ImageWriter writer = iter.next();
@@ -187,21 +184,15 @@ class ImageWorker {
         ImageWriteParam iwp = writer.getDefaultWriteParam();
 
         ImageWriterSpi imgProvider = writer.getOriginatingProvider();
-        String imgProviderDescription = imgProvider.getDescription(Locale.US);
 
-        // GIF can't manage transparency, 
-        if(GifProvider.equals(imgProviderDescription))  {
+        img.coerceData(false);
+
+        // Some format can't manage 16M colors images
+        // JPEG don't like transparency
+        if(! imgProvider.canEncodeImage(outputImage) || "image/jpeg".equals(imgProvider.getMIMETypes()[0].toLowerCase())) {
             int w = img.getWidth();
             int h = img.getHeight();
-
             outputImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-            outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
-        }
-        //Some format can't manage 16M colors images
-        else if(! imgProvider.canEncodeImage(outputImage)) {
-            int w = img.getWidth();
-            int h = img.getHeight();
-            outputImage = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
             outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
             if(! imgProvider.canEncodeImage(outputImage)) {
                 throw new RuntimeException("Invalid image type");
@@ -212,6 +203,14 @@ class ImageWorker {
         if(! imgProvider.isFormatLossless()) {
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             iwp.setCompressionQuality(quality);
+        }
+
+        if(iwp.canWriteProgressive()) {
+            iwp.setProgressiveMode(interlaced ? ImageWriteParam.MODE_DEFAULT:ImageWriteParam.MODE_DISABLED);            
+        }
+
+        if(! imgProvider.canEncodeImage(outputImage)) {
+            throw new RuntimeException("Invalid image type");
         }
 
         ImageOutputStream imageStream = ImageIO.createImageOutputStream(stream);
@@ -225,11 +224,11 @@ class ImageWorker {
         }
         writer.dispose();
 
-        stream.flush();
+        imageStream.flush();
     }
 
-    byte[] saveImage(String path, String type, float quality) throws IOException {
-        byte[] bytes = getImageBytes(type, quality);
+    byte[] saveImage(String path, String type, float quality, boolean interlaced) throws IOException {
+        byte[] bytes = getImageBytes(type, quality, interlaced);
         BufferedOutputStream out = null;
         try {
             out = new BufferedOutputStream(new FileOutputStream(path));
@@ -241,10 +240,10 @@ class ImageWorker {
         }
     }
 
-    byte[] getImageBytes(String type, float quality) throws IOException {
+    byte[] getImageBytes(String type, float quality, boolean interlaced) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY);
         try {
-            saveImage(stream, type, quality);
+            saveImage(stream, type, quality, interlaced);
             return stream.toByteArray();
         }
         finally {

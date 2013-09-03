@@ -3,6 +3,7 @@ package org.rrd4j.graph;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
 import org.rrd4j.core.XmlTemplate;
+import org.rrd4j.data.Variable;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -245,7 +246,6 @@ import java.io.IOException;
  * definition object gets created relatively slowly, but it will be created much faster next time.
  */
 public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstants {
-    static final Color BLIND_COLOR = new Color(0, 0, 0, 0);
 
     private RrdGraphDef rrdGraphDef;
 
@@ -407,6 +407,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void resolvePrint(Node parentNode, boolean isInGraph) {
         validateTagsOnlyOnce(parentNode, new String[]{"datasource", "cf", "format"});
         String datasource = null, format = null;
@@ -426,10 +427,18 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
         if (datasource != null && consolFun != null && format != null) {
             if (isInGraph) {
-                rrdGraphDef.gprint(datasource, consolFun, format);
+                rrdGraphDef.gprint(datasource, consolFun.getVariable(), format);
             }
             else {
-                rrdGraphDef.print(datasource, consolFun, format);
+                rrdGraphDef.print(datasource, consolFun.getVariable(), format);
+            }
+        }
+        else if (datasource != null && format != null) {
+            if (isInGraph) {
+                rrdGraphDef.gprint(datasource, format);
+            }
+            else {
+                rrdGraphDef.print(datasource, format);
             }
         }
         else {
@@ -549,9 +558,11 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveSDef(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf"});
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf", "percentile"});
         String name = null, source = null;
         ConsolFun consolFun = null;
+        boolean ispercentile = false;
+        double percentile = Double.NaN; 
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
@@ -562,11 +573,23 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 source = getValue(childNode);
             }
             else if (nodeName.equals("cf")) {
-                consolFun = ConsolFun.valueOf(getValue(childNode));
+                String cfName = getValue(childNode);
+                if("percent".equals(cfName)) {
+                    ispercentile = true;
+                }
+                else {
+                    consolFun = ConsolFun.valueOf(cfName);                    
+                }
+            }
+            else if(nodeName.equals("percentile")) {
+                percentile = getValueAsDouble(childNode);
             }
         }
         if (name != null && source != null && consolFun != null) {
             rrdGraphDef.datasource(name, source, consolFun);
+        }
+        else if(ispercentile && ! Double.isNaN(percentile)) {
+            rrdGraphDef.percentile(name, source, percentile);
         }
         else {
             throw new IllegalArgumentException("Incomplete SDEF settings");
@@ -961,5 +984,5 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             return RrdGraphConstants.YEAR;
         }
         throw new IllegalArgumentException("Unknown time unit specified: " + unit);
-	}
+    }
 }

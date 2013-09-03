@@ -144,6 +144,7 @@ public class RrdDb implements RrdUpdater {
 
         String path = rrdDef.getPath();
         backend = factory.open(path, false);
+        backend.setFactory(factory);
         try {
             backend.setLength(rrdDef.getEstimatedSize());
             // create header
@@ -206,6 +207,7 @@ public class RrdDb implements RrdUpdater {
             throw new FileNotFoundException("Could not open " + path + " [non existent]");
         }
         backend = factory.open(path, readOnly);
+        backend.setFactory(factory);
         try {
             // restore header
             header = new Header(this, (RrdDef) null);
@@ -380,6 +382,7 @@ public class RrdDb implements RrdUpdater {
             reader = new XmlReader(externalPath);
         }
         backend = factory.open(rrdPath, false);
+        backend.setFactory(factory);
         try {
             backend.setLength(reader.getEstimatedSize());
             // create header
@@ -511,13 +514,11 @@ public class RrdDb implements RrdUpdater {
      * <code>FetchRequest</code> object and its {@link org.rrd4j.core.FetchRequest#fetchData() fetchData()}
      * method to actually fetch data from the RRD file.</p>
      *
-     * @param consolFun  Consolidation function to be used in fetch request. Allowed values are
-     *                   "AVERAGE", "MIN", "MAX" and "LAST" (these constants are conveniently defined in the
-     *                   {@link org.rrd4j.ConsolFun} class).
+     * @param consolFun  Consolidation function to be used in fetch request.
      * @param fetchStart Starting timestamp for fetch request.
      * @param fetchEnd   Ending timestamp for fetch request.
      * @param resolution Fetch resolution (see RRDTool's
-     *                   <a href="../../../../man/rrdfetch.html" target="man">rrdfetch man page</a> for an
+     *                   <a href="http://oss.oetiker.ch/rrdtool/doc/rrdfetch.en.html" target="man">rrdfetch man page</a> for an
      *                   explanation of this parameter.
      * @return Request object that should be used to actually fetch data from RRD
      */
@@ -530,11 +531,10 @@ public class RrdDb implements RrdUpdater {
      * <code>FetchRequest</code> object and its {@link org.rrd4j.core.FetchRequest#fetchData() fetchData()}
      * method to actually fetch data from this RRD. Data will be fetched with the smallest
      * possible resolution (see RRDTool's
-     * <a href="../../../../man/rrdfetch.html" target="man">rrdfetch man page</a>
+     * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdfetch.en.html" target="man">rrdfetch man page</a>
      * for the explanation of the resolution parameter).</p>
      *
-     * @param consolFun  Consolidation function to be used in fetch request. Allowed values are
-     *                   AVERAGE, MIN, MAX, FIRST, LAST and TOTAL (see {@link org.rrd4j.ConsolFun} enum).
+     * @param consolFun  Consolidation function to be used in fetch request.
      * @param fetchStart Starting timestamp for fetch request.
      * @param fetchEnd   Ending timestamp for fetch request.
      * @return Request object that should be used to actually fetch data from RRD.

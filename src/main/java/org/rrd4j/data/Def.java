@@ -2,6 +2,7 @@ package org.rrd4j.data;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.Util;
 
 import java.io.IOException;
@@ -12,8 +13,20 @@ class Def extends Source {
     private FetchData fetchData;
 
     Def(String name, FetchData fetchData) {
-        this(name, null, name, null, null);
+        this(name, name, fetchData);
+    }
+
+    Def(String name, String dsName, FetchData fetchData) {
+        this(name, null, dsName, null, RrdBackendFactory.getDefaultFactory().getName());
         setFetchData(fetchData);
+        setFetchData(fetchData);
+        consolFun = fetchData.getRequest().getConsolFun();
+        try {
+            path = fetchData.getRequest().getParentDb().getCanonicalPath();
+            backend = fetchData.getRequest().getParentDb().getRrdBackend().getFactory().getName();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     Def(String name, String path, String dsName, ConsolFun consolFunc) {

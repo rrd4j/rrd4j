@@ -1,13 +1,13 @@
 package org.rrd4j.core;
 
-import org.rrd4j.data.Aggregates;
-import org.rrd4j.data.DataProcessor;
-import org.rrd4j.ConsolFun;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.rrd4j.ConsolFun;
+import org.rrd4j.data.Aggregates;
+import org.rrd4j.data.DataProcessor;
 
 /**
  * Class used to represent data fetched from the RRD.
@@ -291,6 +291,7 @@ public class FetchData {
      * @throws java.lang.IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data.
      * @return a double.
      */
+    @Deprecated
     public double getAggregate(String dsName, ConsolFun consolFun) {
         DataProcessor dp = createDataProcessor(null);
         return dp.getAggregate(dsName, consolFun);
@@ -307,6 +308,7 @@ public class FetchData {
      * @return Aggregated value
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      */
+    @Deprecated
     public double getRpnAggregate(String rpnExpression, ConsolFun consolFun) {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
         return dataProcessor.getAggregate(RPN_SOURCE_NAME, consolFun);
@@ -320,6 +322,7 @@ public class FetchData {
      * @return Simple object containing all aggregated values.
      * @throws java.lang.IllegalArgumentException Thrown if the given datasource name cannot be found in the fetched data.
      */
+    @Deprecated
     public Aggregates getAggregates(String dsName) {
         DataProcessor dataProcessor = createDataProcessor(null);
         return dataProcessor.getAggregates(dsName);
@@ -337,6 +340,7 @@ public class FetchData {
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      * @throws java.io.IOException if any.
      */
+    @Deprecated
     public Aggregates getRpnAggregates(String rpnExpression) throws IOException {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
         return dataProcessor.getAggregates(RPN_SOURCE_NAME);
@@ -357,6 +361,7 @@ public class FetchData {
      * @return 95th percentile of fetched source values
      * @throws java.lang.IllegalArgumentException Thrown if invalid source name is supplied
      */
+    @Deprecated
     public double get95Percentile(String dsName) {
         DataProcessor dataProcessor = createDataProcessor(null);
         return dataProcessor.get95Percentile(dsName);
@@ -370,6 +375,7 @@ public class FetchData {
      * @return 95-percentile
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      */
+    @Deprecated
     public double getRpn95Percentile(String rpnExpression) {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
         return dataProcessor.get95Percentile(RPN_SOURCE_NAME);

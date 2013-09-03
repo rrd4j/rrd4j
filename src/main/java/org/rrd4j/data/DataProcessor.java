@@ -261,9 +261,12 @@ public class DataProcessor {
      *                                  was not called)
      * @return a aggregate value as a double calculated from the source.
      */
+    @Deprecated
     public double getAggregate(String sourceName, ConsolFun consolFun) {
+        Variable v = consolFun.getVariable();
         Source source = getSource(sourceName);
-        return source.getAggregates(tStart, tEnd).getAggregate(consolFun);
+        v.calculate(source, tStart, tEnd);
+        return v.getValue().value;
     }
 
     /**
@@ -275,9 +278,26 @@ public class DataProcessor {
      *                                  or if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
      */
+    @Deprecated
     public Aggregates getAggregates(String sourceName) {
         Source source = getSource(sourceName);
         return source.getAggregates(tStart, tEnd);
+    }
+    
+    /**
+     * Extract the variable value from an already define Variable datasource (a VDEF)
+     * 
+     * @param sourceName Datasource name
+     * @return A combined time and value extracted calculated from the datasource
+     */
+    public Variable.Value getVariable(String sourceName) {
+        Source source = getSource(sourceName);
+        if( source instanceof VDef) {
+            return ((VDef) source).getValue();
+        }
+        else {
+            throw new IllegalArgumentException(String.format("%s is not a Variable source", source.getName()));            
+        }
     }
 
     /**
@@ -296,6 +316,7 @@ public class DataProcessor {
      * @param sourceName Datasource name
      * @return 95th percentile of fetched source values
      */
+    @Deprecated
     public double get95Percentile(String sourceName) {
         return getPercentile(sourceName);
     }
@@ -314,6 +335,7 @@ public class DataProcessor {
      * @param sourceName Datasource name
      * @return 95th percentile of fetched source values
      */
+    @Deprecated
     public double getPercentile(String sourceName) {
         return getPercentile(sourceName, DEFAULT_PERCENTILE);
     }
@@ -327,6 +349,7 @@ public class DataProcessor {
      *                   to provide your own percentile boundary between zero and 100.
      * @return Requested percentile of fetched source values
      */
+    @Deprecated
     public double getPercentile(String sourceName, double percentile) {
         if (percentile <= 0.0 || percentile > 100.0) {
             throw new IllegalArgumentException("Invalid percentile [" + percentile + "], should be between 0 and 100");
@@ -426,8 +449,43 @@ public class DataProcessor {
      * @param defName   Name of the datasource to calculate the value from.
      * @param consolFun Consolidation function to use for value calculation
      */
+    @Deprecated
     public void addDatasource(String name, String defName, ConsolFun consolFun) {
-        SDef sDef = new SDef(name, defName, consolFun);
+        VDef sDef = new VDef(name, defName, consolFun.getVariable());
+        sources.put(name, sDef);
+    }
+
+    /**
+     * Creates a datasource that performs a percentile calculation on an
+     * another named datasource to yield a single value.
+     *
+     * Requires that the other datasource has already been defined; otherwise, it'll
+     * end up with no data
+     *
+     * @param name - the new virtual datasource name
+     * @param sourceName - the datasource from which to extract the percentile.  Must be a previously
+     *                     defined virtual datasource
+     * @param percentile - the percentile to extract from the source datasource
+     */
+    @Deprecated
+    public void addDatasource(String name, String sourceName, double percentile) {
+        sources.put(name, new VDef(name, sourceName, new Variable.PERCENTILE(percentile)));
+    }
+
+    /**
+     * Creates a datasource that performs a variable calculation on an
+     * another named datasource to yield a single combined timestampe/value.
+     *
+     * Requires that the other datasource has already been defined; otherwise, it'll
+     * end up with no data
+     *
+     * @param name - the new virtual datasource name
+     * @param defName - the datasource from which to extract the percentile. Must be a previously
+     *                     defined virtual datasource
+     * @param var - a new instance of a Variable used to do the calculation
+     */
+    public void addDatasource(String name, String defName, Variable var) {
+        VDef sDef = new VDef(name, defName, var);
         sources.put(name, sDef);
     }
 
@@ -470,22 +528,6 @@ public class DataProcessor {
     }
 
     /**
-     * Creates a datasource that performs a percentile calculation on an
-     * another named datasource to yield a single value.
-     *
-     * Requires that the other datasource has already been defined; otherwise, it'll
-     * end up with no data
-     *
-     * @param name - the new virtual datasource name
-     * @param sourceName - the datasource from which to extract the percentile.  Must be a previously
-     *                     defined virtual datasource
-     * @param percentile - the percentile to extract from the source datasource
-     */
-    public void addDatasource(String name, String sourceName, double percentile) {
-        sources.put(name, new PercentileDef(name, sourceName, percentile));
-    }
-
-    /**
      * Adds DEF datasource with datasource values already available in the FetchData object. This method is
      * used internally by Rrd4j and probably has no purpose outside of it.
      *
@@ -494,6 +536,20 @@ public class DataProcessor {
      */
     public void addDatasource(String name, FetchData fetchData) {
         Def def = new Def(name, fetchData);
+        sources.put(name, def);
+    }
+
+    /**
+     * Adds DEF datasource with datasource values already available in the FetchData object. This method is
+     * used internally by Rrd4j and probably has no purpose outside of it.
+     * The values will be extracted from dsName in fetchData.
+     *
+     * @param name      Source name.
+     * @param dsName    Source name in the fetch data.
+     * @param fetchData Fetched data containing values for the given source name.
+     */
+    public void addDatasource(String name, String dsName, FetchData fetchData) {
+        Def def = new Def(name, dsName, fetchData);
         sources.put(name, def);
     }
 
