@@ -324,7 +324,9 @@ public class Archive implements RrdUpdater {
         writer.writeTag("cf", consolFun.get());
         writer.writeComment(getArcStep() + " seconds");
         writer.writeTag("pdp_per_row", steps.get());
+        writer.startTag("params");
         writer.writeTag("xff", xff.get());
+        writer.closeTag(); // params
         writer.startTag("cdp_prep");
         for (ArcState state : states) {
             state.appendXml(writer);
