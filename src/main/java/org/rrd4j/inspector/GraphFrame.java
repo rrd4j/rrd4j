@@ -1,5 +1,6 @@
 package org.rrd4j.inspector;
 
+import org.rrd4j.core.Archive;
 import org.rrd4j.core.*;
 import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraph;

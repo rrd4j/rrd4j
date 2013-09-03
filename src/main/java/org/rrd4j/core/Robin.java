@@ -2,27 +2,15 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-/**
- * Class to represent archive values for a single datasource. Robin class is the heart of
- * the so-called "round robin database" concept. Basically, each Robin object is a
- * fixed length array of double values. Each double value represents consolidated, archived
- * value for the specific timestamp. When the underlying array of double values gets completely
- * filled, new values will replace the oldest ones.<p>
- * <p/>
- * Robin object does not hold values in memory - such object could be quite large.
- * Instead of it, Robin reads them from the backend I/O only when necessary.
- *
- * @author Sasa Markovic
- */
 public interface Robin extends RrdUpdater {
-
+    
     /**
      * Fetches all archived values.
      *
      * @return Array of double archive values, starting from the oldest one.
      * @throws java.io.IOException Thrown in case of I/O specific error.
      */
-    double[] getValues() throws IOException;
+    public double[] getValues() throws IOException;
 
     /**
      * Updates archived values in bulk.
@@ -32,7 +20,7 @@ public interface Robin extends RrdUpdater {
      * @throws java.lang.IllegalArgumentException Thrown if the length of the input array is different from the length of
      *                                  this archive
      */
-    void setValues(double... newValues) throws IOException;
+    public void setValues(double... newValues) throws IOException;
 
     /**
      * (Re)sets all values in this archive to the same value.
@@ -40,7 +28,7 @@ public interface Robin extends RrdUpdater {
      * @param newValue New value
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    void setValues(double newValue) throws IOException;
+    public void setValues(double newValue) throws IOException;
 
     /**
      * Returns the i-th value from the Robin archive.
@@ -49,7 +37,7 @@ public interface Robin extends RrdUpdater {
      * @return Value stored in the i-th position (the oldest value has zero index)
      * @throws java.io.IOException Thrown in case of I/O specific error.
      */
-    double getValue(int index) throws IOException;
+    public double getValue(int index) throws IOException;
 
     /**
      * Sets the i-th value in the Robin archive.
@@ -58,54 +46,14 @@ public interface Robin extends RrdUpdater {
      * @param value value to be stored
      * @throws java.io.IOException Thrown in case of I/O specific error.
      */
-    void setValue(int index, double value) throws IOException;
-
-    /**
-     * Returns the Archive object to which this Robin object belongs.
-     *
-     * @return Parent Archive object
-     */
-    Archive getParent();
+    public void setValue(int index, double value) throws IOException;
 
     /**
      * Returns the size of the underlying array of archived values.
      *
      * @return Number of stored values
      */
-    int getSize();
-
-    /**
-     * {@inheritDoc}
-     *
-     * Copies object's internal state to another Robin object.
-     */
-    void copyStateTo(RrdUpdater other) throws IOException;
-
-    /**
-     * Filters values stored in this archive based on the given boundary.
-     * Archived values found to be outside of <code>[minValue, maxValue]</code> interval (inclusive)
-     * will be silently replaced with <code>NaN</code>.
-     *
-     * @param minValue lower boundary
-     * @param maxValue upper boundary
-     * @throws java.io.IOException Thrown in case of I/O error
-     */
-    void filterValues(double minValue, double maxValue) throws IOException;
-
-    /**
-     * Returns the underlying storage (backend) object which actually performs all
-     * I/O operations.
-     *
-     * @return I/O backend object
-     */
-    RrdBackend getRrdBackend();
-
-    /**
-     * Required to implement RrdUpdater interface. You should never call this method directly.
-     *
-     * @return Allocator object
-     */
-    RrdAllocator getRrdAllocator();
+    public int getSize();
 
     /**
      * <p>update.</p>
@@ -113,15 +61,7 @@ public interface Robin extends RrdUpdater {
      * @param newValues an array of double.
      * @throws java.io.IOException if any.
      */
-    void update(double[] newValues) throws IOException;
-
-    /**
-     * <p>dump.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     * @throws java.io.IOException if any.
-     */
-    String dump() throws IOException;
+    public void update(double[] newValues) throws IOException;
 
     /**
      * <p>store.</p>
@@ -129,7 +69,7 @@ public interface Robin extends RrdUpdater {
      * @param newValue a double.
      * @throws java.io.IOException if any.
      */
-    void store(double newValue) throws IOException;
+    public void store(double newValue) throws IOException;
 
     /**
      * <p>bulkStore.</p>
@@ -138,7 +78,7 @@ public interface Robin extends RrdUpdater {
      * @param bulkCount a int.
      * @throws java.io.IOException if any.
      */
-    void bulkStore(double newValue, int bulkCount) throws IOException;
+    public void bulkStore(double newValue, int bulkCount) throws IOException;
 
     /**
      * <p>getValues.</p>
@@ -148,5 +88,22 @@ public interface Robin extends RrdUpdater {
      * @return an array of double.
      * @throws java.io.IOException if any.
      */
-    double[] getValues(int index, int count) throws IOException;
+    public double[] getValues(int index, int count) throws IOException;
+    
+    /**
+     * <p>dump.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
+    public String dump() throws IOException;
+
+    /**
+     * Filters values stored in this archive based on the given boundary.
+     * Archived values found to be outside of <code>[minValue, maxValue]</code> interval (inclusive)
+     * will be silently replaced with <code>NaN</code>.
+     * @throws IOException 
+     */
+    public void filterValues(double minValue, double nan) throws IOException;
+
 }

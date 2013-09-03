@@ -39,7 +39,7 @@ public class HeartbeatFix {
             System.out.print("fixed");
             // check consistency of the file
             RrdDb rrd = new RrdDb(path);
-            if (rrd.getRrdDef().getEstimatedSize() == files[i].length() &&
+            if (
                     rrd.getDatasource(0).getHeartbeat() == heartbeat &&
                     rrd.getDatasource(1).getHeartbeat() == heartbeat) {
                 System.out.println(", verified");

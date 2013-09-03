@@ -1,7 +1,9 @@
 package org.rrd4j.demo;
 
+import org.rrd4j.backend.spi.binary.RrdSafeFileBackend;
 import org.rrd4j.core.*;
 import org.rrd4j.graph.RrdGraph;
+import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
 
 import java.awt.*;
@@ -65,17 +67,12 @@ public class Demo {
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700);
         rrdDef.addArchive(AVERAGE, 0.5, 24, 775);
         rrdDef.addArchive(AVERAGE, 0.5, 288, 797);
-        rrdDef.addArchive(TOTAL, 0.5, 1, 600);
-        rrdDef.addArchive(TOTAL, 0.5, 6, 700);
-        rrdDef.addArchive(TOTAL, 0.5, 24, 775);
-        rrdDef.addArchive(TOTAL, 0.5, 288, 797);
         rrdDef.addArchive(MAX, 0.5, 1, 600);
         rrdDef.addArchive(MAX, 0.5, 6, 700);
         rrdDef.addArchive(MAX, 0.5, 24, 775);
         rrdDef.addArchive(MAX, 0.5, 288, 797);
         println(rrdDef.dump());
         log.println(rrdDef.dump());
-        println("Estimated file size: " + rrdDef.getEstimatedSize());
         RrdDb rrdDb = new RrdDb(rrdDef);
         println("== RRD file created.");
         if (rrdDb.getRrdDef().equals(rrdDef)) {
@@ -158,6 +155,8 @@ public class Demo {
         gDef.setEndTime(end);
         gDef.setTitle("Temperatures in May-June 2010");
         gDef.setVerticalLabel("temperature");
+        gDef.setColor(RrdGraphConstants.COLOR_XAXIS, Color.BLUE);
+        gDef.setColor(RrdGraphConstants.COLOR_YAXIS, new Color(0, 255, 0, 40));
 
         gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
         gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE);

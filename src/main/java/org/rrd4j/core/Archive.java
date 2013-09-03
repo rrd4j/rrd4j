@@ -1,8 +1,8 @@
 package org.rrd4j.core;
 
-import org.rrd4j.ConsolFun;
-
 import java.io.IOException;
+
+import org.rrd4j.ConsolFun;
 
 /**
  * Class to represent single RRD archive in a RRD with its internal state.
@@ -18,49 +18,27 @@ import java.io.IOException;
 public class Archive implements RrdUpdater {
     private final RrdDb parentDb;
 
-    // definition
-    protected final RrdString consolFun;
-    protected final RrdDouble xff;
-    protected final RrdInt steps;
-    protected final RrdInt rows;
-
     // state
-    private final Robin[] robins;
-    private final ArcState[] states;
+    private ArcState[] states;
+    
+    //SPI
+    private org.rrd4j.backend.spi.Archive spi;
 
     Archive(RrdDb parentDb, ArcDef arcDef) throws IOException {
         this.parentDb = parentDb;
-        consolFun = new RrdString(this, true);     // constant, may be cached
-        xff = new RrdDouble(this);
-        steps = new RrdInt(this, true);            // constant, may be cached
-        rows = new RrdInt(this, true);             // constant, may be cached
+        spi = parentDb.getRrdBackend().getArchive();
+
         boolean shouldInitialize = arcDef != null;
         if (shouldInitialize) {
-            consolFun.set(arcDef.getConsolFun().name());
-            xff.set(arcDef.getXff());
-            steps.set(arcDef.getSteps());
-            rows.set(arcDef.getRows());
-        }
-        int n = parentDb.getHeader().getDsCount();
-        int numRows = rows.get();
-        states = new ArcState[n];
-        int version = parentDb.getHeader().getVersion();
-        if (version == 1) {
-            robins = new RobinArray[n];
+            spi.consolFun = arcDef.getConsolFun();
+            spi.setXff(arcDef.getXff());
+            spi.steps = arcDef.getSteps();
+            spi.rows = arcDef.getRows();
+            
+            int n = parentDb.getHeader().getDsCount();
+            states = new ArcState[n];
             for (int i = 0; i < n; i++) {
                 states[i] = new ArcState(this, shouldInitialize);
-                robins[i] = new RobinArray(this, numRows, shouldInitialize);
-            }
-        } else {
-            RrdInt[] pointers = new RrdInt[n];
-            robins = new RobinMatrix[n];
-            for (int i = 0; i < n; i++) {
-                pointers[i] = new RrdInt(this);
-                states[i] = new ArcState(this, shouldInitialize);
-            }
-            RrdDoubleMatrix values = new RrdDoubleMatrix(this, numRows, n, shouldInitialize);
-            for (int i = 0; i < n; i++) {
-                robins[i] = new RobinMatrix(this, values, pointers[i], i);
             }
         }
     }
@@ -77,7 +55,7 @@ public class Archive implements RrdUpdater {
             states[i].setNanSteps(reader.getStateNanSteps(arcIndex, i));
             // restore robins
             double[] values = reader.getValues(arcIndex, i);
-            robins[i].update(values);
+            spi.robin(i).update(values);
         }
     }
 
@@ -89,16 +67,16 @@ public class Archive implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public long getArcStep() throws IOException {
-        return parentDb.getHeader().getStep() * steps.get();
+        return parentDb.getHeader().getStep() * spi.steps;
     }
 
     String dump() throws IOException {
         StringBuilder sb = new StringBuilder("== ARCHIVE ==\n");
-        sb.append("RRA:").append(consolFun.get()).append(":").append(xff.get()).append(":").append(steps.get()).append(":").append(rows.get()).append("\n");
+        sb.append("RRA:").append(spi.consolFun).append(":").append(spi.getXff()).append(":").append(spi.steps).append(":").append(spi.rows).append("\n");
         sb.append("interval [").append(getStartTime()).append(", ").append(getEndTime()).append("]" + "\n");
-        for (int i = 0; i < robins.length; i++) {
+        for (int i = 0; i < states.length; i++) {
             sb.append(states[i].dump());
-            sb.append(robins[i].dump());
+            sb.append(spi.robin(i).dump());
         }
         return sb.toString();
     }
@@ -108,7 +86,7 @@ public class Archive implements RrdUpdater {
     }
 
     void archive(int dsIndex, double value, long numUpdates) throws IOException {
-        Robin robin = robins[dsIndex];
+        Robin robin = spi.robin(dsIndex);
         ArcState state = states[dsIndex];
         long step = parentDb.getHeader().getStep();
         long lastUpdateTime = parentDb.getHeader().getLastUpdateTime();
@@ -126,10 +104,10 @@ public class Archive implements RrdUpdater {
             }
         }
         // update robin in bulk
-        int bulkUpdateCount = (int) Math.min(numUpdates / steps.get(), (long) rows.get());
+        int bulkUpdateCount = (int) Math.min(numUpdates / spi.steps, (long) spi.rows);
         robin.bulkStore(value, bulkUpdateCount);
         // update remaining steps
-        long remainingUpdates = numUpdates % steps.get();
+        long remainingUpdates = numUpdates % spi.steps;
         for (long i = 0; i < remainingUpdates; i++) {
             accumulate(state, value);
         }
@@ -139,7 +117,7 @@ public class Archive implements RrdUpdater {
         if (Double.isNaN(value)) {
             state.setNanSteps(state.getNanSteps() + 1);
         } else {
-            switch (ConsolFun.valueOf(consolFun.get())) {
+            switch (spi.consolFun) {
                 case MIN:
                     state.setAccumValue(Util.min(state.getAccumValue(), value));
                     break;
@@ -164,12 +142,11 @@ public class Archive implements RrdUpdater {
 
     private void finalizeStep(ArcState state, Robin robin) throws IOException {
         // should store
-        long arcSteps = steps.get();
-        double arcXff = xff.get();
+        long arcSteps = spi.steps;
         long nanSteps = state.getNanSteps();
         //double nanPct = (double) nanSteps / (double) arcSteps;
         double accumValue = state.getAccumValue();
-        if (nanSteps <= arcXff * arcSteps && !Double.isNaN(accumValue)) {
+        if (nanSteps <= spi.getXff() * arcSteps && !Double.isNaN(accumValue)) {
             if (getConsolFun() == ConsolFun.AVERAGE) {
                 accumValue /= (arcSteps - nanSteps);
             }
@@ -188,7 +165,7 @@ public class Archive implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public ConsolFun getConsolFun() throws IOException {
-        return ConsolFun.valueOf(consolFun.get());
+        return spi.consolFun;
     }
 
     /**
@@ -198,7 +175,7 @@ public class Archive implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public double getXff() throws IOException {
-        return xff.get();
+        return spi.getXff();
     }
 
     /**
@@ -208,7 +185,7 @@ public class Archive implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public int getSteps() throws IOException {
-        return steps.get();
+        return spi.steps;
     }
 
     /**
@@ -218,7 +195,7 @@ public class Archive implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public int getRows() throws IOException {
-        return rows.get();
+        return spi.rows;
     }
 
     /**
@@ -230,8 +207,7 @@ public class Archive implements RrdUpdater {
     public long getStartTime() throws IOException {
         long endTime = getEndTime();
         long arcStep = getArcStep();
-        long numRows = rows.get();
-        return endTime - (numRows - 1) * arcStep;
+        return endTime - (spi.rows - 1) * arcStep;
     }
 
     /**
@@ -266,7 +242,7 @@ public class Archive implements RrdUpdater {
      * @return Underlying round robin archive for the given datasource.
      */
     public Robin getRobin(int dsIndex) {
-        return robins[dsIndex];
+        return spi.robin(dsIndex);
     }
 
     FetchData fetchData(FetchRequest request) throws IOException {
@@ -296,7 +272,7 @@ public class Archive implements RrdUpdater {
             robinValues = new double[dsCount][];
             for (int i = 0; i < dsCount; i++) {
                 int dsIndex = parentDb.getDsIndex(dsToFetch[i]);
-                robinValues[i] = robins[dsIndex].getValues(matchStartIndex, matchCount);
+                robinValues[i] = spi.robin(dsIndex).getValues(matchStartIndex, matchCount);
             }
         }
         for (int ptIndex = 0; ptIndex < ptsCount; ptIndex++) {
@@ -321,11 +297,11 @@ public class Archive implements RrdUpdater {
 
     void appendXml(XmlWriter writer) throws IOException {
         writer.startTag("rra");
-        writer.writeTag("cf", consolFun.get());
+        writer.writeTag("cf", spi.consolFun);
         writer.writeComment(getArcStep() + " seconds");
-        writer.writeTag("pdp_per_row", steps.get());
+        writer.writeTag("pdp_per_row", spi.steps);
         writer.startTag("params");
-        writer.writeTag("xff", xff.get());
+        writer.writeTag("xff", spi.getXff());
         writer.closeTag(); // params
         writer.startTag("cdp_prep");
         for (ArcState state : states) {
@@ -334,11 +310,11 @@ public class Archive implements RrdUpdater {
         writer.closeTag(); // cdp_prep
         writer.startTag("database");
         long startTime = getStartTime();
-        for (int i = 0; i < rows.get(); i++) {
+        for (int i = 0; i < spi.rows; i++) {
             long time = startTime + i * getArcStep();
             writer.writeComment(Util.getDate(time) + " / " + time);
             writer.startTag("row");
-            for (Robin robin : robins) {
+            for (Robin robin : spi.robins()) {
                 writer.writeTag("v", robin.getValue(i));
             }
             writer.closeTag(); // row
@@ -358,10 +334,10 @@ public class Archive implements RrdUpdater {
                     "Cannot copy Archive object to " + other.getClass().getName());
         }
         Archive arc = (Archive) other;
-        if (!arc.consolFun.get().equals(consolFun.get())) {
+        if (!arc.spi.consolFun.equals(spi.consolFun)) {
             throw new IllegalArgumentException("Incompatible consolidation functions");
         }
-        if (arc.steps.get() != steps.get()) {
+        if (arc.spi.steps != spi.steps) {
             throw new IllegalArgumentException("Incompatible number of steps");
         }
         int count = parentDb.getHeader().getDsCount();
@@ -369,7 +345,7 @@ public class Archive implements RrdUpdater {
             int j = Util.getMatchingDatasourceIndex(parentDb, i, arc.parentDb);
             if (j >= 0) {
                 states[i].copyStateTo(arc.states[j]);
-                robins[i].copyStateTo(arc.robins[j]);
+                spi.robin(i).copyStateTo(arc.spi.robin(j));
             }
         }
     }
@@ -384,7 +360,7 @@ public class Archive implements RrdUpdater {
         if (xff < 0D || xff >= 1D) {
             throw new IllegalArgumentException("Invalid xff supplied (" + xff + "), must be >= 0 and < 1");
         }
-        this.xff.set(xff);
+        spi.setXff(xff);
     }
 
     /**
@@ -397,12 +373,4 @@ public class Archive implements RrdUpdater {
         return parentDb.getRrdBackend();
     }
 
-    /**
-     * Required to implement RrdUpdater interface. You should never call this method directly.
-     *
-     * @return Allocator object
-     */
-    public RrdAllocator getRrdAllocator() {
-        return parentDb.getRrdAllocator();
-    }
 }

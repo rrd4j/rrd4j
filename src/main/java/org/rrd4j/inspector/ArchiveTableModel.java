@@ -1,7 +1,7 @@
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.ArcState;
 import org.rrd4j.core.Archive;
+import org.rrd4j.core.ArcState;
 import org.rrd4j.core.RrdDb;
 
 import javax.swing.table.AbstractTableModel;

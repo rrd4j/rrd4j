@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.rrd4j.backend.spi.binary.RrdFileBackendFactory;
+
 /**
  * This class should be used to synchronize access to RRD files
  * in a multithreaded environment. This class should be also used to prevent opening of
@@ -38,7 +40,7 @@ public class RrdDbPool {
      * or returns already existing one. Uses Initialization On Demand Holder idiom.
      *
      * @return Single instance of this class
-     * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.core.RrdFileBackendFactory}
+     * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.backend.spi.binary.RrdFileBackendFactory}
      */
     public static RrdDbPool getInstance() {
         return RrdDbPoolSingletonHolder.instance;

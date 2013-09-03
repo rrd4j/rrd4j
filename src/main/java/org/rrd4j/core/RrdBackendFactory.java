@@ -7,6 +7,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.rrd4j.backend.spi.binary.RrdBerkeleyDbBackendFactory;
+import org.rrd4j.backend.spi.binary.RrdMemoryBackend;
+import org.rrd4j.backend.spi.binary.RrdMemoryBackendFactory;
+import org.rrd4j.backend.spi.binary.RrdMongoDBBackendFactory;
+import org.rrd4j.backend.spi.binary.RrdNioBackend;
+import org.rrd4j.backend.spi.binary.RrdNioBackendFactory;
+import org.rrd4j.backend.spi.binary.RrdRandomAccessFileBackend;
+import org.rrd4j.backend.spi.binary.RrdRandomAccessFileBackendFactory;
+import org.rrd4j.backend.spi.binary.RrdSafeFileBackend;
+import org.rrd4j.backend.spi.binary.RrdSafeFileBackendFactory;
+
 /**
  * Base (abstract) backend factory class which holds references to all concrete
  * backend factories and defines abstract methods which must be implemented in

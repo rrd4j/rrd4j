@@ -24,13 +24,12 @@ public class Header implements RrdUpdater {
     private RrdDb parentDb;
     private int version = -1;
 
-    private RrdString signature;
-    private RrdLong step;
-    private RrdInt dsCount, arcCount;
-    private RrdLong lastUpdateTime;
+    //SPI
+    private org.rrd4j.backend.spi.Header spi;
 
     Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
         this.parentDb = parentDb;
+        spi = parentDb.getRrdBackend().getHeader();
 
         String initSignature = null;		
         if(rrdDef != null) {
@@ -41,19 +40,15 @@ public class Header implements RrdUpdater {
             initSignature = DEFAULT_SIGNATURE;
         }
 
-        signature = new RrdString(this);             // NOT constant, may be cached
-        step = new RrdLong(this, true);             // constant, may be cached
-        dsCount = new RrdInt(this, true);             // constant, may be cached
-        arcCount = new RrdInt(this, true);             // constant, may be cached
-        lastUpdateTime = new RrdLong(this);
 
         if (rrdDef != null) {
-            signature.set(initSignature);
-            step.set(rrdDef.getStep());
-            dsCount.set(rrdDef.getDsCount());
-            arcCount.set(rrdDef.getArcCount());
-            lastUpdateTime.set(rrdDef.getStartTime());
+            spi.setSignature(initSignature);
+            spi.step = rrdDef.getStep();
+            spi.dsCount = rrdDef.getDsCount();
+            spi.arcCount = rrdDef.getArcCount();
+            spi.setLastUpdateTime(rrdDef.getStartTime());
         }
+        spi.update();
     }
 
     Header(RrdDb parentDb, DataImporter reader) throws IOException {
@@ -62,11 +57,12 @@ public class Header implements RrdUpdater {
         if (!RRDTOOL_VERSION1.equals(version) && !RRDTOOL_VERSION3.equals(version) ) {
             throw new IllegalArgumentException("Could not unserialize xml version " + version);
         }
-        signature.set(DEFAULT_SIGNATURE);
-        step.set(reader.getStep());
-        dsCount.set(reader.getDsCount());
-        arcCount.set(reader.getArcCount());
-        lastUpdateTime.set(reader.getLastUpdateTime());
+        spi.setSignature(DEFAULT_SIGNATURE);
+        spi.step = reader.getStep();
+        spi.dsCount = reader.getDsCount();
+        spi.arcCount = reader.getArcCount();
+        spi.setLastUpdateTime(reader.getLastUpdateTime());
+        spi.update();
     }
 
     /**
@@ -77,7 +73,7 @@ public class Header implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public String getSignature() throws IOException {
-        return signature.get();
+        return spi.getSignature();
     }
 
     /**
@@ -98,10 +94,10 @@ public class Header implements RrdUpdater {
      */
     public void setInfo(String info) throws IOException {
         if (info != null && info.length() > 0) {
-            signature.set(SIGNATURE + info);
+            spi.setSignature(SIGNATURE + info);
         }
         else {
-            signature.set(SIGNATURE);
+            spi.setSignature(SIGNATURE);
         }
     }
 
@@ -112,7 +108,7 @@ public class Header implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getLastUpdateTime() throws IOException {
-        return lastUpdateTime.get();
+        return spi.getLastUpdateTime();
     }
 
     /**
@@ -122,7 +118,7 @@ public class Header implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getStep() throws IOException {
-        return step.get();
+        return spi.step;
     }
 
     /**
@@ -132,7 +128,7 @@ public class Header implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public int getDsCount() throws IOException {
-        return dsCount.get();
+        return spi.dsCount;
     }
 
     /**
@@ -141,30 +137,30 @@ public class Header implements RrdUpdater {
      * @return Number of archives defined
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public int getArcCount() throws IOException {
-        return arcCount.get();
+    public int getArcCount() {
+        return spi.arcCount;
     }
 
     void setLastUpdateTime(long lastUpdateTime) throws IOException {
-        this.lastUpdateTime.set(lastUpdateTime);
+        spi.setLastUpdateTime(lastUpdateTime);
     }
 
     String dump() throws IOException {
         return "== HEADER ==\n" +
                 "signature:" + getSignature() +
                 " lastUpdateTime:" + getLastUpdateTime() +
-                " step:" + getStep() +
+                " step:" + spi.step +
                 " dsCount:" + getDsCount() +
                 " arcCount:" + getArcCount() + "\n";
     }
 
     void appendXml(XmlWriter writer) throws IOException {
-        writer.writeComment(signature.get());
+        writer.writeComment(spi.getSignature());
         writer.writeTag("version", RRDTOOL_VERSION3);
         writer.writeComment("Seconds");
-        writer.writeTag("step", step.get());
-        writer.writeComment(Util.getDate(lastUpdateTime.get()));
-        writer.writeTag("lastupdate", lastUpdateTime.get());
+        writer.writeTag("step", spi.step);
+        writer.writeComment(Util.getDate(spi.getLastUpdateTime()));
+        writer.writeTag("lastupdate", spi.getLastUpdateTime());
     }
 
     /**
@@ -179,7 +175,7 @@ public class Header implements RrdUpdater {
         }
         Header header = (Header) other;
         //header.signature.set(signature.get());
-        header.lastUpdateTime.set(lastUpdateTime.get());
+        header.setLastUpdateTime(spi.getLastUpdateTime());
     }
 
     /**
@@ -201,7 +197,7 @@ public class Header implements RrdUpdater {
     public int getVersion() throws IOException {
         if(version < 0) {
             for(int i=0; i < VERSIONS.length; i++) {
-                if(signature.get().endsWith(VERSIONS[i])) {
+                if(spi.getSignature().endsWith(VERSIONS[i])) {
                     version = i + 1;
                     break;
                 }
@@ -211,7 +207,7 @@ public class Header implements RrdUpdater {
     }
 
     boolean isRrd4jHeader() throws IOException {
-        return signature.get().startsWith(SIGNATURE) || signature.get().startsWith("JR"); // backwards compatible with JRobin
+        return spi.getSignature().startsWith(SIGNATURE) || spi.getSignature().startsWith("JR"); // backwards compatible with JRobin
     }
 
     void validateHeader() throws IOException {
@@ -220,12 +216,4 @@ public class Header implements RrdUpdater {
         }
     }
 
-    /**
-     * Required to implement RrdUpdater interface. You should never call this method directly.
-     *
-     * @return Allocator object
-     */
-    public RrdAllocator getRrdAllocator() {
-        return parentDb.getRrdAllocator();
-	}
 }

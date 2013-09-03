@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.DsType;
 
 import java.io.IOException;
 
@@ -20,7 +21,7 @@ abstract class DataImporter {
     // datasource
     abstract String getDsName(int dsIndex) throws IOException;
 
-    abstract String getDsType(int dsIndex) throws IOException;
+    abstract DsType getDsType(int dsIndex) throws IOException;
 
     abstract long getHeartbeat(int dsIndex) throws IOException;
 
@@ -50,16 +51,6 @@ abstract class DataImporter {
     abstract int getStateNanSteps(int arcIndex, int dsIndex) throws IOException;
 
     abstract double[] getValues(int arcIndex, int dsIndex) throws IOException;
-
-    long getEstimatedSize() throws IOException {
-        int dsCount = getDsCount();
-        int arcCount = getArcCount();
-        int rowCount = 0;
-        for (int i = 0; i < arcCount; i++) {
-            rowCount += getRows(i);
-        }
-        return RrdDef.calculateSize(dsCount, arcCount, rowCount);
-    }
 
     void release() throws IOException {
         // NOP

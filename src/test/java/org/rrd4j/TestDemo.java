@@ -72,7 +72,6 @@ public class TestDemo {
         rrdDef.addArchive(MAX, 0.5, 288, 797);
         System.out.println(rrdDef.dump());
         log.println(rrdDef.dump());
-        System.out.println("Estimated file size: " + rrdDef.getEstimatedSize());
         RrdDb rrdDb = new RrdDb(rrdDef);
         System.out.println("== RRD file created.");
         Assert.assertTrue(rrdDb.getRrdDef().equals(rrdDef));

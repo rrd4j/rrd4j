@@ -580,30 +580,6 @@ public class RrdDef {
     }
 
     /**
-     * Returns the number of storage bytes required to create RRD from this
-     * RrdDef object.
-     *
-     * @return Estimated byte count of the underlying RRD storage.
-     */
-    public long getEstimatedSize() {
-        int dsCount = dsDefs.size();
-        int arcCount = arcDefs.size();
-        int rowsCount = 0;
-        for (ArcDef arcDef : arcDefs) {
-            rowsCount += arcDef.getRows();
-        }
-        return calculateSize(dsCount, arcCount, rowsCount);
-    }
-
-    static long calculateSize(int dsCount, int arcCount, int rowsCount) {
-        // return 64L + 128L * dsCount + 56L * arcCount +
-        //	20L * dsCount * arcCount + 8L * dsCount * rowsCount;
-        return (24L + 48L * dsCount + 16L * arcCount +
-                20L * dsCount * arcCount + 8L * dsCount * rowsCount) +
-                (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH;
-    }
-
-    /**
      * {@inheritDoc}
      *
      * Compares the current RrdDef with another. RrdDefs are considered equal if:<p>

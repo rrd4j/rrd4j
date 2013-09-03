@@ -1,8 +1,13 @@
 package org.rrd4j.core;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.Archive;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 
 /**
@@ -55,7 +60,6 @@ public class RrdDb implements RrdUpdater {
     static final int XML_BUFFER_CAPACITY = 100000; // bytes
 
     private RrdBackend backend;
-    private RrdAllocator allocator = new RrdAllocator();
 
     private final Header header;
     private final Datasource[] datasources;
@@ -146,7 +150,6 @@ public class RrdDb implements RrdUpdater {
         backend = factory.open(path, false);
         backend.setFactory(factory);
         try {
-            backend.setLength(rrdDef.getEstimatedSize());
             // create header
             header = new Header(this, rrdDef);
             // create datasources
@@ -384,7 +387,6 @@ public class RrdDb implements RrdUpdater {
         backend = factory.open(rrdPath, false);
         backend.setFactory(factory);
         try {
-            backend.setLength(reader.getEstimatedSize());
             // create header
             header = new Header(this, reader);
             // create datasources
@@ -573,7 +575,7 @@ public class RrdDb implements RrdUpdater {
      * <p>findMatchingArchive.</p>
      *
      * @param request a {@link org.rrd4j.core.FetchRequest} object.
-     * @return a {@link org.rrd4j.core.Archive} object.
+     * @return a {@link org.rrd4j.backend.spi.Archive} object.
      * @throws java.io.IOException if any.
      */
     public Archive findMatchingArchive(FetchRequest request) throws IOException {
@@ -986,12 +988,7 @@ public class RrdDb implements RrdUpdater {
      *                     not derived from RrdFileBackend.
      */
     public String getCanonicalPath() throws IOException {
-        if (backend instanceof RrdFileBackend) {
-            return ((RrdFileBackend) backend).getCanonicalPath();
-        }
-        else {
-            throw new IOException("The underlying backend has no canonical path");
-        }
+        return backend.getCanonicalPath();
     }
 
     /**
@@ -1012,24 +1009,6 @@ public class RrdDb implements RrdUpdater {
         return backend;
     }
 
-    /**
-     * Required to implement RrdUpdater interface. You should never call this method directly.
-     *
-     * @return Allocator object
-     */
-    public RrdAllocator getRrdAllocator() {
-        return allocator;
-    }
-
-    /**
-     * Returns an array of bytes representing the whole RRD.
-     *
-     * @return All RRD bytes
-     * @throws java.io.IOException Thrown in case of I/O related error.
-     */
-    public synchronized byte[] getBytes() throws IOException {
-        return backend.readAll();
-    }
 
     /**
      * Sets default backend factory to be used. This method is just an alias for

@@ -11,13 +11,12 @@ import java.io.IOException;
 public class ArcState implements RrdUpdater {
     private Archive parentArc;
 
-    private RrdDouble accumValue;
-    private RrdLong nanSteps;
+    org.rrd4j.backend.spi.ArcState spi;
 
     ArcState(Archive parentArc, boolean shouldInitialize) throws IOException {
         this.parentArc = parentArc;
-        accumValue = new RrdDouble(this);
-        nanSteps = new RrdLong(this);
+        spi = parentArc.getParentDb().getRrdBackend().ArcState();
+
         if (shouldInitialize) {
             Header header = parentArc.getParentDb().getHeader();
             long step = header.getStep();
@@ -25,17 +24,17 @@ public class ArcState implements RrdUpdater {
             long arcStep = parentArc.getArcStep();
             long initNanSteps = (Util.normalize(lastUpdateTime, step) -
                     Util.normalize(lastUpdateTime, arcStep)) / step;
-            accumValue.set(Double.NaN);
-            nanSteps.set(initNanSteps);
+            spi.setAccumValue(Double.NaN);
+            spi.setNanSteps(initNanSteps);
         }
     }
 
     String dump() throws IOException {
-        return "accumValue:" + accumValue.get() + " nanSteps:" + nanSteps.get() + "\n";
+        return "accumValue:" + spi.getAccumValue() + " nanSteps:" + spi.getNanSteps() + "\n";
     }
 
     void setNanSteps(long value) throws IOException {
-        nanSteps.set(value);
+        spi.setNanSteps(value);
     }
 
     /**
@@ -45,11 +44,11 @@ public class ArcState implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getNanSteps() throws IOException {
-        return nanSteps.get();
+        return spi.getNanSteps();
     }
 
     void setAccumValue(double value) throws IOException {
-        accumValue.set(value);
+        spi.setAccumValue(value);
     }
 
     /**
@@ -59,7 +58,7 @@ public class ArcState implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public double getAccumValue() throws IOException {
-        return accumValue.get();
+        return spi.getAccumValue();
     }
 
     /**
@@ -73,8 +72,8 @@ public class ArcState implements RrdUpdater {
 
     void appendXml(XmlWriter writer) throws IOException {
         writer.startTag("ds");
-        writer.writeTag("value", accumValue.get());
-        writer.writeTag("unknown_datapoints", nanSteps.get());
+        writer.writeTag("value", spi.getAccumValue());
+        writer.writeTag("unknown_datapoints", spi.getNanSteps());
         writer.closeTag(); // ds
     }
 
@@ -88,8 +87,8 @@ public class ArcState implements RrdUpdater {
             throw new IllegalArgumentException("Cannot copy ArcState object to " + other.getClass().getName());
         }
         ArcState arcState = (ArcState) other;
-        arcState.accumValue.set(accumValue.get());
-        arcState.nanSteps.set(nanSteps.get());
+        arcState.spi.setAccumValue(spi.getAccumValue());
+        arcState.spi.setNanSteps(spi.getNanSteps());
     }
 
     /**
@@ -102,12 +101,4 @@ public class ArcState implements RrdUpdater {
         return parentArc.getRrdBackend();
     }
 
-    /**
-     * Required to implement RrdUpdater interface. You should never call this method directly.
-     *
-     * @return Allocator object
-     */
-    public RrdAllocator getRrdAllocator() {
-        return parentArc.getRrdAllocator();
-    }
 }

@@ -53,10 +53,6 @@ public class DsDef {
         if (dsName.length() == 0) {
             throw new IllegalArgumentException("Datasource name length equal to zero");
         }
-        if (dsName.length() > RrdPrimitive.STRING_LENGTH) {
-            throw new IllegalArgumentException("Datasource name [" + dsName + "] to long (" +
-                    dsName.length() + " chars found, only " + RrdPrimitive.STRING_LENGTH + " allowed");
-        }
         if (dsType == null) {
             throw new IllegalArgumentException("Null datasource type specified");
         }

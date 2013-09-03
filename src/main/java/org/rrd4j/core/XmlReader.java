@@ -3,6 +3,7 @@ package org.rrd4j.core;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.DsType;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +43,8 @@ class XmlReader extends DataImporter {
         return Util.Xml.getChildValue(dsNodes[dsIndex], "name");
     }
 
-    String getDsType(int dsIndex) {
-        return Util.Xml.getChildValue(dsNodes[dsIndex], "type");
+    DsType getDsType(int dsIndex) {
+        return DsType.valueOf(Util.Xml.getChildValue(dsNodes[dsIndex], "type"));
     }
 
     long getHeartbeat(int dsIndex) {
