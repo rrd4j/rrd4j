@@ -6,6 +6,7 @@ import org.rrd4j.backend.spi.ArcState;
 import org.rrd4j.backend.spi.Archive;
 import org.rrd4j.backend.spi.Datasource;
 import org.rrd4j.backend.spi.Header;
+import org.rrd4j.backend.spi.Robin;
 
 /**
  * Base implementation class for all backend classes. Each Round Robin Database object
@@ -76,14 +77,6 @@ public abstract class RrdBackend {
     }
 
     /**
-     * Returns the number of RRD bytes in the underlying storage.
-     *
-     * @return Number of RRD bytes in the storage.
-     * @throws java.io.IOException Thrown in case of I/O error.
-     */
-    public abstract long getLength() throws IOException;
-
-    /**
      * Closes the underlying backend.
      *
      * @throws java.io.IOException Thrown in case of I/O error
@@ -122,14 +115,22 @@ public abstract class RrdBackend {
         this.factory = factory;
     }
 
-    public abstract String getCanonicalPath() throws IOException;
+    public abstract String getUniqId() throws IOException;
     
     public abstract Header getHeader() throws IOException;
 
-    public abstract Datasource getDatasource() throws IOException;
+    public abstract Datasource getDatasource(int index) throws IOException;
     
-    public abstract Archive getArchive() throws IOException;
+    public abstract Archive getArchive(int index) throws IOException;
         
-    public abstract ArcState ArcState() throws IOException;
+    public abstract ArcState getArcState(int dsIndex, int arcIndex) throws IOException;
+
+    public abstract Robin getRobin(int dsIndex, int arcIndex) throws IOException;
+
+    public abstract void create(RrdDb rrdDb, RrdDef rrdDef) throws IOException;
     
+    public abstract void load(RrdDb rrdDb) throws IOException;
+
+    public abstract void load(RrdDb rrdDb, DataImporter reader);
+
 }

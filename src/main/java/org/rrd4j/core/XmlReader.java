@@ -19,63 +19,63 @@ class XmlReader extends DataImporter {
         arcNodes = Util.Xml.getChildNodes(root, "rra");
     }
 
-    String getVersion() {
+    public String getVersion() {
         return Util.Xml.getChildValue(root, "version");
     }
 
-    long getLastUpdateTime() {
+    public long getLastUpdateTime() {
         return Util.Xml.getChildValueAsLong(root, "lastupdate");
     }
 
-    long getStep() {
+    public long getStep() {
         return Util.Xml.getChildValueAsLong(root, "step");
     }
 
-    int getDsCount() {
+    public int getDsCount() {
         return dsNodes.length;
     }
 
-    int getArcCount() {
+    public int getArcCount() {
         return arcNodes.length;
     }
 
-    String getDsName(int dsIndex) {
+    public String getDsName(int dsIndex) {
         return Util.Xml.getChildValue(dsNodes[dsIndex], "name");
     }
 
-    DsType getDsType(int dsIndex) {
+    public DsType getDsType(int dsIndex) {
         return DsType.valueOf(Util.Xml.getChildValue(dsNodes[dsIndex], "type"));
     }
 
-    long getHeartbeat(int dsIndex) {
+    public long getHeartbeat(int dsIndex) {
         return Util.Xml.getChildValueAsLong(dsNodes[dsIndex], "minimal_heartbeat");
     }
 
-    double getMinValue(int dsIndex) {
+    public double getMinValue(int dsIndex) {
         return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "min");
     }
 
-    double getMaxValue(int dsIndex) {
+    public double getMaxValue(int dsIndex) {
         return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "max");
     }
 
-    double getLastValue(int dsIndex) {
+    public double getLastValue(int dsIndex) {
         return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "last_ds");
     }
 
-    double getAccumValue(int dsIndex) {
+    public double getAccumValue(int dsIndex) {
         return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "value");
     }
 
-    long getNanSeconds(int dsIndex) {
+    public long getNanSeconds(int dsIndex) {
         return Util.Xml.getChildValueAsLong(dsNodes[dsIndex], "unknown_sec");
     }
 
-    ConsolFun getConsolFun(int arcIndex) {
+    public ConsolFun getConsolFun(int arcIndex) {
         return ConsolFun.valueOf(Util.Xml.getChildValue(arcNodes[arcIndex], "cf"));
     }
 
-    double getXff(int arcIndex) {
+    public double getXff(int arcIndex) {
         Node arc = arcNodes[arcIndex];
         Node params[] = Util.Xml.getChildNodes(arc, "params");
         //RRD4J xml, xff is in the archive definition
@@ -88,29 +88,29 @@ class XmlReader extends DataImporter {
         }
     }
 
-    int getSteps(int arcIndex) {
+    public int getSteps(int arcIndex) {
         return Util.Xml.getChildValueAsInt(arcNodes[arcIndex], "pdp_per_row");
     }
 
-    double getStateAccumValue(int arcIndex, int dsIndex) {
+    public double getStateAccumValue(int arcIndex, int dsIndex) {
         Node cdpNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "cdp_prep");
         Node[] dsNodes = Util.Xml.getChildNodes(cdpNode, "ds");
         return Util.Xml.getChildValueAsDouble(dsNodes[dsIndex], "value");
     }
 
-    int getStateNanSteps(int arcIndex, int dsIndex) {
+    public int getStateNanSteps(int arcIndex, int dsIndex) {
         Node cdpNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "cdp_prep");
         Node[] dsNodes = Util.Xml.getChildNodes(cdpNode, "ds");
         return Util.Xml.getChildValueAsInt(dsNodes[dsIndex], "unknown_datapoints");
     }
 
-    int getRows(int arcIndex) {
+    public int getRows(int arcIndex) {
         Node dbNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "database");
         Node[] rows = Util.Xml.getChildNodes(dbNode, "row");
         return rows.length;
     }
 
-    double[] getValues(int arcIndex, int dsIndex) {
+    public double[] getValues(int arcIndex, int dsIndex) {
         Node dbNode = Util.Xml.getFirstChildNode(arcNodes[arcIndex], "database");
         Node[] rows = Util.Xml.getChildNodes(dbNode, "row");
         double[] values = new double[rows.length];

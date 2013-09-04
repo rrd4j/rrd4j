@@ -61,4 +61,10 @@ public class RrdMongoDBBackend extends RrdByteArrayBackend {
             rrdCollection.save(rrdObject);
         }
     }
+
+    @Override
+    public String getUniqId() throws IOException {
+        return rrdCollection.getFullName() + "/" + getPath();
+    }
+
 }

@@ -1,9 +1,8 @@
 package org.rrd4j.core;
 
-import org.rrd4j.DsType;
-import org.rrd4j.backend.spi.binary.RrdAllocator;
-
 import java.io.IOException;
+
+import org.rrd4j.DsType;
 
 /**
  * Class to represent single datasource within RRD. Each datasource object holds the
@@ -23,8 +22,8 @@ public class Datasource implements RrdUpdater {
 
     private final org.rrd4j.backend.spi.Datasource spi;
     
-    Datasource(RrdDb parentDb, DsDef dsDef) throws IOException {
-        spi = parentDb.getRrdBackend().getDatasource();
+    Datasource(RrdDb parentDb, DsDef dsDef, int dsIndex) throws IOException {
+        spi = parentDb.getRrdBackend().getDatasource(dsIndex);
         boolean shouldInitialize = dsDef != null;
         this.parentDb = parentDb;
         if (shouldInitialize) {
@@ -37,11 +36,12 @@ public class Datasource implements RrdUpdater {
             spi.setAccumValue(0.0);
             Header header = parentDb.getHeader();
             spi.setNanSeconds(header.getLastUpdateTime() % header.getStep());
+            spi.save();
         }
     }
 
     Datasource(RrdDb parentDb, DataImporter reader, int dsIndex) throws IOException {
-        this(parentDb, null);
+        this(parentDb, (DsDef) null, dsIndex);
         spi.dsName = reader.getDsName(dsIndex);
         spi.dsType = reader.getDsType(dsIndex);
         spi.heartbeat = reader.getHeartbeat(dsIndex);
@@ -50,6 +50,7 @@ public class Datasource implements RrdUpdater {
         spi.setLastValue(reader.getLastValue(dsIndex));
         spi.setAccumValue(reader.getAccumValue(dsIndex));
         spi.setNanSeconds(reader.getNanSeconds(dsIndex));
+        spi.save();
     }
 
     String dump() throws IOException {
@@ -317,9 +318,6 @@ public class Datasource implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public void setDsName(String newDsName) throws IOException {
-        if (newDsName != null && newDsName.length() > RrdString.STRING_LENGTH) {
-            throw new IllegalArgumentException("Invalid datasource name specified: " + newDsName);
-        }
         if (parentDb.containsDs(newDsName)) {
             throw new IllegalArgumentException("Datasource already defined in this RRD: " + newDsName);
         }

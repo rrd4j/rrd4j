@@ -1,5 +1,6 @@
 package org.rrd4j.backend.spi.binary;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.rrd4j.core.RrdBackendFactory;
@@ -26,4 +27,21 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
     protected boolean shouldValidateHeader(String path) throws IOException {
         return true;
     }
+    
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackend#resolveUniqId(java.lang.Object)
+     */
+    @Override
+    public String resolveUniqId(Object id) throws IOException {
+        if(id instanceof String) {
+            return (new File((String) id)).getCanonicalPath();
+        }
+        else if(id instanceof File) {
+            return ((File) id).getCanonicalPath();
+        }
+        else {
+            throw new IllegalArgumentException("can't resolve canonical path to " + id);
+        }
+    }
+
 }

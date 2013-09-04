@@ -13,88 +13,88 @@ class RrdToolReader extends DataImporter {
         rrd = new RRDatabase(rrdPath);
     }
 
-    String getVersion() {
+    public String getVersion() {
         return rrd.getHeader().getVersion();
     }
 
-    long getLastUpdateTime() {
+    public long getLastUpdateTime() {
         return Util.getTimestamp(rrd.getLastUpdate());
     }
 
-    long getStep() {
+    public long getStep() {
         return rrd.getHeader().getPDPStep();
     }
 
-    int getDsCount() {
+    public int getDsCount() {
         return rrd.getHeader().getDSCount();
     }
 
-    int getArcCount() throws IOException {
+    public int getArcCount() throws IOException {
         return rrd.getNumArchives();
     }
 
-    String getDsName(int dsIndex) {
+    public String getDsName(int dsIndex) {
         return rrd.getDataSource(dsIndex).getName();
     }
 
-    DsType getDsType(int dsIndex) {
+    public DsType getDsType(int dsIndex) {
         return DsType.valueOf(rrd.getDataSource(dsIndex).getType().toString());
     }
 
-    long getHeartbeat(int dsIndex) {
+    public long getHeartbeat(int dsIndex) {
         return rrd.getDataSource(dsIndex).getMinimumHeartbeat();
     }
 
-    double getMinValue(int dsIndex) {
+    public double getMinValue(int dsIndex) {
         return rrd.getDataSource(dsIndex).getMinimum();
     }
 
-    double getMaxValue(int dsIndex) {
+    public double getMaxValue(int dsIndex) {
         return rrd.getDataSource(dsIndex).getMaximum();
     }
 
-    double getLastValue(int dsIndex) {
+    public double getLastValue(int dsIndex) {
         String valueStr = rrd.getDataSource(dsIndex).getPDPStatusBlock().getLastReading();
         return Util.parseDouble(valueStr);
     }
 
-    double getAccumValue(int dsIndex) {
+    public double getAccumValue(int dsIndex) {
         return rrd.getDataSource(dsIndex).getPDPStatusBlock().getValue();
     }
 
-    long getNanSeconds(int dsIndex) {
+    public long getNanSeconds(int dsIndex) {
         return rrd.getDataSource(dsIndex).getPDPStatusBlock().getUnknownSeconds();
     }
 
-    ConsolFun getConsolFun(int arcIndex) {
+    public ConsolFun getConsolFun(int arcIndex) {
         return ConsolFun.valueOf(rrd.getArchive(arcIndex).getType().toString());
     }
 
-    double getXff(int arcIndex) {
+    public double getXff(int arcIndex) {
         return rrd.getArchive(arcIndex).getXff();
     }
 
-    int getSteps(int arcIndex) {
+    public int getSteps(int arcIndex) {
         return rrd.getArchive(arcIndex).getPdpCount();
     }
 
-    int getRows(int arcIndex) throws IOException {
+    public int getRows(int arcIndex) throws IOException {
         return rrd.getArchive(arcIndex).getRowCount();
     }
 
-    double getStateAccumValue(int arcIndex, int dsIndex) throws IOException {
+    public double getStateAccumValue(int arcIndex, int dsIndex) throws IOException {
         return rrd.getArchive(arcIndex).getCDPStatusBlock(dsIndex).getValue();
     }
 
-    int getStateNanSteps(int arcIndex, int dsIndex) throws IOException {
+    public int getStateNanSteps(int arcIndex, int dsIndex) throws IOException {
         return rrd.getArchive(arcIndex).getCDPStatusBlock(dsIndex).getUnknownDatapoints();
     }
 
-    double[] getValues(int arcIndex, int dsIndex) throws IOException {
+    public double[] getValues(int arcIndex, int dsIndex) throws IOException {
         return rrd.getArchive(arcIndex).getValues()[dsIndex];
     }
 
-    void release() throws IOException {
+    public void release() throws IOException {
         if (rrd != null) {
             rrd.close();
             rrd = null;

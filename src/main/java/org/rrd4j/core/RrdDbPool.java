@@ -161,7 +161,7 @@ public class RrdDbPool {
             return;
         }
 
-        String canonicalPath = rrdDb.getCanonicalPath();
+        String canonicalPath = rrdDb.getUniqId();
         RrdEntry ref = getEntry(canonicalPath);
 
         try {
@@ -354,7 +354,7 @@ public class RrdDbPool {
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(RrdDb rrdDb) throws IOException {
-        String canonicalPath = rrdDb.getCanonicalPath();
+        String canonicalPath = rrdDb.getUniqId();
         RrdEntry ref = pool.get(canonicalPath);
         if(ref == null)
             return 0;

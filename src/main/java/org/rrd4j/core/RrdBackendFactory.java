@@ -236,7 +236,9 @@ public abstract class RrdBackendFactory {
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         if(state != State.RUNNING)
             throw new IllegalStateException("backend not started");
-        return doOpen(path, readOnly);
+        RrdBackend backend = doOpen(path, readOnly);
+        backend.setFactory(this);
+        return backend;
     }
 
     protected abstract RrdBackend doOpen(String path, boolean readOnly) throws IOException;
@@ -343,4 +345,7 @@ public abstract class RrdBackendFactory {
     State getState() {
         return state;
     }
+    
+    public abstract String resolveUniqId(Object id) throws IOException;
+
 }

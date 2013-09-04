@@ -15,26 +15,32 @@ import org.rrd4j.backend.spi.Header;
  * @author Sasa Markovic*
  */
 public class HeaderBinary extends Header implements Allocated {
+    static final int SIGNATURE_LENGTH = 5;
+    static final String SIGNATURE = "RRD4J";
+
+    static final String DEFAULT_SIGNATURE = "RRD4J, version 0.2";
+    static final private String VERSIONS[] = {"version 0.1", "version 0.2"};
+
     protected final RrdAllocator allocator;
     protected final RrdBinaryBackend backend;
 
-    private RrdString signature;
-    private RrdLong step;
-    private RrdInt dsCount, arcCount;
-    private RrdLong lastUpdateTime;
+    private RrdString signatureP;
+    private RrdLong stepP;
+    private RrdInt dsCountP, arcCountP;
+    private RrdLong lastUpdateTimeP;
    
     HeaderBinary(RrdAllocator allocator, RrdBinaryBackend backend) throws IOException {
         this.allocator = allocator;
         this.backend = backend;
 
-        this.signature = new RrdString(this);
-        this.step = new RrdLong(this, true);
-        super.step = this.step.get();
-        this.dsCount = new RrdInt(this, true);
-        super.dsCount = this.dsCount.get();
-        this.arcCount = new RrdInt(this, true);
-        super.arcCount = this.arcCount.get();
-        this.lastUpdateTime = new RrdLong(this);
+        this.signatureP = new RrdString(this);
+        this.stepP = new RrdLong(this, true);
+        super.step = this.stepP.get();
+        this.dsCountP = new RrdInt(this, true);
+        super.dsCount = this.dsCountP.get();
+        this.arcCountP = new RrdInt(this, true);
+        super.arcCount = this.arcCountP.get();
+        this.lastUpdateTimeP = new RrdLong(this);
     }
 
     /**
@@ -45,7 +51,7 @@ public class HeaderBinary extends Header implements Allocated {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public String getSignature() throws IOException {
-        return signature.get();
+        return signatureP.get();
     }
 
     /**
@@ -55,22 +61,39 @@ public class HeaderBinary extends Header implements Allocated {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public long getLastUpdateTime() throws IOException {
-        return lastUpdateTime.get();
+        return lastUpdateTimeP.get();
     }
 
     public void setLastUpdateTime(long lastUpdateTime) throws IOException {
-        this.lastUpdateTime.set(lastUpdateTime);
+        this.lastUpdateTimeP.set(lastUpdateTime);
     }
 
     @Override
-    public void update() throws IOException {
-        this.step.set(super.step);
-        this.dsCount.set(super.dsCount);
-        this.arcCount.set(super.arcCount);
+    public void save() throws IOException {
+        String initSignature = null; 
+        if(version != -1) {
+            initSignature = SIGNATURE + ", " + VERSIONS[ version - 1];           
+        }
+        else {
+            initSignature = DEFAULT_SIGNATURE;
+        }
+        signatureP.set(initSignature);
+        stepP.set(step);
+        dsCountP.set(dsCount);
+        arcCountP.set(arcCount);
     }
 
     @Override
-    public void flush() {
+    public void load() throws IOException {
+        step = stepP.get();
+        dsCount = dsCountP.get();
+        arcCount = arcCountP.get();
+        for(int i=0; i < VERSIONS.length; i++) {
+            if(signatureP.get().endsWith(VERSIONS[i])) {
+                version = i + 1;
+                break;
+            }
+        }
     }
 
     @Override
@@ -85,7 +108,34 @@ public class HeaderBinary extends Header implements Allocated {
 
     @Override
     public void setSignature(String signature) throws IOException {
-        this.signature.set(signature);
+        this.signatureP.set(signature);
+    }
+
+    boolean isRrd4jHeader() throws IOException {
+        return getSignature().startsWith(SIGNATURE) || getSignature().startsWith("JR"); // backwards compatible with JRobin
+    }
+
+    public void validateHeader() throws IOException {
+        if (!isRrd4jHeader()) {
+            throw new IOException("Invalid file header. File [" + backend.getUniqId() + "] is not a RRD4J RRD file");
+        }
+    }
+
+    /**
+     * Return the RRD version.
+     *
+     * @return RRD version
+     * @throws java.io.IOException if any.
+     */
+    public int getVersion() throws IOException {
+        if(version < 0) {
+        }
+        return version;
+    }
+
+    @Override
+    public String getInfo() throws IOException {
+        return signatureP.get().substring(SIGNATURE_LENGTH);
     }
 
 }

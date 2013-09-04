@@ -7,7 +7,7 @@ class RrdString extends RrdPrimitive {
     private String cache;
 
     RrdString(Allocated updater, boolean isConstant) throws IOException {
-        super(updater, RrdPrimitive.RRD_STRING, isConstant);
+        super(updater, RrdType.STRING, isConstant);
     }
 
     RrdString(Allocated updater) throws IOException {

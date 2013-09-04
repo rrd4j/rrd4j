@@ -154,4 +154,10 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         }
     }
 
+    @Override
+    public String resolveUniqId(Object id) throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

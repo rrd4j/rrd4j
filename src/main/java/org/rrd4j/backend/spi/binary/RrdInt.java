@@ -7,7 +7,7 @@ class RrdInt extends RrdPrimitive {
     private boolean cached = false;
 
     RrdInt(Allocated updater, boolean isConstant) throws IOException {
-        super(updater, RrdPrimitive.RRD_INT, isConstant);
+        super(updater, RrdType.INT, isConstant);
     }
 
     RrdInt(Allocated updater) throws IOException {

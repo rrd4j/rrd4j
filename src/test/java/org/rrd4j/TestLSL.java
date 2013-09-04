@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
@@ -58,6 +59,9 @@ public class TestLSL {
 
     @Test
     public void test1() throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("MEMORY");
+        factory.start();
+
         String rrdpath = testFolder.newFile("trend.rrd").getCanonicalPath();
         RrdDef rrdDef = new RrdDef(rrdpath, START - 1, 300);
 
@@ -65,7 +69,10 @@ public class TestLSL {
         rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700);
         rrdDef.addArchive(AVERAGE, 0.5, 24, 775);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = new RrdDb(rrdDef, factory);
+        System.out.println(rrdDb.getPath());
+        System.out.println(rrdDb.getUniqId());
+        System.out.println(rrdDb.getRrdBackend());
 
         long t = START;
         Sample sample = rrdDb.createSample();
@@ -95,7 +102,7 @@ public class TestLSL {
         gdef.setMinValue(0);                                                    //--lower-limit=0
         gdef.setMaxValue(100);                                                  //--upper-limit=100
         gdef.setRigid(true);                                                    //--rigid
-        gdef.datasource("pused1", rrdDb.getCanonicalPath(), "ns-dskPercent", ConsolFun.AVERAGE);   //DEF:pused1={rrd1}:ns-dskPercent:AVERAGE
+        gdef.datasource("pused1", rrdDb.getUniqId(), "ns-dskPercent", ConsolFun.AVERAGE, "MEMORY");   //DEF:pused1={rrd1}:ns-dskPercent:AVERAGE
         gdef.datasource("pused2", "ns-dskPercent", week.fetchData());           //DEF:pused2={rrd1}:ns-dskPercent:AVERAGE:start=-1w
         gdef.datasource("pused3", "ns-dskPercent", month.fetchData());          //DEF:pused3={rrd1}:ns-dskPercent:AVERAGE:start=-1m
         gdef.datasource("D2", "pused2", new Variable.LSLSLOPE());               //VDEF:D2=pused2,LSLSLOPE
@@ -146,6 +153,8 @@ public class TestLSL {
         Assert.assertEquals("  Reach  100% at Fri Apr 30 23:30:00 CEST 2010 ", lines[2]);
         Assert.assertEquals("  Reach  100% at Fri Apr 30 23:30:00 CEST 2010", lines[3]);
 
+        factory.stop();
+        
     }
 }
 

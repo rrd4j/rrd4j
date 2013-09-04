@@ -10,7 +10,7 @@ import java.util.Date;
 class HeaderTableModel extends AbstractTableModel {
     private static final Object[] DESCRIPTIONS = {
             "path", "signature", "step", "last timestamp",
-            "datasources", "archives", "size"
+            "datasources", "archives"
     };
     private static final String[] COLUMN_NAMES = {"description", "value"};
 
@@ -68,9 +68,8 @@ class HeaderTableModel extends AbstractTableModel {
                         new Date(header.getLastUpdateTime() * 1000L) + "]";
                 String datasources = "" + header.getDsCount();
                 String archives = "" + header.getArcCount();
-                String size = rrd.getRrdBackend().getLength() + " bytes";
                 values = new Object[]{
-                        path, signature, step, lastTimestamp, datasources, archives, size
+                        path, signature, step, lastTimestamp, datasources, archives
                 };
             }
             finally {

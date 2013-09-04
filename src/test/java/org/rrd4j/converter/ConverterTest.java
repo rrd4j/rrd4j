@@ -49,8 +49,10 @@ public class ConverterTest {
     }
 
     private void testImport(String file) throws IOException {
-        URL url = getClass().getResource(file); 
+        URL url = getClass().getResource(file);
+        RrdBackendFactory.getFactory("MEMORY").start();
         RrdDb rrd = new RrdDb("test", "rrdtool:/" + url.getFile(), RrdBackendFactory.getFactory("MEMORY"));
         org.rrd4j.TestsUtils.testRrdDb(rrd);
+        RrdBackendFactory.getFactory("MEMORY").stop();
     }
 }

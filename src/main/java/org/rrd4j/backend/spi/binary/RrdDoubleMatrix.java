@@ -2,18 +2,14 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
-import org.rrd4j.core.RrdUpdater;
-
 class RrdDoubleMatrix extends RrdPrimitive {
     private final int rows;
     private final int columns;
 
-    RrdDoubleMatrix(RrdUpdater updater, int row, int column, boolean shouldInitialize) throws IOException {
-        super(updater, RrdPrimitive.RRD_DOUBLE, row * column, false);
+    RrdDoubleMatrix(Allocated updater, int row, int column) throws IOException {
+        super(updater, RrdType.DOUBLE, row * column, false);
         this.rows = row;
         this.columns = column;
-        if (shouldInitialize)
-            writeDouble(0, Double.NaN, rows * columns);
     }
 
     void set(int column, int index, double value) throws IOException {

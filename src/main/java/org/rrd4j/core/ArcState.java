@@ -13,9 +13,9 @@ public class ArcState implements RrdUpdater {
 
     org.rrd4j.backend.spi.ArcState spi;
 
-    ArcState(Archive parentArc, boolean shouldInitialize) throws IOException {
+    ArcState(Archive parentArc, boolean shouldInitialize, int arcIndex, int dsIndex) throws IOException {
         this.parentArc = parentArc;
-        spi = parentArc.getParentDb().getRrdBackend().ArcState();
+        spi = parentArc.getParentDb().getRrdBackend().getArcState(arcIndex, dsIndex);
 
         if (shouldInitialize) {
             Header header = parentArc.getParentDb().getHeader();
@@ -26,6 +26,7 @@ public class ArcState implements RrdUpdater {
                     Util.normalize(lastUpdateTime, arcStep)) / step;
             spi.setAccumValue(Double.NaN);
             spi.setNanSteps(initNanSteps);
+            spi.save();
         }
     }
 

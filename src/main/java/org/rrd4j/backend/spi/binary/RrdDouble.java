@@ -9,11 +9,11 @@ class RrdDouble extends RrdPrimitive {
     private boolean cached = false;
 
     RrdDouble(Allocated updater, boolean isConstant) throws IOException {
-        super(updater, RrdDouble.RRD_DOUBLE, isConstant);
+        super(updater, RrdType.DOUBLE, isConstant);
     }
 
     RrdDouble(Allocated updater) throws IOException {
-        super(updater, RrdDouble.RRD_DOUBLE, false);
+        super(updater, RrdType.DOUBLE, false);
     }
 
     void set(double value) throws IOException {

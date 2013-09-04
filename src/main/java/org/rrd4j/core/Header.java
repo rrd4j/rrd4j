@@ -13,16 +13,10 @@ import java.io.IOException;
  * @author Sasa Markovic*
  */
 public class Header implements RrdUpdater {
-    static final int SIGNATURE_LENGTH = 5;
-    static final String SIGNATURE = "RRD4J";
-
-    static final String DEFAULT_SIGNATURE = "RRD4J, version 0.1";
     static final String RRDTOOL_VERSION1 = "0001";
     static final String RRDTOOL_VERSION3 = "0003";
-    static final private String VERSIONS[] = {"version 0.1", "version 0.2"};
 
     private RrdDb parentDb;
-    private int version = -1;
 
     //SPI
     private org.rrd4j.backend.spi.Header spi;
@@ -31,38 +25,28 @@ public class Header implements RrdUpdater {
         this.parentDb = parentDb;
         spi = parentDb.getRrdBackend().getHeader();
 
-        String initSignature = null;		
-        if(rrdDef != null) {
-            version = rrdDef.getVersion(); 
-            initSignature = SIGNATURE + ", " + VERSIONS[ version - 1];
-        }
-        else {
-            initSignature = DEFAULT_SIGNATURE;
-        }
-
-
         if (rrdDef != null) {
-            spi.setSignature(initSignature);
+            spi.version = rrdDef.getVersion();
             spi.step = rrdDef.getStep();
             spi.dsCount = rrdDef.getDsCount();
             spi.arcCount = rrdDef.getArcCount();
             spi.setLastUpdateTime(rrdDef.getStartTime());
+            spi.save();
         }
-        spi.update();
     }
 
     Header(RrdDb parentDb, DataImporter reader) throws IOException {
         this(parentDb, (RrdDef) null);
+
         String version = reader.getVersion();
         if (!RRDTOOL_VERSION1.equals(version) && !RRDTOOL_VERSION3.equals(version) ) {
             throw new IllegalArgumentException("Could not unserialize xml version " + version);
         }
-        spi.setSignature(DEFAULT_SIGNATURE);
         spi.step = reader.getStep();
         spi.dsCount = reader.getDsCount();
         spi.arcCount = reader.getArcCount();
         spi.setLastUpdateTime(reader.getLastUpdateTime());
-        spi.update();
+        spi.save();
     }
 
     /**
@@ -83,22 +67,7 @@ public class Header implements RrdUpdater {
      * @throws java.io.IOException if any.
      */
     public String getInfo() throws IOException {
-        return getSignature().substring(SIGNATURE_LENGTH);
-    }
-
-    /**
-     * <p>setInfo.</p>
-     *
-     * @param info a {@link java.lang.String} object.
-     * @throws java.io.IOException if any.
-     */
-    public void setInfo(String info) throws IOException {
-        if (info != null && info.length() > 0) {
-            spi.setSignature(SIGNATURE + info);
-        }
-        else {
-            spi.setSignature(SIGNATURE);
-        }
+        return spi.getInfo();
     }
 
     /**
@@ -195,25 +164,11 @@ public class Header implements RrdUpdater {
      * @throws java.io.IOException if any.
      */
     public int getVersion() throws IOException {
-        if(version < 0) {
-            for(int i=0; i < VERSIONS.length; i++) {
-                if(spi.getSignature().endsWith(VERSIONS[i])) {
-                    version = i + 1;
-                    break;
-                }
-            }
-        }
-        return version;
+        return spi.version;
     }
-
-    boolean isRrd4jHeader() throws IOException {
-        return spi.getSignature().startsWith(SIGNATURE) || spi.getSignature().startsWith("JR"); // backwards compatible with JRobin
-    }
-
-    void validateHeader() throws IOException {
-        if (!isRrd4jHeader()) {
-            throw new IOException("Invalid file header. File [" + parentDb.getCanonicalPath() + "] is not a RRD4J RRD file");
-        }
+    
+    public void validateHeader() throws IOException {
+        spi.validateHeader();
     }
 
 }

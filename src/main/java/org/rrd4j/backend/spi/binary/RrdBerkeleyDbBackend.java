@@ -72,4 +72,10 @@ public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
             }
         }
     }
+
+    @Override
+    public String getUniqId() throws IOException {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
 }

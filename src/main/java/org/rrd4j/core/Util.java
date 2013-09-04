@@ -137,7 +137,7 @@ public class Util {
         return Double.isNaN(x) ? y : Double.isNaN(y) ? x : x + y;
     }
 
-    static String formatDouble(double x, String nanString, boolean forceExponents) {
+    public static String formatDouble(double x, String nanString, boolean forceExponents) {
         if (Double.isNaN(x)) {
             return nanString;
         }
@@ -147,7 +147,7 @@ public class Util {
         return "" + x;
     }
 
-    static String formatDouble(double x, boolean forceExponents) {
+    public static String formatDouble(double x, boolean forceExponents) {
         return formatDouble(x, "" + Double.NaN, forceExponents);
     }
 

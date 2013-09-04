@@ -90,4 +90,10 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         return statsMap;
     }
 
+    @Override
+    public String resolveUniqId(Object id) throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

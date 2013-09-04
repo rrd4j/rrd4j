@@ -90,9 +90,11 @@ public class RrdDbTest {
 
     @Test
     public void testXml1Import() throws IOException {
+        RrdBackendFactory.getFactory("MEMORY").start();
         URL url = getClass().getResource("/rrdtool/rrdtool1.xml"); 
         RrdDb rrd = new RrdDb("test", "xml:/" + url.getFile(), RrdBackendFactory.getFactory("MEMORY"));
         org.rrd4j.TestsUtils.testRrdDb(rrd);
+        RrdBackendFactory.getFactory("MEMORY").stop();
     }
 
     @Test
@@ -104,6 +106,7 @@ public class RrdDbTest {
     
     @Test
     public void testSpike() throws IOException {
+        RrdBackendFactory.getDefaultFactory().start();
         RrdDef rrdDef = new RrdDef(testFolder.newFile("testSpike.rrd").getCanonicalPath(), 0, 60);
         rrdDef.setVersion(2);
         rrdDef.addDatasource("ds", GAUGE, 3600, -5, 30);
@@ -135,5 +138,6 @@ public class RrdDbTest {
         Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);
         Assert.assertEquals("Bad average in point 2", 30, values[2], 1e-3);
         Assert.assertEquals("Data after last entry", Double.NaN, values[3]);
+        RrdBackendFactory.getDefaultFactory().start();
     }
 }

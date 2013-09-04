@@ -148,21 +148,21 @@ public class RrdDb implements RrdUpdater {
 
         String path = rrdDef.getPath();
         backend = factory.open(path, false);
-        backend.setFactory(factory);
         try {
+            backend.create(this, rrdDef);
             // create header
             header = new Header(this, rrdDef);
             // create datasources
             DsDef[] dsDefs = rrdDef.getDsDefs();
             datasources = new Datasource[dsDefs.length];
             for (int i = 0; i < dsDefs.length; i++) {
-                datasources[i] = new Datasource(this, dsDefs[i]);
+                datasources[i] = new Datasource(this, dsDefs[i], i);
             }
             // create archives
             ArcDef[] arcDefs = rrdDef.getArcDefs();
             archives = new Archive[arcDefs.length];
             for (int i = 0; i < arcDefs.length; i++) {
-                archives[i] = new Archive(this, arcDefs[i]);
+                archives[i] = new Archive(this, arcDefs[i], i);
             }
         }
         catch (IOException e) {
@@ -210,8 +210,8 @@ public class RrdDb implements RrdUpdater {
             throw new FileNotFoundException("Could not open " + path + " [non existent]");
         }
         backend = factory.open(path, readOnly);
-        backend.setFactory(factory);
         try {
+            backend.load(this); 
             // restore header
             header = new Header(this, (RrdDef) null);
 
@@ -223,13 +223,13 @@ public class RrdDb implements RrdUpdater {
             int dsCount = header.getDsCount();
             datasources = new Datasource[dsCount];
             for (int i = 0; i < dsCount; i++) {
-                datasources[i] = new Datasource(this, null);
+                datasources[i] = new Datasource(this, (DsDef) null, i);
             }
             // restore archives
             int arcCount = header.getArcCount();
             archives = new Archive[arcCount];
             for (int i = 0; i < arcCount; i++) {
-                archives[i] = new Archive(this, null);
+                archives[i] = new Archive(this, (ArcDef) null, i);
             }
         }
         catch (IOException e) {
@@ -385,8 +385,8 @@ public class RrdDb implements RrdUpdater {
             reader = new XmlReader(externalPath);
         }
         backend = factory.open(rrdPath, false);
-        backend.setFactory(factory);
         try {
+            backend.load(this, reader);
             // create header
             header = new Header(this, reader);
             // create datasources
@@ -987,8 +987,8 @@ public class RrdDb implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error or if the underlying backend is
      *                     not derived from RrdFileBackend.
      */
-    public String getCanonicalPath() throws IOException {
-        return backend.getCanonicalPath();
+    public String getUniqId() throws IOException {
+        return backend.getUniqId();
     }
 
     /**
@@ -1092,16 +1092,6 @@ public class RrdDb implements RrdUpdater {
      */
     public synchronized String getInfo() throws IOException {
         return header.getInfo();
-    }
-
-    /**
-     * <p>setInfo.</p>
-     *
-     * @param info a {@link java.lang.String} object.
-     * @throws java.io.IOException if any.
-     */
-    public synchronized void setInfo(String info) throws IOException {
-        header.setInfo(info);
     }
 
     /**

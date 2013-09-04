@@ -1,7 +1,6 @@
 package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.rrd4j.core.RrdBackend;
 import org.rrd4j.core.RrdBackendMeta;
@@ -30,7 +29,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * The thread pool to pass to newly-created RrdNioBackend instances.
      */
-    private RrdSyncThreadPool syncThreadPool =null;
+    private RrdSyncThreadPool syncThreadPool = null;
     
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackendFactory#doStart()
@@ -38,7 +37,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     @Override
     protected boolean startBackend() {
         if(syncThreadPool == null)
-            return false;
+            syncThreadPool = new RrdSyncThreadPool();
         return true;
     }
 

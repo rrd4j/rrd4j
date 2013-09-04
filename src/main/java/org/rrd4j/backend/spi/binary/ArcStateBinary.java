@@ -21,14 +21,6 @@ public class ArcStateBinary extends ArcState implements Allocated {
     }
 
     @Override
-    public void update() throws IOException {        
-    }
-
-    @Override
-    public void flush() throws IOException {
-    }
-
-    @Override
     public RrdAllocator getRrdAllocator() {
         return allocator;
     }
@@ -56,6 +48,18 @@ public class ArcStateBinary extends ArcState implements Allocated {
     @Override
     public long getNanSteps() throws IOException {
         return nanSteps.get();
+    }
+
+    @Override
+    public void save() throws IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void load() throws IOException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

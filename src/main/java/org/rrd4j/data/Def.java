@@ -1,11 +1,10 @@
 package org.rrd4j.data;
 
+import java.io.IOException;
+
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.RrdBackendFactory;
-import org.rrd4j.core.Util;
-
-import java.io.IOException;
 
 class Def extends Source {
     private String path, dsName, backend;
@@ -22,7 +21,7 @@ class Def extends Source {
         setFetchData(fetchData);
         consolFun = fetchData.getRequest().getConsolFun();
         try {
-            path = fetchData.getRequest().getParentDb().getCanonicalPath();
+            path = fetchData.getRequest().getParentDb().getUniqId();
             backend = fetchData.getRequest().getParentDb().getRrdBackend().getFactory().getName();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -38,6 +37,8 @@ class Def extends Source {
         this.path = path;
         this.dsName = dsName;
         this.consolFun = consolFunc;
+        if(backend == null)
+            backend = RrdBackendFactory.getDefaultFactory().getName();
         this.backend = backend;
     }
 
@@ -45,8 +46,8 @@ class Def extends Source {
         return path;
     }
 
-    String getCanonicalPath() throws IOException {
-        return Util.getCanonicalPath(path);
+    String getUniqId() throws IOException {
+        return RrdBackendFactory.getFactory(backend).resolveUniqId(path);
     }
 
     String getDsName() {
@@ -62,7 +63,7 @@ class Def extends Source {
     }
 
     boolean isCompatibleWith(Def def) throws IOException {
-        return getCanonicalPath().equals(def.getCanonicalPath()) &&
+        return getUniqId().equals(def.getUniqId()) &&
                 getConsolFun() == def.consolFun &&
                 ((backend == null && def.backend == null) ||
                         (backend != null && def.backend != null && backend.equals(def.backend)));

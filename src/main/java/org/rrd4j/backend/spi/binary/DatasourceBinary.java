@@ -2,6 +2,7 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
+import org.rrd4j.DsType;
 import org.rrd4j.backend.spi.Datasource;
 
 /**
@@ -19,9 +20,9 @@ public class DatasourceBinary extends Datasource implements Allocated {
     protected final RrdBinaryBackend backend;
 
     // definition
-    private final RrdString dsName, dsType;
-    private final RrdLong heartbeat;
-    private final RrdDouble minValue, maxValue;
+    private final RrdString dsNameP, dsTypeP;
+    private final RrdLong heartbeatP;
+    private final RrdDouble minValueP, maxValueP;
 
     // state variables
     private RrdDouble lastValue;
@@ -32,11 +33,11 @@ public class DatasourceBinary extends Datasource implements Allocated {
         this.allocator = allocator;
         this.backend = backend;
 
-        dsName = new RrdString(this);
-        dsType = new RrdString(this);
-        heartbeat = new RrdLong(this);
-        minValue = new RrdDouble(this);
-        maxValue = new RrdDouble(this);
+        dsNameP = new RrdString(this);
+        dsTypeP = new RrdString(this);
+        heartbeatP = new RrdLong(this);
+        minValueP = new RrdDouble(this);
+        maxValueP = new RrdDouble(this);
         lastValue = new RrdDouble(this);
         accumValue = new RrdDouble(this);
         nanSeconds = new RrdLong(this);
@@ -107,20 +108,25 @@ public class DatasourceBinary extends Datasource implements Allocated {
 
     @Override
     public void setAccumValue(double accumValue) throws IOException {
-        this.setAccumValue(accumValue);
+        this.accumValue.set(accumValue);
     }
 
     @Override
-    public void update() throws IOException {
-        this.dsName.set(super.dsName);
-        this.dsType.set(super.dsType.toString());
-        this.heartbeat.set(super.heartbeat);
-        this.minValue.set(super.minValue);
-        this.maxValue.set(super.maxValue);
+    public void save() throws IOException {
+        dsNameP.set(dsName);
+        dsTypeP.set(dsType.toString());
+        heartbeatP.set(heartbeat);
+        minValueP.set(minValue);
+        maxValueP.set(maxValue);
     }
 
     @Override
-    public void flush() throws IOException {
+    public void load() throws IOException {
+        dsName = dsNameP.get();
+        dsType = DsType.valueOf(dsTypeP.get());
+        heartbeat = heartbeatP.get();
+        minValue = minValueP.get();
+        maxValue = maxValueP.get();
     }
 }
 

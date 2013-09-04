@@ -12,7 +12,7 @@ import org.rrd4j.core.BackEndFactoryTest;
 import org.rrd4j.core.RrdBackendFactory;
 
 public class RrdNioBackendFactoryTest extends BackEndFactoryTest {
-    
+
     @Test
     public void testName() {
         checkRegistred("NIO", RrdNioBackendFactory.class);
@@ -20,13 +20,13 @@ public class RrdNioBackendFactoryTest extends BackEndFactoryTest {
 
     @Test
     public void testBeans() throws IntrospectionException {
-        checkBeans(RrdNioBackendFactory.class, "syncPeriod");
+        checkBeans(RrdNioBackendFactory.class, "syncPeriod", "syncThreadPool");
     }
 
     @Test
     public void testStat() throws IOException {
         RrdBackendFactory factory = RrdBackendFactory.getFactory("NIO");
-        
+
         factory.start();
         Map<String, Number> stats = getStats(factory, "truc.rrd");
         Assert.assertEquals(0, stats.size());

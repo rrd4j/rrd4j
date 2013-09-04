@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.rrd4j.core.RrdDb;
 
 public class TestsUtils {
+    
     public static final void testRrdDb(RrdDb db) throws IOException {
         double value;
 

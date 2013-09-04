@@ -2,13 +2,11 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
-import org.rrd4j.core.RrdUpdater;
-
 class RrdDoubleArray extends RrdPrimitive {
     private int length;
 
-    RrdDoubleArray(RrdUpdater updater, int length) throws IOException {
-        super(updater, RrdPrimitive.RRD_DOUBLE, length, false);
+    RrdDoubleArray(Allocated updater, int length) throws IOException {
+        super(updater, RrdType.DOUBLE, length, false);
         this.length = length;
     }
 

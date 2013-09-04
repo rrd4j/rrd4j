@@ -2,13 +2,12 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
-
 class RrdLong extends RrdPrimitive {
     private long cache;
     private boolean cached = false;
 
     RrdLong(Allocated updater, boolean isConstant) throws IOException {
-        super(updater, RrdPrimitive.RRD_LONG, isConstant);
+        super(updater, RrdType.LONG, isConstant);
     }
 
     RrdLong(Allocated updater) throws IOException {

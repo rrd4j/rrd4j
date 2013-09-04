@@ -2,11 +2,17 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
+import org.rrd4j.backend.spi.ArcState;
 import org.rrd4j.backend.spi.Archive;
 import org.rrd4j.backend.spi.Datasource;
 import org.rrd4j.backend.spi.Header;
-import org.rrd4j.backend.spi.binary.RrdPrimitive;
+import org.rrd4j.backend.spi.Robin;
+import org.rrd4j.core.ArcDef;
+import org.rrd4j.core.DataImporter;
+import org.rrd4j.core.DsDef;
 import org.rrd4j.core.RrdBackend;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdDef;
 
 /**
  * Base implementation class for all backend classes. Each Round Robin Database object
@@ -51,8 +57,14 @@ import org.rrd4j.core.RrdBackend;
  * @author Sasa Markovic
  */
 public abstract class RrdBinaryBackend extends RrdBackend {
-    
+
     private final RrdAllocator allocator = new RrdAllocator();
+
+    private HeaderBinary header;
+    private DatasourceBinary[] datasources;
+    private ArchiveBinary[] archives;
+    private ArcStateBinary[][] states;
+    private Robin[][] robins;
 
     /**
      * Creates backend for a RRD storage with the given path.
@@ -108,6 +120,27 @@ public abstract class RrdBinaryBackend extends RrdBackend {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public void close() throws IOException {
+        saveState();
+    }
+
+    private void saveState() throws IOException {
+        header.save();
+        for(Datasource ds: datasources) {
+            ds.save();
+        }
+        for(Archive archive: archives) {
+            archive.save();
+        }
+        for(ArcState[] s1: states) {
+            for(ArcState s2: s1) {
+                s2.save();
+            }
+        }
+        for(Robin[] r1: robins) {
+            for(Robin r2: r1) {
+                r2.save();
+            }
+        }
     }
 
     /**
@@ -295,50 +328,182 @@ public abstract class RrdBinaryBackend extends RrdBackend {
 
     private static double getDouble(byte[] b) {
         assert b.length == 8 : "Invalid number of bytes for double conversion";
-		return Double.longBitsToDouble(getLong(b));
-	}
+                return Double.longBitsToDouble(getLong(b));
+        }
 
-    /* (non-Javadoc)
-     * @see org.rrd4j.core.RrdBackend#getCanonicalPath()
-     */
-    @Override
-    public String getCanonicalPath() throws IOException {
-        return null;
-    }
 
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackend#getHeader()
      */
     @Override
     public Header getHeader() throws IOException {
-        return new HeaderBinary(allocator, this);
+        return header;
     }
 
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackend#getDatasource()
      */
     @Override
-    public Datasource getDatasource() {
-        // TODO Auto-generated method stub
-        return null;
+    public Datasource getDatasource(int index) {
+        return datasources[index];
     }
 
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackend#getArchive()
      */
     @Override
-    public Archive getArchive() {
-        // TODO Auto-generated method stub
-        return null;
+    public Archive getArchive(int index) {
+        return archives[index];
     }
 
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackend#ArcState()
      */
     @Override
-    public org.rrd4j.backend.spi.ArcState ArcState() {
-        // TODO Auto-generated method stub
-        return null;
+    public ArcState getArcState(int arcIndex, int dsIndex) {
+        return states[arcIndex][dsIndex];
+    }
+
+    @Override
+    public Robin getRobin(int arcIndex, int dsIndex) throws IOException {
+        return robins[arcIndex][dsIndex];        
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackend#create(org.rrd4j.core.RrdDb, org.rrd4j.core.RrdDef)
+     */
+    @Override
+    public void create(RrdDb rrdDb, RrdDef rrdDef) throws IOException {        
+        for(DsDef dsdef: rrdDef.getDsDefs()) {
+            String name = dsdef.getDsName();
+            if (name != null && name.length() > RrdString.STRING_LENGTH) {
+                throw new IllegalArgumentException("Invalid datasource name specified: " + name);
+            }
+        }
+        setLength(getEstimatedSize(rrdDef));
+
+        int version = rrdDef.getVersion();
+        int dsCount = rrdDef.getDsCount();
+        int arcCount = rrdDef.getArcCount();
+
+        header = new HeaderBinary(allocator, this);
+        datasources = new DatasourceBinary[rrdDef.getDsCount()];
+        for(int i = 0; i < dsCount; i++) {
+            datasources[i] = new DatasourceBinary(allocator, this);
+        }
+        states = new ArcStateBinary[arcCount][];
+        archives = new ArchiveBinary[arcCount];
+        RrdInt[] pointers = null;
+        if(version == 1) {
+            robins = new Robin[arcCount][];
+        }
+        else {
+            pointers = new RrdInt[dsCount];
+            robins = new Robin[arcCount][];
+        }
+        for(int i = 0; i < arcCount; i++) {
+            int rows = rrdDef.getArcDefs()[i].getRows();
+            states[i] = new ArcStateBinary[dsCount];
+            archives[i] = new ArchiveBinary(allocator, this);
+            robins[i] = new Robin[dsCount];
+            if (version == 1) {
+                for (int j = 0; i < dsCount; j++) {
+                    states[i][j] = new ArcStateBinary(allocator, this);
+                    robins[i][j] = new RobinArray(allocator, this, rows);
+                }
+            } else {
+                for (int j = 0; j < dsCount; j++) {
+                    pointers[j] = new RrdInt(archives[i]);
+                }
+                RrdDoubleMatrix values = new RrdDoubleMatrix(archives[i], rows, dsCount);
+                for (int k = 0; k < dsCount; k++) {
+                    states[i][k] = new ArcStateBinary(allocator, this);
+                    robins[i][k] = new RobinMatrix(allocator, this, values, pointers[k], k);
+                }
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackend#load(org.rrd4j.core.RrdDb, org.rrd4j.core.RrdDef)
+     */
+    @Override
+    public void load(RrdDb rrdDb) throws IOException {
+        header = new HeaderBinary(allocator, this);
+        header.load();
+
+        int dsCount = header.dsCount;
+        int arcCount = header.arcCount;
+
+        datasources = new DatasourceBinary[dsCount];
+        for(int i = 0; i < dsCount; i++) {
+            datasources[i] = new DatasourceBinary(allocator, this);
+            datasources[i].load();
+        }
+        states = new ArcStateBinary[arcCount][];
+        archives = new ArchiveBinary[arcCount];
+        RrdInt[] pointers = null;
+        if(header.version == 1) {
+            robins = new Robin[arcCount][];
+        }
+        else {
+            pointers = new RrdInt[dsCount];
+            robins = new Robin[arcCount][];
+        }
+        for(int i = 0; i < arcCount; i++) {
+            states[i] = new ArcStateBinary[dsCount];
+            archives[i] = new ArchiveBinary(allocator, this);
+            archives[i].load();
+            int rows = archives[i].rows;
+            robins[i] = new Robin[dsCount];
+            if (header.version == 1) {
+                for (int j = 0; i < dsCount; j++) {
+                    states[i][j] = new ArcStateBinary(allocator, this);
+                    states[i][j].load();
+                    robins[i][j] = new RobinArray(allocator, this, rows);
+                    robins[i][j].load();
+                }
+            } else {
+                for (int j = 0; j < dsCount; j++) {
+                    pointers[j] = new RrdInt(archives[i]);
+                }
+                RrdDoubleMatrix values = new RrdDoubleMatrix(archives[i], rows, dsCount);
+                for (int k = 0; k < dsCount; k++) {
+                    states[i][k] = new ArcStateBinary(allocator, this);
+                    states[i][k].load();
+                    robins[i][k] = new RobinMatrix(allocator, this, values, pointers[k], k);
+                    robins[i][k].load();
+                }
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.rrd4j.core.RrdBackend#load(org.rrd4j.core.RrdDb, org.rrd4j.core.DataImporter)
+     */
+    @Override
+    public void load(RrdDb rrdDb, DataImporter reader) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    /**
+     * Returns the number of storage bytes required to create RRD from this
+     * RrdDef object.
+     *
+     * @return Estimated byte count of the underlying RRD storage.
+     */
+    public long getEstimatedSize(RrdDef rrdDef) {
+        int dsCount = rrdDef.getDsCount();
+        int arcCount = rrdDef.getArcCount();
+        int rowsCount = 0;
+        for (ArcDef arcDef : rrdDef.getArcDefs()) {
+            rowsCount += arcDef.getRows();
+        }
+        return (24L + 48L * dsCount + 16L * arcCount +
+                20L * dsCount * arcCount + 8L * dsCount * rowsCount) +
+                (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH;
+
     }
 
 }

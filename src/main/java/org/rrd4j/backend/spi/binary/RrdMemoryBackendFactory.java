@@ -22,14 +22,25 @@ import org.rrd4j.core.RrdDb;
  */
 @RrdBackendMeta("MEMORY")
 public class RrdMemoryBackendFactory extends RrdBackendFactory {
-    protected  Map<String, RrdMemoryBackend> backends;
+    
+    final static class ByteBuffer {
+        byte[] buffer;
+        ByteBuffer(byte[] buffer) {
+            this.buffer = buffer;
+        }
+        ByteBuffer() {
+            this.buffer = null;
+        }
+    }
+    
+    protected  Map<String, ByteBuffer> backends;
 
     /* (non-Javadoc)
      * @see org.rrd4j.core.RrdBackendFactory#doStart()
      */
     @Override
     protected boolean startBackend() {
-        backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
+        backends = new ConcurrentHashMap<String, ByteBuffer>();
         return true;
     }
 
@@ -53,15 +64,10 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      * @throws IOException Thrown in case of I/O error.
      */
     protected RrdBackend doOpen(String id, boolean readOnly) throws IOException {
-        RrdMemoryBackend backend;
-        if (backends.containsKey(id)) {
-            backend = backends.get(id);
+        if(! backends.containsKey(id)) {
+            backends.put(id, new ByteBuffer());            
         }
-        else {
-            backend = new RrdMemoryBackend(id);
-            backends.put(id, backend);
-        }
-        return backend;
+        return new RrdMemoryBackend(id, backends.get(id));
     }
 
     /**
@@ -100,10 +106,15 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
     @Override
     public Map<String, Number> getStats() {
         long size = 0;
-        for(RrdMemoryBackend be: backends.values()) {
-            size += be.getLength();
+        for(ByteBuffer bb: backends.values()) {
+            size += bb.buffer.length;
         }
         return Collections.singletonMap("memory usage", (Number) new Long(size));
+    }
+
+    @Override
+    public String resolveUniqId(Object id) throws IOException {
+        return id.toString();
     }
 
 }

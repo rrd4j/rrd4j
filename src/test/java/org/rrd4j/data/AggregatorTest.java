@@ -4,11 +4,14 @@ package org.rrd4j.data;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
+import org.rrd4j.core.RrdBackendFactory.State;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -25,6 +28,8 @@ public class AggregatorTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     private double testCf(ConsolFun cf) throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
+        Assert.assertEquals(State.RUNNING, factory.start());
         long startTime = Util.normalize(Util.getTimestamp(new Date()), 60);
 
         File rrd = new File(testFolder.getRoot(), "testAggregator.rrd");
@@ -32,7 +37,7 @@ public class AggregatorTest {
         rrdDef.addArchive(ConsolFun.AVERAGE, 0, 1, 10);
         rrdDef.addDatasource("total", DsType.GAUGE, 60, 0, Double.NaN);
 
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = new RrdDb(rrdDef, factory);
 
         Sample sample = rrdDb.createSample();
         sample.setTime(startTime+60);
@@ -50,9 +55,9 @@ public class AggregatorTest {
         sample.update();
 
         FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, startTime, startTime + 240);
-
-        return fetchRequest.fetchData().getAggregate("total", cf);
-
+        double fetched = fetchRequest.fetchData().getAggregate("total", cf);
+        RrdBackendFactory.getDefaultFactory().stop();
+        return fetched;
     }
 
     @Test

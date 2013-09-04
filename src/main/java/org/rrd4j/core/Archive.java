@@ -20,26 +20,32 @@ public class Archive implements RrdUpdater {
 
     // state
     private ArcState[] states;
+    private Robin[] robins;
     
     //SPI
     private org.rrd4j.backend.spi.Archive spi;
 
-    Archive(RrdDb parentDb, ArcDef arcDef) throws IOException {
+    Archive(RrdDb parentDb, ArcDef arcDef, int arcIndex) throws IOException {
         this.parentDb = parentDb;
-        spi = parentDb.getRrdBackend().getArchive();
+
+        spi = parentDb.getRrdBackend().getArchive(arcIndex);
+
+        int n = parentDb.getHeader().getDsCount();
+        states = new ArcState[n];
+        robins = new Robin[n];
 
         boolean shouldInitialize = arcDef != null;
+
         if (shouldInitialize) {
             spi.consolFun = arcDef.getConsolFun();
             spi.setXff(arcDef.getXff());
             spi.steps = arcDef.getSteps();
-            spi.rows = arcDef.getRows();
-            
-            int n = parentDb.getHeader().getDsCount();
-            states = new ArcState[n];
-            for (int i = 0; i < n; i++) {
-                states[i] = new ArcState(this, shouldInitialize);
-            }
+            spi.rows = arcDef.getRows();    
+            spi.save();
+        }
+        for (int i = 0; i < n; i++) {
+            states[i] = new ArcState(this, shouldInitialize, arcIndex, i);
+            robins[i] = new Robin(this, arcIndex, i);
         }
     }
 
@@ -47,7 +53,7 @@ public class Archive implements RrdUpdater {
     Archive(RrdDb parentDb, DataImporter reader, int arcIndex) throws IOException {
         this(parentDb, new ArcDef(
                 reader.getConsolFun(arcIndex), reader.getXff(arcIndex),
-                reader.getSteps(arcIndex), reader.getRows(arcIndex)));
+                reader.getSteps(arcIndex), reader.getRows(arcIndex)), arcIndex);
         int n = parentDb.getHeader().getDsCount();
         for (int i = 0; i < n; i++) {
             // restore state
@@ -55,7 +61,7 @@ public class Archive implements RrdUpdater {
             states[i].setNanSteps(reader.getStateNanSteps(arcIndex, i));
             // restore robins
             double[] values = reader.getValues(arcIndex, i);
-            spi.robin(i).update(values);
+            this.getRrdBackend().getRobin(arcIndex, i).setValues(values);
         }
     }
 
@@ -76,7 +82,7 @@ public class Archive implements RrdUpdater {
         sb.append("interval [").append(getStartTime()).append(", ").append(getEndTime()).append("]" + "\n");
         for (int i = 0; i < states.length; i++) {
             sb.append(states[i].dump());
-            sb.append(spi.robin(i).dump());
+            sb.append(robins[i].dump());
         }
         return sb.toString();
     }
@@ -86,7 +92,7 @@ public class Archive implements RrdUpdater {
     }
 
     void archive(int dsIndex, double value, long numUpdates) throws IOException {
-        Robin robin = spi.robin(dsIndex);
+        Robin robin = robins[dsIndex];
         ArcState state = states[dsIndex];
         long step = parentDb.getHeader().getStep();
         long lastUpdateTime = parentDb.getHeader().getLastUpdateTime();
@@ -242,7 +248,7 @@ public class Archive implements RrdUpdater {
      * @return Underlying round robin archive for the given datasource.
      */
     public Robin getRobin(int dsIndex) {
-        return spi.robin(dsIndex);
+        return robins[dsIndex];
     }
 
     FetchData fetchData(FetchRequest request) throws IOException {
@@ -272,7 +278,7 @@ public class Archive implements RrdUpdater {
             robinValues = new double[dsCount][];
             for (int i = 0; i < dsCount; i++) {
                 int dsIndex = parentDb.getDsIndex(dsToFetch[i]);
-                robinValues[i] = spi.robin(dsIndex).getValues(matchStartIndex, matchCount);
+                robinValues[i] = robins[dsIndex].getValues(matchStartIndex, matchCount);
             }
         }
         for (int ptIndex = 0; ptIndex < ptsCount; ptIndex++) {
@@ -314,7 +320,7 @@ public class Archive implements RrdUpdater {
             long time = startTime + i * getArcStep();
             writer.writeComment(Util.getDate(time) + " / " + time);
             writer.startTag("row");
-            for (Robin robin : spi.robins()) {
+            for (Robin robin : robins) {
                 writer.writeTag("v", robin.getValue(i));
             }
             writer.closeTag(); // row
@@ -345,7 +351,7 @@ public class Archive implements RrdUpdater {
             int j = Util.getMatchingDatasourceIndex(parentDb, i, arc.parentDb);
             if (j >= 0) {
                 states[i].copyStateTo(arc.states[j]);
-                spi.robin(i).copyStateTo(arc.spi.robin(j));
+                robins[i].copyStateTo(arc.robins[j]);
             }
         }
     }
