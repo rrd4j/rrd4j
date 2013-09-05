@@ -1,15 +1,15 @@
 package org.rrd4j.graph;
 
+import java.awt.Font;
+import java.awt.Paint;
+import java.io.File;
+import java.io.IOException;
+
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
 import org.rrd4j.core.XmlTemplate;
-import org.rrd4j.data.Variable;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
-
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Class used to create an arbitrary number of RrdGraphDef (graph definition) objects
@@ -557,6 +557,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void resolveSDef(Node parentNode) {
         validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf", "percentile"});
         String name = null, source = null;

@@ -1,8 +1,7 @@
 package org.rrd4j.graph;
 
-import org.rrd4j.core.XmlWriter;
-import org.rrd4j.data.Variable;
 import org.rrd4j.data.DataProcessor;
+import org.rrd4j.data.Variable;
 
 class VDef extends Source {
     private final String defName;

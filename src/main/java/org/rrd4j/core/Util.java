@@ -7,8 +7,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -584,6 +586,17 @@ public class Util {
             factory.setNamespaceAware(false);
             try {
                 DocumentBuilder builder = factory.newDocumentBuilder();
+                builder.setErrorHandler(new ErrorHandler() {
+                    public void error(SAXParseException exception) throws SAXException {
+                        throw exception;
+                    }
+                    public void fatalError(SAXParseException exception) throws SAXException {
+                        throw exception;
+                    }
+                    public void warning(SAXParseException exception) throws SAXException {
+                        throw exception;
+                    }
+                });
                 Document doc = builder.parse(inputSource);
                 return doc.getDocumentElement();
             }

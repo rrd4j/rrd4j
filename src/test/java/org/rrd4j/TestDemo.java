@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
@@ -45,6 +46,9 @@ public class TestDemo {
 
     @Test
     public void main() throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
+        factory.start();
+
         System.out.println("== Starting demo");
         long startMillis = System.currentTimeMillis();
         long start = START;
@@ -72,7 +76,7 @@ public class TestDemo {
         rrdDef.addArchive(MAX, 0.5, 288, 797);
         System.out.println(rrdDef.dump());
         log.println(rrdDef.dump());
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = new RrdDb(rrdDef, factory);
         System.out.println("== RRD file created.");
         Assert.assertTrue(rrdDb.getRrdDef().equals(rrdDef));
         rrdDb.close();
@@ -85,7 +89,7 @@ public class TestDemo {
                 MAX_STEP + " seconds (* denotes 1000 updates)");
         long t = start;
         int n = 0;
-        rrdDb = new RrdDb(rrdPath);
+        rrdDb = new RrdDb(rrdPath, factory);
         Sample sample = rrdDb.createSample();
 
         while (t <= end + 172800L) {
@@ -101,7 +105,7 @@ public class TestDemo {
         System.out.println("== Finished. RRD file updated " + n + " times");
 
         // test read-only access!
-        rrdDb = new RrdDb(rrdPath, true);
+        rrdDb = new RrdDb(rrdPath, true, factory);
         System.out.println("File reopen in read-only mode");
         System.out.println("== Last update time was: " + rrdDb.getLastUpdateTime());
         System.out.println("== Last info was: " + rrdDb.getInfo());
@@ -121,7 +125,7 @@ public class TestDemo {
         System.out.println("== Dumping RRD file to XML file " + xmlPath + " (can be restored with RRDTool)");
         rrdDb.exportXml(xmlPath);
         System.out.println("== Creating RRD file " + rrdRestoredPath + " from XML file " + xmlPath);
-        RrdDb rrdRestoredDb = new RrdDb(rrdRestoredPath, xmlPath);
+        RrdDb rrdRestoredDb = new RrdDb(rrdRestoredPath, xmlPath, factory);
 
         // close files
         System.out.println("== Closing both RRD files");
@@ -145,8 +149,8 @@ public class TestDemo {
         gDef.setColor(RrdGraphConstants.COLOR_XAXIS, Color.BLUE);
         gDef.setColor(RrdGraphConstants.COLOR_YAXIS, new Color(0, 255, 0, 40));
 
-        gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
-        gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE);
+        gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE, "FILE");
+        gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE, "FILE");
         gDef.datasource("median", "sun,shade,+,2,/");
         gDef.datasource("diff", "sun,shade,-,ABS,-1,*");
         gDef.datasource("sine", "TIME," + start + ",-," + (end - start) + ",/,2,PI,*,*,SIN,1000,*");
@@ -205,6 +209,8 @@ public class TestDemo {
         
         Assert.assertEquals(1277467200, sunmax.getValue().timestamp);
         Assert.assertEquals(4284.9218056, sunmax.getValue().value, 1e-15);
+        
+        factory.stop();
     }
 
     static class GaugeSource {

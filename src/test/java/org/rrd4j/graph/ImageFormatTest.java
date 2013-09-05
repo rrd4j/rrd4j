@@ -7,6 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.RrdBackendFactory;
 
 public class ImageFormatTest {
     private final static String rrdpath = ImageFormatTest.class.getResource("/demo1.rrd").getFile(); 
@@ -15,7 +16,7 @@ public class ImageFormatTest {
         RrdGraphDef gDef = new RrdGraphDef();
         gDef.setWidth(200);
         gDef.setHeight(200);
-        gDef.datasource("sun", rrdpath, "sun", ConsolFun.AVERAGE);
+        gDef.datasource("sun", rrdpath, "sun", ConsolFun.AVERAGE, "FILE");
         gDef.line("sun", Color.GREEN, "sun temp");
         return gDef;
     }
@@ -27,38 +28,63 @@ public class ImageFormatTest {
     
     @Test
     public void testJPEG() throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
+        factory.start();
+
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("jpeg");
         gDef.setImageQuality(0.99f);
         doGraph(gDef);
+
+        factory.stop();
     }
 
     @Test
     public void testGIF() throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
+        factory.start();
+        
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("gif");
         doGraph(gDef);
+
+        factory.stop();
     }
 
     @Test
     public void testPNG() throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
+        factory.start();
+
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("png");
         doGraph(gDef);
+
+        factory.stop();
     }
 
     @Test
     public void testBMP() throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
+        factory.start();
+
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("bmp");
         doGraph(gDef);
+
+        factory.stop();
     }
 
     @Test(expected=RuntimeException.class)
     public void testWBMP() throws IOException {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
+        factory.start();
+
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("wbmp");
         doGraph(gDef);
+
+        factory.stop();
     }
 
 }

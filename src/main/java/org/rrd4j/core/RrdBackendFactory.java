@@ -133,6 +133,11 @@ public abstract class RrdBackendFactory {
         }
         synchronized(fs) {
             Class<? extends RrdBackendFactory> factoryClass = fs.clazz;
+            
+            // If backend is stopped, it can be dropped
+            if(fs.instance != null && fs.instance.getState() == State.TERMINATED) {
+                fs.instance = null;
+            }
             try {
                 if(fs.instance == null) {
                     fs.instance = factoryClass.getConstructor().newInstance();
@@ -295,6 +300,7 @@ public abstract class RrdBackendFactory {
      * @see com.google.common.util.concurrent.AbstractService#doStop()
      */
     public synchronized final State stop() {
+        sync();
         if(state != State.RUNNING)
             return state;
         state = State.STOPPING;

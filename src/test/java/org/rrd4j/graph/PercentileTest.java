@@ -22,6 +22,8 @@ public class PercentileTest {
 
     @Test
     public void testSampleVDEFPercentile1() throws Exception {
+        RrdBackendFactory factory = RrdBackendFactory.getFactory("MEMORY");
+        factory.start();
 
         long startTime = (int)( now / 1000);
         startTime -= (startTime % 300); 
@@ -48,6 +50,8 @@ public class PercentileTest {
         Assert.assertNotNull("graph printLines", printLines);
         Assert.assertEquals("graph printLines size", 1, printLines.length);
         Assert.assertEquals("graph printLines item 0", "9.574000e+03", printLines[0]);
+
+        factory.stop();
     }
 
     @Test

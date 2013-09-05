@@ -1,10 +1,8 @@
 package org.rrd4j.graph;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,9 +12,9 @@ import java.util.TimeZone;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.Util;
-import org.rrd4j.data.Variable;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
+import org.rrd4j.data.Variable;
 
 /**
  * Class which should be used to define new Rrd4j graph. Once constructed and populated with data

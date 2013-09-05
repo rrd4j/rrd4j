@@ -328,8 +328,8 @@ public abstract class RrdBinaryBackend extends RrdBackend {
 
     private static double getDouble(byte[] b) {
         assert b.length == 8 : "Invalid number of bytes for double conversion";
-                return Double.longBitsToDouble(getLong(b));
-        }
+        return Double.longBitsToDouble(getLong(b));
+    }
 
 
     /* (non-Javadoc)
@@ -458,7 +458,7 @@ public abstract class RrdBinaryBackend extends RrdBackend {
             int rows = archives[i].rows;
             robins[i] = new Robin[dsCount];
             if (header.version == 1) {
-                for (int j = 0; i < dsCount; j++) {
+                for (int j = 0; j < dsCount; j++) {
                     states[i][j] = new ArcStateBinary(allocator, this);
                     states[i][j].load();
                     robins[i][j] = new RobinArray(allocator, this, rows);
