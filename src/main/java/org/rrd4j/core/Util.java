@@ -139,7 +139,7 @@ public class Util {
         return Double.isNaN(x) ? y : Double.isNaN(y) ? x : x + y;
     }
 
-    public static String formatDouble(double x, String nanString, boolean forceExponents) {
+    static String formatDouble(double x, String nanString, boolean forceExponents) {
         if (Double.isNaN(x)) {
             return nanString;
         }
@@ -149,7 +149,7 @@ public class Util {
         return "" + x;
     }
 
-    public static String formatDouble(double x, boolean forceExponents) {
+    static String formatDouble(double x, boolean forceExponents) {
         return formatDouble(x, "" + Double.NaN, forceExponents);
     }
 
@@ -474,6 +474,18 @@ public class Util {
      * Various DOM utility functions.
      */
     public static class Xml {
+        private static final ErrorHandler eh = new ErrorHandler() {
+            public void error(SAXParseException exception) throws SAXException {
+                throw exception;
+            }
+            public void fatalError(SAXParseException exception) throws SAXException {
+                throw exception;
+            }
+            public void warning(SAXParseException exception) throws SAXException {
+                throw exception;
+            }
+        };
+        
         private Xml() {
 
         }
@@ -586,17 +598,7 @@ public class Util {
             factory.setNamespaceAware(false);
             try {
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                builder.setErrorHandler(new ErrorHandler() {
-                    public void error(SAXParseException exception) throws SAXException {
-                        throw exception;
-                    }
-                    public void fatalError(SAXParseException exception) throws SAXException {
-                        throw exception;
-                    }
-                    public void warning(SAXParseException exception) throws SAXException {
-                        throw exception;
-                    }
-                });
+                builder.setErrorHandler(eh);
                 Document doc = builder.parse(inputSource);
                 return doc.getDocumentElement();
             }
