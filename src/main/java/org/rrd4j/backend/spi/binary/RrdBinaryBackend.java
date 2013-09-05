@@ -394,32 +394,26 @@ public abstract class RrdBinaryBackend extends RrdBackend {
         }
         states = new ArcStateBinary[arcCount][];
         archives = new ArchiveBinary[arcCount];
-        RrdInt[] pointers = null;
-        if(version == 1) {
-            robins = new Robin[arcCount][];
-        }
-        else {
-            pointers = new RrdInt[dsCount];
-            robins = new Robin[arcCount][];
-        }
+        robins = new Robin[arcCount][];
+        RrdInt[] pointers = version == 2 ? new RrdInt[dsCount] : null;
         for(int i = 0; i < arcCount; i++) {
             int rows = rrdDef.getArcDefs()[i].getRows();
             states[i] = new ArcStateBinary[dsCount];
             archives[i] = new ArchiveBinary(allocator, this);
             robins[i] = new Robin[dsCount];
             if (version == 1) {
-                for (int j = 0; i < dsCount; j++) {
+                for (int j = 0; j < dsCount; j++) {
                     states[i][j] = new ArcStateBinary(allocator, this);
                     robins[i][j] = new RobinArray(allocator, this, rows);
                 }
             } else {
                 for (int j = 0; j < dsCount; j++) {
                     pointers[j] = new RrdInt(archives[i]);
+                    states[i][j] = new ArcStateBinary(allocator, this);
                 }
                 RrdDoubleMatrix values = new RrdDoubleMatrix(archives[i], rows, dsCount);
-                for (int k = 0; k < dsCount; k++) {
-                    states[i][k] = new ArcStateBinary(allocator, this);
-                    robins[i][k] = new RobinMatrix(allocator, this, values, pointers[k], k);
+                for (int j = 0; j < dsCount; j++) {
+                    robins[i][j] = new RobinMatrix(allocator, this, values, pointers[j], j);
                 }
             }
         }
@@ -443,14 +437,8 @@ public abstract class RrdBinaryBackend extends RrdBackend {
         }
         states = new ArcStateBinary[arcCount][];
         archives = new ArchiveBinary[arcCount];
-        RrdInt[] pointers = null;
-        if(header.version == 1) {
-            robins = new Robin[arcCount][];
-        }
-        else {
-            pointers = new RrdInt[dsCount];
-            robins = new Robin[arcCount][];
-        }
+        robins = new Robin[arcCount][];
+        RrdInt[] pointers = header.version == 2 ? new RrdInt[dsCount] : null;
         for(int i = 0; i < arcCount; i++) {
             states[i] = new ArcStateBinary[dsCount];
             archives[i] = new ArchiveBinary(allocator, this);
@@ -467,13 +455,13 @@ public abstract class RrdBinaryBackend extends RrdBackend {
             } else {
                 for (int j = 0; j < dsCount; j++) {
                     pointers[j] = new RrdInt(archives[i]);
+                    states[i][j] = new ArcStateBinary(allocator, this);
+                    states[i][j].load();
                 }
                 RrdDoubleMatrix values = new RrdDoubleMatrix(archives[i], rows, dsCount);
-                for (int k = 0; k < dsCount; k++) {
-                    states[i][k] = new ArcStateBinary(allocator, this);
-                    states[i][k].load();
-                    robins[i][k] = new RobinMatrix(allocator, this, values, pointers[k], k);
-                    robins[i][k].load();
+                for (int j = 0; j < dsCount; j++) {
+                    robins[i][j] = new RobinMatrix(allocator, this, values, pointers[j], j);
+                    robins[i][j].load();
                 }
             }
         }
@@ -483,8 +471,47 @@ public abstract class RrdBinaryBackend extends RrdBackend {
      * @see org.rrd4j.core.RrdBackend#load(org.rrd4j.core.RrdDb, org.rrd4j.core.DataImporter)
      */
     @Override
-    public void load(RrdDb rrdDb, DataImporter reader) {
-        throw new UnsupportedOperationException("not implemented yet");
+    public void load(RrdDb rrdDb, DataImporter reader) throws IOException {
+        int version = reader.getVersion();
+        int dsCount = reader.getDsCount();
+        int arcCount = reader.getArcCount();
+        int rowsCount = 0;
+        for (int i = 0; i < reader.getArcCount() ; i++) {
+            rowsCount += reader.getRows(i);
+        }
+        setLength(calculateSize(dsCount, arcCount, rowsCount, reader.getVersion()));
+        
+        header = new HeaderBinary(allocator, this);
+        datasources = new DatasourceBinary[reader.getDsCount()];
+        for(int i = 0; i < dsCount; i++) {
+            datasources[i] = new DatasourceBinary(allocator, this);
+        }
+        states = new ArcStateBinary[arcCount][];
+        archives = new ArchiveBinary[arcCount];
+        robins = new Robin[arcCount][];
+        RrdInt[] pointers = version !=1  ? new RrdInt[dsCount] : null;
+        for(int i = 0; i < arcCount; i++) {
+            states[i] = new ArcStateBinary[dsCount];
+            archives[i] = new ArchiveBinary(allocator, this);
+            robins[i] = new Robin[dsCount];
+            if (version == 1) {
+                for (int j = 0; j < dsCount; j++) {
+                    states[i][j] = new ArcStateBinary(allocator, this);
+                    robins[i][j] = new RobinArray(allocator, this, reader.getRows(i));
+                    robins[i][j].setValues(reader.getValues(i, j));
+                }
+            } else {
+                for (int j = 0; j < dsCount; j++) {
+                    pointers[j] = new RrdInt(archives[i]);
+                    states[i][j] = new ArcStateBinary(allocator, this);
+                }
+                RrdDoubleMatrix values = new RrdDoubleMatrix(archives[i], reader.getRows(i), reader.getDsCount());
+                for (int j = 0; j < dsCount; j++) {
+                    robins[i][j] = new RobinMatrix(allocator, this, values, pointers[j], j);
+                    robins[i][j].setValues(reader.getValues(i, j));
+                }
+            }
+        }
     }
 
     /**
@@ -500,9 +527,15 @@ public abstract class RrdBinaryBackend extends RrdBackend {
         for (ArcDef arcDef : rrdDef.getArcDefs()) {
             rowsCount += arcDef.getRows();
         }
+        int version = rrdDef.getVersion();
+        return calculateSize(dsCount, arcCount, rowsCount, version);
+    }
+
+    public static final long calculateSize(int dsCount, int arcCount, int rowsCount, int version) {
         return (24L + 48L * dsCount + 16L * arcCount +
                 20L * dsCount * arcCount + 8L * dsCount * rowsCount) +
-                (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH;
+                (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH +
+                (version == 2 ? 8L * dsCount * arcCount : 0);
 
     }
 

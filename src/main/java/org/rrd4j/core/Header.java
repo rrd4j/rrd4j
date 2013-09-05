@@ -13,13 +13,9 @@ import java.io.IOException;
  * @author Sasa Markovic*
  */
 public class Header implements RrdUpdater {
-    static final String RRDTOOL_VERSION1 = "0001";
-    static final String RRDTOOL_VERSION3 = "0003";
+    private final RrdDb parentDb;
 
-    private RrdDb parentDb;
-
-    //SPI
-    private org.rrd4j.backend.spi.Header spi;
+    private final org.rrd4j.backend.spi.Header spi;
 
     Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
         this.parentDb = parentDb;
@@ -38,8 +34,8 @@ public class Header implements RrdUpdater {
     Header(RrdDb parentDb, DataImporter reader) throws IOException {
         this(parentDb, (RrdDef) null);
 
-        String version = reader.getVersion();
-        if (!RRDTOOL_VERSION1.equals(version) && !RRDTOOL_VERSION3.equals(version) ) {
+        int version = reader.getVersion();
+        if (version != 1 && version != 3 ) {
             throw new IllegalArgumentException("Could not unserialize xml version " + version);
         }
         spi.step = reader.getStep();
@@ -125,7 +121,7 @@ public class Header implements RrdUpdater {
 
     void appendXml(XmlWriter writer) throws IOException {
         writer.writeComment(spi.getSignature());
-        writer.writeTag("version", RRDTOOL_VERSION3);
+        writer.writeTag("version", "0003");
         writer.writeComment("Seconds");
         writer.writeTag("step", spi.step);
         writer.writeComment(Util.getDate(spi.getLastUpdateTime()));
@@ -143,7 +139,6 @@ public class Header implements RrdUpdater {
                     "Cannot copy Header object to " + other.getClass().getName());
         }
         Header header = (Header) other;
-        //header.signature.set(signature.get());
         header.setLastUpdateTime(spi.getLastUpdateTime());
     }
 
@@ -166,7 +161,7 @@ public class Header implements RrdUpdater {
     public int getVersion() throws IOException {
         return spi.version;
     }
-    
+
     public void validateHeader() throws IOException {
         spi.validateHeader();
     }

@@ -13,8 +13,8 @@ class RrdToolReader extends DataImporter {
         rrd = new RRDatabase(rrdPath);
     }
 
-    public String getVersion() {
-        return rrd.getHeader().getVersion();
+    public int getVersion() {
+        return rrd.getHeader().getVersionAsInt();
     }
 
     public long getLastUpdateTime() {

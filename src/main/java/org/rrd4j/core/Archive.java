@@ -18,12 +18,11 @@ import org.rrd4j.ConsolFun;
 public class Archive implements RrdUpdater {
     private final RrdDb parentDb;
 
+    private final org.rrd4j.backend.spi.Archive spi;
+
     // state
     private ArcState[] states;
     private Robin[] robins;
-    
-    //SPI
-    private org.rrd4j.backend.spi.Archive spi;
 
     Archive(RrdDb parentDb, ArcDef arcDef, int arcIndex) throws IOException {
         this.parentDb = parentDb;
@@ -124,24 +123,24 @@ public class Archive implements RrdUpdater {
             state.setNanSteps(state.getNanSteps() + 1);
         } else {
             switch (spi.consolFun) {
-                case MIN:
-                    state.setAccumValue(Util.min(state.getAccumValue(), value));
-                    break;
-                case MAX:
-                    state.setAccumValue(Util.max(state.getAccumValue(), value));
-                    break;
-                case FIRST:
-                    if (Double.isNaN(state.getAccumValue())) {
-                        state.setAccumValue(value);
-                    }
-                    break;
-                case LAST:
+            case MIN:
+                state.setAccumValue(Util.min(state.getAccumValue(), value));
+                break;
+            case MAX:
+                state.setAccumValue(Util.max(state.getAccumValue(), value));
+                break;
+            case FIRST:
+                if (Double.isNaN(state.getAccumValue())) {
                     state.setAccumValue(value);
-                    break;
-                case AVERAGE:
-                case TOTAL:
-                    state.setAccumValue(Util.sum(state.getAccumValue(), value));
-                    break;
+                }
+                break;
+            case LAST:
+                state.setAccumValue(value);
+                break;
+            case AVERAGE:
+            case TOTAL:
+                state.setAccumValue(Util.sum(state.getAccumValue(), value));
+                break;
             }
         }
     }

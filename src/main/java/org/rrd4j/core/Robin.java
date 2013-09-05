@@ -6,8 +6,7 @@ public class Robin implements RrdUpdater {
 
     private final Archive parentArc;
 
-    //SPI
-    private org.rrd4j.backend.spi.Robin spi;
+    private final org.rrd4j.backend.spi.Robin spi;
 
     Robin(Archive parentArc, int arcIndex, int dsIndex) throws IOException {
         this.parentArc = parentArc;

@@ -131,6 +131,6 @@ public abstract class RrdBackend {
     
     public abstract void load(RrdDb rrdDb) throws IOException;
 
-    public abstract void load(RrdDb rrdDb, DataImporter reader);
+    public abstract void load(RrdDb rrdDb, DataImporter reader) throws IOException;
 
 }

@@ -8,7 +8,7 @@ import java.io.IOException;
 public abstract class DataImporter {
 
     // header
-    abstract public String getVersion() throws IOException;
+    abstract public int getVersion() throws IOException;
 
     abstract public long getLastUpdateTime() throws IOException;
 

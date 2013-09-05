@@ -9,9 +9,9 @@ import java.io.IOException;
  * @author Sasa Markovic
  */
 public class ArcState implements RrdUpdater {
-    private Archive parentArc;
+    private final Archive parentArc;
 
-    org.rrd4j.backend.spi.ArcState spi;
+    private final org.rrd4j.backend.spi.ArcState spi;
 
     ArcState(Archive parentArc, boolean shouldInitialize, int arcIndex, int dsIndex) throws IOException {
         this.parentArc = parentArc;

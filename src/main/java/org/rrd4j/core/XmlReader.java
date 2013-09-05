@@ -19,8 +19,8 @@ class XmlReader extends DataImporter {
         arcNodes = Util.Xml.getChildNodes(root, "rra");
     }
 
-    public String getVersion() {
-        return Util.Xml.getChildValue(root, "version");
+    public int getVersion() {
+        return Util.Xml.getChildValueAsInt(root, "version");
     }
 
     public long getLastUpdateTime() {
