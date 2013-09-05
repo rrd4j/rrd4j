@@ -3,9 +3,8 @@ package org.rrd4j.data;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.core.FetchRequest;
-import org.rrd4j.core.RrdBackendFactory;
-import org.rrd4j.core.RrdBackendFactory.State;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
@@ -29,7 +28,7 @@ public class AggregatorTest {
 
     private double testCf(ConsolFun cf) throws IOException {
         RrdBackendFactory factory = RrdBackendFactory.getFactory("FILE");
-        Assert.assertEquals(State.RUNNING, factory.start());
+        Assert.assertTrue(factory.start());
         long startTime = Util.normalize(Util.getTimestamp(new Date()), 60);
 
         File rrd = new File(testFolder.getRoot(), "testAggregator.rrd");

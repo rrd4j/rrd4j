@@ -3,6 +3,7 @@ package org.rrd4j.core;
 import java.io.IOException;
 
 import org.rrd4j.DsType;
+import org.rrd4j.backend.RrdBackend;
 
 /**
  * Class to represent single datasource within RRD. Each datasource object holds the

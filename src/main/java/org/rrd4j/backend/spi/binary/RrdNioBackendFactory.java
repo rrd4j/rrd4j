@@ -2,8 +2,8 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
-import org.rrd4j.core.RrdBackend;
-import org.rrd4j.core.RrdBackendMeta;
+import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.RrdBackendMeta;
 
 /**
  * Factory class which creates actual {@link RrdNioBackend} objects. This is the default factory since

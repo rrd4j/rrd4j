@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backend;
 
 import java.io.IOException;
 
@@ -7,6 +7,9 @@ import org.rrd4j.backend.spi.Archive;
 import org.rrd4j.backend.spi.Datasource;
 import org.rrd4j.backend.spi.Header;
 import org.rrd4j.backend.spi.Robin;
+import org.rrd4j.core.DataImporter;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdDef;
 
 /**
  * Base implementation class for all backend classes. Each Round Robin Database object
@@ -44,14 +47,13 @@ import org.rrd4j.backend.spi.Robin;
  * create custom backend objects when necessary.
  *
  * <li>Create instance of your custom RrdBackendFactory and register it as a regular
- * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.core.RrdBackendFactory} to
+ * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.backend.RrdBackendFactory} to
  * find out how to do this.
  * </ul>
  *
  * @author Sasa Markovic
  */
 public abstract class RrdBackend {
-    private static boolean instanceCreated = false;
     private final String path;
     private RrdBackendFactory factory;
 
@@ -64,7 +66,6 @@ public abstract class RrdBackend {
      */
     protected RrdBackend(String path) {
         this.path = path;
-        instanceCreated = true;
     }
 
     /**
@@ -96,10 +97,6 @@ public abstract class RrdBackend {
     protected boolean isCachingAllowed() {
         return true;
     }
-
-	static boolean isInstanceCreated() {
-		return instanceCreated;
-	}
 
     /**
      * @return the factory

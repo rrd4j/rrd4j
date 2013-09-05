@@ -7,11 +7,10 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.backend.spi.binary.RrdMemoryBackendFactory;
 import org.rrd4j.backend.spi.binary.RrdMongoDBBackendFactory;
 import org.rrd4j.core.BackEndFactoryTest;
-import org.rrd4j.core.RrdBackendFactory;
-import org.rrd4j.core.RrdBackendFactory.State;
 
 public class RrdMemoryBackendFactoryTest extends BackEndFactoryTest {
 
@@ -31,9 +30,9 @@ public class RrdMemoryBackendFactoryTest extends BackEndFactoryTest {
     public void testStat() throws IOException {
         RrdBackendFactory factory = RrdBackendFactory.getFactory("MEMORY");
         
-        State started = factory.start();
+        boolean started = factory.start();
         
-        Assert.assertEquals("Failed to start the backend", State.RUNNING, started);
+        Assert.assertTrue("Failed to start the backend", started);
         
         Map<String, Number> stats = getStats(factory, "dummy");
         Assert.assertTrue(stats.containsKey("memory usage"));

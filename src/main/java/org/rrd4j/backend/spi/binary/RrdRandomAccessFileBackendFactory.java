@@ -2,8 +2,8 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
-import org.rrd4j.core.RrdBackend;
-import org.rrd4j.core.RrdBackendMeta;
+import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.RrdBackendMeta;
 import org.rrd4j.core.Util;
 
 /**
@@ -31,11 +31,11 @@ public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
      * @param path File path
      * @return True, if such file exists, false otherwise.
      */
-    protected boolean exists(String path) {
+    public boolean exists(String path) {
         return Util.fileExists(path);
     }
 
-    protected boolean shouldValidateHeader(String path) throws IOException {
+    public boolean shouldValidateHeader(String path) throws IOException {
         return true;
     }
 

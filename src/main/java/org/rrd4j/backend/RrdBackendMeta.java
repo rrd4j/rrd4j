@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backend;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

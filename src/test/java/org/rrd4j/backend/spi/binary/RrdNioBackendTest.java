@@ -12,7 +12,7 @@ import junit.framework.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.rrd4j.core.RrdBackendFactory;
+import org.rrd4j.backend.RrdBackendFactory;
 
 public class RrdNioBackendTest {
     @Rule

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.rrd4j.core.RrdBackend;
-import org.rrd4j.core.RrdBackendFactory;
-import org.rrd4j.core.RrdBackendMeta;
+import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.RrdBackendFactory;
+import org.rrd4j.backend.RrdBackendMeta;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
@@ -64,14 +64,14 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
     }
 
     @Override
-    protected boolean exists(String path) throws IOException {
+    public boolean exists(String path) throws IOException {
         BasicDBObject query = new BasicDBObject();
         query.put("path", path);
         return rrdCollection.findOne(query) != null;
     }
 
     @Override
-    protected boolean shouldValidateHeader(String path) throws IOException {
+    public boolean shouldValidateHeader(String path) throws IOException {
         return false;
     }
 

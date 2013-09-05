@@ -3,8 +3,8 @@ package org.rrd4j.data;
 import java.io.IOException;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.core.FetchData;
-import org.rrd4j.core.RrdBackendFactory;
 
 class Def extends Source {
     private String path, dsName, backend;

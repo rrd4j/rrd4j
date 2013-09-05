@@ -3,7 +3,7 @@ package org.rrd4j.backend.spi.binary;
 import java.io.File;
 import java.io.IOException;
 
-import org.rrd4j.core.RrdBackendFactory;
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.core.Util;
 
 /**
@@ -19,12 +19,12 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
      *
      * Method to determine if a file with the given path already exists.
      */
-    protected boolean exists(String path) {
+    public boolean exists(String path) {
         return Util.fileExists(path);
     }
 
     /** {@inheritDoc} */
-    protected boolean shouldValidateHeader(String path) throws IOException {
+    public boolean shouldValidateHeader(String path) throws IOException {
         return true;
     }
     

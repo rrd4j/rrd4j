@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.backend.spi.binary.RrdFileBackendFactory;
 
 /**

@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.data.Aggregates;
 
 public class RrdDbTest {

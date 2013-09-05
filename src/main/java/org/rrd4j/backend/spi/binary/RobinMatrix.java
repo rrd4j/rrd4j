@@ -212,7 +212,7 @@ class RobinMatrix extends Robin implements Allocated {
     /**
      * <p>getRrdBackend.</p>
      *
-     * @return a {@link org.rrd4j.core.RrdBackend} object.
+     * @return a {@link org.rrd4j.backend.RrdBackend} object.
      */
     @Override
     public RrdBinaryBackend getRrdBackend() {

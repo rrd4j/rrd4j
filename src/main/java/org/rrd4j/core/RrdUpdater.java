@@ -2,11 +2,13 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
+import org.rrd4j.backend.RrdBackend;
+
 public interface RrdUpdater {
     /**
      * <p>getRrdBackend.</p>
      *
-     * @return a {@link org.rrd4j.core.RrdBackend} object.
+     * @return a {@link org.rrd4j.backend.RrdBackend} object.
      */
     RrdBackend getRrdBackend();
 

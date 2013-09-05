@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backend;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +17,7 @@ import org.rrd4j.backend.spi.binary.RrdRandomAccessFileBackend;
 import org.rrd4j.backend.spi.binary.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.backend.spi.binary.RrdSafeFileBackend;
 import org.rrd4j.backend.spi.binary.RrdSafeFileBackendFactory;
+import org.rrd4j.core.RrdDb;
 
 /**
  * Base (abstract) backend factory class which holds references to all concrete
@@ -58,7 +59,7 @@ import org.rrd4j.backend.spi.binary.RrdSafeFileBackendFactory;
  * See javadoc for {@link RrdBackend} to find out how to create your custom backends.
  */
 public abstract class RrdBackendFactory {
-    public enum State {
+    protected enum State {
         /**
          * A service in this state is inactive. It does minimal work and consumes
          * minimal resources.
@@ -107,9 +108,17 @@ public abstract class RrdBackendFactory {
         registerFactory(RrdMongoDBBackendFactory.class);
     }
 
+    // Set to try once the factory has been used on, to prevent change of default factory
+    // Once used this factory can only be changed after a purge
+    private boolean instanceCreated = false;
+
     /**
-     * Returns backend factory for the given backend factory name. <p>
+     * Returns a backend factory for the given backend factory name. <p>
      * It will not start nor configure the factory.
+     * <p>
+     * The first call will return a new instance, the next one will return the previous one
+     * <p>
+     * If the factory was stopped, it will be dropped and a new one created
      *
      * @param factoryName Backend factory name. Initially supported names are:<p>
      *             <ul>
@@ -133,8 +142,8 @@ public abstract class RrdBackendFactory {
         }
         synchronized(fs) {
             Class<? extends RrdBackendFactory> factoryClass = fs.clazz;
-            
-            // If backend is stopped, it can be dropped
+
+            // If backend already exist but is stopped, it can be dropped and a new one created
             if(fs.instance != null && fs.instance.getState() == State.TERMINATED) {
                 fs.instance = null;
             }
@@ -160,7 +169,38 @@ public abstract class RrdBackendFactory {
     }
 
     /**
-     * Registers new (custom) backend factory within the Rrd4j framework.
+     * This method stop and purge a factory, even if a previous stop failed. It should be used with care, it can drop data.
+     * But it can allow to purge a failed factory after cleaning. 
+     * <p>
+     * It's also needed to change the default factory
+     * 
+     * @param factoryName the factory to drop
+     * @return return true if every think when smoothly
+     * @throws Exception if the stopping throws any exception the factory is purged any way.
+     */
+    public static boolean purge(String factoryName) throws Exception {
+        boolean cleanstop = true;
+        FactoryState fs = factories.get(factoryName);
+        if(fs == null) {
+            throw new IllegalArgumentException("No backend factory found with the name specified [" + factoryName + "]");           
+        }
+        try {
+            if(fs.instance != null) {
+                if(defaultFactory == fs.instance)
+                    defaultFactory = null;
+                cleanstop = fs.instance.stop();
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            fs.instance = null;
+        }
+        return cleanstop;
+    }
+
+    /**
+     * Registers a new (custom) backend factory within the Rrd4j framework. It will not be started
+     * so any factory can be registred, just in case.
      *
      * @param factory Factory to be registered
      */
@@ -178,7 +218,7 @@ public abstract class RrdBackendFactory {
     }
 
     /**
-     * Registers new (custom) backend factory within the Rrd4j framework and sets this
+     * Registers a new (custom) backend factory within the Rrd4j framework and sets this
      * factory as the default.<p>
      * It will not start nor configure the factory.
      * 
@@ -214,7 +254,7 @@ public abstract class RrdBackendFactory {
      *                    "NIO" (java.nio.* based) and "MEMORY" (byte[] based).
      */
     public static synchronized void setDefaultFactory(String factoryName) {
-        if (RrdBackend.isInstanceCreated() && ! defaultFactoryName.equals(factoryName)) {
+        if (defaultFactory.instanceCreated == true) {
             throw new IllegalStateException("Could not change the default backend factory. " +
                     "This method must be called before the first RRD gets created");
         }
@@ -228,6 +268,17 @@ public abstract class RrdBackendFactory {
     protected RrdBackendFactory() {
         name = getClass().getAnnotation(RrdBackendMeta.class).value();
     }
+    
+    /**
+     * Call stop() at the end of life of an factory, to ensure clean drop of content
+     * @see java.lang.Object#finalize()
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        stop();
+        super.finalize();
+    }
+    
 
     /**
      * Creates RrdBackend object for the given storage path.
@@ -238,7 +289,7 @@ public abstract class RrdBackendFactory {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws IOException Thrown in case of I/O error.
      */
-    protected RrdBackend open(String path, boolean readOnly) throws IOException {
+    public RrdBackend open(String path, boolean readOnly) throws IOException {
         if(state != State.RUNNING)
             throw new IllegalStateException("backend not started");
         RrdBackend backend = doOpen(path, readOnly);
@@ -254,7 +305,7 @@ public abstract class RrdBackendFactory {
      * @param path Storage path
      * @return True, if such storage exists, false otherwise.
      */
-    protected abstract boolean exists(String path) throws IOException;
+    public abstract boolean exists(String path) throws IOException;
 
     /**
      * Determines if the header should be validated.
@@ -263,7 +314,7 @@ public abstract class RrdBackendFactory {
      * @return True, if the header should be validated for this factory
      * @throws IOException if header validation fails
      */
-    protected abstract boolean shouldValidateHeader(String path) throws IOException;
+    public abstract boolean shouldValidateHeader(String path) throws IOException;
 
     /**
      * Returns the name (primary ID) for the factory.
@@ -274,12 +325,13 @@ public abstract class RrdBackendFactory {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.util.concurrent.AbstractService#doStart()
+    /**
+     * Start a factory, will call the abstract method startBackend
+     * @return true is started without problems
      */
-    public synchronized final State start() {
+    public synchronized final boolean start() {
         if(state != State.NEW)
-            return state;
+            return state == State.RUNNING;
         state = State.STARTING;
         try {
             if(startBackend()) {
@@ -293,16 +345,18 @@ public abstract class RrdBackendFactory {
             state = State.FAILED;  
             throw new IllegalStateException("backend failed to start with exception", e);
         }
-        return state;
+        return state == State.RUNNING;
     }
 
-    /* (non-Javadoc)
-     * @see com.google.common.util.concurrent.AbstractService#doStop()
+    /**
+     * Stop a factory, will call the abstract method stopBackend.
+     * sync() is always called at the start of this method.
+     * @return
      */
-    public synchronized final State stop() {
+    public synchronized final boolean stop() {
         sync();
         if(state != State.RUNNING)
-            return state;
+            return state == State.TERMINATED;
         state = State.STOPPING;
         try {
             if(stopBackend()) {
@@ -317,25 +371,18 @@ public abstract class RrdBackendFactory {
             throw new IllegalStateException("backend failed to stop with exception", e);
 
         }
-        return state;
+        return state == State.TERMINATED;
     }
 
     /**
-     * A class that can be called to force an commit to permanent storage of date
+     * A class that can be called to force an commit to permanent storage of date.
+     * The default one is empty and should be overridden by implementation if needed.
      */
-    public final void sync() {
-        if(state == State.RUNNING)
-            doSync();
+    public void sync() {
     }
 
     /**
-     * A empty method. Subclass should overwrite it to force a sync of data.
-     */
-    protected void doSync() {
-    }
-
-    /**
-     * A method can be be overriden to provide back-end staticics
+     * A method can be be overridden to provide back-end staticics
      * @return an empty map
      */
     public Map<String, Number> getStats() {
@@ -351,7 +398,13 @@ public abstract class RrdBackendFactory {
     State getState() {
         return state;
     }
-    
+
+    /**
+     * Resolve the identifier of a backend to an uniq string. It could be the canonical path of file, a fully qualified URL
+     * @param id an opaq key for the object
+     * @return e string identifier
+     * @throws IOException
+     */
     public abstract String resolveUniqId(Object id) throws IOException;
 
 }

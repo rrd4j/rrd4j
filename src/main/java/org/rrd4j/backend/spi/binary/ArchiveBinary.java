@@ -58,7 +58,7 @@ public class ArchiveBinary extends Archive implements Allocated {
     /**
      * <p>getRrdBackend.</p>
      *
-     * @return a {@link org.rrd4j.core.RrdBackend} object.
+     * @return a {@link org.rrd4j.backend.RrdBackend} object.
      */
     public RrdBinaryBackend getRrdBackend() {
         return backend;

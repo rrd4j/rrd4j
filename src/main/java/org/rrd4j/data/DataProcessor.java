@@ -1,5 +1,6 @@
 package org.rrd4j.data;
 
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.core.*;
 import org.rrd4j.ConsolFun;
 

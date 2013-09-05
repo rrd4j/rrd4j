@@ -2,6 +2,8 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
+import org.rrd4j.backend.RrdBackend;
+
 public class Robin implements RrdUpdater {
 
     private final Archive parentArc;

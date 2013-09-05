@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
+import org.rrd4j.backend.RrdBackendFactory;
 
 import junit.framework.Assert;
 

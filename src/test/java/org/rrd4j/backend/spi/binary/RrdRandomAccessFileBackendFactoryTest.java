@@ -7,9 +7,9 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.backend.spi.binary.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.BackEndFactoryTest;
-import org.rrd4j.core.RrdBackendFactory;
 
 
 public class RrdRandomAccessFileBackendFactoryTest extends BackEndFactoryTest {

@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.rrd4j.core.RrdBackend;
-import org.rrd4j.core.RrdBackendFactory;
-import org.rrd4j.core.RrdBackendMeta;
+import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.RrdBackendFactory;
+import org.rrd4j.backend.RrdBackendMeta;
 import org.rrd4j.core.RrdDb;
 
 /**
@@ -76,11 +76,11 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      * @param id Memory storage ID.
      * @return True, if such storage exists, false otherwise.
      */
-    protected boolean exists(String id) {
+    public boolean exists(String id) {
         return backends.containsKey(id);
     }
 
-    protected boolean shouldValidateHeader(String path) throws IOException {
+    public boolean shouldValidateHeader(String path) throws IOException {
         return false;
     }
 

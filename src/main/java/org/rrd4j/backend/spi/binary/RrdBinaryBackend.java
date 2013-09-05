@@ -2,6 +2,7 @@ package org.rrd4j.backend.spi.binary;
 
 import java.io.IOException;
 
+import org.rrd4j.backend.RrdBackend;
 import org.rrd4j.backend.spi.ArcState;
 import org.rrd4j.backend.spi.Archive;
 import org.rrd4j.backend.spi.Datasource;
@@ -10,7 +11,6 @@ import org.rrd4j.backend.spi.Robin;
 import org.rrd4j.core.ArcDef;
 import org.rrd4j.core.DataImporter;
 import org.rrd4j.core.DsDef;
-import org.rrd4j.core.RrdBackend;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 
@@ -50,7 +50,7 @@ import org.rrd4j.core.RrdDef;
  * create custom backend objects when necessary.
  *
  * <li>Create instance of your custom RrdBackendFactory and register it as a regular
- * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.core.RrdBackendFactory} to
+ * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.backend.RrdBackendFactory} to
  * find out how to do this.
  * </ul>
  *

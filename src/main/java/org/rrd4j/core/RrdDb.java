@@ -1,6 +1,8 @@
 package org.rrd4j.core;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.RrdBackendFactory;
 import org.rrd4j.core.Archive;
 
 import java.io.ByteArrayOutputStream;
@@ -71,7 +73,7 @@ public class RrdDb implements RrdUpdater {
      * <p>Constructor used to create new RRD object from the definition. This RRD object will be backed
      * with a storage (backend) of the default type. Initially, storage type defaults to "NIO"
      * (RRD bytes will be put in a file on the disk). Default storage type can be changed with a static
-     * {@link org.rrd4j.core.RrdBackendFactory#setDefaultFactory(String)} method call.</p>
+     * {@link org.rrd4j.backend.RrdBackendFactory#setDefaultFactory(String)} method call.</p>
      * <p/>
      * <p>New RRD file structure is specified with an object of class
      * {@link RrdDef <b>RrdDef</b>}. The underlying RRD storage is created as soon
@@ -1012,7 +1014,7 @@ public class RrdDb implements RrdUpdater {
 
     /**
      * Sets default backend factory to be used. This method is just an alias for
-     * {@link org.rrd4j.core.RrdBackendFactory#setDefaultFactory(String)}.<p>
+     * {@link org.rrd4j.backend.RrdBackendFactory#setDefaultFactory(String)}.<p>
      *
      * @param factoryName Name of the backend factory to be set as default.
      * @throws java.lang.IllegalArgumentException Thrown if invalid factory name is supplied, or not called

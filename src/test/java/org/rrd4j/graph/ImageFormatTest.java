@@ -7,7 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
-import org.rrd4j.core.RrdBackendFactory;
+import org.rrd4j.backend.RrdBackendFactory;
 
 public class ImageFormatTest {
     private final static String rrdpath = ImageFormatTest.class.getResource("/demo1.rrd").getFile(); 

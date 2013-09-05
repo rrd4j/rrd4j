@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.rrd4j.core.RrdBackend;
-import org.rrd4j.core.RrdBackendFactory;
-import org.rrd4j.core.RrdBackendMeta;
+import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.RrdBackendFactory;
+import org.rrd4j.backend.RrdBackendMeta;
 
 /**
  * {@link RrdBackendFactory} that uses
@@ -93,7 +93,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
     /**
      * Checks if the RRD with the given id (path) already exists in the database.
      */
-    protected boolean exists(String path) throws IOException {
+    public boolean exists(String path) throws IOException {
         if (pathCache.contains(path)) {
             return true;
         } else {
@@ -115,7 +115,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         }
     }
 
-    protected boolean shouldValidateHeader(String path) {
+    public boolean shouldValidateHeader(String path) {
         return false;
     }
 
@@ -123,7 +123,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
      * @see org.rrd4j.core.RrdBackendFactory#sync()
      */
     @Override
-    public void doSync() {
+    public void sync() {
         rrdDatabase.sync();
     }
 
