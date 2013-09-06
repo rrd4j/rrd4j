@@ -27,8 +27,7 @@ public class PercentileTest {
         startTime -= (startTime % 300); 
         long endTime = startTime +  200 * 300;
 
-        RrdDb db = createRrdFile(fileName, startTime);
-        db.exportXml("/tmp/rrd1.xml");
+        createRrdFile(fileName, startTime);
         System.out.println(String.format("rrdtool graph /dev/null -s %d -e %d 'DEF:baz=/tmp/rrd1.rrd:bar:AVERAGE' 'VDEF:nfp=baz,95,PERCENT' 'PRINT:nfp:%%le'", startTime - 300, endTime + 300));
 
         RrdGraphDef graphDef = new RrdGraphDef();
@@ -58,8 +57,7 @@ public class PercentileTest {
         startTime -= (startTime % 300); 
         long endTime = startTime +  100 * 300;
 
-        RrdDb db = createRrdFile(fileName, startTime);
-        db.exportXml("/tmp/rrd2.xml");
+        createRrdFile(fileName, startTime);
         System.out.println(String.format("rrdtool graph /dev/null -s %d -e %d 'DEF:baz=/tmp/rrd2.rrd:bar:AVERAGE' 'VDEF:nfp=baz,95,PERCENT' 'PRINT:nfp:%%le'", startTime - 300, endTime + 300));
 
         RrdGraphDef graphDef = new RrdGraphDef();
