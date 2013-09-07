@@ -34,15 +34,25 @@ public abstract class Variable {
      * @param end
      */
     void calculate(Source s, long start, long end) {
+        long step = s.timestamps[1] - s.timestamps[0];
         int first = -1;
         int last = -1;
         // Iterate over array, stop then end cursor reach start or when both start and end has been found
         for(int i = 0, j = s.timestamps.length - 1; j > first && first == -1 || start == -1; i++, j--) {
-            if(first == -1 && s.timestamps[i] > start) {
-                first = i;
+            if(first == -1) {
+                long leftdown = Math.max(s.timestamps[i] - step, start);
+                long rightdown = Math.min(s.timestamps[i], end);
+                if(rightdown > leftdown) {
+                    first = i;
+                }                
             }
-            if(last == -1 && s.timestamps[j] < end) {
-                last = j;
+            
+            if(last == -1) {
+                long leftup = Math.max(s.timestamps[j] - step, start);
+                long rightup = Math.min(s.timestamps[j], end);
+                if(rightup - leftup > 0) {
+                    last = j;
+                }                
             }
         }
         if( first == -1 || last == -1) {
@@ -100,7 +110,7 @@ public abstract class Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             for(int i = 0; i < values.length; i++) {
-                if( ! Double.isNaN(values[i])) {
+                if( timestamps[i] > start && timestamps[i] < end && ! Double.isNaN(values[i])) {
                     return new Value(timestamps[i], values[i]);
                 }
             }
@@ -116,7 +126,7 @@ public abstract class Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             for(int i = values.length - 1 ; i >=0 ; i--) {
-                if( ! Double.isNaN(values[i]) && timestamps[i] < end) {
+                if( timestamps[i] > start && timestamps[i] < end &&  ! Double.isNaN(values[i]) && timestamps[i] < end) {
                     return new Value(timestamps[i], values[i]);
                 }
             }
@@ -153,7 +163,7 @@ public abstract class Variable {
             long timestamp = 0;
             double value = Double.MIN_VALUE;
             for(int i = values.length -1 ; i >=0 ; i--) {
-                if( !Double.isNaN(values[i]) && value < values[i]) {
+                if(!Double.isNaN(values[i]) && value < values[i]) {
                     timestamp = timestamps[i];
                     value = values[i];
                 }
@@ -253,7 +263,7 @@ public abstract class Variable {
             Arrays.sort(values);
             // skip top (100% - percentile) values
             double topPercentile = (100.0 - percentile) / 100.0;
-            count -= (int) Math.floor(count * topPercentile);
+            count -= (int) Math.ceil(count * topPercentile);
             // if we have anything left...
             if (count > 0) {
                 double value = values[count - 1 ];

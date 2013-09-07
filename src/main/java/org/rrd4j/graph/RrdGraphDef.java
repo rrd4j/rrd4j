@@ -56,6 +56,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     boolean noMinorGrid = false; // ok
     boolean altYMrtg = false; // ok
     boolean altAutoscale = false; // ok
+    boolean altAutoscaleMin = false; // ok
     boolean altAutoscaleMax = false; // ok
     int unitsExponent = Integer.MAX_VALUE; // ok
     int unitsLength = DEFAULT_UNITS_LENGTH; // ok
@@ -300,6 +301,22 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void setAltAutoscale(boolean altAutoscale) {
         this.altAutoscale = altAutoscale;
+    }
+
+    /**
+     * Computes Y range based on function absolute minimum and maximum
+     * values. Where setAltAutoscale(true) will modify both the absolute maximum AND
+     * minimum values, this option will only affect the maximum value. The
+     * minimum value, if not defined elsewhere, will be 0. This
+     * option can be useful when graphing router traffic when the WAN line
+     * uses compression, and thus the throughput may be higher than the
+     * WAN line speed.
+     *
+     * @param altAutoscaleMax true to request alternative autoscaling, false
+     *                        otherwise (default)
+     */
+    public void setAltAutoscaleMin(boolean altAutoscaleMin) {
+        this.altAutoscaleMin = altAutoscaleMin;
     }
 
     /**

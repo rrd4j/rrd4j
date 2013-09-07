@@ -428,7 +428,7 @@ public class RrdGraph implements RrdGraphConstants {
                     im.minval = scaled_min;
                     im.maxval = scaled_max;
                 }
-                else if (gdef.altAutoscale) {
+                else if (gdef.altAutoscale || (gdef.altAutoscaleMin && gdef.altAutoscaleMax)) {
                     /* measure the amplitude of the function. Make sure that
                             graph boundaries are slightly higher then max/min vals
                             so we can see amplitude on the graph */
@@ -443,6 +443,13 @@ public class RrdGraph implements RrdGraphConstants {
                     }
                     im.minval -= adj;
                     im.maxval += adj;
+                }
+                else if (gdef.altAutoscaleMin) {
+                    /* measure the amplitude of the function. Make sure that
+                            graph boundaries are slightly lower than min vals
+                            so we can see amplitude on the graph */
+                    adj = (im.maxval - im.minval) * 0.1;
+                    im.minval -= adj;
                 }
                 else if (gdef.altAutoscaleMax) {
                     /* measure the amplitude of the function. Make sure that

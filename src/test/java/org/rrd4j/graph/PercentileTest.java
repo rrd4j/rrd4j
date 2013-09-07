@@ -29,9 +29,8 @@ public class PercentileTest {
         startTime -= (startTime % 300); 
         long endTime = startTime +  200 * 300;
 
-        RrdDb db = createRrdFile(fileName, startTime);
-        db.exportXml("/tmp/rrd.xml");
-        System.out.println(String.format("rrdtool graph /dev/null -s %d -e %d 'DEF:baz=/tmp/rrd.rrd:bar:AVERAGE' 'VDEF:nfp=baz,95,PERCENT' 'PRINT:nfp:%%le'", startTime - 300, endTime + 300));
+        createRrdFile(fileName, startTime);
+        System.out.println(String.format("rrdtool graph /dev/null -s %d -e %d 'DEF:baz=/tmp/rrd1.rrd:bar:AVERAGE' 'VDEF:nfp=baz,95,PERCENT' 'PRINT:nfp:%%le'", startTime - 300, endTime + 300));
 
         RrdGraphDef graphDef = new RrdGraphDef();
         graphDef.setStartTime(startTime - 300);
@@ -49,6 +48,7 @@ public class PercentileTest {
         String[] printLines = info.getPrintLines();
         Assert.assertNotNull("graph printLines", printLines);
         Assert.assertEquals("graph printLines size", 1, printLines.length);
+        // rrdtools says 9.574000e+03
         Assert.assertEquals("graph printLines item 0", "9.574000e+03", printLines[0]);
 
         factory.stop();
@@ -61,9 +61,8 @@ public class PercentileTest {
         startTime -= (startTime % 300); 
         long endTime = startTime +  100 * 300;
 
-        RrdDb db = createRrdFile(fileName, startTime);
-        db.exportXml("/tmp/rrd.xml");
-        System.out.println(String.format("rrdtool graph /dev/null -s %d -e %d 'DEF:baz=/tmp/rrd.rrd:bar:AVERAGE' 'VDEF:nfp=baz,95,PERCENT' 'PRINT:nfp:%%le'", startTime - 300, endTime + 300));
+        createRrdFile(fileName, startTime);
+        System.out.println(String.format("rrdtool graph /dev/null -s %d -e %d 'DEF:baz=/tmp/rrd2.rrd:bar:AVERAGE' 'VDEF:nfp=baz,95,PERCENT' 'PRINT:nfp:%%le'", startTime - 300, endTime + 300));
 
         RrdGraphDef graphDef = new RrdGraphDef();
         graphDef.setStartTime(startTime - 300);
@@ -81,7 +80,7 @@ public class PercentileTest {
         String[] printLines = info.getPrintLines();
         Assert.assertNotNull("graph printLines", printLines);
         Assert.assertEquals("graph printLines size", 1, printLines.length);
-        // rrdootl would prefer 4.810000e+03
+        // rrdtools says 4.810000e+03
         Assert.assertEquals("graph printLines item 0", "4.799000e+03", printLines[0]);
     }
 
