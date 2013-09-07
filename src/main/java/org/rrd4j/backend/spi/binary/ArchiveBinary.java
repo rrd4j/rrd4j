@@ -17,7 +17,6 @@ import org.rrd4j.backend.spi.Archive;
  * @author Sasa Markovic
  */
 public class ArchiveBinary extends Archive implements Allocated {
-    protected final RrdAllocator allocator;
     protected final RrdBinaryBackend backend;
 
     // definition
@@ -26,8 +25,7 @@ public class ArchiveBinary extends Archive implements Allocated {
     final RrdInt stepsP;
     final RrdInt rowsP;
 
-    ArchiveBinary(RrdAllocator allocator, RrdBinaryBackend backend) throws IOException {
-        this.allocator = allocator;
+    ArchiveBinary(RrdBinaryBackend backend) throws IOException {
         this.backend = backend;
         
         consolFunP = new RrdString(this, true);
@@ -52,7 +50,7 @@ public class ArchiveBinary extends Archive implements Allocated {
      * @return a {@link org.rrd4j.core.RrdAllocator} object.
      */
     public RrdAllocator getRrdAllocator() {
-        return allocator;
+        return backend.getRrdAllocator();
     }
 
     /**
