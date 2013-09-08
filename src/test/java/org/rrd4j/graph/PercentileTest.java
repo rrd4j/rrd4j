@@ -22,7 +22,7 @@ public class PercentileTest {
 
     @Test
     public void testSampleVDEFPercentile1() throws Exception {
-        RrdBackendFactory factory = RrdBackendFactory.getFactory("MEMORY");
+        RrdBackendFactory factory = RrdBackendFactory.getFactory(backend);
         factory.start();
 
         long startTime = (int)( now / 1000);
