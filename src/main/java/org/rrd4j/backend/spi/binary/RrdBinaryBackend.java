@@ -14,48 +14,6 @@ import org.rrd4j.core.DsDef;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 
-/**
- * Base implementation class for all backend classes. Each Round Robin Database object
- * ({@link org.rrd4j.core.RrdDb} object) is backed with a single RrdBackend object which performs
- * actual I/O operations on the underlying storage. Rrd4j supports
- * multiple backends out of the box. E.g.:</p>
- * <ul>
- * <li>{@link org.rrd4j.backend.spi.binary.RrdRandomAccessFileBackend}: objects of this class are created from the
- * {@link org.rrd4j.backend.spi.binary.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
- * Rrd4j releases prior to 1.4.0. It uses java.io.* package and
- * RandomAccessFile class to store RRD data in files on the disk.
- *
- * <li>{@link org.rrd4j.backend.spi.binary.RrdNioBackend}: objects of this class are created from the
- * {@link org.rrd4j.backend.spi.binary.RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
- * classes (mapped ByteBuffer) to store RRD data in files on the disk. This backend is fast, very fast,
- * but consumes a lot of memory (borrowed not from the JVM but from the underlying operating system
- * directly). <b>This is the default backend used in Rrd4j since 1.4.0 release.</b>
- *
- * <li>{@link org.rrd4j.backend.spi.binary.RrdMemoryBackend}: objects of this class are created from the
- * {@link org.rrd4j.backend.spi.binary.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
- * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
- * </ul>
- *
- * To create your own backend in order to provide some custom type of RRD storage,
- * you should do the following:</p>
- *
- * <ul>
- * <li>Create your custom RrdBackend class (RrdCustomBackend, for example)
- * by extending RrdBackend class. You have to implement all abstract methods defined
- * in the base class.
- *
- * <li>Create your custom RrdBackendFactory class (RrdCustomBackendFactory,
- * for example) by extending RrdBackendFactory class. You have to implement all
- * abstract methods defined in the base class. Your custom factory class will actually
- * create custom backend objects when necessary.
- *
- * <li>Create instance of your custom RrdBackendFactory and register it as a regular
- * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.backend.RrdBackendFactory} to
- * find out how to do this.
- * </ul>
- *
- * @author Sasa Markovic
- */
 public abstract class RrdBinaryBackend extends RrdBackend implements Allocated {
 
     private final RrdAllocator allocator = new RrdAllocator();
