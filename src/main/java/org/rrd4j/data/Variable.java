@@ -2,6 +2,10 @@ package org.rrd4j.data;
 
 import java.util.Arrays;
 
+import org.rrd4j.backend.spi.RobinIterator;
+import org.rrd4j.backend.spi.RobinTimeSet;
+import org.rrd4j.core.RrdValue;
+
 /**
  *  An abstract class to help extract single value from a set of value (VDEF in rrdtool)
  *  
@@ -22,7 +26,7 @@ public abstract class Variable {
             this.timestamp = timestamp;
         }
     };
-    
+
     static public final Value INVALIDVALUE = new Value(0, Double.NaN);
 
     private Value val = null;
@@ -34,30 +38,30 @@ public abstract class Variable {
      * @param end
      */
     void calculate(Source s, long start, long end) {
-        long step = s.timestamps[1] - s.timestamps[0];
-        int first = -1;
-        int last = -1;
-        // Iterate over array, stop then end cursor reach start or when both start and end has been found
-        for(int i = 0, j = s.timestamps.length - 1; j > first && first == -1 || start == -1; i++, j--) {
-            if(first == -1) {
-                long leftdown = Math.max(s.timestamps[i] - step, start);
-                long rightdown = Math.min(s.timestamps[i], end);
-                if(rightdown > leftdown) {
-                    first = i;
-                }                
-            }
-            
-            if(last == -1) {
-                long leftup = Math.max(s.timestamps[j] - step, start);
-                long rightup = Math.min(s.timestamps[j], end);
-                if(rightup - leftup > 0) {
-                    last = j;
-                }                
-            }
-        }
-        if( first == -1 || last == -1) {
-            throw new RuntimeException("Invalid range");
-        }
+        //        long step = s.timestamps[1] - s.timestamps[0];
+        //        int first = -1;
+        //        int last = -1;
+        //        // Iterate over array, stop then end cursor reach start or when both start and end has been found
+        //        for(int i = 0, j = s.timestamps.length - 1; j > first && first == -1 || start == -1; i++, j--) {
+        //            if(first == -1) {
+        //                long leftdown = Math.max(s.timestamps[i] - step, start);
+        //                long rightdown = Math.min(s.timestamps[i], end);
+        //                if(rightdown > leftdown) {
+        //                    first = i;
+        //                }                
+        //            }
+        //            
+        //            if(last == -1) {
+        //                long leftup = Math.max(s.timestamps[j] - step, start);
+        //                long rightup = Math.min(s.timestamps[j], end);
+        //                if(rightup - leftup > 0) {
+        //                    last = j;
+        //                }                
+        //            }
+        //        }
+        //        if( first == -1 || last == -1) {
+        //            throw new RuntimeException("Invalid range");
+        //        }
         if(s instanceof VDef) {
             // Already a variable, just check if it fits
             Value v = ((VDef) s).getValue();
@@ -75,11 +79,7 @@ public abstract class Variable {
             }
         }
         else {
-            long[] timestamps = new long[ last - first + 1];
-            System.arraycopy(s.timestamps, first, timestamps, 0, timestamps.length);
-            double[] values = new double[ last - first + 1];
-            System.arraycopy(s.getValues(), first, values, 0, values.length);
-            val = fill(timestamps, values, start, end);            
+            val = fill(s.getIterator());            
         }
     }
 
@@ -100,37 +100,47 @@ public abstract class Variable {
      * @param end the end of the period
      * @return a filled Value object
      */
-    abstract protected Value fill(long timestamps[], double[] values, long start, long end);
+    abstract protected Value fill(RobinTimeSet iter);
 
     /**
      * Find the first valid data point and it's timestamp
      *
      */
-   public static class FIRST extends Variable {
+    public static class FIRST extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
-            for(int i = 0; i < values.length; i++) {
-                if( timestamps[i] > start && timestamps[i] < end && ! Double.isNaN(values[i])) {
-                    return new Value(timestamps[i], values[i]);
+        protected Value fill(RobinTimeSet iter) {
+            long start = iter.getStart();
+            long end = iter.getEnd();
+            for(RobinIterator.RobinPoint i: iter ) {
+                long ts = i.timestamp;
+                if( ts > start && ts < end) {
+                    return new Value(ts, i.value);
                 }
             }
             return new Value(0, Double.NaN);
         }
     }
 
-   /**
+    /**
      * Find the first last valid point and it's timestamp
-    *
-    */
+     *
+     */
     public static class LAST extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
-            for(int i = values.length - 1 ; i >=0 ; i--) {
-                if( timestamps[i] > start && timestamps[i] < end &&  ! Double.isNaN(values[i]) && timestamps[i] < end) {
-                    return new Value(timestamps[i], values[i]);
+        protected Value fill(RobinTimeSet iter) {
+            long start = iter.getStart();
+            long end = iter.getEnd();
+            double last = Double.NaN;
+            long lastTime =  0;
+            for(RobinIterator.RobinPoint i: iter) {
+                long ts = i.timestamp;
+                double value = i.value;
+                if( ts > start && ts < end && !Double.isNaN(ts)) {
+                    last = value;
+                    lastTime = ts;
                 }
             }
-            return new Value(0, Double.NaN);
+            return new Value(lastTime, last);            
         }
     }
 
@@ -140,13 +150,15 @@ public abstract class Variable {
      */
     public static class MIN extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(RobinTimeSet iter) {
             long timestamp = 0;
             double value = Double.MAX_VALUE;
-            for(int i = values.length -1 ; i >=0 ; i--) {
-                if( !Double.isNaN(values[i]) && value > values[i]) {
-                    timestamp = timestamps[i];
-                    value = values[i];
+            for(RobinIterator.RobinPoint i: iter) {
+                long ts = i.timestamp;
+                double stepValue = i.value;
+                if( !Double.isNaN(stepValue) && value > stepValue) {
+                    timestamp = ts;
+                    value = stepValue;
                 }
             }
             return new Value(timestamp, value);
@@ -159,13 +171,15 @@ public abstract class Variable {
      */
     public static  class MAX extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(RobinTimeSet iter) {
             long timestamp = 0;
             double value = Double.MIN_VALUE;
-            for(int i = values.length -1 ; i >=0 ; i--) {
-                if(!Double.isNaN(values[i]) && value < values[i]) {
-                    timestamp = timestamps[i];
-                    value = values[i];
+            for(RobinIterator.RobinPoint i: iter) {
+                long ts = i.timestamp;
+                double stepValue = i.value;
+                if( !Double.isNaN(stepValue) && value < stepValue) {
+                    timestamp = ts;
+                    value = stepValue;
                 }
             }
             return new Value(timestamp, value);
@@ -178,7 +192,7 @@ public abstract class Variable {
      */
     public static  class TOTAL extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(RobinIterator i, long start, long end) {
             double value = 0;
             for(int i = values.length - 1 ; i >= 0 ; i--) {
                 if( !Double.isNaN(values[i]) ) {
@@ -195,7 +209,7 @@ public abstract class Variable {
      */
     public static class AVERAGE extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(RobinIterator i, long start, long end) {
             double value = 0;
             int count = 0;
             for(int i = values.length - 1 ; i >= 0 ; i--) {
@@ -220,7 +234,7 @@ public abstract class Variable {
      */
     public static class STDDEV extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(RobinIterator i) {
             double value = Double.NaN;
             int count = 0;
             double stdevM = 0.0;
@@ -257,7 +271,7 @@ public abstract class Variable {
         }
 
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(RobinIterator i, long start, long end) {
             int count = values.length;
             // sort array
             Arrays.sort(values);
@@ -281,7 +295,7 @@ public abstract class Variable {
     public static class LSLSLOPE extends Variable {
 
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(RobinIterator i, long start, long end) {
             int cnt = 0;
             int lslstep = 0;
             double SUMx = 0.0;

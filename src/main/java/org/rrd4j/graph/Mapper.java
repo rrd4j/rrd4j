@@ -1,5 +1,10 @@
 package org.rrd4j.graph;
 
+import java.util.Iterator;
+
+import org.rrd4j.backend.spi.RobinIterator;
+import org.rrd4j.backend.spi.RobinTimeSet;
+
 class Mapper {
     private RrdGraphDef gdef;
     private ImageParameters im;
@@ -19,6 +24,37 @@ class Mapper {
 
     int xtr(double mytime) {
         return (int) ((double) im.xorigin + pixieX * (mytime - im.start));
+    }
+
+    Iterator<RobinIterator.RobinPoint> ytr(final RobinTimeSet timeset) {
+        return new Iterator<RobinIterator.RobinPoint>() {
+            RobinIterator.RobinPoint point = new RobinIterator.RobinPoint();
+            Iterator<RobinIterator.RobinPoint> i = timeset.iterator();
+            boolean goodpoint = false;
+            
+            @Override
+            public boolean hasNext() {
+                return i.hasNext();
+            }
+
+            @Override
+            public RobinIterator.RobinPoint next() {
+                if(! goodpoint) {
+                    point.value = ytr(i.next().value);
+                    goodpoint = true;
+                    return point;
+                }
+                else {
+                    goodpoint = false;
+                    return point; 
+                }
+            }
+
+            @Override
+            public void remove() {
+                i.remove();
+            }
+        };
     }
 
     int ytr(double value) {

@@ -1,8 +1,9 @@
 package org.rrd4j.graph;
 
-import org.rrd4j.data.DataProcessor;
+import java.awt.Paint;
 
-import java.awt.*;
+import org.rrd4j.backend.spi.StackedRobinTimeSet;
+import org.rrd4j.data.DataProcessor;
 
 class Stack extends SourcedPlotElement {
     private final SourcedPlotElement parent;
@@ -13,21 +14,7 @@ class Stack extends SourcedPlotElement {
     }
 
     void assignValues(DataProcessor dproc) {
-        double[] parentValues = parent.getValues();
-        double[] procValues = dproc.getValues(srcName);
-        values = new double[procValues.length];
-        for (int i = 0; i < values.length; i++) {
-            if (Double.isNaN(parentValues[i])) {
-                values[i] = procValues[i];
-            }
-            else if (Double.isNaN(procValues[i])){
-                values[i] = parentValues[i];
-            }
-            else {
-                values[i] = parentValues[i] + procValues[i];
-                
-            }
-        }
+        iter = new StackedRobinTimeSet(dproc.getIterator(srcName), parent.getIterator());
     }
 
     float getParentLineWidth() {

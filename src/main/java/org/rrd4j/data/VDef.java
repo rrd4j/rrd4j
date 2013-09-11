@@ -34,7 +34,7 @@ class VDef extends Source implements NonRrdSource  {
     double[] getValues() {
         int count = getTimestamps().length;
         double[] values = new double[count];
-        Arrays.fill(values, var.getValue().value);
+        Arrays.fill(values, var.getValue().getValue());
         return values;
     }
 

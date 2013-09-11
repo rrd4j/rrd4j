@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.spi.RobinTimeSet;
 
 /**
  * Class to represent single RRD archive in a RRD with its internal state.
@@ -253,7 +254,6 @@ public class Archive implements RrdUpdater {
 
     FetchData fetchData(FetchRequest request) throws IOException {
         long arcStep = getArcStep();
-        long fetchStart = Util.normalize(request.getFetchStart(), arcStep);
         long fetchEnd = Util.normalize(request.getFetchEnd(), arcStep);
         if (fetchEnd < request.getFetchEnd()) {
             fetchEnd += arcStep;
@@ -265,39 +265,14 @@ public class Archive implements RrdUpdater {
             dsToFetch = parentDb.getDsNames();
         }
         int dsCount = dsToFetch.length;
-        int ptsCount = (int) ((fetchEnd - fetchStart) / arcStep + 1);
-        long[] timestamps = new long[ptsCount];
-        double[][] values = new double[dsCount][ptsCount];
-        long matchStartTime = Math.max(fetchStart, startTime);
-        long matchEndTime = Math.min(fetchEnd, endTime);
-        double[][] robinValues = null;
-        if (matchStartTime <= matchEndTime) {
-            // preload robin values
-            int matchCount = (int) ((matchEndTime - matchStartTime) / arcStep + 1);
-            int matchStartIndex = (int) ((matchStartTime - startTime) / arcStep);
-            robinValues = new double[dsCount][];
-            for (int i = 0; i < dsCount; i++) {
-                int dsIndex = parentDb.getDsIndex(dsToFetch[i]);
-                robinValues[i] = robins[dsIndex].getValues(matchStartIndex, matchCount);
-            }
+        RobinTimeSet[] iterators = new RobinTimeSet[dsCount]; 
+
+        for (int i = 0 ; i < dsToFetch.length ; i++) {
+            int dsIndex = parentDb.getDsIndex(dsToFetch[i]);
+            iterators[i] = robins[dsIndex].getValues(startTime, endTime);
         }
-        for (int ptIndex = 0; ptIndex < ptsCount; ptIndex++) {
-            long time = fetchStart + ptIndex * arcStep;
-            timestamps[ptIndex] = time;
-            for (int i = 0; i < dsCount; i++) {
-                double value = Double.NaN;
-                if (time >= matchStartTime && time <= matchEndTime) {
-                    // inbound time
-                    int robinValueIndex = (int) ((time - matchStartTime) / arcStep);
-                    assert robinValues != null;
-                    value = robinValues[i][robinValueIndex];
-                }
-                values[i][ptIndex] = value;
-            }
-        }
-        FetchData fetchData = new FetchData(this, request);
-        fetchData.setTimestamps(timestamps);
-        fetchData.setValues(values);
+
+        FetchData fetchData = new FetchData(this, request, iterators);
         return fetchData;
     }
 

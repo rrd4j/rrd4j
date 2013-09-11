@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.backend.spi.RobinIterator;
+import org.rrd4j.backend.spi.RobinTimeSet;
 import org.rrd4j.data.Aggregates;
 import org.rrd4j.data.DataProcessor;
 
@@ -37,32 +39,26 @@ public class FetchData {
     // anything fuuny will do
     private static final String RPN_SOURCE_NAME = "WHERE THE SPEECHLES UNITE IN A SILENT ACCORD";
 
-    private FetchRequest request;
-    private String[] dsNames;
-    private long[] timestamps;
-    private double[][] values;
+    private final FetchRequest request;
+    private final String[] dsNames;
+    private final RobinTimeSet[] iterators;
 
-    private Archive matchingArchive;
+    private final Archive matchingArchive;
     private long arcStep;
     private long arcEndTime;
 
-    FetchData(Archive matchingArchive, FetchRequest request) throws IOException {
+    FetchData(Archive matchingArchive, FetchRequest request, RobinTimeSet[] iterators) throws IOException {
         this.matchingArchive = matchingArchive;
         this.arcStep = matchingArchive.getArcStep();
         this.arcEndTime = matchingArchive.getEndTime();
-        this.dsNames = request.getFilter();
         if (this.dsNames == null) {
             this.dsNames = matchingArchive.getParentDb().getDsNames();
         }
+        else {
+            this.dsNames = request.getFilter();            
+        }
         this.request = request;
-    }
-
-    void setTimestamps(long[] timestamps) {
-        this.timestamps = timestamps;
-    }
-
-    void setValues(double[][] values) {
-        this.values = values;
+        this.iterators = iterators;
     }
 
     /**
@@ -72,7 +68,11 @@ public class FetchData {
      * @return Number of rows.
      */
     public int getRowCount() {
-        return timestamps.length;
+        try {
+            return iterators[0].count();
+        } catch (IOException e) {
+            return 0;
+        }
     }
 
     /**
@@ -223,6 +223,10 @@ public class FetchData {
             }
         }
         return -1;        // Datasource not found !
+    }
+    
+    public RobinTimeSet getIterator(int index) {
+        return iterators[index];
     }
 
     /**

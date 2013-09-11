@@ -3,6 +3,7 @@ package org.rrd4j.backend.spi.binary;
 import java.io.IOException;
 
 import org.rrd4j.backend.spi.Robin;
+import org.rrd4j.backend.spi.RobinIterator;
 import org.rrd4j.core.Util;
 
 public abstract class RobinBinary extends Robin implements Allocated {
@@ -204,7 +205,7 @@ public abstract class RobinBinary extends Robin implements Allocated {
     }
 
     @Override
-    public Iterator getValues(org.rrd4j.core.Archive archive, long tStart, long tEnd) throws IOException {
+    public RobinIterator getValues(org.rrd4j.core.Archive archive, long tStart, long tEnd) throws IOException {
 
         final long arcStep = archive.getArcStep();
         final long fetchStart = Util.normalize(tStart, arcStep);
@@ -221,7 +222,7 @@ public abstract class RobinBinary extends Robin implements Allocated {
         final int matchCount = matchStartTime <= matchEndTime ? (int) ((matchEndTime - matchStartTime) / arcStep + 1) : 0;
         final int matchStartIndex = matchStartTime <= matchEndTime ?  (int) ((matchStartTime - startTime) / arcStep) : 0;
 
-        return new Iterator(archive, tStart, tEnd) {
+        return new RobinIterator(archive, tStart, tEnd) {
             int pos = 0;
             @Override
             protected void prepareQuery(org.rrd4j.core.Archive archive, long tStart, long tEnd) {
@@ -250,6 +251,11 @@ public abstract class RobinBinary extends Robin implements Allocated {
             @Override
             protected long readTimestamp() throws IOException {
                 return fetchStart + pos * arcStep;
+            }
+
+            @Override
+            public int count() {
+                return ptsCount;
             }
 
         };

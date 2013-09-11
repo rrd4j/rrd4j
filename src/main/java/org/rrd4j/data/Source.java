@@ -1,5 +1,7 @@
 package org.rrd4j.data;
 
+import org.rrd4j.backend.spi.RobinTimeSet;
+
 abstract class Source {
     private final String name;
 
@@ -14,22 +16,6 @@ abstract class Source {
         return name;
     }
 
-    void setValues(double[] values) {
-        this.values = values;
-    }
-
-    void setTimestamps(long[] timestamps) {
-        this.timestamps = timestamps;
-    }
-
-    double[] getValues() {
-        return values;
-    }
-
-    long[] getTimestamps() {
-        return timestamps;
-    }
-
     @Deprecated
     Aggregates getAggregates(long tStart, long tEnd) {
         Aggregator agg = new Aggregator(timestamps, values);
@@ -40,7 +26,9 @@ abstract class Source {
     double getPercentile(long tStart, long tEnd, double percentile) {
         Variable vpercent = new Variable.PERCENTILE((float) percentile);
         vpercent.calculate(this, tStart, tEnd);
-        return vpercent.getValue().value;
+        return vpercent.getValue().getValue();
     }
+
+    public abstract RobinTimeSet getIterator();
 
 }

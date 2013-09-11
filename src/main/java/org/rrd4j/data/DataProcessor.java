@@ -1,6 +1,8 @@
 package org.rrd4j.data;
 
 import org.rrd4j.backend.RrdBackendFactory;
+import org.rrd4j.backend.spi.RobinIterator;
+import org.rrd4j.backend.spi.RobinTimeSet;
 import org.rrd4j.core.*;
 import org.rrd4j.ConsolFun;
 
@@ -248,6 +250,15 @@ public class DataProcessor {
             throw new IllegalArgumentException("Values not available for source [" + sourceName + "]");
         }
         return values;
+    }
+
+    public RobinTimeSet getIterator(String sourceName) {
+        Source source = getSource(sourceName);
+        RobinTimeSet iter = source.getIterator();
+        if (iter == null) {
+            throw new IllegalArgumentException("Values not available for source [" + sourceName + "]");
+        }
+        return iter;
     }
 
     /**

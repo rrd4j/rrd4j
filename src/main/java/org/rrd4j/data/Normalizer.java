@@ -1,8 +1,13 @@
 package org.rrd4j.data;
 
+import org.rrd4j.backend.spi.RobinIterator;
+import org.rrd4j.backend.spi.RobinIterator.RobinPoint;
+import org.rrd4j.backend.spi.RobinTimeSet;
 import org.rrd4j.core.Util;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 
 class Normalizer {
     final private long[] timestamps;
@@ -55,6 +60,75 @@ class Normalizer {
             }
         }
         return values;
+    }
+
+    Iterator<RobinIterator.RobinPoint> normalize(final long[] rawTimestamps, RobinTimeSet set) throws IOException {
+        final int rawCount = rawTimestamps.length;
+        final long rawStep = rawTimestamps[1] - rawTimestamps[0];
+        final RobinIterator ri = set.values();
+        return new Iterator<RobinIterator.RobinPoint>() {
+            
+            RobinIterator.RobinPoint point = new RobinIterator.RobinPoint();
+            int seg = 0;
+            int fillSeg = seg;
+            double value = Double.NaN;
+            double weight = Double.NaN;
+            int rawSeg = 0;
+            boolean overlap = false;
+            double rawValue = ri.hasNext() ? ri.next().value : Double.NaN;
+            @Override
+            public boolean hasNext() {
+                return seg < count && fillSeg < count;
+            }
+
+            @Override
+            public RobinPoint next() {
+                long rawLeft = rawTimestamps[rawSeg] - rawStep;
+                if(!overlap && rawLeft >= timestamps[seg]) {
+                    point.value = value;
+                    point.timestamp = timestamps[seg];
+                    seg++;
+                    rawSeg++;
+                    return point;
+                }
+                else {
+                    long left = timestamps[seg] - step;
+                    long t1 = Math.max(rawLeft, left);
+                    long t2 = Math.min(rawTimestamps[rawSeg], timestamps[seg]);
+                    if( t1 < t2) {
+                        
+                    }
+                    else {
+                        overlap = false;
+                    }
+                    seg++;
+                }
+
+                if (!Double.isNaN(rawValue)) {
+                    
+                    for ( ; overlap && fillSeg < count; fillSeg++) {
+                        long left = timestamps[fillSeg] - step;
+                        long t1 = Math.max(rawLeft, left);
+                        long t2 = Math.min(rawTimestamps[rawSeg], timestamps[fillSeg]);
+                        if (t1 < t2) {
+                            value = Util.sum(values[fillSeg], (t2 - t1) * rawValues[rawSeg]);
+                            weight = Util.sum(weights[fillSeg], t2 - t1);
+                        }
+                        else {
+                            overlap = false;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void remove() {
+                // TODO Auto-generated method stub
+
+            }
+
+        };
+
     }
 
     private static double[] getCopyOf(double[] rawValues) {

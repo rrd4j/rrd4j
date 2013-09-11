@@ -3,6 +3,7 @@ package org.rrd4j.core;
 import java.io.IOException;
 
 import org.rrd4j.backend.RrdBackend;
+import org.rrd4j.backend.spi.RobinTimeSet;
 
 public class Robin implements RrdUpdater {
 
@@ -21,6 +22,7 @@ public class Robin implements RrdUpdater {
      * @return Array of double archive values, starting from the oldest one.
      * @throws java.io.IOException Thrown in case of I/O specific error.
      */
+    @Deprecated
     public double[] getValues() throws IOException {
         return spi.getValues();
     }
@@ -108,8 +110,13 @@ public class Robin implements RrdUpdater {
      * @return an array of double.
      * @throws java.io.IOException if any.
      */
+    @Deprecated
     public double[] getValues(int index, int count) throws IOException {
         return spi.getValues(index, count);
+    }
+    
+    public RobinTimeSet getValues(long tStart, long tEnd) throws IOException {
+        return spi.getValues(this.parentArc, tStart, tEnd);
     }
 
     public int getSize() {

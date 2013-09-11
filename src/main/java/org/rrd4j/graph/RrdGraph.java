@@ -671,6 +671,8 @@ public class RrdGraph implements RrdGraphConstants {
         }
         return timestampsDev;
     }
+    
+    
 
     double[] ytr(double[] values) {
         double[] valuesDev = new double[2 * values.length - 1];

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.backend.RrdBackendFactory;
+import org.rrd4j.backend.spi.RobinTimeSet;
 import org.rrd4j.core.FetchData;
 
 class Def extends Source {
@@ -81,6 +82,12 @@ class Def extends Source {
         return fetchData.getValues(dsName);
     }
 
+    @Override
+    public RobinTimeSet getIterator() {
+        return fetchData.getIterator(fetchData.getDsIndex(dsName));
+    }
+
+
     long getArchiveEndTime() {
         return fetchData.getArcEndTime();
     }
@@ -89,12 +96,14 @@ class Def extends Source {
         return fetchData.getStep();
     }
 
+    @Deprecated
     Aggregates getAggregates(long tStart, long tEnd) {
         long[] t = getRrdTimestamps();
         double[] v = getRrdValues();
         return new Aggregator(t, v).getAggregates(tStart, tEnd);
     }
 
+    @Deprecated
     double getPercentile(long tStart, long tEnd, double percentile) {
         long[] t = getRrdTimestamps();
         double[] v = getRrdValues();
@@ -104,4 +113,5 @@ class Def extends Source {
     boolean isLoaded() {
         return fetchData != null;
     }
+
 }

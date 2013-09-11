@@ -1,8 +1,9 @@
 package org.rrd4j.graph;
 
 import java.awt.Paint;
-import java.util.Arrays;
 
+import org.rrd4j.backend.spi.AddedRobinTimeSet;
+import org.rrd4j.backend.spi.RobinTimeSet;
 import org.rrd4j.data.DataProcessor;
 
 public class ConstantLine extends Line {
@@ -14,16 +15,8 @@ public class ConstantLine extends Line {
     }
 
     void assignValues(DataProcessor dproc) {
-        values = new double[dproc.getTimestamps().length];
-        Arrays.fill(values, value);
-        if(parent != null) {
-            double[] parentValues = parent.getValues();
-            for (int i = 0; i < values.length; i++) {
-                if (! Double.isNaN(parentValues[i])){
-                    values[i] += parentValues[i];
-                }
-            }
-        }
+        final RobinTimeSet riParent = parent.getIterator();
+        iter = new AddedRobinTimeSet(value, riParent);
     }
 
 }

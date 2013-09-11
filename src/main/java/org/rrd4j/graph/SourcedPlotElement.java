@@ -1,14 +1,17 @@
 package org.rrd4j.graph;
 
-import org.rrd4j.core.Util;
-import org.rrd4j.data.DataProcessor;
+import java.awt.Paint;
+import java.io.IOException;
 
-import java.awt.*;
+import org.rrd4j.backend.spi.RobinTimeSet;
+import org.rrd4j.backend.spi.StackedRobinTimeSet;
+import org.rrd4j.data.DataProcessor;
 
 class SourcedPlotElement extends PlotElement {
     final String srcName;
     final SourcedPlotElement parent;
     double[] values;
+    protected RobinTimeSet iter;
 
     SourcedPlotElement(String srcName, Paint color) {
         super(color);
@@ -24,44 +27,34 @@ class SourcedPlotElement extends PlotElement {
 
     void assignValues(DataProcessor dproc) {
         if(parent == null) {
-            values = dproc.getValues(srcName);
+            iter = dproc.getIterator(srcName);
         }
         else {
-            values = stackValues(dproc);
+            iter = new StackedRobinTimeSet(dproc.getIterator(srcName), parent.getIterator());
         }
-    }
-
-    double[] stackValues(DataProcessor dproc) {
-        double[] parentValues = parent.getValues();
-        double[] procValues = dproc.getValues(srcName);
-        double[] stacked = new double[procValues.length];
-        for (int i = 0; i < stacked.length; i++) {
-            if (Double.isNaN(parentValues[i])) {
-                stacked[i] = procValues[i];
-            }
-            else if (Double.isNaN(procValues[i])){
-                stacked[i] = parentValues[i];
-            }
-            else {
-                stacked[i] = parentValues[i] + procValues[i];
-            }
-        }
-        return stacked;
     }
 
     Paint getParentColor() {
         return parent != null ? parent.color : null;
     }
 
-    double[] getValues() {
-        return values;
+    RobinTimeSet getIterator() {
+        return iter;
     }
 
     double getMinValue() {
-        return Util.min(values);
+        try {
+            return iter.getMin();
+        } catch (IOException e) {
+            return Double.NaN;
+        }
     }
 
     double getMaxValue() {
-        return Util.max(values);
+        try {
+            return iter.getMax();
+        } catch (IOException e) {
+            return Double.NaN;
+        }
     }
 }
