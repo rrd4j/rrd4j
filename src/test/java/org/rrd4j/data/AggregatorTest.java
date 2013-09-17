@@ -58,7 +58,7 @@ public class AggregatorTest {
     @Test
     public void testAggregatorTotal() throws IOException {
         double total = testCf(ConsolFun.TOTAL);
-        assertEquals("The aggregate total should be equal to the total of the samples added", 1, total, 1e-15);
+        assertEquals("The aggregate total should be equal to the total of the samples added", 60, total, 1e-15);
     }
 
     @Test
