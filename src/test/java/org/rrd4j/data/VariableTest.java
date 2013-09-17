@@ -25,7 +25,7 @@ public class VariableTest {
     static private final long step = 300;
     static private long startTime;
     static private long endTime;
-    static private final boolean dorrdtool = true;
+    static private final boolean dorrdtool = false;
 
     @BeforeClass
     public static void createRrd() throws IOException {
