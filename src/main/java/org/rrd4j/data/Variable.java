@@ -2,6 +2,8 @@ package org.rrd4j.data;
 
 import java.util.Arrays;
 
+import org.rrd4j.core.Util;
+
 /**
  *  An abstract class to help extract single value from a set of value (VDEF in rrdtool)
  *  
@@ -22,7 +24,7 @@ public abstract class Variable {
             this.timestamp = timestamp;
         }
     };
-    
+
     static public final Value INVALIDVALUE = new Value(0, Double.NaN);
 
     private Value val = null;
@@ -38,7 +40,8 @@ public abstract class Variable {
         int first = -1;
         int last = -1;
         // Iterate over array, stop then end cursor reach start or when both start and end has been found
-        for(int i = 0, j = s.timestamps.length - 1; j > first && first == -1 || start == -1; i++, j--) {
+        // It also stop if cursor cross other side boundary
+        for(int i = 0, j = s.timestamps.length - 1 ; ( last == -1 && j > first ) || ( first == -1 && ( last == -1 || i < last )  ) ; i++, j--) {
             if(first == -1) {
                 long leftdown = Math.max(s.timestamps[i] - step, start);
                 long rightdown = Math.min(s.timestamps[i], end);
@@ -46,11 +49,11 @@ public abstract class Variable {
                     first = i;
                 }                
             }
-            
+
             if(last == -1) {
                 long leftup = Math.max(s.timestamps[j] - step, start);
                 long rightup = Math.min(s.timestamps[j], end);
-                if(rightup - leftup > 0) {
+                if(rightup > leftup ) {
                     last = j;
                 }                
             }
@@ -106,7 +109,7 @@ public abstract class Variable {
      * Find the first valid data point and it's timestamp
      *
      */
-   public static class FIRST extends Variable {
+    public static class FIRST extends Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             for(int i = 0; i < values.length; i++) {
@@ -118,10 +121,10 @@ public abstract class Variable {
         }
     }
 
-   /**
+    /**
      * Find the first last valid point and it's timestamp
-    *
-    */
+     *
+     */
     public static class LAST extends Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
@@ -179,13 +182,12 @@ public abstract class Variable {
     public static  class TOTAL extends Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
-            double value = 0;
-            for(int i = values.length - 1 ; i >= 0 ; i--) {
-                if( !Double.isNaN(values[i]) ) {
-                    value = Double.isNaN(value) ?  values[i] : values[i] + value;
-                }
+            double value = Double.NaN;
+
+            for(double tempVal: values) {
+                value = Util.sum(value, tempVal);
             }
-            return new Value(0, value);
+            return new Value(0, value * (timestamps[1] - timestamps[0]) );
         }
     }
 
@@ -223,23 +225,25 @@ public abstract class Variable {
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             double value = Double.NaN;
             int count = 0;
-            double stdevM = 0.0;
-            double stdevS = 0.0;
-            for(int i = values.length -1 ; i >=0 ; i--) {
-                if( !Double.isNaN(values[i])) {
-                    if(count == 1) {
-                        stdevM = values[i];
-                        stdevS = 0;
-                    }
-                    // See Knuth TAOCP vol 2, 3rd edition, page 232 and http://www.johndcook.com/standard_deviation.html
-                    double ds = values[i] - stdevM;                            
-                    stdevM += ds/count;
-                    stdevS += stdevS + ds*(values[i] - stdevM);
-                    count++;
+            double M = 0.0;
+            double S = 0.0;
+            // See Knuth TAOCP vol 2, 3rd edition, page 232 and http://www.johndcook.com/standard_deviation.html
+            for(double cursVal: values) {
+                if(Double.isNaN(cursVal))
+                    continue;
+                count++;
+                if(count == 1) {
+                    M = cursVal;
+                    S = 0;
+                }
+                else {
+                    double dM = cursVal - M;
+                    M += dM/count;
+                    S += dM * (cursVal - M);                        
                 }
             }
-            if(count > 0) {
-                value = Math.sqrt(( (count > 1) ? stdevS/(count - 1) : 0.0 ));
+            if(count > 1) {
+                value = Math.sqrt( S/(count - 1) );
             }
             return new Value(0, value);
         }
@@ -266,8 +270,8 @@ public abstract class Variable {
             count -= (int) Math.ceil(count * topPercentile);
             // if we have anything left...
             if (count > 0) {
-                double value = values[count - 1 ];
-                long timestamp = timestamps[count - 1 ];
+                double value = values[count - 1];
+                long timestamp = timestamps[count - 1];
                 return new Value(timestamp, value);
             }
             return new Value(0, Double.NaN);
