@@ -143,8 +143,8 @@ public class TestLSL {
         String[] lines = graphinfo.getPrintLines();
         Assert.assertEquals("  Reach   90% at Wed Apr 28 10:30:00 CEST 2010 ", lines[0]);
         Assert.assertEquals("  Reach   90% at Wed Apr 28 11:00:00 CEST 2010", lines[1]);
-        Assert.assertEquals("  Reach  100% at Fri Apr 30 23:30:00 CEST 2010 ", lines[2]);
-        Assert.assertEquals("  Reach  100% at Fri Apr 30 23:30:00 CEST 2010", lines[3]);
+        Assert.assertEquals("  Reach  100% at Sat May 01 00:00:00 CEST 2010 ", lines[2]);
+        Assert.assertEquals("  Reach  100% at Sat May 01 00:00:00 CEST 2010", lines[3]);
 
     }
 }

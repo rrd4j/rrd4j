@@ -1,6 +1,8 @@
 package org.rrd4j.data;
 
-import java.util.Arrays;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.rrd4j.core.Util;
 
@@ -129,7 +131,7 @@ public abstract class Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             for(int i = values.length - 1 ; i >=0 ; i--) {
-                if( timestamps[i] > start && timestamps[i] < end &&  ! Double.isNaN(values[i]) && timestamps[i] < end) {
+                if( ! Double.isNaN(values[i]) ) {
                     return new Value(timestamps[i], values[i]);
                 }
             }
@@ -250,31 +252,109 @@ public abstract class Variable {
     }
 
     /**
+     * Store all the informations about a datasource point, for predictive and consistent sorting
+     *
+     */
+    static final class PercentElem {
+        long timestamp;
+        double value;
+
+        PercentElem(int pos, long timestamp, double value) {
+            this.timestamp = timestamp;
+            this.value = value;
+        }
+
+        @Override
+        final public boolean equals(Object arg0) {
+            return timestamp == ((PercentElem) arg0).timestamp;
+        }
+        @Override
+        public int hashCode() {
+            return new Long(timestamp).hashCode();
+        }
+        @Override
+        public String toString() {
+            return String.format("[%d, %f]", timestamp, value);
+        }
+    }
+
+    /**
+     * The sort used by rrdtool for percent, where NaN < -INF < finite values < INF
+     *
+     */
+    static final class ComparPercentElemen implements Comparator<PercentElem> {
+        @Override
+        final public int compare(PercentElem arg0, PercentElem arg1) {
+            if(Double.isNaN(arg0.value) && Double.isNaN(arg1.value))
+                return Long.signum(arg0.timestamp - arg1.timestamp);
+            else if(Double.isNaN(arg0.value))
+                return -1;
+            else if (Double.isNaN(arg1.value))
+                return +1;
+            else  {
+                int compared = Double.compare(arg0.value, arg1.value);
+                if (compared == 0) {
+                    compared = Long.signum(arg0.timestamp - arg1.timestamp);
+                }
+                return compared;
+            }
+        }
+    }
+
+    /**
      * Find the point at the n-th percentile.
      *
      */
     public static class PERCENTILE extends Variable {
-        private final double percentile;
+        private final float percentile;
+        private final boolean withNaN;
+
+        protected PERCENTILE(float percentile, boolean withNaN) {
+            this.percentile = percentile;
+            this.withNaN = withNaN;
+        }
 
         public PERCENTILE(double percentile) {
-            this.percentile = percentile;
+            this((float) percentile, true);
+        }
+
+        public PERCENTILE(float percentile) {
+            this(percentile, true);
         }
 
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
-            int count = values.length;
-            // sort array
-            Arrays.sort(values);
-            // skip top (100% - percentile) values
-            double topPercentile = (100.0 - percentile) / 100.0;
-            count -= (int) Math.ceil(count * topPercentile);
+            // valuesSet will be a set with NaN packet at the start
+            SortedSet<PercentElem> valuesSet = new TreeSet<PercentElem>(new ComparPercentElemen());
+            for(int i = 0 ; i < values.length ; i++) {
+                valuesSet.add(new PercentElem(i, timestamps[i], values[i]));
+            }
+
+            //If not with nan, just drop all nan (inferior to min value)
+            if( ! withNaN) {
+                valuesSet = valuesSet.tailSet(new PercentElem(0, 0, Double.NEGATIVE_INFINITY ));
+            }
+
+            PercentElem[] element = (PercentElem[]) valuesSet.toArray(new PercentElem[valuesSet.size()]);
+            int pos = Math.round(percentile * (element.length - 1) / 100);
             // if we have anything left...
-            if (count > 0) {
-                double value = values[count - 1];
-                long timestamp = timestamps[count - 1];
+            if (pos >= 0) {
+                double value = element[pos].value;
+                long timestamp = element[pos].timestamp;
                 return new Value(timestamp, value);
             }
             return new Value(0, Double.NaN);
+        }
+    }
+
+    public static class PERCENTILENAN extends PERCENTILE {
+        
+        public PERCENTILENAN(float percentile) {
+            super(percentile, false);
+        }
+        
+        public PERCENTILENAN(double percentile) {
+            super((float)percentile, false);
         }
     }
 
