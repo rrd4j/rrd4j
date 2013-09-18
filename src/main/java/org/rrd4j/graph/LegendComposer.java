@@ -20,7 +20,7 @@ class LegendComposer implements RrdGraphConstants {
         this.legX = legX;
         this.legY = legY;
         this.legWidth = legWidth;
-        interLegendSpace = rrdGraph.getInterLegendSpace();
+        interLegendSpace = rrdGraph.getInterlegendSpace();
         leading = rrdGraph.getLeading();
         smallLeading = rrdGraph.getSmallLeading();
         boxSpace = rrdGraph.getBoxSpace();
@@ -136,7 +136,7 @@ class LegendComposer implements RrdGraphConstants {
         }
 
         private double getCommentWidth(CommentText comment) {
-            double commentWidth = worker.getStringWidth(comment.resolvedText, gdef.smallFont);
+            double commentWidth = worker.getStringWidth(comment.resolvedText, gdef.getFont(FONTTAG_LEGEND));
             if (comment instanceof LegendText) {
                 commentWidth += boxSpace;
             }

@@ -365,4 +365,56 @@ public interface RrdGraphConstants {
      * Stroke used to draw ticks
      */
     Stroke TICK_STROKE = new BasicStroke(1);
+
+    /**
+     * Allowed font tag names which can be used in {@link RrdGraphDef#setFont(String, java.awt.Font)} method
+     */
+    public enum FontTag  {
+        /**
+         * Index of the default font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         */
+        DEFAULT,
+        /**
+         * Index of the title font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         */
+        TITLE,
+        /**
+         * Index of the axis label font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         */
+        AXIS,
+        /**
+         * Index of the vertical unit label font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         */
+        UNIT,
+        /**
+         * Index of the graph legend font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         */
+        LEGEND,
+        /**
+         * Index of the edge watermark font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         */
+        WATERMARK;
+
+        public void set(Font f, Font[] fonts) {
+            fonts[this.ordinal()] = f;
+        }
+
+        public Font get(Font f, Font[] fonts) {
+            return fonts[this.ordinal()];
+        }
+
+    }
+
+    FontTag FONTTAG_DEFAULT   = FontTag.DEFAULT;
+
+    FontTag FONTTAG_TITLE     = FontTag.TITLE;
+
+    FontTag FONTTAG_AXIS      = FontTag.AXIS;
+
+    FontTag FONTTAG_UNIT      = FontTag.AXIS;
+
+    FontTag FONTTAG_LEGEND    = FontTag.LEGEND;
+
+    FontTag FONTTAG_WATERMARK = FontTag.WATERMARK;
+
 }

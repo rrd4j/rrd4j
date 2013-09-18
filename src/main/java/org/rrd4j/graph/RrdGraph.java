@@ -129,7 +129,7 @@ public class RrdGraph implements RrdGraphConstants {
     private void gator() {
         if (!gdef.onlyGraph && gdef.showSignature) {
             worker.setTextAntiAliasing(gdef.textAntiAliasing);
-            Font font = GATOR_FONT;
+            Font font = gdef.getFont(FONTTAG_WATERMARK);
             int x = (int) (im.xgif - 2 - worker.getFontAscent(font));
             int y = 4;
             worker.transform(x, y, Math.PI / 2);
@@ -184,16 +184,16 @@ public class RrdGraph implements RrdGraphConstants {
         if (!gdef.onlyGraph) {
             worker.setTextAntiAliasing(gdef.textAntiAliasing);
             if (gdef.title != null) {
-                int x = im.xgif / 2 - (int) (worker.getStringWidth(gdef.title, gdef.largeFont) / 2);
-                int y = PADDING_TOP + (int) worker.getFontAscent(gdef.largeFont);
-                worker.drawString(gdef.title, x, y, gdef.largeFont, gdef.colors[COLOR_FONT]);
+                int x = im.xgif / 2 - (int) (worker.getStringWidth(gdef.title, gdef.getFont(FONTTAG_TITLE)) / 2);
+                int y = PADDING_TOP + (int) worker.getFontAscent(gdef.getFont(FONTTAG_TITLE));
+                worker.drawString(gdef.title, x, y, gdef.getFont(FONTTAG_TITLE), gdef.colors[COLOR_FONT]);
             }
             if (gdef.verticalLabel != null) {
                 int x = PADDING_LEFT;
-                int y = im.yorigin - im.ysize / 2 + (int) worker.getStringWidth(gdef.verticalLabel, gdef.smallFont) / 2;
-                int ascent = (int) worker.getFontAscent(gdef.smallFont);
+                int y = im.yorigin - im.ysize / 2 + (int) worker.getStringWidth(gdef.verticalLabel, gdef.getFont(FONTTAG_UNIT)) / 2;
+                int ascent = (int) worker.getFontAscent(gdef.getFont(FONTTAG_UNIT));
                 worker.transform(x, y, -Math.PI / 2);
-                worker.drawString(gdef.verticalLabel, 0, ascent, gdef.smallFont, gdef.colors[COLOR_FONT]);
+                worker.drawString(gdef.verticalLabel, 0, ascent, gdef.getFont(FONTTAG_UNIT), gdef.colors[COLOR_FONT]);
                 worker.reset();
             }
             worker.setTextAntiAliasing(false);
@@ -230,9 +230,9 @@ public class RrdGraph implements RrdGraphConstants {
                 if (!ok) {
                     String msg = "No Data Found";
                     worker.drawString(msg,
-                            im.xgif / 2 - (int) worker.getStringWidth(msg, gdef.largeFont) / 2,
+                            im.xgif / 2 - (int) worker.getStringWidth(msg, gdef.getFont(FONTTAG_TITLE)) / 2,
                             (2 * im.yorigin - im.ysize) / 2,
-                            gdef.largeFont, gdef.colors[COLOR_FONT]);
+                            gdef.getFont(FONTTAG_TITLE), gdef.colors[COLOR_FONT]);
                 }
             }
             worker.setTextAntiAliasing(false);
@@ -323,7 +323,7 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void placeLegends() {
         if (!gdef.noLegend && !gdef.onlyGraph) {
-            int border = (int) (getSmallFontCharWidth() * PADDING_LEGEND);
+            int border = (int) (getFontCharWidth(FontTag.LEGEND) * PADDING_LEGEND);
             LegendComposer lc = new LegendComposer(this, border, im.ygif, im.xgif - 2 * border);
             im.ygif = lc.placeComments() + PADDING_BOTTOM;
         }
@@ -338,11 +338,11 @@ public class RrdGraph implements RrdGraphConstants {
             im.xorigin = 0;
         }
         else {
-            im.xorigin = (int) (PADDING_LEFT + im.unitslength * getSmallFontCharWidth());
+            im.xorigin = (int) (PADDING_LEFT + im.unitslength * getFontCharWidth(FontTag.UNIT));
         }
 
         if (!gdef.onlyGraph && gdef.verticalLabel != null) {
-            im.xorigin += getSmallFontHeight();
+            im.xorigin += getFontHeight(FONTTAG_UNIT);
         }
 
         if (gdef.onlyGraph) {
@@ -355,7 +355,7 @@ public class RrdGraph implements RrdGraphConstants {
         mapper = new Mapper(this);
 
         if (!gdef.onlyGraph && gdef.title != null) {
-            im.yorigin += getLargeFontHeight() + PADDING_TITLE;
+            im.yorigin += getFontHeight(FONTTAG_TITLE) + PADDING_TITLE;
         }
 
         if (gdef.onlyGraph) {
@@ -364,7 +364,7 @@ public class RrdGraph implements RrdGraphConstants {
         }
         else {
             im.xgif = PADDING_RIGHT + im.xsize + im.xorigin;
-            im.ygif = im.yorigin + (int) (PADDING_PLOT * getSmallFontHeight());
+            im.ygif = im.yorigin + (int) (PADDING_PLOT * getFontHeight(FONTTAG_DEFAULT));
         }
     }
 
@@ -598,7 +598,7 @@ public class RrdGraph implements RrdGraphConstants {
     private void drawLegend() {
         if (!gdef.onlyGraph && !gdef.noLegend) {
             worker.setTextAntiAliasing(gdef.textAntiAliasing);
-            int ascent = (int) worker.getFontAscent(gdef.smallFont);
+            int ascent = (int) worker.getFontAscent(gdef.getFont(FONTTAG_LEGEND));
             int box = (int) getBox(), boxSpace = (int) (getBoxSpace());
             for (CommentText c : gdef.comments) {
                 if (c.isValidGraphElement()) {
@@ -609,10 +609,10 @@ public class RrdGraph implements RrdGraphConstants {
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_CANVAS]);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_BACK]);
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, ((LegendText) c).legendColor);
-                        worker.drawString(c.resolvedText, x + boxSpace, y, gdef.smallFont, gdef.colors[COLOR_FONT]);
+                        worker.drawString(c.resolvedText, x + boxSpace, y, gdef.getFont(FONTTAG_LEGEND), gdef.colors[COLOR_FONT]);
                     }
                     else {
-                        worker.drawString(c.resolvedText, x, y, gdef.smallFont, gdef.colors[COLOR_FONT]);
+                        worker.drawString(c.resolvedText, x, y, gdef.getFont(FONTTAG_LEGEND), gdef.colors[COLOR_FONT]);
                     }
                 }
             }
@@ -622,36 +622,41 @@ public class RrdGraph implements RrdGraphConstants {
 
     // helper methods
 
+    double getFontHeight(FontTag fonttag) {
+        return worker.getFontHeight(gdef.getFont(fonttag));
+    }
+
+    double getFontCharWidth(FontTag fonttag) {
+        return worker.getStringWidth("a", gdef.getFont(fonttag));
+    }
+
+    @Deprecated
     double getSmallFontHeight() {
-        return worker.getFontHeight(gdef.smallFont);
+        return getFontHeight(FONTTAG_LEGEND);
     }
 
-    private double getLargeFontHeight() {
-        return worker.getFontHeight(gdef.largeFont);
+    double getTitleFontHeight() {
+        return getFontHeight(FONTTAG_TITLE);
     }
 
-    private double getSmallFontCharWidth() {
-        return worker.getStringWidth("a", gdef.smallFont);
-    }
-
-    double getInterLegendSpace() {
-        return getSmallFontCharWidth() * LEGEND_INTERSPACING;
+    double getInterlegendSpace() {
+        return getFontCharWidth(FONTTAG_LEGEND) * LEGEND_INTERSPACING;
     }
 
     double getLeading() {
-        return getSmallFontHeight() * LEGEND_LEADING;
+        return getFontHeight(FONTTAG_LEGEND) * LEGEND_LEADING;
     }
 
     double getSmallLeading() {
-        return getSmallFontHeight() * LEGEND_LEADING_SMALL;
+        return getFontHeight(FONTTAG_LEGEND) * LEGEND_LEADING_SMALL;
     }
 
     double getBoxSpace() {
-        return Math.ceil(getSmallFontHeight() * LEGEND_BOX_SPACE);
+        return Math.ceil(getFontHeight(FONTTAG_LEGEND) * LEGEND_BOX_SPACE);
     }
 
     private double getBox() {
-        return getSmallFontHeight() * LEGEND_BOX;
+        return getFontHeight(FONTTAG_LEGEND) * LEGEND_BOX;
     }
 
     double[] xtr(long[] timestamps) {

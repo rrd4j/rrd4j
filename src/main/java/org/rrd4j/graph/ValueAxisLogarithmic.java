@@ -28,11 +28,11 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
     }
 
     boolean draw() {
-        Font font = gdef.smallFont;
+        Font font = gdef.getFont(FONTTAG_AXIS);
         Paint gridColor = gdef.colors[COLOR_GRID];
         Paint mGridColor = gdef.colors[COLOR_MGRID];
         Paint fontColor = gdef.colors[COLOR_FONT];
-        int fontHeight = (int) Math.ceil(rrdGraph.getSmallFontHeight());
+        int fontHeight = (int) Math.ceil(rrdGraph.getFontHeight(FONTTAG_AXIS));
         int labelOffset = (int) (worker.getFontAscent(font) / 2);
 
         double pixpex = (double) im.ysize / (log10(im.maxval) - log10(im.minval));

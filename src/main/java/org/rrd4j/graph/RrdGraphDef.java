@@ -1,10 +1,8 @@
 package org.rrd4j.graph;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,9 +12,9 @@ import java.util.TimeZone;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.Util;
-import org.rrd4j.data.Variable;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
+import org.rrd4j.data.Variable;
 
 /**
  * Class which should be used to define new Rrd4j graph. Once constructed and populated with data
@@ -96,8 +94,14 @@ public class RrdGraphDef implements RrdGraphConstants {
     boolean forceRulesLegend = false; // ok
     String title = null; // ok
     long step = 0; // ok
-    Font smallFont = RrdGraphConstants.DEFAULT_SMALL_FONT; // ok
-    Font largeFont = RrdGraphConstants.DEFAULT_LARGE_FONT; // ok
+    Font[] fonts = new Font[] {
+            DEFAULT_SMALL_FONT,    // FONTTAG_DEFAULT
+            DEFAULT_LARGE_FONT,    // FONTTAG_TITLE
+            DEFAULT_SMALL_FONT,    // FONTTAG_AXIS
+            DEFAULT_SMALL_FONT,    // FONTTAG_UNIT
+            DEFAULT_SMALL_FONT,    // FONTTAG_LEGEND
+            GATOR_FONT             // FONTTAG_WATERMARK
+    };
     boolean drawXGrid = true; // ok
     boolean drawYGrid = true; // ok
     int firstDayOfWeek = FIRST_DAY_OF_WEEK; // ok
@@ -631,8 +635,9 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param smallFont Default font for graphing. Use only monospaced fonts.
      */
-    public void setSmallFont(Font smallFont) {
-        this.smallFont = smallFont;
+    @Deprecated
+    public void setSmallFont(final Font smallFont) {
+        this.setFont(FontTag.DEFAULT, smallFont);
     }
 
     /**
@@ -640,9 +645,115 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param largeFont Font to be used for graph title.
      */
-    public void setLargeFont(Font largeFont) {
-        this.largeFont = largeFont;
+    @Deprecated
+    public void setLargeFont(final Font largeFont) {
+        this.setFont(FontTag.TITLE, largeFont);
     }
+
+    /**
+     * Sets font to be used for a specific font tag. The fontTag
+     * must be one of the following constants defined in the
+     * {@link RrdGraphConstants}:
+     * {@link RrdGraphConstants#FONTTAG_DEFAULT FONTTAG_DEFAULT} default font,,
+     * {@link RrdGraphConstants#FONTTAG_TITLE FONTTAG_TITLE} title,
+     * {@link RrdGraphConstants#FONTTAG_AXIS FONTTAG_AXIS} grid axis,,
+     * {@link RrdGraphConstants#FONTTAG_UNIT FONTTAG_UNIT} vertical unit label,,
+     * {@link RrdGraphConstants#FONTTAG_LEGEND FONTTAG_LEGEND} legend,
+     * {@link RrdGraphConstants#FONTTAG_WATERMARK FONTTAG_WATERMARK} watermark.
+     * This method can be called multiple times to set several fonts.
+     *
+     * @param fontTag Font tag, as explained above.
+     * @param font Font to be used for tag
+     * @throws RrdException Thrown if invalid fontTag is supplied.
+     */
+    public void setFont(final FontTag fontTag, final Font font) {
+        this.setFont(fontTag, font, false);
+    }
+
+    /**
+     * Sets font.
+     *
+     * @param fontTag Font tag, as explained above.
+     * @param font Font to be used for tag
+     * @param setAll Boolean to flag whether to set all fonts if fontTag == FONTTAG_DEFAULT
+     * @throws RrdException Thrown if invalid fontTag is supplied.
+     */
+    public void setFont(final FontTag fontTag, final Font font, final boolean setAll) {
+        this.setFont(fontTag, font, setAll, false);
+    }
+
+    /**
+     * Sets font.
+     *
+     * @param fontTag Font tag, as explained above.
+     * @param font Font to be used for tag
+     * @param setAll Boolean to flag whether to set all fonts if fontTag == FONTTAG_DEFAULT
+     * @param keepSizes Boolean to flag whether to keep original font sizes if setting all fonts.
+     * @throws RrdException Thrown if invalid fontTag is supplied.
+     */
+    public void setFont(final FontTag fontTag, final Font font, final boolean setAll, final boolean keepSizes) {
+        if (fontTag == FontTag.DEFAULT && setAll) {
+            if (keepSizes) {
+                this.fonts[FONTTAG_DEFAULT.ordinal()] = font.deriveFont(this.fonts[FONTTAG_DEFAULT.ordinal()].getSize());
+                this.fonts[FONTTAG_TITLE.ordinal()] = font.deriveFont(this.fonts[FONTTAG_TITLE.ordinal()].getSize());
+                this.fonts[FONTTAG_AXIS.ordinal()] = font.deriveFont(this.fonts[FONTTAG_AXIS.ordinal()].getSize());
+                this.fonts[FONTTAG_UNIT.ordinal()] = font.deriveFont(this.fonts[FONTTAG_UNIT.ordinal()].getSize());
+                this.fonts[FONTTAG_LEGEND.ordinal()] = font.deriveFont(this.fonts[FONTTAG_LEGEND.ordinal()].getSize());
+                this.fonts[FONTTAG_WATERMARK.ordinal()] = font.deriveFont(this.fonts[FONTTAG_WATERMARK.ordinal()].getSize());
+            }
+            else {
+                this.fonts[FONTTAG_DEFAULT.ordinal()] = font;
+                this.fonts[FONTTAG_TITLE.ordinal()] = null;
+                this.fonts[FONTTAG_AXIS.ordinal()] = null;
+                this.fonts[FONTTAG_UNIT.ordinal()] = null;
+                this.fonts[FONTTAG_LEGEND.ordinal()] = null;
+                this.fonts[FONTTAG_WATERMARK.ordinal()] = null;
+            }
+        } else {
+            this.fonts[fontTag.ordinal()] = font;
+        }
+    }
+
+    /**
+     * Sets font.
+     *
+     * @param fontTag Font tag as String, as explained in {@link RrdGraphConstants#setFont setFont(int, java.awt.Font)}.
+     * @param font Font to be used for tag
+     * @throws RrdException Thrown if invalid fontTag is supplied.
+     */
+    public void setFont(final String fontTag, final Font font) {
+        this.setFont(FontTag.valueOf(fontTag), font);
+    }
+
+    /**
+     * Sets font.
+     *
+     * @param fontTag Font tag as String, as explained in {@link RrdGraphConstants#setFont setFont(int, java.awt.Font)}.
+     * @param font Font to be used for tag
+     * @param setAll Boolean to flag whether to set all fonts if fontTag == FONTTAG_DEFAULT
+     * @throws RrdException Thrown if invalid fontTag is supplied.
+     */
+    public void setFont(final String fontTag, final Font font, final boolean setAll) {
+        this.setFont(FontTag.valueOf(fontTag), font, setAll);
+    }
+
+    /**
+     * Sets font.
+     *
+     * @param fontTag Font tag as String, as explained in {@link RrdGraphConstants#setFont setFont(int, java.awt.Font)}.
+     * @param font Font to be used for tag
+     * @param setAll Boolean to flag whether to set all fonts if fontTag == FONTTAG_DEFAULT
+     * @param keepSizes Boolean to flag whether to keep original font sizes if setting all fonts.
+     * @throws RrdException Thrown if invalid fontTag is supplied.
+     */
+    public void setFont(final String fontTag, final Font font, final boolean setAll, final boolean keepSizes) {
+        this.setFont(FontTag.valueOf(fontTag), font, setAll, keepSizes);
+    }
+
+    public Font getFont(final FontTag tag) {
+        return this.fonts[tag.ordinal()] == null ? this.fonts[FONTTAG_DEFAULT.ordinal()] : this.fonts[tag.ordinal()];
+    }
+
 
     /**
      * Defines virtual datasource. This datasource can then be used
@@ -919,7 +1030,7 @@ public class RrdGraphDef implements RrdGraphConstants {
         comments.add(new PrintText(srcName, format, false, strftime));
     }
 
-   /**
+    /**
      * This method does basically the same thing as {@link #print(String, ConsolFun, String)},
      * but the result is printed on the graph itself, below the chart area.
      *
@@ -970,7 +1081,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void gprint(String srcName, String format) {
         gprint(srcName, format, false);
-   }
+    }
 
     /**
      * Read the value of a variable (VDEF) and prints the the value or the time stamp, according to the strftime flag
@@ -1000,7 +1111,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param strftime  use the timestamp from the variable (true) or the numerical value (false)
      */
     public void gprint(String srcName, String format, boolean strftime) {
-         comments.add(new PrintText(srcName, format, true, strftime));
+        comments.add(new PrintText(srcName, format, true, strftime));
     }
 
     /**
@@ -1298,12 +1409,12 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void stack(String srcName, Paint color, String legend) {
         SourcedPlotElement parent = findParent();
-            if (legend != null) {
-                comments.add(new LegendText(color, legend));
-            }
-            plotElements.add(new Stack(parent, srcName, color));
+        if (legend != null) {
+            comments.add(new LegendText(color, legend));
         }
-    
+        plotElements.add(new Stack(parent, srcName, color));
+    }
+
     private SourcedPlotElement findParent() {
         // find parent AREA or LINE
         SourcedPlotElement parent = null;

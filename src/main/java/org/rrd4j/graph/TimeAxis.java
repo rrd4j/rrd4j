@@ -82,7 +82,7 @@ class TimeAxis implements RrdGraphConstants {
     private void drawLabels() {
         // escape strftime like format string
         String labelFormat = tickSetting.format.replaceAll("([^%]|^)%([^%t])", "$1%t$2");
-        Font font = rrdGraph.gdef.smallFont;
+        Font font = rrdGraph.gdef.getFont(FONTTAG_AXIS);
         Paint color = rrdGraph.gdef.colors[COLOR_FONT];
         adjustStartingTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
         int y = rrdGraph.im.yorigin + (int) rrdGraph.worker.getFontHeight(font) + 2;

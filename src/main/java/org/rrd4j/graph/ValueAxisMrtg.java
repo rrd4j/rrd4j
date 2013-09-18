@@ -17,7 +17,7 @@ class ValueAxisMrtg implements RrdGraphConstants {
     }
 
     boolean draw() {
-        Font font = gdef.smallFont;
+        Font font = gdef.getFont(FONTTAG_AXIS);
         Paint mGridColor = gdef.colors[COLOR_MGRID];
         Paint fontColor = gdef.colors[COLOR_FONT];
         int labelOffset = (int) (worker.getFontAscent(font) / 2);

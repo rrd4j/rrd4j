@@ -46,7 +46,7 @@ class ValueAxis implements RrdGraphConstants {
     }
 
     boolean draw() {
-        Font font = gdef.smallFont;
+        Font font = gdef.getFont(FONTTAG_AXIS);
         Paint gridColor = gdef.colors[COLOR_GRID];
         Paint mGridColor = gdef.colors[COLOR_MGRID];
         Paint fontColor = gdef.colors[COLOR_FONT];
@@ -215,7 +215,7 @@ class ValueAxis implements RrdGraphConstants {
      */
     private int findLabelFactor(YLabel thisYLabel) {
         int pixel = this.getPixelsPerGridline(thisYLabel);
-        int fontHeight = (int) Math.ceil(worker.getFontHeight(gdef.smallFont));
+        int fontHeight = (int) Math.ceil(worker.getFontHeight(gdef.getFont(FONTTAG_AXIS)));
         for (int j = 0; j < 4; j++) {
             if (pixel * thisYLabel.labelFacts[j] >= 2 * fontHeight) {
                 return thisYLabel.labelFacts[j];
