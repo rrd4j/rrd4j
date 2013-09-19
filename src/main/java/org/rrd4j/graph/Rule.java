@@ -1,14 +1,15 @@
 package org.rrd4j.graph;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Paint;
 
 class Rule extends PlotElement {
     final LegendText legend;
-    final float width;
+    final BasicStroke stroke;
 
-    Rule(Paint color, LegendText legend, float width) {
+    Rule(Paint color, LegendText legend, BasicStroke stroke) {
         super(color);
         this.legend = legend;
-        this.width = width;
+        this.stroke = stroke;
     }
 }

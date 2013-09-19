@@ -1185,9 +1185,21 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param width  Rule width
      */
     public void hrule(double value, Paint color, String legend, float width) {
+        hrule(value, color, legend, new BasicStroke(width));
+    }
+
+    /**
+     * Draws a horizontal rule into the graph and optionally adds a legend.
+     *
+     * @param value  Position of the rule
+     * @param color  Rule color
+     * @param legend Legend text. If null, legend text will be omitted.
+     * @param stroke Rule stroke
+     */
+    public void hrule(double value, Paint color, String legend, BasicStroke stroke) {
         LegendText legendText = new LegendText(color, legend);
         comments.add(legendText);
-        plotElements.add(new HRule(value, color, legendText, width));
+        plotElements.add(new HRule(value, color, legendText, stroke));
     }
 
     /**
@@ -1220,9 +1232,21 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param width     Rule width
      */
     public void vrule(long timestamp, Paint color, String legend, float width) {
+        vrule(timestamp, color, legend, new BasicStroke(width));
+    }
+
+    /**
+     * Draws a vertical rule into the graph and optionally adds a legend
+     *
+     * @param timestamp Position of the rule (seconds since epoch)
+     * @param color     Rule color
+     * @param legend    Legend text. Use null to omit the text.
+     * @param stroke    Rule stroke
+     */
+    public void vrule(long timestamp, Paint color, String legend, BasicStroke stroke) {
         LegendText legendText = new LegendText(color, legend);
         comments.add(legendText);
-        plotElements.add(new VRule(timestamp, color, legendText, width));
+        plotElements.add(new VRule(timestamp, color, legendText, stroke));
     }
 
     /**

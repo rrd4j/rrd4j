@@ -146,14 +146,14 @@ public class RrdGraph implements RrdGraphConstants {
                 HRule hr = (HRule) pe;
                 if (hr.value >= im.minval && hr.value <= im.maxval) {
                     int y = mapper.ytr(hr.value);
-                    worker.drawLine(im.xorigin, y, im.xorigin + im.xsize, y, hr.color, new BasicStroke(hr.width));
+                    worker.drawLine(im.xorigin, y, im.xorigin + im.xsize, y, hr.color, hr.stroke);
                 }
             }
             else if (pe instanceof VRule) {
                 VRule vr = (VRule) pe;
                 if (vr.timestamp >= im.start && vr.timestamp <= im.end) {
                     int x = mapper.xtr(vr.timestamp);
-                    worker.drawLine(x, im.yorigin, x, im.yorigin - im.ysize, vr.color, new BasicStroke(vr.width));
+                    worker.drawLine(x, im.yorigin, x, im.yorigin - im.ysize, vr.color, vr.stroke);
                 }
             }
         }
