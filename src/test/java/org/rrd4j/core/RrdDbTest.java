@@ -10,8 +10,7 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Random;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -58,7 +57,6 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid number of steps for second archive", 6, db.getArchive(1).getSteps());
         Assert.assertEquals("Invalid number of row for seconde archive", 700, db.getArchive(1).getRows());
         Assert.assertEquals("Invalid XFF for second archive", 0.5, db.getArchive(1).getXff(), 1e-7);
-
     }
 
     public void testRrdDbXml(RrdDb db) throws IOException {
@@ -109,7 +107,6 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid value for first ds in second archive: " + value, 1.4316557620e+07, value, 1e-5);
         value = db.getArchive(1).getArcState(1).getAccumValue();
         Assert.assertEquals("Invalid value for second ds in second archive: " + value, 6.0, value, 1e-5);
-
     }
 
     public void checkValues(RrdDb db) throws IOException {
@@ -155,7 +152,6 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid min for shade", 4.4615000000E02, weightAggr.getMin(), 1e-7);
         Assert.assertEquals("Invalid max for shade", 7.3451666667E02, weightAggr.getMax(), 1e-7);
         Assert.assertEquals("Invalid total for shade", 361708.99333333364, weightAggr.getTotal(), 1e-7);
-
     }
 
     @Test
@@ -270,9 +266,9 @@ public class RrdDbTest {
         FetchData f = rrdDb.createFetchRequest(AVERAGE, start, end).fetchData();
         System.out.println(f.dump());
         double[] values = f.getValues("ds");
-        Assert.assertEquals("Data before first entry", Double.NaN, values[0]);
+        Assert.assertEquals("Data before first entry", Double.NaN, values[0], 0.0);
         Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);
         Assert.assertEquals("Bad average in point 2", 30, values[2], 1e-3);
-        Assert.assertEquals("Data after last entry", Double.NaN, values[3]);
+        Assert.assertEquals("Data after last entry", Double.NaN, values[3], 0.0);
     }
 }
