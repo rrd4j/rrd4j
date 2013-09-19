@@ -250,7 +250,7 @@ public class RrdGraph implements RrdGraphConstants {
                 SourcedPlotElement source = (SourcedPlotElement) plotElement;
                 double[] y = ytr(source.getValues());
                 if (Line.class.isAssignableFrom(source.getClass())) {
-                    worker.drawPolyline(x, y, source.color, new BasicStroke(((Line) source).width));
+                    worker.drawPolyline(x, y, source.color, ((Line)source).stroke );
                 }
                 else if (Area.class.isAssignableFrom(source.getClass())) {
                     if(source.parent == null) {

@@ -1,5 +1,6 @@
 package org.rrd4j.graph;
 
+import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
@@ -1304,7 +1305,24 @@ public class RrdGraphDef implements RrdGraphConstants {
             comments.add(new LegendText(color, legend));
         }
         SourcedPlotElement parent = stack ? findParent() : null;
-        plotElements.add(new Line(srcName, color, width, parent));
+        plotElements.add(new Line(srcName, color, new BasicStroke(width), parent));
+    }
+
+    /**
+     * Plots requested data as a line, using the color and the {@link java.awt.BasicStroke} specified.
+     *
+     * @param srcName Virtual source name
+     * @param color   Line color
+     * @param legend  Legend text
+     * @param stroke  Line stroke to use
+     * @param boolean true if it will be stacked
+     */
+    public void line(String srcName, Paint color, String legend, BasicStroke stroke, boolean stack) {
+        if (legend != null) {
+            comments.add(new LegendText(color, legend));
+        }
+        SourcedPlotElement parent = stack ? findParent() : null;
+        plotElements.add(new Line(srcName, color, stroke, parent));
     }
 
     /**
@@ -1316,7 +1334,19 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void line(double value, Paint color, float width, boolean stack) {
         SourcedPlotElement parent = stack ? findParent() : null;
-        plotElements.add(new ConstantLine(value, color, width, parent));
+        plotElements.add(new ConstantLine(value, color, new BasicStroke(width), parent));
+    }
+
+    /**
+     * Define a line like any other but with constant value, it can be stacked
+     * @param value
+     * @param color
+     * @param stroke
+     * @param stack
+     */
+    public void line(double value, Paint color, BasicStroke stroke, boolean stack) {
+        SourcedPlotElement parent = stack ? findParent() : null;
+        plotElements.add(new ConstantLine(value, color, stroke, parent));
     }
 
     /**
