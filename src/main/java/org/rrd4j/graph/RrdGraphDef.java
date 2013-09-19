@@ -631,6 +631,37 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * This method reset the font set to it's default values. With the flag rrdtool set to true, it's not the old
+     * default set that is used, but the one taken from rrdtool. So use false to keep compatibility with previous version
+     * and true for a graph matching rrdtool's
+     * 
+     * @param rrdtool true to use rrdtool font set
+     */
+    public void setFontSet(boolean rrdtool) {
+        if(rrdtool) {
+            // We add a factor to the font size, rrdtool and java don't agree about font size
+            float rrdtoolfactor = 12f/9;
+            fonts = new Font[] {
+                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_DEFAULT
+                    DEFAULT_SMALL_FONT.deriveFont(9.0f * rrdtoolfactor),    // FONTTAG_TITLE
+                    DEFAULT_SMALL_FONT.deriveFont(7.0f * rrdtoolfactor),    // FONTTAG_AXIS
+                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_UNIT
+                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_LEGEND
+                    DEFAULT_SMALL_FONT.deriveFont(5.5f * rrdtoolfactor)     // FONTTAG_WATERMARK
+            };
+        } else {
+            fonts = new Font[] {
+                    DEFAULT_SMALL_FONT,    // FONTTAG_DEFAULT
+                    DEFAULT_LARGE_FONT,    // FONTTAG_TITLE
+                    DEFAULT_SMALL_FONT,    // FONTTAG_AXIS
+                    DEFAULT_SMALL_FONT,    // FONTTAG_UNIT
+                    DEFAULT_SMALL_FONT,    // FONTTAG_LEGEND
+                    GATOR_FONT             // FONTTAG_WATERMARK
+            };            
+        }
+    }
+
+    /**
      * Sets default font for graphing. Note that Rrd4j will behave unpredictably if proportional
      * font is selected.
      *
