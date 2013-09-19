@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -32,6 +31,7 @@ public class RrdNioBackendTest {
         DataInputStream is = new DataInputStream(new FileInputStream(rrdfile));
         Double d = is.readDouble();
         Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
+        is.close();
     }
 
     @Test
@@ -47,6 +47,6 @@ public class RrdNioBackendTest {
         DataInputStream is = new DataInputStream(new FileInputStream(rrdfile));
         Double d = is.readDouble();
         Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
-
+        is.close();
     }
 }
