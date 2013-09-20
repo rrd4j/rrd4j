@@ -38,7 +38,11 @@ class PrintText extends CommentText {
         else if(strftime) {
             if(v != Variable.INVALIDVALUE) {
                 long time = v.timestamp;
-                resolvedText = String.format(l, resolvedText, new Date(time * 1000));                
+                try {
+                    resolvedText = String.format(l, resolvedText, new Date(time * 1000));
+                } catch (Exception e) {
+                    throw new RuntimeException("can't format '" + resolvedText + "'", e);
+                }                
             }
             else {
                 resolvedText = "-";                
@@ -54,7 +58,11 @@ class PrintText extends CommentText {
                         matcher.group(1) + scaled.unit + resolvedText.substring(matcher.end());
                 value = scaled.value;
             }
-            resolvedText = Util.sprintf(l, resolvedText, value);
+            try {
+                resolvedText = Util.sprintf(l, resolvedText, value);
+            } catch (Exception e) {
+                throw new RuntimeException("can't format '" + resolvedText + "'", e);
+            }
         }
         trimIfGlue();
     }

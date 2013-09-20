@@ -427,10 +427,10 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
         if (datasource != null && consolFun != null && format != null) {
             if (isInGraph) {
-                rrdGraphDef.gprint(datasource, consolFun.getVariable(), format);
+                rrdGraphDef.gprint(datasource, consolFun, format);
             }
             else {
-                rrdGraphDef.print(datasource, consolFun.getVariable(), format);
+                rrdGraphDef.print(datasource, consolFun, format);
             }
         }
         else if (datasource != null && format != null) {
