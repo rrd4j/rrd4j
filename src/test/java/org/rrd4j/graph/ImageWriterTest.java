@@ -2,8 +2,7 @@ package org.rrd4j.graph;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -23,6 +22,8 @@ public class ImageWriterTest {
     @Test
     public void testGif() throws IOException {
         ImageWorker iw = new ImageWorker(100, 100);
+        // Ensure there is a least one, or the the GIF encoder can't create a palette
+        iw.fillRect(0, 0, 100, 100, java.awt.Color.black);
         int count = iw.saveImage(testFolder.newFile("test.gif").getCanonicalPath(), "gif", 1.0f, true).length;
         Assert.assertTrue(count > 0);
     }
