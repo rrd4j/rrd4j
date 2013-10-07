@@ -102,6 +102,7 @@
                                 <!-- Exclude the converter and inspector from the default build. -->
                                 <exclude>**/converter/</exclude>
                                 <exclude>**/inspector/</exclude>
+								<exclude>**/demo/</exclude>
                                 <!-- Exclude images used in the inspector only. -->
                                 <exclude>*.gif</exclude>
                                 <exclude>*.png</exclude>
@@ -152,6 +153,27 @@
                             </archive>
                         </configuration>
                     </execution>
+					<execution>
+						<id>demo</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>demo</classifier>
+							<includes>
+								<include>**/demo/*</include>
+							</includes>
+							<archive>
+								<manifest>
+									<mainClass>org.rrd4j.demo.Demo</mainClass>
+								</manifest>
+								<manifestEntries>
+									<!-- Resolves to the default jar file. -->
+									<Class-Path>${project.build.finalName}.jar</Class-Path>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</execution>
                 </executions>
             </plugin>
             <plugin>
