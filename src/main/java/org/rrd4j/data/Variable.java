@@ -147,9 +147,12 @@ public abstract class Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             long timestamp = 0;
-            double value = Double.MAX_VALUE;
+            double value = Double.NaN;
             for(int i = values.length -1 ; i >=0 ; i--) {
-                if( !Double.isNaN(values[i]) && value > values[i]) {
+                if(! Double.isNaN(values[i]) && Double.isNaN(value)) {
+                    timestamp = timestamps[i];
+                    value = values[i];                    
+                } else if( ! Double.isNaN(values[i]) && value > values[i]) {
                     timestamp = timestamps[i];
                     value = values[i];
                 }
@@ -166,9 +169,12 @@ public abstract class Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             long timestamp = 0;
-            double value = Double.MIN_VALUE;
+            double value = Double.NaN;
             for(int i = values.length -1 ; i >=0 ; i--) {
-                if(!Double.isNaN(values[i]) && value < values[i]) {
+                if(! Double.isNaN(values[i]) && Double.isNaN(value)) {
+                    timestamp = timestamps[i];
+                    value = values[i];                    
+                } else if(!Double.isNaN(values[i]) && value < values[i]) {
                     timestamp = timestamps[i];
                     value = values[i];
                 }
@@ -348,11 +354,11 @@ public abstract class Variable {
     }
 
     public static class PERCENTILENAN extends PERCENTILE {
-        
+
         public PERCENTILENAN(float percentile) {
             super(percentile, false);
         }
-        
+
         public PERCENTILENAN(double percentile) {
             super((float)percentile, false);
         }
