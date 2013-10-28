@@ -18,6 +18,7 @@
     <property name="lib-rrd4j" value="rrd4j-${version}.jar"/>
     <property name="lib-inspector" value="inspector-${version}.jar"/>
     <property name="lib-converter" value="converter-${version}.jar"/>
+    <property name="lib-demo" value="demo-${version}.jar"/>
     <property name="dist-prefix" value="rrd4j-${version}"/>
     <property name="dist-file" value="${dist-prefix}.tar.gz"/>
 
@@ -65,7 +66,7 @@
             <include name="org/rrd4j/converter/**/*.class"/>
             <include name="org/rrd4j/core/**/*.class"/>
             <include name="org/rrd4j/data/**/*.class"/>
-            <include name="org/rrd4j/demo/**/*.class"/>
+            <exclude name="org/rrd4j/demo/**/*.class"/>
             <include name="org/rrd4j/graph/**/*.class"/>
             <include name="org/rrd4j/inspector/**/*.class"/>
             <include name="*.ttf"/>
@@ -88,6 +89,13 @@
             <include name="*.gif"/>
             <include name="*.png"/>
         </jar>
+        <jar jarfile="${dist}/${lib-demo}" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="org.rrd4j.demo.Demo"/>
+                <attribute name="Class-Path" value="${lib-rrd4j}"/>
+            </manifest>
+            <include name="org/rrd4j/demo/**/*.class"/>
+        </jar>
     </target>
 
     <target name="javadoc" depends="compile">
@@ -99,8 +107,12 @@
                  source="${buildSource}"
                  sourcepath="${src}"
                  access="protected">
-                 <classpath refid="class.path"/>
-                 <link href="http://java.sun.com/j2se/1.6.0/docs/api/"/>
+            <classpath refid="class.path"/>
+            <link href="http://docs.oracle.com/javase/6/docs/api/" />
+			<link href="http://api.mongodb.org/java/current/" />
+			<link href="http://docs.oracle.com/cd/E17277_02/html/java/" />
+			<link href="http://junit.sourceforge.net/javadoc/" />
+			<link href="http://api.mongodb.org/java/current" />
         </javadoc>
     </target>
 
