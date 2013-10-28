@@ -41,6 +41,8 @@ public class Demo {
      * @throws java.io.IOException Thrown
      */
     public static void main(String[] args) throws IOException {
+        System.setProperty("java.awt.headless","true");
+        
         println("== Starting demo");
         long startMillis = System.currentTimeMillis();
         if (args.length > 0) {
