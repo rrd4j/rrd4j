@@ -298,14 +298,33 @@ public class RrdGraph implements RrdGraphConstants {
                     gridColor, stroke);
             worker.drawLine(im.xorigin - 4, im.yorigin, im.xorigin + im.xsize + 4, im.yorigin,
                     xaxisColor, stroke);
-            worker.drawLine(im.xorigin, im.yorigin, im.xorigin, im.yorigin - im.ysize,
+            worker.drawLine(im.xorigin, im.yorigin + 4, im.xorigin, im.yorigin - im.ysize - 4,
                     yaxisColor, stroke);
-            worker.drawLine(im.xorigin + im.xsize + 4, im.yorigin - 3, im.xorigin + im.xsize + 4, im.yorigin + 3,
-                    arrowColor, stroke);
-            worker.drawLine(im.xorigin + im.xsize + 4, im.yorigin - 3, im.xorigin + im.xsize + 9, im.yorigin,
-                    arrowColor, stroke);
-            worker.drawLine(im.xorigin + im.xsize + 4, im.yorigin + 3, im.xorigin + im.xsize + 9, im.yorigin,
-                    arrowColor, stroke);
+            //Do X axis arrow
+            double[] Xarrow_x = {
+                    im.xorigin + im.xsize + 4,
+                    im.xorigin + im.xsize + 9,
+                    im.xorigin + im.xsize + 4,
+            };
+            double[] Xarrow_y = {
+                    im.yorigin - 3,
+                    im.yorigin + 0,
+                    im.yorigin + 3,
+            };
+            worker.fillPolygon(Xarrow_x, im.yorigin + 3, Xarrow_y, arrowColor);
+            
+            //Do y axis arrow
+            double[] Yarrow_x = {
+                    im.xorigin - 3,
+                    im.xorigin,
+                    im.xorigin + 3,
+            };
+            double[] Yarrow_y = {
+                    im.yorigin - im.ysize - 4,
+                    im.yorigin - im.ysize - 9,
+                    im.yorigin - im.ysize - 4,
+            };
+            worker.fillPolygon(Yarrow_x, im.yorigin - im.ysize - 4, Yarrow_y, arrowColor);
         }
     }
 

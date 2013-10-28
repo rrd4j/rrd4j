@@ -169,7 +169,7 @@ public interface RrdGraphConstants {
     /**
      * Default arrow color
      */
-    Color DEFAULT_ARROW_COLOR = Color.RED;
+    Color DEFAULT_ARROW_COLOR = new Color(128, 31, 31);
     /**
      * Default x-axis color
      */
@@ -177,7 +177,7 @@ public interface RrdGraphConstants {
     /**
      * Default x-axis color
      */
-    Color DEFAULT_YAXIS_COLOR = DEFAULT_GRID_COLOR;
+    Color DEFAULT_YAXIS_COLOR = Color.BLACK;
 
     /**
      * An transparent color
