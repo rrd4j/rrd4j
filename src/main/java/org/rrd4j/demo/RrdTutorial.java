@@ -269,7 +269,7 @@ public class RrdTutorial {
         gDef4.datasource("myspeed", rrdPath, "speed", AVERAGE);
         gDef4.datasource("nonans", "myspeed,UN,0,myspeed,IF");
         gDef4.datasource("kmh", "nonans,3600,*");
-        gDef4.datasource("fast", "kmh,100,GT,kmh,0,IF");
+        gDef4.datasource("fast", "kmh,100,GT,100,0,IF");
         gDef4.datasource("over", "kmh,100,GT,kmh,100,-,0,IF");
         gDef4.datasource("good", "kmh,100,GT,0,kmh,IF");
         gDef4.hrule(100, new Color(0x00, 0x00, 0xFF), "Maximum allowed");
