@@ -50,6 +50,8 @@ public class RrdTutorial {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+        System.setProperty("java.awt.headless","true");
+
         println("== Starting tutorial code");
         final String rrdPath = Util.getRrd4jDemoPath(FILE + ".rrd");
         final String speedSource = "speed";

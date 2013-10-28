@@ -1,6 +1,7 @@
 package org.rrd4j.demo;
 
 import static org.rrd4j.ConsolFun.*;
+
 import org.rrd4j.core.*;
 import org.rrd4j.graph.*;
 import org.rrd4j.DsType;
@@ -16,6 +17,8 @@ class MinMax {
      * @throws java.io.IOException if any.
      */
     public static void main(String[] args) throws IOException {
+        System.setProperty("java.awt.headless","true");
+
         long start = Util.getTime(), end = start + 300 * 300;
         String rrdFile = Util.getRrd4jDemoPath("minmax.rrd");
         String pngFile = Util.getRrd4jDemoPath("minmax.png");
