@@ -118,6 +118,11 @@ public class ArcDef {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return consolFun.hashCode() + steps * 19;
+    }
+
     void setRows(int rows) {
         this.rows = rows;
     }
@@ -125,4 +130,5 @@ public class ArcDef {
     boolean exactlyEqual(ArcDef def) {
         return consolFun == def.consolFun && xff == def.xff && steps == def.steps && rows == def.rows;
     }
+
 }
