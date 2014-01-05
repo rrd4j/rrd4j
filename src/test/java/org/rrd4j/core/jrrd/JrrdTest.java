@@ -96,7 +96,7 @@ public class JrrdTest {
             Assert.assertEquals("bad primary value", 1.43161853E7, rrd.getArchive(0).getCDPStatusBlock(0).primary_value, 1);
         }
         Assert.assertEquals("bad primary value", 1.4316557620000001E7, rrd.getArchive(1).getCDPStatusBlock(0).value, 1);
-        rrd.rrdFile.ras.seek( rrd.getArchive(0).dataOffset + 16 * rrd.getArchive(0).currentRow);
+        rrd.rrdFile.seek( rrd.getArchive(0).dataOffset + 16 * rrd.getArchive(0).currentRow);
         double speed = readDouble(rrd.rrdFile);
         double weight = readDouble(rrd.rrdFile);
         Assert.assertEquals(1.4316185300e+07, speed, 1e-7);
@@ -107,12 +107,7 @@ public class JrrdTest {
     }
     
    Double readDouble(RRDFile rrdFile) throws IOException {
-       RandomAccessFile ras = rrdFile.ras;
-       byte[] buffer = new byte[8];
-       ras.read(buffer);
-       ByteBuffer bb = ByteBuffer.wrap(buffer);
-       bb.order(rrdFile.isBigEndian() ? ByteOrder.BIG_ENDIAN: ByteOrder.LITTLE_ENDIAN);
-       return bb.getDouble();
+       return rrdFile.readDouble();
    }
 
 }
