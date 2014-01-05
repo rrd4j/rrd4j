@@ -1,10 +1,12 @@
 package org.rrd4j.core.jrrd;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * This class is used read information from an RRD file. Writing
@@ -19,10 +21,10 @@ import java.nio.ByteOrder;
 class RRDFile implements Constants {
     private int alignment;
     private int longSize = 4;
-    final RandomAccessFile ras;
 
-    private ByteBuffer bbuffer = ByteBuffer.allocate(1024);
-    private byte[] buffer = bbuffer.array();
+    private final FileInputStream underlying;
+    private final MappedByteBuffer mappedByteBuffer;
+
     private ByteOrder order;
 
     RRDFile(String name) throws IOException {
@@ -30,20 +32,35 @@ class RRDFile implements Constants {
     }
 
     RRDFile(File file) throws IOException {
-        ras = new RandomAccessFile(file, "r");
-        initDataLayout(file);
-    }
+        long len = file.length();
+        if (len > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(
+                    "RRDFile cannot read files larger than 2**31 because of limitations of java.nio.ByteBuffer");
+        }
 
-    private int read(int len) throws IOException {
-        bbuffer.clear();
-        int read = ras.read(buffer, 0, len);
-        return read;
+        boolean ok = false;
+        try {
+            underlying = new FileInputStream(file);
+            mappedByteBuffer = underlying.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, len);
+            initDataLayout(file);
+            ok = true;
+        } finally {
+            if (!ok) {
+                try {
+                    close();
+                } catch (Throwable ignored) {
+                }
+                // and then rethrow
+            }
+        }
     }
 
     private void initDataLayout(File file) throws IOException {
 
         if (file.exists()) {    // Load the data formats from the file
-            read(32);
+            byte[] buffer = new byte[32];
+            mappedByteBuffer.get(buffer);
+            ByteBuffer bbuffer = ByteBuffer.wrap(buffer);
 
             int index;
 
@@ -57,6 +74,7 @@ class RRDFile implements Constants {
             else {
                 throw new IOException("Invalid RRD file");
             }
+            mappedByteBuffer.order(order);
             bbuffer.order(order);
 
             switch (index) {
@@ -84,7 +102,8 @@ class RRDFile implements Constants {
         }
         else {                // Default to data formats for this hardware architecture
         }
-        ras.seek(0);    // Reset file pointer to start of file
+        // Reset file pointer to start of file
+        mappedByteBuffer.rewind();
     }
 
     private int indexOf(byte[] pattern, byte[] array) {
@@ -100,42 +119,39 @@ class RRDFile implements Constants {
     }
 
     double readDouble() throws IOException {
-        read(8);
-        return bbuffer.getDouble();
+        return mappedByteBuffer.getDouble();
     }
 
     int readInt() throws IOException {
-        read(4);
-        return bbuffer.getInt();
+        return mappedByteBuffer.getInt();
     }
 
     int readLong() throws IOException {
-        read(longSize);
         if(longSize == 4) {
-            return bbuffer.getInt();
+            return mappedByteBuffer.getInt();
         }
         else {
-            return (int) bbuffer.getLong();
+            return (int) mappedByteBuffer.getLong();
         }
     }
 
     String readString(int maxLength) throws IOException {
+        byte[] array = new byte[maxLength];
+        mappedByteBuffer.get(array);
 
-        ras.read(buffer, 0, maxLength);
-
-        return new String(buffer, 0, maxLength).trim();
+        return new String(array, 0, maxLength).trim();
     }
 
     void skipBytes(int n) throws IOException {
-        ras.skipBytes(n);
+        mappedByteBuffer.position(mappedByteBuffer.position() + n);
     }
 
     int align(int boundary) throws IOException {
 
-        int skip = (int) (boundary - (ras.getFilePointer() % boundary)) % boundary;
+        int skip = (int) (boundary - (mappedByteBuffer.position() % boundary)) % boundary;
 
         if (skip != 0) {
-            ras.skipBytes(skip);
+            mappedByteBuffer.position(mappedByteBuffer.position() + skip);
         }
 
         return skip;
@@ -146,19 +162,23 @@ class RRDFile implements Constants {
     }
 
     long info() throws IOException {
-        return ras.getFilePointer();
+        return mappedByteBuffer.position();
     }
 
     long getFilePointer() throws IOException {
-        return ras.getFilePointer();
+        return mappedByteBuffer.position();
     }
 
     void close() throws IOException {
-        ras.close();
+        if (underlying != null) {
+            underlying.close();
+        }
     }
 
     void read(ByteBuffer bb) throws IOException{
-        ras.getChannel().read(bb);
+        int count = bb.remaining();
+        bb.put((ByteBuffer) mappedByteBuffer.duplicate().limit(mappedByteBuffer.position() + count));
+        mappedByteBuffer.position(mappedByteBuffer.position() + count);
     }
 
     UnivalArray getUnivalArray(int size) throws IOException {
@@ -170,5 +190,9 @@ class RRDFile implements Constants {
      */
     int getBits() {
         return longSize * 8;
+    }
+
+    public void seek(long position) {
+        mappedByteBuffer.position((int) position);
     }
 }

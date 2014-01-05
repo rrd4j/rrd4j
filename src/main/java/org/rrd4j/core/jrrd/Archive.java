@@ -113,7 +113,7 @@ public class Archive {
             pointer = currentRow + chunk.start + 1;
         }
 
-        db.rrdFile.ras.seek(dataOffset + (chunk.dsCount * pointer * 8));
+        db.rrdFile.seek((dataOffset + (chunk.dsCount * pointer * 8)));
 
         double[][] data = chunk.data;
 
@@ -136,7 +136,7 @@ public class Archive {
                 if (pointer >= rowCount) {
                     pointer -= rowCount;
 
-                    db.rrdFile.ras.seek(dataOffset + (chunk.dsCount * pointer * 8));
+                    db.rrdFile.seek(dataOffset + (chunk.dsCount * pointer * 8));
                 }
 
                 for (int ii = 0; ii < chunk.dsCount; ii++) {
@@ -218,7 +218,7 @@ public class Archive {
             int counter = 0;
             int row = currentRow;
 
-            db.rrdFile.ras.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
+            db.rrdFile.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
 
             long lastUpdate = db.lastUpdate.getTime() / 1000;
             int pdpStep = db.header.pdpStep;
@@ -232,7 +232,7 @@ public class Archive {
                 if (row == rowCount) {
                     row = 0;
 
-                    db.rrdFile.ras.seek(dataOffset);
+                    db.rrdFile.seek(dataOffset);
                 }
 
                 long now = (lastUpdate - lastUpdate % (pdpCount * pdpStep))
@@ -285,12 +285,12 @@ public class Archive {
         }
         values = new double[db.header.dsCount][rowCount];
         int row = currentRow;
-        db.rrdFile.ras.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
+        db.rrdFile.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
         for (int counter = 0; counter < rowCount; counter++) {
             row++;
             if (row == rowCount) {
                 row = 0;
-                db.rrdFile.ras.seek(dataOffset);
+                db.rrdFile.seek(dataOffset);
             }
             for (int col = 0; col < db.header.dsCount; col++) {
                 double value = db.rrdFile.readDouble();
