@@ -26,6 +26,16 @@ public class XmlWriter {
     }
 
     /**
+     * Creates XmlWriter with the specified output stream to send XML code to.
+     *
+     * @param stream Output stream which receives XML code
+     * @param autoFlush is the stream to be flushed automatically
+     */
+    public XmlWriter(OutputStream stream, boolean autoFlush) {
+        writer = new PrintWriter(stream, autoFlush);
+    }
+
+    /**
      * Opens XML tag
      *
      * @param tag XML tag name
@@ -164,13 +174,6 @@ public class XmlWriter {
      */
     public void flush() {
         writer.flush();
-    }
-
-    /**
-     * <p>finalize.</p>
-     */
-    protected void finalize() {
-        writer.close();
     }
 
     /**
