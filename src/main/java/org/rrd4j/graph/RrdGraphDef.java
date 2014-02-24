@@ -52,6 +52,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     String filename = RrdGraphConstants.IN_MEMORY_IMAGE; // ok
     long startTime, endTime; // ok
     TimeAxisSetting timeAxisSetting = null; // ok
+    TimeLabelFormat timeLabelFormat = null; // ok
     ValueAxisSetting valueAxisSetting = null; // ok
     boolean altYGrid = false; // ok
     boolean noMinorGrid = false; // ok
@@ -248,6 +249,10 @@ public class RrdGraphDef implements RrdGraphConstants {
             int labelUnit, int labelUnitCount, int labelSpan, String simpleDateFormat) {
         timeAxisSetting = new TimeAxisSetting(minorUnit, minorUnitCount, majorUnit, majorUnitCount,
                 labelUnit, labelUnitCount, labelSpan, simpleDateFormat);
+    }
+
+    public void setTimeLabelFormat(TimeLabelFormat format) {
+        timeLabelFormat = format;
     }
 
     /**

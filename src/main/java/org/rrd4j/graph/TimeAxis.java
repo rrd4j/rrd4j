@@ -80,14 +80,12 @@ class TimeAxis implements RrdGraphConstants {
     }
 
     private void drawLabels() {
-        // escape strftime like format string
-        String labelFormat = tickSetting.format.replaceAll("([^%]|^)%([^%t])", "$1%t$2");
         Font font = rrdGraph.gdef.getFont(FONTTAG_AXIS);
         Paint color = rrdGraph.gdef.colors[COLOR_FONT];
         adjustStartingTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
         int y = rrdGraph.im.yorigin + (int) rrdGraph.worker.getFontHeight(font) + 2;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
-            String label = formatLabel(labelFormat, calendar.getTime());
+            String label = tickSetting.format.format(calendar, rrdGraph.gdef.locale, calendar.getTime());
             long time = calendar.getTime().getTime() / 1000L;
             int x1 = rrdGraph.mapper.xtr(time);
             int x2 = rrdGraph.mapper.xtr(time + tickSetting.labelSpan);
@@ -97,20 +95,6 @@ class TimeAxis implements RrdGraphConstants {
                 rrdGraph.worker.drawString(label, x, y, font, color);
             }
             findNextTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
-        }
-    }
-
-    private String formatLabel(String format, Date date) {
-        Calendar c = (Calendar) calendar.clone();
-        c.setTime(date);
-        if (format.contains("%")) {
-            // strftime like format string
-            return String.format(rrdGraph.gdef.locale, format, c);
-        }
-        else {
-            SimpleDateFormat sdf = new SimpleDateFormat(format);
-            sdf.setCalendar(c);
-            return sdf.format(date);
         }
     }
 
@@ -202,6 +186,9 @@ class TimeAxis implements RrdGraphConstants {
             for (int i = 0; tickSettings[i].secPerPix >= 0 && secPerPix > tickSettings[i].secPerPix; i++) {
                 tickSetting = tickSettings[i];
             }
+        }
+        if (rrdGraph.gdef.timeLabelFormat != null) {
+            tickSetting = tickSetting.withLabelFormat(rrdGraph.gdef.timeLabelFormat);
         }
     }
 
