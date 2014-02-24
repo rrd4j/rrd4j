@@ -160,6 +160,7 @@ public class Demo {
         gDef.setEndTime(end);
         gDef.setTitle("Temperatures in May-June 2010");
         gDef.setVerticalLabel("temperature");
+        gDef.setFontSet(true);
 
         gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
         gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE);

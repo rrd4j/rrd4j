@@ -273,7 +273,7 @@ public interface RrdGraphConstants {
 
             InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath);
             try {
-                return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type == Font.BOLD ? Font.BOLD : Font.PLAIN, size);
+                return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(size);
             } catch (FontFormatException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
@@ -394,16 +394,7 @@ public interface RrdGraphConstants {
          * Index of the edge watermark font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
          */
         WATERMARK;
-
-        public void set(Font f, Font[] fonts) {
-            fonts[this.ordinal()] = f;
-        }
-
-        public Font get(Font f, Font[] fonts) {
-            return fonts[this.ordinal()];
-        }
-
-    }
+     }
 
     FontTag FONTTAG_DEFAULT   = FontTag.DEFAULT;
 
@@ -411,7 +402,7 @@ public interface RrdGraphConstants {
 
     FontTag FONTTAG_AXIS      = FontTag.AXIS;
 
-    FontTag FONTTAG_UNIT      = FontTag.AXIS;
+    FontTag FONTTAG_UNIT      = FontTag.UNIT;
 
     FontTag FONTTAG_LEGEND    = FontTag.LEGEND;
 

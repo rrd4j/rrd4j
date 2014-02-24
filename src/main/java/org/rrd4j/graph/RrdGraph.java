@@ -312,7 +312,7 @@ public class RrdGraph implements RrdGraphConstants {
                     im.yorigin + 3,
             };
             worker.fillPolygon(Xarrow_x, im.yorigin + 3, Xarrow_y, arrowColor);
-            
+
             //Do y axis arrow
             double[] Yarrow_x = {
                     im.xorigin - 3,
@@ -671,21 +671,14 @@ public class RrdGraph implements RrdGraphConstants {
     }
 
     double getBoxSpace() {
-        return Math.ceil(getFontHeight(FONTTAG_LEGEND) * LEGEND_BOX_SPACE);
+        return (int) getBox() + worker.getStringWidth("—", gdef.getFont(FONTTAG_LEGEND));
     }
 
     private double getBox() {
-        return getFontHeight(FONTTAG_LEGEND) * LEGEND_BOX;
+        return Math.ceil(getFontCharWidth(FONTTAG_LEGEND) * 1.2);
     }
 
     double[] xtr(long[] timestamps) {
-        /*
-          double[] timestampsDev = new double[timestamps.length];
-          for (int i = 0; i < timestamps.length; i++) {
-              timestampsDev[i] = mapper.xtr(timestamps[i]);
-          }
-          return timestampsDev;
-         */
         double[] timestampsDev = new double[2 * timestamps.length - 1];
         for (int i = 0, j = 0; i < timestamps.length; i += 1, j += 2) {
             timestampsDev[j] = mapper.xtr(timestamps[i]);

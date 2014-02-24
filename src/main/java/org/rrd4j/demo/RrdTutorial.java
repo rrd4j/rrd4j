@@ -261,8 +261,11 @@ public class RrdTutorial {
         // STACK:over#FF0000:"Over speed"
         println("== Creating graph 4");
         RrdGraphDef gDef4 = new RrdGraphDef();
+        gDef4.setTitle("Graph 4");
         gDef4.setWidth(IMG_WIDTH);
         gDef4.setHeight(IMG_HEIGHT);
+        gDef4.setFontSet(true);
+        gDef4.setTextAntiAliasing(true);
         String img4Path = Util.getRrd4jDemoPath(FILE + "4" + "." + FILE_FORMAT);
         gDef4.setFilename(img4Path);
         gDef4.setStartTime(920804400);

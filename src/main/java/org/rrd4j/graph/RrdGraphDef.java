@@ -639,15 +639,15 @@ public class RrdGraphDef implements RrdGraphConstants {
      */
     public void setFontSet(boolean rrdtool) {
         if(rrdtool) {
-            // We add a factor to the font size, rrdtool and java don't agree about font size
-            float rrdtoolfactor = 12f/9;
+            // We multiply with a factor the font size, rrdtool (Pango) and java don't agree about font size
+            // The factors was manually checked
             fonts = new Font[] {
-                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_DEFAULT
-                    DEFAULT_SMALL_FONT.deriveFont(9.0f * rrdtoolfactor),    // FONTTAG_TITLE
-                    DEFAULT_SMALL_FONT.deriveFont(7.0f * rrdtoolfactor),    // FONTTAG_AXIS
-                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_UNIT
-                    DEFAULT_SMALL_FONT.deriveFont(8.0f * rrdtoolfactor),    // FONTTAG_LEGEND
-                    DEFAULT_SMALL_FONT.deriveFont(5.5f * rrdtoolfactor)     // FONTTAG_WATERMARK
+                    DEFAULT_SMALL_FONT.deriveFont(8.0f * 13f/9),    // FONTTAG_DEFAULT
+                    DEFAULT_SMALL_FONT.deriveFont(9.0f * 13f/9),    // FONTTAG_TITLE
+                    DEFAULT_SMALL_FONT.deriveFont(7.0f * 13f/9),    // FONTTAG_AXIS
+                    DEFAULT_SMALL_FONT.deriveFont(8.0f * 12f/9),    // FONTTAG_UNIT
+                    DEFAULT_SMALL_FONT.deriveFont(8.0f * 12f/9),    // FONTTAG_LEGEND
+                    DEFAULT_SMALL_FONT.deriveFont(5.5f * 13f/9)     // FONTTAG_WATERMARK
             };
         } else {
             fonts = new Font[] {
