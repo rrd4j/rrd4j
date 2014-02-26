@@ -1,14 +1,11 @@
 package org.rrd4j.core.jrrd;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Date;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class JrrdTest {
@@ -62,10 +59,11 @@ public class JrrdTest {
     //big endian
     //32 bits
     //alignement on long
-    //@Test
-    //public void test_1_b_32_8() throws IOException {
-    //    testFile("/rrdtool/0001b328.rrd", "0001");
-    //}
+    @Test
+    @Ignore
+    public void test_1_b_32_8() throws IOException {
+        testFile("/rrdtool/0001b328.rrd", "0001");
+    }
 
     @Test
     public void test_1_l_32_4() throws IOException {
@@ -105,9 +103,9 @@ public class JrrdTest {
         Assert.assertEquals(0.02, data.toPlottable("speed").getValue(920802300), 1e-7);
         Assert.assertEquals(1.0, data.toPlottable("weight").getValue(920802300), 1e-7);
     }
-    
-   Double readDouble(RRDFile rrdFile) throws IOException {
-       return rrdFile.readDouble();
-   }
+
+    Double readDouble(RRDFile rrdFile) throws IOException {
+        return rrdFile.readDouble();
+    }
 
 }
