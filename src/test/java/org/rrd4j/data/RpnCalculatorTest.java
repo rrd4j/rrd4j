@@ -3,9 +3,9 @@ package org.rrd4j.data;
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
+import org.rrd4j.core.Util;
 
 public class RpnCalculatorTest {
     class Myplottable extends Plottable {
@@ -19,6 +19,8 @@ public class RpnCalculatorTest {
         }
     }
 
+    private final static long testedTimeSeconds = Util.getCalendar("2001-02-03 04:05:06").getTime().getTime() / 1000;
+
     private void expected(DataProcessor dp, String rpn, double... values) throws IOException {
         dp.processData();
         RpnCalculator calc = new RpnCalculator(rpn, "rpn name", dp);
@@ -26,7 +28,7 @@ public class RpnCalculatorTest {
         System.out.println(Arrays.toString(rpnValues));
         for(int i=0; i < values.length; i++) {
             String message = String.format("for '%s', at %d", rpn, i);
-            Assert.assertEquals(message, values[i], rpnValues[i]);
+            Assert.assertEquals(message, values[i], rpnValues[i], 1e-10);
         }
     }
 
@@ -61,7 +63,7 @@ public class RpnCalculatorTest {
         dp.addDatasource("source2", new Myplottable(3.0, 2.0, 1.0));
         expected(dp, "source1,source2,GE", 0.0, 1.0, 1.0);
     }
-    
+
     @Test
     public void testEQ() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
@@ -165,7 +167,7 @@ public class RpnCalculatorTest {
         DataProcessor dp = new DataProcessor(1, 2);
         expected(dp, "INF", Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
-    
+
     @Test
     public void testUNKN() throws IOException {
         DataProcessor dp = new DataProcessor(1, 2);
@@ -187,14 +189,14 @@ public class RpnCalculatorTest {
         dp.addDatasource("source2", new Myplottable(1.0, Double.NaN, 1.0, Double.NaN));
         expected(dp, "source1, source2, ADDNAN", 2.0, 1.0, 1.0, Double.NaN);
     }
-    
+
     @Test
     public void testLIMIT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
         dp.addDatasource("source1", new Myplottable(1.0, 2.0, 3.0, 4.0));
         expected(dp, "source1, 2, 3, LIMIT", Double.NaN, 2.0, 3.0, Double.NaN);
     }
-    
+
     @Test
     public void testCOUNT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
@@ -206,7 +208,7 @@ public class RpnCalculatorTest {
         DataProcessor dp = new DataProcessor(1, 2);
         expected(dp, "1,2,3,4,4,AVG", 2.5);
     }
-    
+
     @Test
     public void testSORT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 2);
@@ -219,11 +221,46 @@ public class RpnCalculatorTest {
         expected(dp, "4,3,2,1,4,REV,POP, 3, AVG", 2.0);
     }
 
+    @Test
+    public void testYEAR() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, testedTimeSeconds + ", YEAR", 2001);
+    }
+
+    @Test
+    public void testMONTH() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, testedTimeSeconds + ", MONTH", 2);
+    }
+
+    @Test
+    public void testDATE() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, testedTimeSeconds + ", DATE", 3);
+    }
+
+    @Test
+    public void testHOUR() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, testedTimeSeconds + ", HOUR", 4);
+    }
+
+    @Test
+    public void testMINUTE() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, testedTimeSeconds + ", MINUTE", 5);
+    }
+
+    @Test
+    public void testSECOND() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 2);
+        expected(dp, testedTimeSeconds + ", SECOND", 6);
+    }
+
     @Test(expected=IllegalArgumentException.class)
     public void testInvalid() throws IOException {
         DataProcessor dp = new DataProcessor(1, 2);
         expected(dp, "nothing, 1, +");
     }
-
 
 }
