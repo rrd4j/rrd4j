@@ -12,9 +12,9 @@ import java.util.Stack;
 public class XmlWriter {
     static final String INDENT_STR = "   ";
 
-    private PrintWriter writer;
-    private StringBuilder indent = new StringBuilder("");
-    private Stack<String> openTags = new Stack<String>();
+    private final PrintWriter writer;
+    private final StringBuilder indent = new StringBuilder("");
+    private final Stack<String> openTags = new Stack<String>();
 
     /**
      * Creates XmlWriter with the specified output stream to send XML code to.
