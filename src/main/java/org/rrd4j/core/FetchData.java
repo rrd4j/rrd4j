@@ -382,14 +382,14 @@ public class FetchData {
     }
 
     /**
-     * Dumps fetch data to output stream in XML format.
+     * Dumps fetch data to output stream in XML format. A flush is issued at the end of the xml generation.
      *
      * @param outputStream Output stream to dump fetch data to
-     * @param autoFlush true if the output stream is to be flushed when the dump is finished
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public void exportXml(OutputStream outputStream, boolean autoFlush) throws IOException {
-        XmlWriter writer = new XmlWriter(outputStream, autoFlush);
+    public void exportXml(OutputStream outputStream) throws IOException {
+        //No auto flush for XmlWriter, it will be flushed once, when export is finished
+        XmlWriter writer = new XmlWriter(outputStream, false);
         writer.startTag("fetch_data");
         writer.startTag("request");
         writer.writeTag("file", request.getParentDb().getPath());
@@ -419,22 +419,9 @@ public class FetchData {
         }
         writer.closeTag(); // data
         writer.closeTag(); // fetch_data
-        if(autoFlush) {
-            writer.flush();            
-        }
+        writer.flush();            
     }
     
-    /**
-     * Dumps fetch data to output stream in XML format. A flush is issued at the end of the xml.
-     *
-     * @param outputStream Output stream to dump fetch data to
-     * @throws java.io.IOException Thrown in case of I/O error
-     */
-    public void exportXml(OutputStream outputStream) throws IOException {
-        exportXml(outputStream, true);
-    }
-    
-
     /**
      * Dumps fetch data to file in XML format.
      *
