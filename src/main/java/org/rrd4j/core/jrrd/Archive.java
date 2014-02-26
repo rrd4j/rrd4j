@@ -3,12 +3,14 @@ package org.rrd4j.core.jrrd;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Instances of this class model an archive section of an RRD file.
@@ -222,7 +224,7 @@ public class Archive {
 
             long lastUpdate = db.lastUpdate.getTime() / 1000;
             int pdpStep = db.header.pdpStep;
-            NumberFormat numberFormat = new DecimalFormat("0.0000000000E0");
+            NumberFormat numberFormat = new DecimalFormat("0.0000000000E0", DecimalFormatSymbols.getInstance(Locale.US));
             SimpleDateFormat dateFormat =
                     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
@@ -246,6 +248,7 @@ public class Archive {
                 s.print(now);
                 s.print(" --> ");
 
+                s.println("<row>");
                 for (int col = 0; col < db.header.dsCount; col++) {
                     s.print("<v> ");
 
