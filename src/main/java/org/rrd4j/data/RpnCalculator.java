@@ -355,7 +355,7 @@ class RpnCalculator {
                 c.push((s.slot == 0) ? Double.NaN : s.token.values[s.slot - 1]);
             }
         },
-        
+
         //Time and date operator
         TKN_STEP("STEP") {
             @Override
@@ -390,7 +390,7 @@ class RpnCalculator {
         TKN_MONTH("MONTH") {
             @Override
             void do_method(RpnCalculator c, State s) {
-                c.push(c.getCalendarField(c.pop(), Calendar.MONTH));
+                c.push(c.getCalendarField(c.pop(), Calendar.MONTH) + 1);
             }
         },
         TKN_DATE("DATE") {
@@ -714,7 +714,7 @@ class RpnCalculator {
     }
 
     private double getCalendarField(double timestamp, int field) {
-        Calendar calendar = Util.getCalendar((long) (timestamp * 1000));
+        Calendar calendar = Util.getCalendar((long) (timestamp));
         return calendar.get(field);
     }
 
