@@ -21,9 +21,9 @@
 	<properties>
 		<!-- The project should have a source encoding set. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mavenJavadocPluginVersion>2.9.1</mavenJavadocPluginVersion>
-		<mavenResourcesPlugin>2.6</mavenResourcesPlugin>
-		<mavenSurefirePlugin>2.15</mavenSurefirePlugin>
+		<mavenJavadocPluginVersion>2.10.1</mavenJavadocPluginVersion>
+		<mavenResourcesPlugin>2.7</mavenResourcesPlugin>
+		<mavenSurefirePlugin>2.18</mavenSurefirePlugin>
 		<junitVersion>4.10</junitVersion>
 		<buildSource>1.6</buildSource>
 		<buildTarget>1.6</buildTarget>
@@ -90,7 +90,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
+				<version>3.2</version>
 				<configuration>
 					<source>${buildSource}</source>
 					<target>${buildTarget}</target>
@@ -100,7 +100,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.5</version>
 				<executions>
 					<execution>
 						<id>default-jar</id>
@@ -200,7 +200,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>2.4</version>
 				<executions>
 					<execution>
 						<id>attach-source</id>
@@ -214,7 +214,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.4.1</version>
+				<version>2.5.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -243,7 +243,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.6.3.201306030806</version>
+				<version>0.7.2.201409121644</version>
 				<configuration>
 					<destfile>${basedir}/target/coverage-reports/jacoco-unit.exec</destfile>
 					<datafile>${basedir}/target/coverage-reports/jacoco-unit.exec</datafile>
@@ -273,17 +273,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.7</version>
+					<version>2.8.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.4</version>
+					<version>1.5</version>
 					<configuration>
 						<!-- This is the name of the signing key used to sign the artifacts. -->
                         <!-- The key has to be installed on a machine to be able to perform a release. -->
@@ -295,7 +295,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.5.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -308,7 +308,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.2</version>
+					<version>3.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -379,7 +379,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.5.2</version>
+				<version>2.5.5</version>
 				<configuration>
 					<findbugsXmlOutput>true</findbugsXmlOutput>
 					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
