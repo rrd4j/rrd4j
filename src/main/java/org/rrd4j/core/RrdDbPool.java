@@ -119,10 +119,12 @@ public class RrdDbPool {
     }
 
     private RrdEntry getUnusedEntry(String path) throws IOException, InterruptedException {
-        RrdEntry ref = getEntry(path);
+        poolLock.readLock().lockInterruptibly();
+        RrdEntry ref = getUnlockedEntry(path);
 
         // Now wait until the condition empty is OK
         try {
+            ref.inuse.lockInterruptibly();
             while(ref.count.intValue() != 0) {
                 ref.empty.await();
             }
@@ -132,6 +134,9 @@ public class RrdDbPool {
                 ref.inuse.unlock();                
             }
             throw e;
+        }
+        finally {
+            poolLock.readLock().unlock();            
         }
     }
 
