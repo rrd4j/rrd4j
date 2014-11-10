@@ -9,11 +9,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -86,7 +82,7 @@ public class RrdDbPoolTest {
                     done.set(1);
                 } catch (IOException e) {
                     e.printStackTrace();
-               }
+                }
             }
 
         };
