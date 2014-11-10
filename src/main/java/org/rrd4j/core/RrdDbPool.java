@@ -97,7 +97,7 @@ public class RrdDbPool {
         return files.toArray(new String[files.size()]);
     }
 
-    private RrdEntry getUnlockedEntry(String path) throws IOException, InterruptedException {
+    private RrdEntry getUnlockedEntry(String path) throws IOException {
         String canonicalPath = Util.getCanonicalPath(path);
         RrdEntry ref = pool.putIfAbsent(canonicalPath, new RrdEntry());
         if(ref == null) {
@@ -119,22 +119,18 @@ public class RrdDbPool {
     }
 
     private RrdEntry getUnusedEntry(String path) throws IOException, InterruptedException {
-        poolLock.readLock().lockInterruptibly();
-        RrdEntry ref = getUnlockedEntry(path);
-        try {
-            ref.inuse.lockInterruptibly();
-        }
-        finally {
-            poolLock.readLock().unlock();            
-        }
+        RrdEntry ref = getEntry(path);
 
+        // Now wait until the condition empty is OK
         try {
             while(ref.count.intValue() != 0) {
                 ref.empty.await();
             }
             return ref;
         } catch (InterruptedException e) {
-            ref.inuse.unlock();
+            if(ref.inuse.isHeldByCurrentThread()) {
+                ref.inuse.unlock();                
+            }
             throw e;
         }
     }
@@ -160,16 +156,18 @@ public class RrdDbPool {
             throw new RuntimeException("release interrupted for " + rrdDb, e);
         }
 
-        if (ref.count.get() <= 0) {
-            ref.inuse.unlock();
-            throw new IllegalStateException("Could not release [" + canonicalPath + "], the file was never requested");
-        }
-        if (ref.count.decrementAndGet() <= 0  && ref.rrdDb != null) {
-            ref.rrdDb.close();
-            ref.rrdDb = null;
-            capacity.release();
-            ref.count.set(0);
-            ref.empty.signal();
+        try {
+            if (ref.count.get() <= 0) {
+                throw new IllegalStateException("Could not release [" + canonicalPath + "], the file was never requested");
+            }
+            if (ref.count.decrementAndGet() <= 0  && ref.rrdDb != null) {
+                ref.rrdDb.close();
+                ref.rrdDb = null;
+                capacity.release();
+                ref.count.set(0);
+                ref.empty.signal();
+            }
+        } finally {
             ref.inuse.unlock();
         }
 
@@ -230,23 +228,18 @@ public class RrdDbPool {
             }
             //Not opened or in inconsistent state, try to recover
             else {
+                ref.rrdDb = new RrdDb(path);
+                ref.count.set(1);
                 try {
                     capacity.acquire();
                 } catch (InterruptedException e) {
                     throw new RuntimeException("RrdDb acquire interrupted", e);
                 }
-                try {
-                    ref.rrdDb = new RrdDb(path);
-                } catch (IOException e) {
-                    capacity.release();
-                    throw e;
-                }
-                ref.count.set(1);
             }
+            return ref.rrdDb;
         } finally {
             ref.inuse.unlock();;
         }
-        return ref.rrdDb;
     }
 
     /**
