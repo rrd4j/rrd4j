@@ -4,8 +4,11 @@ import static org.rrd4j.ConsolFun.AVERAGE;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
+import java.util.TimeZone;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -23,9 +26,9 @@ import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraphInfo;
 
 public class TestLSL {
-    static final long START = Util.getTimestamp(2010, 3, 1, 0, 0);
-    static final long LASTWEEK = Util.getTimestamp(2010, 3, 25, 23, 59);
-    static final long END = Util.getTimestamp(2010, 3, 30, 23, 59);
+    static final long START = getTimestamp(2010, 3, 1, 0, 0);
+    static final long LASTWEEK = getTimestamp(2010, 3, 25, 23, 59);
+    static final long END = getTimestamp(2010, 3, 30, 23, 59);
     static final long SEED = 1909752002L;
     static final Random RANDOM = new Random(SEED);
     static final int MAX_STEP = 300;
@@ -51,6 +54,12 @@ public class TestLSL {
             }
             return Math.round(oldValue);
         }
+    }
+
+    private static long getTimestamp(int year, int month, int day, int hour, int min){
+        Calendar c = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
+        c.set(year, month, day, hour, min);
+        return Util.getTimestamp(c);
     }
 
     @Rule
@@ -83,6 +92,7 @@ public class TestLSL {
 
         RrdGraphDef gdef = new RrdGraphDef();
         gdef.setLocale(Locale.US);
+        gdef.setTimeZone(TimeZone.getTimeZone("CET"));
         gdef.setFilename(testFolder.newFile("trend.png").getCanonicalPath());
         gdef.setStartTime(LASTWEEK);
         gdef.setEndTime(END);

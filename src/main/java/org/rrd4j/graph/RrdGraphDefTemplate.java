@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
@@ -670,7 +671,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 "image_quality", "background_image", "overlay_image", "unit", "lazy",
                 "min_value", "max_value", "rigid", "base", "logarithmic", "colors",
                 "no_legend", "only_graph", "force_rules_legend", "title", "step", "fonts",
-                "first_day_of_week", "signature"
+                "first_day_of_week", "signature", "timezone"
         });
         Node[] optionNodes = getChildNodes(rootOptionNode);
         for (Node optionNode : optionNodes) {
@@ -783,6 +784,9 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             }
             else if (option.equals("signature")) {
                 rrdGraphDef.setShowSignature(getValueAsBoolean(optionNode));
+            }
+            else if (option.equals("timezone")) {
+                rrdGraphDef.setTimeZone(TimeZone.getTimeZone(getValue(optionNode)));
             }
         }
     }

@@ -378,7 +378,8 @@ class RpnCalculator {
         TKN_LTIME("LTIME") {
             @Override
             void do_method(RpnCalculator c, State s) {
-                c.push(c.timestamps[s.slot] + (long) (s.tz.getOffset(c.timestamps[s.slot]) / 1000L));
+                TimeZone tz = s.getTimeZone();
+                c.push(c.timestamps[s.slot] + (long) (tz.getOffset(c.timestamps[s.slot]) / 1000L));
             }
         },
         TKN_YEAR("YEAR") {
@@ -773,12 +774,14 @@ class RpnCalculator {
         }
     }
 
-    private static final class State {
+    private final class State {
         public int token_rpi;
         int rpi;
         Token token;
         int slot;
-        final TimeZone tz = TimeZone.getDefault();
+        TimeZone getTimeZone() {
+            return RpnCalculator.this.dataProcessor.getTimeZone();
+        }
     }
 
     private static final class Token {

@@ -312,7 +312,7 @@ public class RrdGraph implements RrdGraphConstants {
                     im.yorigin + 3,
             };
             worker.fillPolygon(Xarrow_x, im.yorigin + 3, Xarrow_y, arrowColor);
-            
+
             //Do y axis arrow
             double[] Yarrow_x = {
                     im.xorigin - 3,
@@ -591,6 +591,7 @@ public class RrdGraph implements RrdGraphConstants {
     private void fetchData() throws IOException {
         dproc = new DataProcessor(gdef.startTime, gdef.endTime);
         dproc.setPoolUsed(gdef.poolUsed);
+        dproc.setTimeZone(gdef.tz);
         if (gdef.step > 0) {
             dproc.setStep(gdef.step);
             dproc.setFetchRequestResolution(gdef.step); 

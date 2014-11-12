@@ -54,11 +54,15 @@ public class DataProcessor {
     private long step = 0;
     // resolution to be used for RRD fetch operation
     private long fetchRequestResolution = 1;
+    // The timezone to use
+    private TimeZone tz = TimeZone.getDefault();
 
     // the order is important, ordinary HashMap is unordered
     private Map<String, Source> sources = new LinkedHashMap<String, Source>();
 
     private Def[] defSources;
+
+    private boolean processed = false;
 
     /**
      * Creates new DataProcessor object for the given time span. Ending timestamp may be set to zero.
@@ -94,12 +98,15 @@ public class DataProcessor {
      * Creates new DataProcessor object for the given time span. Ending date may be set to null.
      * In that case, the class will try to find optimal ending date based on the last update time of
      * RRD files processed with the {@link #processData()} method.
+     * 
+     * It use the time zone for starting calendar date.
      *
      * @param gc1 Starting Calendar date
      * @param gc2 Ending Calendar date
      */
     public DataProcessor(Calendar gc1, Calendar gc2) {
         this(Util.getTimestamp(gc1), gc2 != null ? Util.getTimestamp(gc2) : 0);
+        this.tz = gc1.getTimeZone();
     }
 
     /**
@@ -202,6 +209,14 @@ public class DataProcessor {
      */
     public void setFetchRequestResolution(long fetchRequestResolution) {
         this.fetchRequestResolution = fetchRequestResolution;
+    }
+
+    public TimeZone getTimeZone() {
+        return tz;
+    }
+
+    public void setTimeZone(TimeZone tz) {
+        this.tz = tz;
     }
 
     /**

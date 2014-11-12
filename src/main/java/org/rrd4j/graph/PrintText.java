@@ -1,6 +1,7 @@
 package org.rrd4j.graph;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +40,9 @@ class PrintText extends CommentText {
             if(v != Variable.INVALIDVALUE) {
                 long time = v.timestamp;
                 try {
-                    resolvedText = String.format(l, resolvedText, new Date(time * 1000));
+                    Calendar c = new GregorianCalendar(dproc.getTimeZone(), l);
+                    c.setTimeInMillis(time * 1000);
+                    resolvedText = String.format(l, resolvedText, c);
                 } catch (Exception e) {
                     throw new RuntimeException("can't format '" + resolvedText + "'", e);
                 }                

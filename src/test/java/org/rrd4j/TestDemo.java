@@ -9,8 +9,11 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
+import java.util.TimeZone;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -36,8 +39,18 @@ public class TestDemo {
     static final Random RANDOM = new Random(SEED);
     static final String FILE = "demo";
 
-    static final long START = Util.getTimestamp(2010, 4, 1);
-    static final long END = Util.getTimestamp(2010, 6, 1);
+    static final long START;
+    static final long END;
+    static {
+        Calendar c1 = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
+        c1.set(2010, 4, 1, 0, 0);
+        START = Util.getTimestamp(c1);
+
+        Calendar c2 = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
+        c2.set(2010, 6, 1, 0, 0);
+        END = Util.getTimestamp(c2);
+    }
+
     static final int MAX_STEP = 300;
 
     static final int IMG_WIDTH = 500;
@@ -136,6 +149,7 @@ public class TestDemo {
         System.out.println("== Creating graph from the second file");
         RrdGraphDef gDef = new RrdGraphDef();
         gDef.setLocale(Locale.US);
+        gDef.setTimeZone(TimeZone.getTimeZone("CET"));
         gDef.setWidth(IMG_WIDTH);
         gDef.setHeight(IMG_HEIGHT);
         gDef.setFilename(imgPath);
