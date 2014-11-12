@@ -117,7 +117,9 @@ public class TestDemo {
         // test read-only access!
         rrdDb = new RrdDb(rrdPath, true);
         System.out.println("File reopen in read-only mode");
-        System.out.println("== Last update time was: " + rrdDb.getLastUpdateTime());
+        Calendar c = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
+        c.setTimeInMillis(rrdDb.getLastUpdateTime() * 1000);
+        System.out.println("== Last update time was: " + String.format(Locale.US, "%tF %tT", c, c));
         System.out.println("== Last info was: " + rrdDb.getInfo());
 
         // fetch data
@@ -183,9 +185,9 @@ public class TestDemo {
         gDef.datasource("sunaverage", "sun", sunaverage);
         gDef.gprint("sunmax", "maxSun = %.3f%s");
         gDef.gprint("sunaverage", "avgSun = %.3f%S\\c");
-        gDef.print("sunmax", "maxSun = %.3f%s");
+        gDef.print("sunmax", "maxSun = %.2f%s");
         gDef.print("sunmax", "maxSun time = %ts", true);
-        gDef.print("sunaverage", "avgSun = %.3f%S\\c");
+        gDef.print("sunaverage", "avgSun = %.2f%S\\c");
 
         gDef.datasource("shademax", "shade", new Variable.MAX());
         gDef.datasource("shadeverage", "shade", new Variable.AVERAGE());
@@ -209,15 +211,15 @@ public class TestDemo {
 
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
         String[] lines = graphinfo.getPrintLines();
-        Assert.assertEquals("maxSun = 4.285k", lines[0]);
+        Assert.assertEquals("maxSun = 4.29k", lines[0]);
         Assert.assertEquals("maxSun time = 1277467200", lines[1]);
-        Assert.assertEquals("avgSun = 3.000k", lines[2]);
+        Assert.assertEquals("avgSun = 3.00k", lines[2]);
         Assert.assertEquals("maxShade = 0.878k", lines[3]);
         Assert.assertEquals("avgShade = 0.404k", lines[4]);
         Assert.assertEquals(412, graphinfo.getHeight());
         Assert.assertEquals(591, graphinfo.getWidth());
         Assert.assertTrue(graphinfo.getFilename().endsWith(".png"));
-        
+
         Assert.assertEquals(1277467200, sunmax.getValue().timestamp);
         Assert.assertEquals(4284.9218056, sunmax.getValue().value, 1e-15);
     }
