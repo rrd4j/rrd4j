@@ -64,12 +64,7 @@ public class RrdDbPool {
             throw new RuntimeException("Cannot create instance of " + getClass().getName() + " with " +
                     "a default backend factory not derived from RrdFileBackendFactory");
         }
-        capacity = new Semaphore(maxCapacity, true) {
-            @Override
-            public String toString() {
-                return "Capacity semaphore: " + super.toString();
-            }            
-        };
+        capacity = new Semaphore(maxCapacity, true);
     }
 
     /**
@@ -187,12 +182,13 @@ public class RrdDbPool {
                 if(ref == null) {
                     return;
                 }
-                ref.inuse.lockInterruptibly();                
-                //No one started to wait on it, still no use, remove from the map
-                if(! ref.inuse.hasWaiters(ref.empty) && ref.count.get() == 0) {
-                    pool.remove(canonicalPath);
+                if(ref.inuse.tryLock()){
+                    //No one started to wait on it, still no use, remove from the map
+                    if(! ref.inuse.hasWaiters(ref.empty) && ref.count.get() == 0) {
+                        pool.remove(canonicalPath);
+                    }
+                    ref.inuse.unlock();                    
                 }
-                ref.inuse.unlock();
             } catch (InterruptedException e) {
                 throw new RuntimeException("release interrupted for " + rrdDb, e);
             } finally {
@@ -233,17 +229,22 @@ public class RrdDbPool {
             }
             //Not opened or in inconsistent state, try to recover
             else {
-                ref.rrdDb = new RrdDb(path);
-                ref.count.set(1);
                 try {
                     capacity.acquire();
                 } catch (InterruptedException e) {
                     throw new RuntimeException("RrdDb acquire interrupted", e);
                 }
+                try {
+                    ref.rrdDb = new RrdDb(path);
+                    ref.count.set(1);
+                } catch (IOException e) {
+                    capacity.release();
+                    throw e;
+                }
             }
             return ref.rrdDb;
         } finally {
-            ref.inuse.unlock();;
+            ref.inuse.unlock();
         }
     }
 
@@ -273,6 +274,7 @@ public class RrdDbPool {
             capacity.acquire();
             ref.rrdDb = new RrdDb(rrdDef);
             ref.count.set(1);
+            return ref.rrdDb;
         } catch (IOException e) {
             capacity.release();
             throw e;
@@ -282,9 +284,8 @@ public class RrdDbPool {
         } catch (InterruptedException e) {
             throw new RuntimeException("request interrupted for new rrdDef " + rrdDef.getPath(), e);
         } finally {
-            ref.inuse.unlock();;
+            ref.inuse.unlock();
         }
-        return ref.rrdDb;
     }
 
     /**
@@ -316,15 +317,15 @@ public class RrdDbPool {
             capacity.acquire();
             ref.rrdDb = new RrdDb(path, sourcePath);
             ref.count.set(1);
+            return ref.rrdDb;
         } catch (IOException e) {
             capacity.release();
             throw e;
         } catch (InterruptedException e) {
             throw new RuntimeException("request interrupted for new rrd " + path, e);
         } finally {
-            ref.inuse.unlock();;
+            ref.inuse.unlock();
         }
-        return ref.rrdDb;
     }
 
     /**
@@ -345,12 +346,7 @@ public class RrdDbPool {
                 throw new RuntimeException("Can only be done on a empty pool");
             }
             else {
-                capacity = new Semaphore(newCapacity, true) {
-                    @Override
-                    public String toString() {
-                        return "Capacity semaphore: " + super.toString();
-                    }            
-                };
+                capacity = new Semaphore(newCapacity, true);
             }
             maxCapacity = newCapacity;
         } finally {

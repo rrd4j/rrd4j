@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.rrd4j.core;
 
 import java.io.File;
@@ -25,12 +22,12 @@ public class RrdDbPoolTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    @Test(timeout=200)
+    @Test(timeout=500)
     public void test1() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(10);
         final LinkedList<RrdDb> dbs = new LinkedList<RrdDb>();
-        final AtomicInteger done = new AtomicInteger(1);
+        final AtomicInteger done = new AtomicInteger(0);
         Thread t = new Thread() {
 
             @Override
@@ -40,9 +37,9 @@ public class RrdDbPoolTest {
                     while(dbs.size() > 0) {
                         instance.release(dbs.pop());                        
                     }
+                    done.set(1);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    done.set(0);
                 }
             }
         };
@@ -63,7 +60,7 @@ public class RrdDbPoolTest {
         Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
     }
 
-    @Test(timeout=200)
+    @Test(timeout=500)
     public void test2() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         final RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
