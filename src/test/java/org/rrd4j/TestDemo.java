@@ -43,11 +43,11 @@ public class TestDemo {
     static final long END;
     static {
         Calendar c1 = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
-        c1.set(2010, 4, 1, 0, 0);
+        c1.set(2010, 4, 1, 0, 0, 0);
         START = Util.getTimestamp(c1);
 
         Calendar c2 = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
-        c2.set(2010, 6, 1, 0, 0);
+        c2.set(2010, 6, 1, 0, 0, 0);
         END = Util.getTimestamp(c2);
     }
 
@@ -185,9 +185,9 @@ public class TestDemo {
         gDef.datasource("sunaverage", "sun", sunaverage);
         gDef.gprint("sunmax", "maxSun = %.3f%s");
         gDef.gprint("sunaverage", "avgSun = %.3f%S\\c");
-        gDef.print("sunmax", "maxSun = %.2f%s");
+        gDef.print("sunmax", "maxSun = %.3f%s");
         gDef.print("sunmax", "maxSun time = %ts", true);
-        gDef.print("sunaverage", "avgSun = %.2f%S\\c");
+        gDef.print("sunaverage", "avgSun = %.3f%S\\c");
 
         gDef.datasource("shademax", "shade", new Variable.MAX());
         gDef.datasource("shadeverage", "shade", new Variable.AVERAGE());
@@ -211,9 +211,9 @@ public class TestDemo {
 
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
         String[] lines = graphinfo.getPrintLines();
-        Assert.assertEquals("maxSun = 4.29k", lines[0]);
+        Assert.assertEquals("maxSun = 4.285k", lines[0]);
         Assert.assertEquals("maxSun time = 1277467200", lines[1]);
-        Assert.assertEquals("avgSun = 3.00k", lines[2]);
+        Assert.assertEquals("avgSun = 3.000k", lines[2]);
         Assert.assertEquals("maxShade = 0.878k", lines[3]);
         Assert.assertEquals("avgShade = 0.404k", lines[4]);
         Assert.assertEquals(412, graphinfo.getHeight());
