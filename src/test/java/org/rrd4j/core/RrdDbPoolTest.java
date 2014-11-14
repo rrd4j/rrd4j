@@ -23,7 +23,26 @@ public class RrdDbPoolTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Test(timeout=500)
-    public void test1() throws IOException, InterruptedException {
+    public void testCount() throws IOException, InterruptedException {
+        final RrdDbPool instance = new RrdDbPool();
+        instance.setCapacity(10);
+        RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
+        def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
+        def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+        RrdDb db = instance.requestRrdDb(def);
+        for(int i=0; i < 9; i++ ) {
+            instance.requestRrdDb(db.getPath());
+        }
+        for(int i=0; i < 10; i++ ) {
+            instance.release(db);
+        }
+        String[] files = instance.getOpenFiles();
+        Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
+    }
+
+
+    @Test(timeout=500)
+    public void testPoolFull() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(10);
         final LinkedList<RrdDb> dbs = new LinkedList<RrdDb>();
