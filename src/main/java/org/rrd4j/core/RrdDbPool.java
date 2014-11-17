@@ -212,13 +212,26 @@ public class RrdDbPool {
         }
 
         try {
-            //Not opened
-            if(ref.count == 0) {
+            //Loop if count was 0 (need open) and acquire failed
+            while(ref.count == 0 && ! capacity.tryAcquire()) {
+                boolean acquired = false;
                 try {
+                    //Don't hold the ref, wait until acquire succeeded
+                    passNext(ACTION.SWAP, ref);
                     capacity.acquire();
+                    acquired = true;
+                    ref = getEntry(path, true);    
+                    //oups, this was not the real acquire, release for the while test 
+                    capacity.release();
                 } catch (InterruptedException e) {
+                    if(acquired) {
+                        capacity.release();                       
+                    }
                     throw new RuntimeException("RrdDb acquire interrupted", e);
-                }
+                }                
+            }
+            //lock was successfully acquired with an empty ref
+            if(ref.count == 0) {
                 try {
                     ref.rrdDb = new RrdDb(path);
                 } catch (IOException e) {
@@ -231,6 +244,52 @@ public class RrdDbPool {
         } finally {
             passNext(ACTION.SWAP, ref);
         }
+    }
+
+    private RrdEntry waitEmpty(String path) throws IOException, InterruptedException {
+        RrdEntry ref = null;
+        try {
+            do {
+                ref = getEntry(path, true);
+                if(ref.count != 0) {
+                    //Not empty, give it back, but wait for signal
+                    passNext(ACTION.SWAP, ref);                
+                    ref.waitempty.await();
+                    // ref is not a real reference (not replaced by a placeholder
+                    // So must try a get entry before carry on
+                    ref = null; //might be checked by the catch
+                    continue;
+                }
+            } while(ref == null || ref.count != 0);
+            return ref;
+        } catch (InterruptedException e) {
+            if(ref != null) {
+                passNext(ACTION.SWAP, ref);                
+            }
+            throw e;
+        }
+    }
+
+    private RrdEntry requestEmpty(String path) throws InterruptedException, IOException {
+        RrdEntry ref = waitEmpty(path);
+
+        //No slot, release the lock and wait
+        boolean acquired = capacity.tryAcquire();
+        while(! acquired) {
+            try {
+                passNext(ACTION.SWAP, ref);
+                capacity.acquire();
+                acquired = true;
+                ref = waitEmpty(path);    
+            } catch (InterruptedException e) {
+                if(acquired) {
+                    capacity.release();                       
+                }
+                throw e;
+            }
+        }
+        ref.count = 1;
+        return ref;
     }
 
     /**
@@ -251,33 +310,15 @@ public class RrdDbPool {
     public RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
         RrdEntry ref = null;
         try {
-            do {
-                ref = getEntry(rrdDef.getPath(), true);
-                if(ref.count != 0) {
-                    //Not empty, give it back, but wait for signal
-                    passNext(ACTION.SWAP, ref);                
-                    ref.waitempty.await();
-                    // ref is not a real reference (not replaced by a placeholder
-                    // So must try a get entry before carry on
-                    ref = null; //might be checked by the catch
-                    continue;
-                }
-            } while(ref == null || ref.count != 0);
-        } catch (InterruptedException e) {
-            if(ref != null) {
-                passNext(ACTION.SWAP, ref);                
-            }
-            throw new RuntimeException("request interrupted for new rrdDef " + rrdDef.getPath(), e);
-        }
-        try {
+            ref = requestEmpty(rrdDef.getPath());
             ref.rrdDb = new RrdDb(rrdDef);
-            ref.count = 1;
-            capacity.acquire();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             throw new RuntimeException("request interrupted for new rrdDef " + rrdDef.getPath(), e);
         } finally {
-            passNext(ACTION.SWAP, ref);
+            if(ref != null) {
+                passNext(ACTION.SWAP, ref);                                            
+            }
         }
     }
 
@@ -300,37 +341,20 @@ public class RrdDbPool {
      */
     public RrdDb requestRrdDb(String path, String sourcePath)
             throws IOException {
+
         RrdEntry ref = null;
         try {
-            do {
-                ref = getEntry(path, true);
-                if(ref.count != 0) {
-                    //Not empty, give it back, but wait for signal
-                    passNext(ACTION.SWAP, ref);                
-                    ref.waitempty.await();
-                    // ref is not a real reference (not replaced by a placeholder
-                    // So must try a get entry before carry on
-                    ref = null; //might be checked by the catch
-                    continue;
-                }
-            } while(ref.count != 0);
-        } catch (InterruptedException e) {
-            if(ref != null) {
-                passNext(ACTION.SWAP, ref);                
-            }
-            throw new RuntimeException("request interrupted for new rrd " + path, e);
-        }
-
-        try {
+            ref = requestEmpty(path);
             ref.rrdDb = new RrdDb(path, sourcePath);
-            ref.count = 1;
-            capacity.acquire();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             throw new RuntimeException("request interrupted for new rrd " + path, e);
         } finally {
-            passNext(ACTION.SWAP, ref);
+            if(ref != null) {
+                passNext(ACTION.SWAP, ref);                                            
+            }
         }
+
     }
 
     /**
