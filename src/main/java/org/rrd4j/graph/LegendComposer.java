@@ -38,7 +38,6 @@ class LegendComposer implements RrdGraphConstants {
             }
         }
         line.layoutAndAdvance(true);
-        worker.dispose();
         return legY;
     }
 
@@ -88,7 +87,7 @@ class LegendComposer implements RrdGraphConstants {
             }
             width += commentWidth;
             lastMarker = comment.marker;
-            noJustification |= lastMarker.equals(NO_JUSTIFICATION_MARKER);
+            noJustification |= lastMarker.equals(NO_JUSTIFICATION_MARKER) || lastMarker.isEmpty();
             comments.add(comment);
         }
 
@@ -118,10 +117,10 @@ class LegendComposer implements RrdGraphConstants {
                 else {
                     // nothing specified, align with respect to '\J'
                     if (noJustification || isLastLine) {
-                        placeComments(legX, interLegendSpace);
+                        placeComments(legX, (legWidth - width) / spaceCount + interLegendSpace);
                     }
                     else {
-                        placeComments(legX, (legWidth - width) / spaceCount + interLegendSpace);
+                        placeComments(legX, interLegendSpace);
                     }
                 }
                 if (!lastMarker.equals(ALIGN_LEFTNONL_MARKER)) {

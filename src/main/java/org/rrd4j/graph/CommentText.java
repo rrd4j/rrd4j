@@ -10,7 +10,7 @@ class CommentText implements RrdGraphConstants {
     String resolvedText;    // resolved text
     String marker; // end-of-text marker
     boolean enabled; // hrule and vrule comments can be disabled at runtime
-    int x, y; // coordinates, evaluated later
+    int x, y; // coordinates, evaluated in LegendComposer
 
     CommentText(String text) {
         this.text = text;
