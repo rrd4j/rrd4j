@@ -6,7 +6,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class should be used to synchronize access to RRD files
@@ -61,13 +63,15 @@ public class RrdDbPool {
         return RrdDbPoolSingletonHolder.instance;
     }
 
-    private Semaphore capacity;
+    private final AtomicInteger usage = new AtomicInteger(0);
+    private final ReentrantLock countLock = new ReentrantLock();
+    private final Condition full = countLock.newCondition();
     private int maxCapacity = INITIAL_CAPACITY;
 
     private final ConcurrentMap<String, RrdEntry> pool = new ConcurrentHashMap<String, RrdEntry>(INITIAL_CAPACITY);
 
     /**
-     * <p>Constructor for RrdDbPool.</p>
+     * Constructor for RrdDbPool.
      * 
      * Not private, used by junit tests
      */
@@ -76,7 +80,6 @@ public class RrdDbPool {
             throw new RuntimeException("Cannot create instance of " + getClass().getName() + " with " +
                     "a default backend factory not derived from RrdFileBackendFactory");
         }
-        capacity = new Semaphore(maxCapacity, true);
     }
 
     /**
@@ -85,7 +88,7 @@ public class RrdDbPool {
      * @return Number of currently open RRD files held in the pool.
      */
     public int getOpenFileCount() {
-        return maxCapacity - capacity.availablePermits();
+        return usage.get();
     }
 
     /**
@@ -103,25 +106,23 @@ public class RrdDbPool {
     private RrdEntry getEntry(String path, boolean cancreate) throws IOException, InterruptedException {
         String canonicalPath = Util.getCanonicalPath(path);
         RrdEntry ref = null;
-        while(ref == null || ref.placeholder) {
+        do {
             ref = pool.get(canonicalPath);
             if(ref == null) {
                 //Slot empty
-                //If still absent put a place holder, and create the entry
+                //If still absent put a place holder, and create the entry to return
                 ref = pool.putIfAbsent(canonicalPath, new RrdEntry(true, canonicalPath));
                 if(ref == null) {
-                    return cancreate ? new RrdEntry(false, canonicalPath) : null;                    
+                    ref = cancreate ? new RrdEntry(false, canonicalPath) : null;                    
                 }               
             } else if(! ref.placeholder) {
                 // Real entry, try to put a place holder if some one did'nt get it meanwhile
-                if(pool.replace(canonicalPath, ref, new RrdEntry(true, canonicalPath))) {
-                    return ref;
-                }
+                pool.replace(canonicalPath, ref, new RrdEntry(true, canonicalPath));
+            } else {
+                // a place holder, wait for the using task to finish
+                ref.inuse.await();
             }
-            // Reached only if a place holder and not null
-            // Wait for other tasks to be finished
-            ref.inuse.await();
-        }
+        } while(ref != null && ref.placeholder);
         return ref;
     }
 
@@ -179,8 +180,18 @@ public class RrdDbPool {
                 throw new IllegalStateException("Could not release [" + rrdDb.getPath() + "], pool corruption");                    
             }
             ref.rrdDb.close();
-            capacity.release();
-            passNext(ACTION.DROP, ref);
+            usage.decrementAndGet();
+            try {
+                countLock.lockInterruptibly();
+                if(usage.get() < maxCapacity) {
+                    full.signal();
+                }
+                countLock.unlock();
+            } catch (InterruptedException e) {
+                throw new RuntimeException("release interrupted for " + rrdDb, e);
+            } finally {
+                passNext(ACTION.DROP, ref);                
+            }
             //If someone is waiting for an empty entry, signal it
             ref.waitempty.countDown();
         } else {
@@ -204,92 +215,103 @@ public class RrdDbPool {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb requestRrdDb(String path) throws IOException {
-        RrdEntry ref;
+
+        RrdEntry ref = null;
         try {
             ref = getEntry(path, true);
         } catch (InterruptedException e) {
             throw new RuntimeException("request interrupted for " + path, e);
         }
 
-        try {
-            //Loop if count was 0 (need open) and acquire failed
-            while(ref.count == 0 && ! capacity.tryAcquire()) {
-                boolean acquired = false;
+        if(ref.count == 0) {
+            //Wait until the pool is not full
+            //Don't lock on anything
+            while(usage.get() >= maxCapacity) {
+                passNext(ACTION.SWAP, ref);
                 try {
-                    //Don't hold the ref, wait until acquire succeeded
-                    passNext(ACTION.SWAP, ref);
-                    capacity.acquire();
-                    acquired = true;
-                    ref = getEntry(path, true);    
-                    //oups, this was not the real acquire, release for the while test 
-                    capacity.release();
-                } catch (InterruptedException e) {
-                    if(acquired) {
-                        capacity.release();                       
+                    countLock.lockInterruptibly();
+                    full.await();
+                    ref = getEntry(path, true);
+                    //Get an empty ref, can use it, reserve the slot
+                    if(ref.count == 0 && usage.get() < maxCapacity) {
+                        usage.incrementAndGet();
+                        break;
                     }
-                    throw new RuntimeException("RrdDb acquire interrupted", e);
-                }                
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("request interrupted for " + path, e);
+                } finally {
+                    if(countLock.isHeldByCurrentThread()) {
+                        countLock.unlock();                        
+                    }
+                }
             }
-            //lock was successfully acquired with an empty ref
+            //Someone might have already open it, rechecks
             if(ref.count == 0) {
                 try {
                     ref.rrdDb = new RrdDb(path);
+                    passNext(ACTION.SWAP, ref);
                 } catch (IOException e) {
-                    capacity.release();
+                    //Don't forget to release the slot reserved earlier
+                    usage.decrementAndGet();
+                    passNext(ACTION.DROP, ref);
                     throw e;
-                }
+                }                
             }
-            ref.count++;
-            return ref.rrdDb;
-        } finally {
-            passNext(ACTION.SWAP, ref);
+        } else {
+            passNext(ACTION.SWAP, ref);            
         }
+        ref.count++;
+        return ref.rrdDb;
     }
 
+    /**
+     * Wait for a empty reference with no usage
+     * @param path
+     * @return an reference with no usage 
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private RrdEntry waitEmpty(String path) throws IOException, InterruptedException {
-        RrdEntry ref = null;
+        RrdEntry ref = getEntry(path, true);
         try {
-            do {
+            while(ref.count != 0) {
+                //Not empty, give it back, but wait for signal
+                passNext(ACTION.SWAP, ref);                
+                ref.waitempty.await();
                 ref = getEntry(path, true);
-                if(ref.count != 0) {
-                    //Not empty, give it back, but wait for signal
-                    passNext(ACTION.SWAP, ref);                
-                    ref.waitempty.await();
-                    // ref is not a real reference (not replaced by a placeholder
-                    // So must try a get entry before carry on
-                    ref = null; //might be checked by the catch
-                    continue;
-                }
-            } while(ref == null || ref.count != 0);
+            }
             return ref;
         } catch (InterruptedException e) {
-            if(ref != null) {
-                passNext(ACTION.SWAP, ref);                
-            }
+            passNext(ACTION.SWAP, ref);                
             throw e;
         }
     }
 
+    /**
+     * Got an empty reference, use it only if slots are available
+     * But don't hold any lock waiting for it
+     * @param path
+     * @return an reference with no usage 
+     * @throws InterruptedException
+     * @throws IOException
+     */
     private RrdEntry requestEmpty(String path) throws InterruptedException, IOException {
-        RrdEntry ref = waitEmpty(path);
-
-        //No slot, release the lock and wait
-        boolean acquired = capacity.tryAcquire();
-        while(! acquired) {
-            try {
+        try {
+            RrdEntry ref = waitEmpty(path);
+            while(usage.get() >= maxCapacity) {
                 passNext(ACTION.SWAP, ref);
-                capacity.acquire();
-                acquired = true;
-                ref = waitEmpty(path);    
-            } catch (InterruptedException e) {
-                if(acquired) {
-                    capacity.release();                       
-                }
-                throw e;
+                countLock.lockInterruptibly();
+                full.await();
+                ref = waitEmpty(path); 
+            }
+            usage.incrementAndGet();
+            ref.count = 1;
+            return ref;
+        } finally {
+            if(countLock.isHeldByCurrentThread()) {
+                countLock.unlock();
             }
         }
-        ref.count = 1;
-        return ref;
     }
 
     /**
@@ -363,13 +385,13 @@ public class RrdDbPool {
      * @param capacity Maximum number of simultaneously open RRD files.
      */
     public void setCapacity(int newCapacity) {
-        int available = capacity.drainPermits();
-        if (available != maxCapacity) {
-            capacity.release(available);
-            throw new RuntimeException("Can only be done on a empty pool");
-        }
-        else {
-            capacity = new Semaphore(newCapacity, true);
+        int oldUsage = usage.getAndSet(maxCapacity);
+        try {
+            if (oldUsage != 0) {
+                throw new RuntimeException("Can only be done on a empty pool");
+            }
+        } finally {
+            usage.set(oldUsage);        
         }
         maxCapacity = newCapacity;
     }
