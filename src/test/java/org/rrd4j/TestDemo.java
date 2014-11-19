@@ -43,10 +43,12 @@ public class TestDemo {
     static final long END;
     static {
         Calendar c1 = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
+        c1.setTimeInMillis(0);
         c1.set(2010, 4, 1, 0, 0, 0);
         START = Util.getTimestamp(c1);
 
         Calendar c2 = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
+        c2.setTimeInMillis(0);
         c2.set(2010, 6, 1, 0, 0, 0);
         END = Util.getTimestamp(c2);
     }
