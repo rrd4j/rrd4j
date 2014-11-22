@@ -3,7 +3,9 @@ package org.rrd4j.core;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Assert;
@@ -33,6 +35,7 @@ public class RrdDbPoolTest {
         for(int i=0; i < 9; i++ ) {
             instance.requestRrdDb(db.getPath());
         }
+        Assert.assertEquals(1, instance.getOpenFileCount());
         for(int i=0; i < 10; i++ ) {
             instance.release(db);
         }
@@ -41,46 +44,66 @@ public class RrdDbPoolTest {
     }
 
 
-    @Test(timeout=500)
+    @Test(timeout=100)
     public void testPoolFull() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(10);
-        final LinkedList<RrdDb> dbs = new LinkedList<RrdDb>();
+        final Queue<RrdDb> dbs = new ConcurrentLinkedQueue<RrdDb>();
         final AtomicInteger done = new AtomicInteger(0);
+        final CountDownLatch full = new CountDownLatch(10);
         Thread t = new Thread() {
 
             @Override
             public void run() {
                 try {
-                    Thread.sleep(100);
-                    while(dbs.size() > 0) {
-                        instance.release(dbs.pop());                        
+                    full.await();
+                    while(instance.getOpenFileCount() > 0) {
+                        Assert.assertTrue("too much open files", instance.getOpenFileCount() <= 10);
+                        if(dbs.size() > 0) {
+                            RrdDb release = dbs.poll();
+                            instance.release(release);
+                            done.incrementAndGet();
+                            Thread.yield();
+                        }
                     }
-                    done.set(1);
+
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         };
-        t.start();
-        long start = new Date().getTime();
-        for(int i=0; i < 11; i++) {
-            RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test" + i + ".rrd").getCanonicalPath());
-            def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
-            def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
-            RrdDb db = instance.requestRrdDb(def);
-            dbs.add(db);
+        final CountDownLatch barrier = new CountDownLatch(1);
+        for(int i=0; i < 12; i++) {
+            final int locali = i;
+            new Thread() {
+
+                @Override
+                public void run() {
+                    try {
+                        RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test" + locali + ".rrd").getCanonicalPath());
+                        def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
+                        def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+                        barrier.await();
+                        RrdDb db = instance.requestRrdDb(def);
+                        dbs.add(db);                        
+                        full.countDown();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }                
+            }.start();
         }
-        long end = new Date().getTime();
+        barrier.countDown();
+        full.await();
+        t.start();
         t.join();
-        Assert.assertTrue("pool didn't wait for capacity", (end - start) > 100); 
-        Assert.assertEquals("failure in sub thread", 1, done.get()); 
+        Assert.assertEquals("failure in sub thread", 12, done.get()); 
         String[] files = instance.getOpenFiles();
         Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
     }
 
     @Test(timeout=500)
-    public void test2() throws IOException, InterruptedException {
+    public void testWaitEmpty() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         final RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
@@ -97,7 +120,7 @@ public class RrdDbPoolTest {
                     instance.release(db);
                     done.set(1);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
 
