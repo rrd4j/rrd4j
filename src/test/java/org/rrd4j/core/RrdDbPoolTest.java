@@ -102,6 +102,66 @@ public class RrdDbPoolTest {
         Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
     }
 
+    @Test(timeout=100)
+    public void testMultiOpen() throws IOException, InterruptedException {
+        final RrdDbPool instance = new RrdDbPool();
+        instance.setCapacity(2);
+        final Queue<RrdDb> dbs = new ConcurrentLinkedQueue<RrdDb>();
+        final AtomicInteger done = new AtomicInteger(0);
+        final CountDownLatch full = new CountDownLatch(12);
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    full.await();
+                    while(instance.getOpenFileCount() > 0) {
+                        Assert.assertTrue("too much open files", instance.getOpenFileCount() <= 1);
+                        if(dbs.size() > 0) {
+                            RrdDb release = dbs.poll();
+                            instance.release(release);
+                            done.incrementAndGet();
+                            Thread.yield();
+                        }
+                    }
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
+        def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
+        def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+        final RrdDb db = instance.requestRrdDb(def);
+        dbs.add(db);                        
+
+        final CountDownLatch barrier = new CountDownLatch(1);
+        for(int i=0; i < 12; i++) {
+            new Thread() {
+
+                @Override
+                public void run() {
+                    try {
+                        barrier.await();
+                        RrdDb againdb = instance.requestRrdDb(db.getCanonicalPath());
+                        dbs.add(againdb);                        
+                        full.countDown();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }                
+            }.start();
+        }
+        barrier.countDown();
+        full.await();
+        t.start();
+        t.join();
+        Assert.assertEquals("failure in sub thread", 13, done.get()); 
+        String[] files = instance.getOpenFiles();
+        Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
+    }
+
     @Test(timeout=500)
     public void testWaitEmpty() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();

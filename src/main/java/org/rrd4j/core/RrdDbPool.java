@@ -46,10 +46,6 @@ public class RrdDbPool {
                 waitempty = new CountDownLatch(1);
             }
         }
-        @Override
-        public String toString() {
-            return placeholder + "@" + canonicalPath;
-        }        
     }
 
     /**
@@ -130,8 +126,11 @@ public class RrdDbPool {
                     }
                 }
             } else if(! ref.placeholder) {
-                // Real entry, try to put a place holder if some one did'nt get it meanwhile
-                pool.replace(canonicalPath, ref, new RrdEntry(true, canonicalPath));
+                // Real entry, try to put a place holder if some one didn't get it meanwhile
+                if( ! pool.replace(canonicalPath, ref, new RrdEntry(true, canonicalPath))) {
+                    //Dummy ref, a new iteration is needed
+                    ref = new RrdEntry(true, canonicalPath);
+                }              
             } else {
                 // a place holder, wait for the using task to finish
                 ref.inuse.await();
@@ -238,8 +237,6 @@ public class RrdDbPool {
             try {
                 ref.rrdDb = new RrdDb(path);
             } catch (IOException e) {
-                //Don't forget to release the slot reserved earlier
-                usage.decrementAndGet();
                 passNext(ACTION.DROP, ref);
                 throw e;
             }                
