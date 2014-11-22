@@ -126,6 +126,17 @@ public class RrdDbPool {
         return ref;
     }
 
+    private boolean tryGetSlot() throws InterruptedException {
+        boolean incremented = false;
+        countLock.lockInterruptibly();
+        if(usage.get() < maxCapacity) {
+            usage.incrementAndGet();
+            incremented = true;
+        }
+        countLock.unlock();
+        return incremented;
+    }
+
     private enum ACTION {
         SWAP, DROP;
     };
@@ -143,8 +154,7 @@ public class RrdDbPool {
         //task finished, waiting on a place holder can go on
         if(o != null) {
             o.inuse.countDown();
-        }             
-
+        }  
     }
 
     /**
@@ -223,44 +233,37 @@ public class RrdDbPool {
             throw new RuntimeException("request interrupted for " + path, e);
         }
 
-        if(ref.count == 0) {
-            //Wait until the pool is not full
+        try {
+            //Wait until the pool is not full and 
             //Don't lock on anything
-            while(usage.get() >= maxCapacity) {
+            while(ref.count == 0 && ! tryGetSlot()) {
                 passNext(ACTION.SWAP, ref);
-                try {
-                    countLock.lockInterruptibly();
-                    full.await();
-                    ref = getEntry(path, true);
-                    //Get an empty ref, can use it, reserve the slot
-                    if(ref.count == 0 && usage.get() < maxCapacity) {
-                        usage.incrementAndGet();
-                        break;
-                    }
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("request interrupted for " + path, e);
-                } finally {
-                    if(countLock.isHeldByCurrentThread()) {
-                        countLock.unlock();                        
-                    }
-                }
+                countLock.lockInterruptibly();
+                full.await();
+                countLock.unlock();                        
+                ref = getEntry(path, true);
             }
-            //Someone might have already open it, rechecks
-            if(ref.count == 0) {
-                try {
-                    ref.rrdDb = new RrdDb(path);
-                    passNext(ACTION.SWAP, ref);
-                } catch (IOException e) {
-                    //Don't forget to release the slot reserved earlier
-                    usage.decrementAndGet();
-                    passNext(ACTION.DROP, ref);
-                    throw e;
-                }                
+        } catch (InterruptedException e) {
+            passNext(ACTION.DROP, ref);
+            throw new RuntimeException("request interrupted for " + path, e);
+        } finally {
+            if(countLock.isHeldByCurrentThread()) {
+                countLock.unlock();                        
             }
-        } else {
-            passNext(ACTION.SWAP, ref);            
+        }
+        //Someone might have already open it, rechecks
+        if(ref.count == 0) {
+            try {
+                ref.rrdDb = new RrdDb(path);
+            } catch (IOException e) {
+                //Don't forget to release the slot reserved earlier
+                usage.decrementAndGet();
+                passNext(ACTION.DROP, ref);
+                throw e;
+            }                
         }
         ref.count++;
+        passNext(ACTION.SWAP, ref);
         return ref.rrdDb;
     }
 
@@ -282,7 +285,7 @@ public class RrdDbPool {
             }
             return ref;
         } catch (InterruptedException e) {
-            passNext(ACTION.SWAP, ref);                
+            passNext(ACTION.DROP, ref);                
             throw e;
         }
     }
@@ -296,17 +299,23 @@ public class RrdDbPool {
      * @throws IOException
      */
     private RrdEntry requestEmpty(String path) throws InterruptedException, IOException {
+        RrdEntry ref = null;
         try {
-            RrdEntry ref = waitEmpty(path);
-            while(usage.get() >= maxCapacity) {
+            ref = waitEmpty(path);
+            while( ! tryGetSlot()) {
                 passNext(ACTION.SWAP, ref);
                 countLock.lockInterruptibly();
                 full.await();
-                ref = waitEmpty(path); 
+                countLock.unlock();                        
+                ref = waitEmpty(path);
             }
-            usage.incrementAndGet();
             ref.count = 1;
             return ref;
+        } catch (InterruptedException e) {
+            if(ref != null) {
+                passNext(ACTION.DROP, ref);                                
+            }
+            throw e;
         } finally {
             if(countLock.isHeldByCurrentThread()) {
                 countLock.unlock();
