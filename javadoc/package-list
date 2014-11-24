@@ -1,9 +1,0 @@
-org.rrd4j
-org.rrd4j.converter
-org.rrd4j.core
-org.rrd4j.core.jrrd
-org.rrd4j.core.timespec
-org.rrd4j.data
-org.rrd4j.demo
-org.rrd4j.graph
-org.rrd4j.inspector
