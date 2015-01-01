@@ -1271,10 +1271,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      * Plots requested data as a line, using the color and the line width specified.
      *
      * @param srcName Virtual source name
-     * @param color   Line color
-     * @param legend  Legend text
-     * @param width   Line width (default: 1.0F)
-     * @param stack   true if it will be stacked
+     * @param color   Line color.
+     * @param legend  Legend text.
+     * @param width   Line width (default: 1.0F).
+     * @param stack   true if it will be stacked.
      */
     public void line(String srcName, Paint color, String legend, float width, boolean stack) {
         if (legend != null) {
@@ -1288,10 +1288,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      * Plots requested data as a line, using the color and the {@link java.awt.BasicStroke} specified.
      *
      * @param srcName Virtual source name
-     * @param color   Line color
-     * @param legend  Legend text
-     * @param stroke  Line stroke to use
-     * @param stack   true if it will be stacked
+     * @param color   Line color.
+     * @param legend  Legend text.
+     * @param stroke  Line stroke to use.
+     * @param stack   true if it will be stacked.
      */
     public void line(String srcName, Paint color, String legend, BasicStroke stroke, boolean stack) {
         if (legend != null) {
@@ -1303,10 +1303,10 @@ public class RrdGraphDef implements RrdGraphConstants {
 
     /**
      * Define a line like any other but with constant value, it can be stacked
-     * @param value Line position
-     * @param color Line color
-     * @param width Line width (default: 1.0F)
-     * @param stack true if it will be stacked
+     * @param value Line position.
+     * @param color Line color.
+     * @param width Line width (default: 1.0F).
+     * @param stack true if it will be stacked.
      */
     public void line(double value, Paint color, float width, boolean stack) {
         SourcedPlotElement parent = stack ? findParent() : null;
