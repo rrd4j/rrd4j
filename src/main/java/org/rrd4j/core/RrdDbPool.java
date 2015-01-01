@@ -209,7 +209,8 @@ public class RrdDbPool {
     }
 
     /**
-     * Requests a RrdDb reference for the given RRD file path.<p>
+     * Requests a RrdDb reference for the given RRD file path.
+     * <p>
      * <ul>
      * <li>If the file is already open, previously returned RrdDb reference will be returned. Its usage count
      * will be incremented by one.
@@ -284,7 +285,8 @@ public class RrdDbPool {
     }
 
     /**
-     * Requests a RrdDb reference for the given RRD file definition object.<p>
+     * Requests a RrdDb reference for the given RRD file definition object.
+     * <p>
      * <ul>
      * <li>If the file with the path specified in the RrdDef object is already open,
      * the method blocks until the file is closed.
@@ -315,7 +317,8 @@ public class RrdDbPool {
 
     /**
      * Requests a RrdDb reference for the given path. The file will be created from
-     * external data (from XML dump, RRD file or RRDTool's binary RRD file).<p>
+     * external data (from XML dump, RRD file or RRDTool's binary RRD file).
+     * <p>
      * <ul>
      * <li>If the file with the path specified is already open,
      * the method blocks until the file is closed.

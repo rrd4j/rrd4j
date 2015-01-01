@@ -10,9 +10,11 @@ import java.util.*;
  * Class which should be used for all calculations based on the data fetched from RRD files. This class
  * supports ordinary DEF datasources (defined in RRD files), CDEF datasources (RPN expressions evaluation),
  * SDEF (static datasources - extension of Rrd4j) and PDEF (plottables, see
- * {@link org.rrd4j.data.Plottable Plottable} for more information.<p>
+ * {@link org.rrd4j.data.Plottable Plottable} for more information.
+ * <p>
  *
- * Typical class usage:<p>
+ * Typical class usage:
+ * <p>
  * <pre>
  * final long t1 = ...
  * final long t2 = ...
@@ -61,8 +63,6 @@ public class DataProcessor {
     private Map<String, Source> sources = new LinkedHashMap<String, Source>();
 
     private Def[] defSources;
-
-    private boolean processed = false;
 
     /**
      * Creates new DataProcessor object for the given time span. Ending timestamp may be set to zero.
@@ -133,7 +133,8 @@ public class DataProcessor {
      * but has influence neither on datasource values calculated with the
      * {@link #processData()} method nor on aggregated values returned from {@link #getAggregates(String)}
      * and similar methods. In other words, aggregated values will not change once you decide to change
-     * the dimension of your graph.<p>
+     * the dimension of your graph.
+     * <p>
      *
      * The default number of pixels is defined by constant {@link #DEFAULT_PIXEL_COUNT}
      * and can be changed with a {@link #setPixelCount(int)} method.
@@ -156,17 +157,17 @@ public class DataProcessor {
 
     /**
      * Roughly corresponds to the --step option in RRDTool's graph/xport commands. Here is an explanation borrowed
-     * from RRDTool:<p>
-     *
+     * from RRDTool:
+     * <p>
      * <i>"By default rrdgraph calculates the width of one pixel in the time
      * domain and tries to get data at that resolution from the RRD. With
      * this switch you can override this behavior. If you want rrdgraph to
      * get data at 1 hour resolution from the RRD, then you can set the
      * step to 3600 seconds. Note, that a step smaller than 1 pixel will
-     * be silently ignored."</i><p>
-     *
-     * I think this option is not that useful, but it's here just for compatibility.<p>
-     *
+     * be silently ignored."</i>
+     * <p>
+     * I think this option is not that useful, but it's here just for compatibility.
+     * <p>
      * @param step Time step at which data should be fetched from RRD files. If this method is not used,
      *             the step will be equal to the smallest RRD step of all processed RRD files. If no RRD file is processed,
      *             the step will be roughly equal to the with of one graph pixel (in seconds).
@@ -416,9 +417,9 @@ public class DataProcessor {
     /////////////////////////////////////////////////////////////////
 
     /**
-     * <p>Adds a custom, {@link org.rrd4j.data.Plottable plottable} datasource (<b>PDEF</b>).
+     * Adds a custom, {@link org.rrd4j.data.Plottable plottable} datasource (<b>PDEF</b>).
      * The datapoints should be made available by a class extending
-     * {@link org.rrd4j.data.Plottable Plottable} class.</p>
+     * {@link org.rrd4j.data.Plottable Plottable} class.
      *
      * @param name      source name.
      * @param plottable class that extends Plottable class and is suited for graphing.
@@ -429,23 +430,23 @@ public class DataProcessor {
     }
 
     /**
-     * <p>Adds complex source (<b>CDEF</b>).
-     * Complex sources are evaluated using the supplied <code>RPN</code> expression.</p>
-     *
-     * <p>Complex source <code>name</code> can be used:</p>
+     * Adds complex source (<b>CDEF</b>).
+     * Complex sources are evaluated using the supplied <code>RPN</code> expression.
+     * <p>
+     * Complex source <code>name</code> can be used:
      * <ul>
      * <li>To specify sources for line, area and stack plots.</li>
      * <li>To define other complex sources.</li>
      * </ul>
      *
-     * <p>The supported RPN functions, operators and constants are detailed at
-     * <a href="https://code.google.com/p/rrd4j/wiki/RPNFuncs" target="man">RRD4J's wiki</a>.</p>
-     *
-     * <p>Rrd4j does not force you to specify at least one simple source name as RRDTool.</p>
-     *
-     * <p>For more details on RPN see RRDTool's
+     * The supported RPN functions, operators and constants are detailed at
+     * <a href="https://code.google.com/p/rrd4j/wiki/RPNFuncs" target="man">RRD4J's wiki</a>.
+     * <p>
+     * Rrd4j does not force you to specify at least one simple source name as RRDTool.
+     * <p>
+     * For more details on RPN see RRDTool's
      * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdgraph_rpn.en.html" target="man">
-     * rrdgraph man page</a>.</p>
+     * rrdgraph man page</a>.
      *
      * @param name          source name.
      * @param rpnExpression RPN expression containing comma delimited simple and complex
@@ -457,8 +458,8 @@ public class DataProcessor {
     }
 
     /**
-     * <p>Adds static source (<b>SDEF</b>). Static sources are the result of a consolidation function applied
-     * to <em>any</em> other source that has been defined previously.</p>
+     * Adds static source (<b>SDEF</b>). Static sources are the result of a consolidation function applied
+     * to <em>any</em> other source that has been defined previously.
      *
      * @param name      source name.
      * @param defName   Name of the datasource to calculate the value from.
@@ -505,8 +506,9 @@ public class DataProcessor {
     }
 
     /**
-     * <p>Adds simple datasource (<b>DEF</b>). Simple source <code>name</code>
-     * can be used:</p>
+     * Adds simple datasource (<b>DEF</b>). Simple source <code>name</code>
+     * can be used:
+     * <p>
      * <ul>
      * <li>To specify sources for line, area and stack plots.</li>
      * <li>To define complex sources
@@ -523,7 +525,8 @@ public class DataProcessor {
     }
 
     /**
-     * <p>Adds simple source (<b>DEF</b>). Source <code>name</code> can be used:</p>
+     * Adds simple source (<b>DEF</b>). Source <code>name</code> can be used:
+     * <p>
      * <ul>
      * <li>To specify sources for line, area and stack plots.</li>
      * <li>To define complex sources

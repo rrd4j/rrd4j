@@ -6,7 +6,8 @@ import java.io.IOException;
  * Base implementation class for all backend classes. Each Round Robin Database object
  * ({@link org.rrd4j.core.RrdDb} object) is backed with a single RrdBackend object which performs
  * actual I/O operations on the underlying storage. Rrd4j supports
- * multiple backends out of the box. E.g.:</p>
+ * multiple backends out of the box. E.g.:
+ * <p>
  * <ul>
  * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
  * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
@@ -25,7 +26,8 @@ import java.io.IOException;
  * </ul>
  *
  * To create your own backend in order to provide some custom type of RRD storage,
- * you should do the following:</p>
+ * you should do the following:
+ * <p>
  *
  * <ul>
  * <li>Create your custom RrdBackend class (RrdCustomBackend, for example)
@@ -118,11 +120,11 @@ public abstract class RrdBackend {
     /**
      * This method suggests the caching policy to the Rrd4j frontend (high-level) classes. If <code>true</code>
      * is returned, frontend classes will cache frequently used parts of a RRD file in memory to improve
-     * performance. If </code>false</code> is returned, high level classes will never cache RRD file sections
+     * performance. If <code>false</code> is returned, high level classes will never cache RRD file sections
      * in memory.
      *
      * @return <code>true</code> if file caching is enabled, <code>false</code> otherwise. By default, the
-     *         method returns <code>true</code> but it can be overriden in subclasses.
+     *         method returns <code>true</code> but it can be overridden in subclasses.
      */
     protected boolean isCachingAllowed() {
         return true;

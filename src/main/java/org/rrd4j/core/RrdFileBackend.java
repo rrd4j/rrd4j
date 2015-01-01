@@ -19,7 +19,7 @@ public abstract class RrdFileBackend extends RrdBackend {
     protected final File file;
 
     /**
-     * <p>Constructor for RrdFileBackend.</p>
+     * Constructor for RrdFileBackend.
      *
      * @param path a {@link java.lang.String} object.
      * @param readOnly a boolean.

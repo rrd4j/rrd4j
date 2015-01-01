@@ -23,11 +23,11 @@ import java.util.List;
  * <li>remove archive from a RRD file.
  * </ul>
  *
- * <p>All these operations can be performed on the copy of the original RRD file, or on the
- * original file itself (with possible backup file creation)</p>
- *
- * <p><b><u>IMPORTANT</u></b>: NEVER use methods found in this class on 'live' RRD files
- * (files which are currently in use).</p>
+ * All these operations can be performed on the copy of the original RRD file, or on the
+ * original file itself (with possible backup file creation).
+ * <p>
+ * <b><u>IMPORTANT</u></b>: NEVER use methods found in this class on 'live' RRD files
+ * (files which are currently in use).
  *
  */
 public class RrdToolkit {

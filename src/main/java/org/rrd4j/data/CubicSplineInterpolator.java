@@ -7,7 +7,8 @@ import java.util.Date;
 
 /**
  * Class used to interpolate datasource values from the collection of (timestamp, values)
- * points using natural cubic spline interpolation.<p>
+ * points using natural cubic spline interpolation.
+ * <p>
  *
  * <b>WARNING</b>: So far, this class cannot handle NaN datasource values
  * (an exception will be thrown by the constructor). Future releases might change this.

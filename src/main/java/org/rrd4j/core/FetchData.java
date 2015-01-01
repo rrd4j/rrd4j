@@ -13,23 +13,27 @@ import org.rrd4j.data.DataProcessor;
  * Class used to represent data fetched from the RRD.
  * Object of this class is created when the method
  * {@link org.rrd4j.core.FetchRequest#fetchData() fetchData()} is
- * called on a {@link org.rrd4j.core.FetchRequest FetchRequest} object.<p>
+ * called on a {@link org.rrd4j.core.FetchRequest FetchRequest} object.
+ * <p>
  *
  * Data returned from the RRD is, simply, just one big table filled with
  * timestamps and corresponding datasource values.
  * Use {@link #getRowCount() getRowCount()} method to count the number
- * of returned timestamps (table rows).<p>
+ * of returned timestamps (table rows).
+ * <p>
  *
  * The first table column is filled with timestamps. Time intervals
  * between consecutive timestamps are guaranteed to be equal. Use
  * {@link #getTimestamps() getTimestamps()} method to get an array of
- * timestamps returned.<p>
+ * timestamps returned.
+ * <p>
  *
  * Remaining columns are filled with datasource values for the whole timestamp range,
  * on a column-per-datasource basis. Use {@link #getColumnCount() getColumnCount()} to find
  * the number of datasources and {@link #getValues(int) getValues(i)} method to obtain
  * all values for the i-th datasource. Returned datasource values correspond to
- * the values returned with {@link #getTimestamps() getTimestamps()} method.<p>
+ * the values returned with {@link #getTimestamps() getTimestamps()} method.
+ * <p>
  *
  * @author Sasa Markovic
  */
@@ -148,8 +152,9 @@ public class FetchData {
     /**
      * Returns a set of values created by applying RPN expression to the fetched data.
      * For example, if you have two datasources named <code>x</code> and <code>y</code>
-     * in this FetchData and you want to calculate values for <code>(x+y)/2</code> use something like: <p>
-     * <code>getRpnValues("x,y,+,2,/");</code><p>
+     * in this FetchData and you want to calculate values for <code>(x+y)/2</code> use something like: 
+     * <p>
+     * <code>getRpnValues("x,y,+,2,/");</code>
      *
      * @param rpnExpression RRDTool-like RPN expression
      * @return Calculated values
@@ -228,7 +233,7 @@ public class FetchData {
     /**
      * Dumps the content of the whole FetchData object. Useful for debugging.
      *
-     * @return a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} containing the contents of this object, for debugging.
      */
     public String dump() {
         StringBuilder buffer = new StringBuilder();
@@ -300,8 +305,9 @@ public class FetchData {
     /**
      * Returns aggregated value for a set of values calculated by applying an RPN expression to the
      * fetched data. For example, if you have two datasources named <code>x</code> and <code>y</code>
-     * in this FetchData and you want to calculate MAX value of <code>(x+y)/2</code> use something like: <p>
-     * <code>getRpnAggregate("x,y,+,2,/", "MAX");</code><p>
+     * in this FetchData and you want to calculate MAX value of <code>(x+y)/2</code> use something like: 
+     * <p>
+     * <code>getRpnAggregate("x,y,+,2,/", "MAX");</code>
      *
      * @param rpnExpression RRDTool-like RPN expression
      * @param consolFun     Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
@@ -332,8 +338,9 @@ public class FetchData {
      * Returns all aggregated values for a set of values calculated by applying an RPN expression to the
      * fetched data. For example, if you have two datasources named <code>x</code> and <code>y</code>
      * in this FetchData and you want to calculate MIN, MAX, LAST, FIRST, AVERAGE and TOTAL value
-     * of <code>(x+y)/2</code> use something like: <p>
-     * <code>getRpnAggregates("x,y,+,2,/");</code><p>
+     * of <code>(x+y)/2</code> use something like: 
+     * <p>
+     * <code>getRpnAggregates("x,y,+,2,/");</code>
      *
      * @param rpnExpression RRDTool-like RPN expression
      * @return Object containing all aggregated values
@@ -347,11 +354,13 @@ public class FetchData {
     }
 
     /**
-     * Used by ISPs which charge for bandwidth utilization on a "95th percentile" basis.<p>
+     * Used by ISPs which charge for bandwidth utilization on a "95th percentile" basis.
+     * <p>
      *
      * The 95th percentile is the highest source value left when the top 5% of a numerically sorted set
      * of source data is discarded. It is used as a measure of the peak value used when one discounts
-     * a fair amount for transitory spikes. This makes it markedly different from the average.<p>
+     * a fair amount for transitory spikes. This makes it markedly different from the average.
+     * <p>
      *
      * Read more about this topic at:<p>
      * <a href="http://www.red.net/support/resourcecentre/leasedline/percentile.php">Rednet</a> or<br>

@@ -60,8 +60,8 @@ public class Util {
     /**
      * Converts an array of long primitives to an array of doubles.
      *
+     * @param array input array of long values.
      * @return Same array but with all values as double.
-     * @param array an array of long.
      */
     public static double[] toDoubleArray(final long[] array) {
         double[] values = new double[array.length];
@@ -72,8 +72,8 @@ public class Util {
 
     /**
      * Returns current timestamp in seconds (without milliseconds). Returned timestamp
-     * is obtained with the following expression: <p>
-     * <p/>
+     * is obtained with the following expression:
+     * <p>
      * <code>(System.currentTimeMillis() + 500L) / 1000L</code>
      *
      * @return Current timestamp
@@ -92,9 +92,10 @@ public class Util {
     }
 
     /**
-     * Rounds the given timestamp to the nearest whole &quote;step&quote;. Rounded value is obtained
-     * from the following expression:<p>
-     * <code>timestamp - timestamp % step;</code><p>
+     * Rounds the given timestamp to the nearest whole &quot;step&quot;. Rounded value is obtained
+     * from the following expression:
+     * <p>
+     * <code>timestamp - timestamp % step;</code>
      *
      * @param timestamp Timestamp in seconds
      * @param step      Step in seconds
@@ -251,7 +252,8 @@ public class Util {
     }
 
     /**
-     * Parses at-style time specification and returns the corresponding timestamp. For example:<p>
+     * Parses at-style time specification and returns the corresponding timestamp. For example:
+     * <p>
      * <pre>
      * long t = Util.getTimestamp("now-1d");
      * </pre>
@@ -266,7 +268,8 @@ public class Util {
     }
 
     /**
-     * Parses two related at-style time specifications and returns corresponding timestamps. For example:<p>
+     * Parses two related at-style time specifications and returns corresponding timestamps. For example:
+     * <p>
      * <pre>
      * long[] t = Util.getTimestamps("end-1d","now");
      * </pre>
@@ -646,11 +649,11 @@ public class Util {
 
     /**
      * Returns the root directory of the Rrd4j distribution. Useful in some demo applications,
-     * probably of no use anywhere else.<p>
-     * <p/>
+     * probably of no use anywhere else.
+     * <p>
      * The function assumes that all Rrd4j .class files are placed under
      * the &lt;root&gt;/classes subdirectory and that all jars (libraries) are placed in the
-     * &lt;root&gt;/lib subdirectory (the original Rrd4j directory structure).<p>
+     * &lt;root&gt;/lib subdirectory (the original Rrd4j directory structure).
      *
      * @return absolute path to Rrd4j's home directory
      */

@@ -7,13 +7,13 @@ import java.util.Date;
 
 /**
  * Class used to interpolate datasource values from the collection of (timestamp, values)
- * points. This class is suitable for linear interpolation only. <p>
- *
+ * points. This class is suitable for linear interpolation only. 
+ * <p>
  * Interpolation algorithm returns different values based on the value passed to
  * {@link #setInterpolationMethod(int) setInterpolationMethod()}. If not set, interpolation
  * method defaults to standard linear interpolation ({@link #INTERPOLATE_LINEAR}).
  * Interpolation method handles NaN datasource
- * values gracefully.<p>
+ * values gracefully.
  */
 public class LinearInterpolator extends Plottable {
     /**
@@ -112,21 +112,22 @@ public class LinearInterpolator extends Plottable {
     /**
      * Sets interpolation method to be used. Suppose that we have two timestamp/value pairs:<br>
      * <code>(t, 100)</code> and <code>(t + 100, 300)</code>. Here are the results interpolator
-     * returns for t + 50 seconds, for various <code>interpolationMethods</code>:<p>
+     * returns for t + 50 seconds, for various <code>interpolationMethods</code>:
+     * <p>
      * <ul>
      * <li><code>INTERPOLATE_LEFT:   100</code>
      * <li><code>INTERPOLATE_RIGHT:  300</code>
      * <li><code>INTERPOLATE_LINEAR: 200</code>
      * </ul>
-     * If not set, interpolation method defaults to <code>INTERPOLATE_LINEAR</code>.<p>
-     *
+     * If not set, interpolation method defaults to <code>INTERPOLATE_LINEAR</code>.
+     * <p>
      * The fourth available interpolation method is INTERPOLATE_REGRESSION. This method uses
      * simple linear regression to interpolate supplied data with a simple straight line which does not
      * necessarily pass through all data points. The slope of the best-fit line will be chosen so that the
-     * total square distance of real data points from from the best-fit line is at minimum.<p>
-     *
+     * total square distance of real data points from from the best-fit line is at minimum.
+     * <p>
      * The full explanation of this interpolation method can be found
-     * <a href="http://www.JerryDallal.com/LHSP/slr.htm">here</a>.<p>
+     * <a href="http://www.JerryDallal.com/LHSP/slr.htm">here</a>.
      *
      * @param interpolationMethod Should be <code>INTERPOLATE_LEFT</code>,
      *                            <code>INTERPOLATE_RIGHT</code>, <code>INTERPOLATE_LINEAR</code> or

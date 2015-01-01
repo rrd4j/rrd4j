@@ -7,11 +7,11 @@ import java.io.IOException;
 /**
  * Class to represent single RRD archive in a RRD with its internal state.
  * Normally, you don't need methods to manipulate archive objects directly
- * because Rrd4j framework does it automatically for you.<p>
- * <p/>
+ * because Rrd4j framework does it automatically for you.
+ * <p>
  * Each archive object consists of three parts: archive definition, archive state objects
  * (one state object for each datasource) and round robin archives (one round robin for
- * each datasource). API (read-only) is provided to access each of these parts.<p>
+ * each datasource). API (read-only) is provided to access each of these parts.
  *
  * @author Sasa Markovic
  */
@@ -377,7 +377,7 @@ public class Archive implements RrdUpdater {
     /**
      * Sets X-files factor to a new value.
      *
-     * @param xff New X-files factor value. Must be >= 0 and < 1.
+     * @param xff New X-files factor value. Must be &gt;= 0 and &lt; 1.
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public void setXff(double xff) throws IOException {

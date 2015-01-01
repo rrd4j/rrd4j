@@ -9,7 +9,7 @@ import java.util.Set;
  * Class to represent fetch request. For the complete explanation of all
  * fetch parameters consult RRDTool's
  * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdfetch.en.html" target="man">rrdfetch man page</a>.
- *
+ * <p>
  * You cannot create <code>FetchRequest</code> directly (no public constructor
  * is provided). Use {@link org.rrd4j.core.RrdDb#createFetchRequest(ConsolFun, long, long, long)
  * createFetchRequest()} method of your {@link org.rrd4j.core.RrdDb RrdDb} object.

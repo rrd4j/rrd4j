@@ -13,7 +13,8 @@ import java.util.Date;
 /**
  * Small swing-based utility to convert timestamps (seconds since epoch) to readable dates and vice versa.
  * Supports at-style time specification (like "now-2d", "noon yesterday") and other human-readable
- * data formats:<p>
+ * data formats:
+ * <p>
  * <ul>
  * <li>MM/dd/yy HH:mm:ss
  * <li>dd.MM.yy HH:mm:ss
@@ -31,7 +32,7 @@ import java.util.Date;
  * <li>HH:mm:ss dd.MM.yy
  * <li>HH:mm:ss yy-MM-dd
  * </ul>
- * The current timestamp is displayed in the title bar :)<p>
+ * The current timestamp is displayed in the title bar :)
  *
  */
 public class Epoch extends JFrame {

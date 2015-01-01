@@ -17,7 +17,8 @@ import java.util.regex.Pattern;
  * number of placeholders (variables) in the format <code>${variable_name}</code>.
  * Methods are provided to specify variable values at runtime.
  * Note that this class has limited functionality: XML source gets parsed, and variable
- * values are collected. You have to extend this class to do something more useful.<p>
+ * values are collected. You have to extend this class to do something more useful.
+ * <p>
  */
 public abstract class XmlTemplate {
     private static final String PATTERN_STRING = "\\$\\{(\\w+)\\}";
@@ -316,7 +317,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getChildValueAsInt.</p>
+     * getChildValueAsInt.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @param childName a {@link java.lang.String} object.
@@ -328,7 +329,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getValueAsInt.</p>
+     * getValueAsInt.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @return a int.
@@ -339,7 +340,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getChildValueAsLong.</p>
+     * getChildValueAsLong.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @param childName a {@link java.lang.String} object.
@@ -351,7 +352,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getValueAsLong.</p>
+     * getValueAsLong.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @return a long.
@@ -362,7 +363,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getChildValueAsDouble.</p>
+     * getChildValueAsDouble.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @param childName a {@link java.lang.String} object.
@@ -374,7 +375,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getValueAsDouble.</p>
+     * getValueAsDouble.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @return a double.
@@ -385,7 +386,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getChildValueAsBoolean.</p>
+     * getChildValueAsBoolean.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @param childName a {@link java.lang.String} object.
@@ -397,7 +398,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getValueAsBoolean.</p>
+     * getValueAsBoolean.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @return a boolean.
@@ -408,7 +409,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>getValueAsColor.</p>
+     * getValueAsColor.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @return a {@link java.awt.Paint} object.
@@ -419,7 +420,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>isEmptyNode.</p>
+     * isEmptyNode.
      *
      * @param node a {@link org.w3c.dom.Node} object.
      * @return a boolean.
@@ -431,7 +432,7 @@ public abstract class XmlTemplate {
     }
 
     /**
-     * <p>validateTagsOnlyOnce.</p>
+     * validateTagsOnlyOnce.
      *
      * @param parentNode a {@link org.w3c.dom.Node} object.
      * @param allowedChildNames an array of {@link java.lang.String} objects.

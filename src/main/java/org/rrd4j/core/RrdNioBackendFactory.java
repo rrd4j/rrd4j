@@ -83,7 +83,6 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * {@link #open(String path, boolean readOnly)}.
      * Failure to do so will lead to memory leaks in anything but the simplest applications because the underlying thread pool will not
      * be shut down cleanly. Read the Javadoc for this class to understand why using this constructor is discouraged.
-     * <p/>
      */
     public RrdNioBackendFactory() {
         super();

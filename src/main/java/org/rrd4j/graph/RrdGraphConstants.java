@@ -367,31 +367,31 @@ public interface RrdGraphConstants {
     Stroke TICK_STROKE = new BasicStroke(1);
 
     /**
-     * Allowed font tag names which can be used in {@link RrdGraphDef#setFont(String, java.awt.Font)} method
+     * Allowed font tag names which can be used in {@link org.rrd4j.graph.RrdGraphDef#setFont(org.rrd4j.graph.RrdGraphConstants.FontTag, java.awt.Font)} method
      */
     public enum FontTag  {
         /**
-         * Index of the default font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         * Index of the default font. Used in {@link org.rrd4j.graph.RrdGraphDef#setFont(org.rrd4j.graph.RrdGraphConstants.FontTag, java.awt.Font)}
          */
         DEFAULT,
         /**
-         * Index of the title font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         * Index of the title font. Used in {@link org.rrd4j.graph.RrdGraphDef#setFont(org.rrd4j.graph.RrdGraphConstants.FontTag, java.awt.Font)}
          */
         TITLE,
         /**
-         * Index of the axis label font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         * Index of the axis label font. Used in {@link org.rrd4j.graph.RrdGraphDef#setFont(org.rrd4j.graph.RrdGraphConstants.FontTag, java.awt.Font)}
          */
         AXIS,
         /**
-         * Index of the vertical unit label font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         * Index of the vertical unit label font. Used in {@link org.rrd4j.graph.RrdGraphDef#setFont(org.rrd4j.graph.RrdGraphConstants.FontTag, java.awt.Font)}
          */
         UNIT,
         /**
-         * Index of the graph legend font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         * Index of the graph legend font. Used in {@link org.rrd4j.graph.RrdGraphDef#setFont(org.rrd4j.graph.RrdGraphConstants.FontTag, java.awt.Font)}
          */
         LEGEND,
         /**
-         * Index of the edge watermark font. Used in {@link RrdGraphDef#setFont(int, java.awt.Font)}
+         * Index of the edge watermark font. Used in {@link org.rrd4j.graph.RrdGraphDef#setFont(org.rrd4j.graph.RrdGraphConstants.FontTag, java.awt.Font)}
          */
         WATERMARK;
 

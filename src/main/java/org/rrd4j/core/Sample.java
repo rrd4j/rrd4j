@@ -5,13 +5,13 @@ import java.util.StringTokenizer;
 import java.util.Arrays;
 
 /**
- * <p>Class to represent data source values for the given timestamp. Objects of this
+ * Class to represent data source values for the given timestamp. Objects of this
  * class are never created directly (no public constructor is provided). To learn more how
  * to update RRDs, see RRDTool's
  * <a href="../../../../man/rrdupdate.html" target="man">rrdupdate man page</a>.
- * <p/>
- * <p>To update a RRD with Rrd4j use the following procedure:</p>
- * <p/>
+ * <p>
+ * To update a RRD with Rrd4j use the following procedure:
+ * <p>
  * <ol>
  * <li>Obtain empty Sample object by calling method {@link org.rrd4j.core.RrdDb#createSample(long)
  * createSample()} on respective {@link RrdDb RrdDb} object.
@@ -19,10 +19,10 @@ import java.util.Arrays;
  * <li>Supply data source values (see {@link #setValue(String, double) setValue()}).
  * <li>Call Sample's {@link #update() update()} method.
  * </ol>
- * <p/>
- * <p>Newly created Sample object contains all data source values set to 'unknown'.
+ * <p>
+ * Newly created Sample object contains all data source values set to 'unknown'.
  * You should specify only 'known' data source values. However, if you want to specify
- * 'unknown' values too, use <code>Double.NaN</code>.</p>
+ * 'unknown' values too, use <code>Double.NaN</code>.
  *
  * @author Sasa Markovic
  */
@@ -138,22 +138,23 @@ public class Sample {
     }
 
     /**
-     * <p>Sets sample timestamp and data source values in a fashion similar to RRDTool.
+     * Sets sample timestamp and data source values in a fashion similar to RRDTool.
      * Argument string should be composed in the following way:
-     * <code>timestamp:value1:value2:...:valueN</code>.</p>
-     * <p/>
-     * <p>You don't have to supply all datasource values. Unspecified values will be treated
-     * as unknowns. To specify unknown value in the argument string, use letter 'U'
+     * <code>timestamp:value1:value2:...:valueN</code>.
+     * <p>
+     * You don't have to supply all datasource values. Unspecified values will be treated
+     * as unknowns. To specify unknown value in the argument string, use letter 'U'.
      *
      * @param timeAndValues String made by concatenating sample timestamp with corresponding
-     *                      data source values delmited with colons. For example:<p>
+     *                      data source values delmited with colons. For example:
+     *                      <p>
      *                      <pre>
      *                      1005234132:12.2:35.6:U:24.5
      *                      NOW:12.2:35.6:U:24.5
      *                      </pre>
      *                      'N' stands for the current timestamp (can be replaced with 'NOW')<p>
      *                      Method will throw an exception if timestamp is invalid (cannot be parsed as Long, and is not 'N'
-     *                      or 'NOW'). Datasource value which cannot be parsed as 'double' will be silently set to NaN.<p>
+     *                      or 'NOW'). Datasource value which cannot be parsed as 'double' will be silently set to NaN.
      * @return This <code>Sample</code> object
      * @throws java.lang.IllegalArgumentException Thrown if too many datasource values are supplied
      */
@@ -199,9 +200,9 @@ public class Sample {
     }
 
     /**
-     * <p>Creates sample with the timestamp and data source values supplied
+     * Creates sample with the timestamp and data source values supplied
      * in the argument string and stores sample in the corresponding RRD.
-     * This method is just a shortcut for:</p>
+     * This method is just a shortcut for:
      * <pre>
      *     set(timeAndValues);
      *     update();

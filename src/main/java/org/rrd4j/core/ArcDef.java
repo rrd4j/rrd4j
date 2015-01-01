@@ -12,9 +12,9 @@ import org.rrd4j.ConsolFun;
  * <li>number of steps
  * <li>number of rows.
  * </ul>
- * <p>For the complete explanation of all archive definition parameters, see RRDTool's
+ * For the complete explanation of all archive definition parameters, see RRDTool's
  * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html" target="man">rrdcreate man page</a>
- * </p>
+ * 
  *
  * @author Sasa Markovic
  */
@@ -25,10 +25,10 @@ public class ArcDef {
     private int rows;
 
     /**
-     * <p>Creates new archive definition object. This object should be passed as argument to
+     * Creates new archive definition object. This object should be passed as argument to
      * {@link org.rrd4j.core.RrdDef#addArchive(ArcDef) addArchive()} method of
-     * {@link RrdDb RrdDb} object.</p>
-     *
+     * {@link RrdDb RrdDb} object.
+     * <p>
      * <p>For the complete explanation of all archive definition parameters, see RRDTool's
      * <a href="http://oss.oetiker.ch/rrdtool/doc/rrdcreate.en.html" target="man">rrdcreate man page</a></p>
      *

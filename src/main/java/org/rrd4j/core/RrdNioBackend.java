@@ -109,7 +109,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      *
      * @param offset Starting file offset
      * @param b      Buffer which receives bytes read from the file.
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     protected synchronized void read(long offset, byte[] b) throws IOException {
         if (byteBuffer != null) {
@@ -124,7 +124,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
     /**
      * Closes the underlying RRD file.
      *
-     * @throws java.io.IOException Thrown in case of I/O error
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public synchronized void close() throws IOException {
         // cancel synchronization

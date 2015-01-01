@@ -22,9 +22,9 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
      * Creates RrdFileBackend object for the given file path, backed by RandomAccessFile object.
      *
      * @param path Path to a file
-     * @throws java.io.IOException Thrown in case of I/O error
-     * @param lockWaitTime a long.
-     * @param lockRetryPeriod a long.
+     * @param lockWaitTime lock waiting time in milliseconds.
+     * @param lockRetryPeriod lock retry period in milliseconds.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdSafeFileBackend(String path, long lockWaitTime, long lockRetryPeriod)
             throws IOException {
