@@ -1,13 +1,14 @@
 package org.rrd4j.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.rrd4j.core.Util;
+
+import com.tomgibara.crinch.hashing.PerfectStringHash;
 
 class RpnCalculator {
     private enum Token_Symbol {
@@ -530,7 +531,6 @@ class RpnCalculator {
             }
         },
         TKN_PREDICT("PREDICT") {
-
             @Override
             void do_method(RpnCalculator c, State s) {
                 c.pop(); // Clear the value of our variable
@@ -629,13 +629,28 @@ class RpnCalculator {
         abstract void do_method(RpnCalculator c, State s);
     }
 
-    static private final Map<String, Token_Symbol> symbols = new HashMap<String, Token_Symbol>(Token_Symbol.values().length);
+    static private final Token_Symbol[] symbols;
+    static private final PerfectStringHash perfect;
+    static
     {
+        List<String> tokenStrings = new ArrayList<String>(Token_Symbol.values().length);
         for(Token_Symbol s: Token_Symbol.values()) {
-            if(! s.token_string.isEmpty())
-                symbols.put(s.token_string, s);
+            if(! s.token_string.isEmpty()) {
+                tokenStrings.add(s.token_string);
+            }
+        }
+        
+        String[] array = tokenStrings.toArray(new String[tokenStrings.size()]);
+        perfect = new PerfectStringHash(array);
+        symbols = new Token_Symbol[tokenStrings.size()];
+        for(Token_Symbol s: Token_Symbol.values()) {
+            int hash = perfect.hashAsInt(s.token_string);
+            if(hash >= 0) {
+                symbols[hash] = s;                
+            }
         }
     }
+
     private final String rpnExpression;
     private final String sourceName;
     private final DataProcessor dataProcessor;
@@ -663,28 +678,23 @@ class RpnCalculator {
     }
 
     private Token createToken(String parsedText) {
-        Token token = new Token();
-        if (symbols.containsKey(parsedText)){
-            token.id = symbols.get(parsedText);
+        Token token;
+        int hash = perfect.hashAsInt(parsedText);
+        if (hash >= 0 ){
+            token = new Token(symbols[hash]);
         }
         else if (parsedText.equals("PREV")) {
-            token.id = Token_Symbol.TKN_PREV;
-            token.variable = sourceName;
-            token.values = calculatedValues;
+            token = new Token(Token_Symbol.TKN_PREV, sourceName, calculatedValues);
         }
         else if (parsedText.startsWith("PREV(") && parsedText.endsWith(")")) {
-            token.id = Token_Symbol.TKN_PREV;
-            token.variable = parsedText.substring(5, parsedText.length() - 1);
-            token.values = dataProcessor.getValues(token.variable);
+            String variable = parsedText.substring(5, parsedText.length() - 1);
+            token = new Token(Token_Symbol.TKN_PREV, variable, dataProcessor.getValues(variable));
         }
         else if (Util.isDouble(parsedText)) {
-            token.id = Token_Symbol.TKN_NUM;
-            token.number = Util.parseDouble(parsedText);
+            token = new Token(Token_Symbol.TKN_NUM, Util.parseDouble(parsedText));
         }
         else if (sourcesNames.contains(parsedText)){
-            token.id = Token_Symbol.TKN_VAR;
-            token.variable = parsedText;
-            token.values = dataProcessor.getValues(token.variable);
+            token = new Token(Token_Symbol.TKN_VAR, parsedText, dataProcessor.getValues(parsedText));
         }
         else {
             throw new IllegalArgumentException("Unexpected RPN token encountered: " +  parsedText);
@@ -785,9 +795,27 @@ class RpnCalculator {
     }
 
     private static final class Token {
-        Token_Symbol id;
-        double number = Double.NaN;
-        String variable = "";
-        double[] values = null;
+        final Token_Symbol id;
+        final double number;
+        final String variable;
+        final double[] values;
+        Token(Token_Symbol id) {
+            this.id = id;
+            this.values = null;
+            this.variable = "";
+            this.number = Double.NaN;
+        }
+        Token(Token_Symbol id, String variable, double[] values) {
+            this.id = id;
+            this.variable = variable;
+            this.values = values;
+            this.number = Double.NaN;
+        }
+        Token(Token_Symbol id, double number) {
+            this.id = id;
+            this.values = null;
+            this.variable = "";
+            this.number = number;
+        }
     }
 }
