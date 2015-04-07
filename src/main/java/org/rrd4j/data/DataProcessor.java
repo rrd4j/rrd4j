@@ -440,7 +440,7 @@ public class DataProcessor {
      * </ul>
      *
      * The supported RPN functions, operators and constants are detailed at
-     * <a href="https://code.google.com/p/rrd4j/wiki/RPNFuncs" target="man">RRD4J's wiki</a>.
+     * <a href="https://github.com/rrd4j/rrd4j/wiki/RPNFuncs" target="man">RRD4J's wiki</a>.
      * <p>
      * Rrd4j does not force you to specify at least one simple source name as RRDTool.
      * <p>
