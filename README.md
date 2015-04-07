@@ -4,8 +4,8 @@ rrd4j <a href='http://jrds.fr/jenkins/job/rrd4j/'><img src='http://jrds.fr/jenki
 RRD4J is a high performance data logging and graphing system for time series data, implementing [RRDTool's](http://oss.oetiker.ch/rrdtool/)
 functionality in Java. It follows much of the same logic and uses the same data sources, archive types and definitions as RRDTool does.
 
-RRD4J supports all standard operations on Round Robin Database (RRD) files: CREATE, UPDATE, FETCH, LAST, DUMP, EXPORT and GRAPH.
-RRD4J's API is made for those who are familiar with <a href='http://oss.oetiker.ch/rrdtool/'>RRDTool's</a> concepts and logic, but prefer to
+RRD4J supports all standard operations on Round Robin Database (RRD) files: `CREATE`, `UPDATE`, `FETCH`, `LAST`, `DUMP`, `EXPORT` and `GRAPH`.
+RRD4J's API is made for those who are familiar with [RRDTool's](http://oss.oetiker.ch/rrdtool/) concepts and logic, but prefer to
 work with pure Java (no native functions or libraries, no Runtime.exec(), RRDTool does not have to be present).
 
 ### Latest Version (requires Java 6+)
@@ -14,12 +14,10 @@ RRD4J 2.2 (released 2013-04-11) - [Download](https://github.com/rrd4j/rrd4j/rele
 
 ### Development
 
-RRD4J can be build using gradle, maven or ant, but maven is the main build tool, the one that is used to generate continuous integration build.
+RRD4J can be build using Gradle, Maven or Ant, but Maven is the main build tool, the one that is used to generate continuous integration build.
 
-The Git repository can also be accessed at <a href='https://github.com/fbacchella/RRD4J'>https://github.com/fbacchella/RRD4J</a>. But for now, the reference site will stay on google, GitHub will be used for pull request.<br>
-
-The maven generated site is available [here](http://rrd4j.org/site).
-Automated build are uploaded at Sonatype's [repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
+The maven generated site is available [here](http://rrd4j.org/site). Automated build are uploaded
+at Sonatype's [repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
 RRD4J is missing unit tests, so please don't hesitate to look at the <a href='http://rrd4j.org/site/jacoco'>jacoco report</a> for missing code
 coverage and submit new ones.
