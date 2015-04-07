@@ -10,9 +10,9 @@ work with pure Java (no native functions or libraries, no Runtime.exec(), RRDToo
 
 ### Latest Version (requires Java 6+)
 
-RRD4J 2.2 (released 2013-04-11) - [Download](https://github.com/rrd4j/rrd4j/releases] - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
+RRD4J 2.2 (released 2013-04-11) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
 
-### Development
+### Building (optional)
 
 RRD4J can be build using Gradle, Maven or Ant, but Maven is the main build tool, the one that is used to generate continuous integration build.
 
@@ -22,16 +22,16 @@ at Sonatype's [repository](https://oss.sonatype.org/content/repositories/snapsho
 RRD4J is missing unit tests, so please don't hesitate to look at the <a href='http://rrd4j.org/site/jacoco'>jacoco report</a> for missing code
 coverage and submit new ones.
 
-### Highlights
+### Why RRD4J?
 
-  * **Portable files**, RRDTool files are not
-  * **Simple API**
-  * **RRD4J supports the same data source types** as RRDTool (COUNTER, ABSOLUTE, DERIVE, GAUGE)
-  * **RRD4J supports the same consolidation functions** as RRDTool (AVERAGE, MIN, MAX, LAST) and adds TOTAL, FIRST
-  * **RRD4J** supports almost all RRDTool RPN functions (wiki/see [RPNFuncs](RPNFuncs))
-  * RRD4J has **multiple backends**, e.g. use MongoDB as data store
+  * Portable files, RRDTool files are not
+  * Simple API
+  * Supports the same data source types as RRDTool (`COUNTER`, `ABSOLUTE`, `DERIVE`, `GAUGE`)
+  * Supports the same consolidation functions as RRDTool (`AVERAGE`, `MIN`, `MAX`, `LAST`) and adds `TOTAL`, `FIRST`
+  * Supports almost all RRDTool RPN functions (wiki/see [RPNFuncs](RPNFuncs))
+  * Multiple backends, e.g. use MongoDB as data store
 
-### Usage Example
+### Usage
 
 ```java
 import org.rrd4j.code.*;
