@@ -1,4 +1,4 @@
-Changes in version 2.2 - 6 Dec 2011
+Changes in version 2.2 - 4 Nov 2013
 ----------------------------------------
 * Fixed Issue 24: Less intrusive grid
 * Fixed Issue 26: please expose RrdNioBackendFactory.close() to shut down the syncer pool. Added a setSyncThreadPool to RrdNioBackendFactory, see Javadoc for more details.
