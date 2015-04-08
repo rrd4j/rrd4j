@@ -14,13 +14,8 @@ RRD4J 2.2 (released 2013-04-11) - [Download](https://github.com/rrd4j/rrd4j/rele
 
 ### Building (optional)
 
-RRD4J can be build using Gradle, Maven or Ant, but Maven is the main build tool, the one that is used to generate continuous integration build.
-
-The maven generated site is available [here](http://rrd4j.org/site). Automated build are uploaded
-at Sonatype's [repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
-
-RRD4J is missing unit tests, so please don't hesitate to look at the <a href='http://rrd4j.org/site/jacoco'>jacoco report</a> for missing code
-coverage and submit new ones.
+RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/site). Automated builds are uploaded
+to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
 ### Why RRD4J?
 
@@ -75,12 +70,12 @@ RrdGraph graph = new RrdGraph(gDef); // will create the graph in the path specif
 
 Go through the source of [Demo](http://rrd4j.googlecode.com/svn/trunk/src/main/java/org/rrd4j/demo/Demo.java) for more examples.
 
-### Supported Databases
+### Supported Backends
 
-Next to memory and file storage, RRD4J supports the following databases (using byte array storage):
+Next to memory and file storage, RRD4J supports the following backends (using byte array storage):
 
-  * [MongoDB](http://www.mongodb.org/) - a scalable, high-performance, open source, document-oriented database. See the [RrdMongoDBBackendFactory](http://code.google.com/p/rrd4j/source/browse/trunk/src/main/java/org/rrd4j/core/RrdMongoDBBackendFactory.java) class.
-  * [Oracle Berkeley DB](http://www.oracle.com/technetwork/database/berkeleydb/overview/index-093405.html) Java Edition -  an open source, embeddable database providing developers with fast, reliable, local persistence with zero administration. See the [RrdBerkeleyDbBackendFactory](http://code.google.com/p/rrd4j/source/browse/trunk/src/main/java/org/rrd4j/core/RrdBerkeleyDbBackendFactory.java) class.
+  * [MongoDB](http://www.mongodb.org/) - a scalable, high-performance, open source, document-oriented database.
+  * [Oracle Berkeley DB](http://www.oracle.com/technetwork/database/berkeleydb/overview/index-093405.html) Java Edition - an open source, embeddable database providing developers with fast, reliable, local persistence with zero administration.
 
 ### Clojure
 
