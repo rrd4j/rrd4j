@@ -5,9 +5,9 @@ import java.util.Locale;
 import org.rrd4j.data.DataProcessor;
 
 class CommentText implements RrdGraphConstants {
-    private final String text;        // original text
+    protected final String text; // original text
 
-    String resolvedText;    // resolved text
+    String resolvedText; // resolved text
     String marker; // end-of-text marker
     boolean enabled; // hrule and vrule comments can be disabled at runtime
     int x, y; // coordinates, evaluated in LegendComposer
@@ -20,9 +20,9 @@ class CommentText implements RrdGraphConstants {
         resolvedText = text;
         marker = "";
         if (resolvedText != null) {
-            for (String aMARKERS : MARKERS) {
-                if (resolvedText.endsWith(aMARKERS)) {
-                    marker = aMARKERS;
+            for (String someMarker : MARKERS) {
+                if (resolvedText.endsWith(someMarker)) {
+                    marker = someMarker;
                     resolvedText = resolvedText.substring(0, resolvedText.length() - marker.length());
                     trimIfGlue();
                     break;
@@ -32,10 +32,9 @@ class CommentText implements RrdGraphConstants {
         enabled = resolvedText != null;
     }
 
-
     void trimIfGlue() {
         if (marker.equals(GLUE_MARKER)) {
-            resolvedText = resolvedText.trim();
+            resolvedText = resolvedText.replaceFirst("\\s+$", "");
         }
     }
 
