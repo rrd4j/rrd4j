@@ -1,0 +1,7 @@
+language: java
+sudo: false
+services:
+  - mongodb
+jdk:
+  - oraclejdk8
+  - oraclejdk7
