@@ -61,6 +61,22 @@ public class DataChunk {
         return sb.toString();
     }
 
+    public int getStart() {
+        return start;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public long getStep() {
+        return step;
+    }
+
+    public int getDsCount() {
+        return dsCount;
+    }
+
     /**
      * <p>Getter for the field <code>data</code>.</p>
      *
