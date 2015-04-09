@@ -16,7 +16,7 @@
         <version>7</version>
     </parent>
     <prerequisites>
-        <maven>2.2.1</maven>
+        <maven>3.2.5</maven>
     </prerequisites>
     <properties>
         <!-- The project should have a source encoding set. -->
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junitVersion}</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -179,7 +179,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${mavenJavadocPluginVersion}</version>
+                <version>${maven.plugin.javadoc.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -269,7 +269,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>${mavenResourcesPlugin}</version>
+                    <version>${maven.plugin.resources.version}</version>
                     <configuration>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
@@ -282,7 +282,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${mavenSurefirePlugin}</version>
+                    <version>${maven.plugin.surefire.version}</version>
                     <configuration>
                         <systemProperties>
                             <property>
@@ -295,7 +295,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${mavenJavadocPluginVersion}</version>
+                    <version>${maven.plugin.javadoc.version}</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <detectLinks/>
@@ -304,7 +304,6 @@
                             <link>http://api.mongodb.org/java/current/</link>
                             <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
-                            <link>http://api.mongodb.org/java/current/</link>
                         </links>
                         <bootclasspath>${sun.boot.class.path}</bootclasspath>
                     </configuration>
@@ -321,19 +320,20 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${mavenJavadocPluginVersion}</version>
+                <version>${maven.plugin.javadoc.version}</version>
                 <configuration>
                     <quiet>false</quiet>
                     <detectLinks>true</detectLinks>
                     <detectJavaApiLink>true</detectJavaApiLink>
                     <show>protected</show>
-                    <bottom>Copyright (c) ${year} The RRD4J Authors. Copyright (c) 2001-2005 Sasa
-                        Markovic and Ciaran Treanor. Copyright (c) ${year} The OpenNMS Group, Inc.</bottom>
+                    <bottom><![CDATA[
+                        <p>&copy; ${year} The RRD4J Authors. &copy; 2001-2005 Sasa Markovic and Ciaran Treanor. &copy; ${year} The OpenNMS Group, Inc.</p>
+                        ]]>
+                    </bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
                         <id>javadoc-report</id>
-                        <!-- If a Maven site is generated, javadocs will be included in it. -->
                         <reports>
                             <report>javadoc</report>
                         </reports>
@@ -343,23 +343,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${mavenSurefirePlugin}</version>
+                <version>${maven.plugin.surefire.version}</version>
             </plugin>
         </plugins>
     </reporting>
-    <repositories>
-        <repository>
-            <!-- The BerkeleyDB dependency is found here. -->
-            <id>oracleReleases</id>
-            <name>Oracle Released Java Packages</name>
-            <url>http://download.oracle.com/maven</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots />
-        </repository>
-    </repositories>
     <developers>
         <developer>
             <name>Sasa Markovic</name>
