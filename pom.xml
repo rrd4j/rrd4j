@@ -25,8 +25,8 @@
         <mavenResourcesPlugin>2.7</mavenResourcesPlugin>
         <mavenSurefirePlugin>2.18</mavenSurefirePlugin>
         <junitVersion>4.10</junitVersion>
-        <buildSource>1.6</buildSource>
-        <buildTarget>1.6</buildTarget>
+        <buildSource>1.7</buildSource>
+        <buildTarget>1.7</buildTarget>
         <!-- current year. -->
         <year>2013</year>
     </properties>
