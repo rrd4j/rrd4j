@@ -692,20 +692,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param fetchData FetchData object.
      */
     public void datasource(String name, FetchData fetchData) {
-        sources.add(new TDef(name, name, fetchData));
-    }
-
-    /**
-     * Creates a new 'fetched' datasource. Datasource values are obtained from the
-     * given {@link org.rrd4j.core.FetchData} object. 
-     * Values will be extracted from the datasource dsName in the fetchData
-     *
-     * @param name      Source name.
-     * @param dsName    Source name in fetchData.
-     * @param fetchData FetchData object.
-     */
-    public void datasource(String name, String dsName, FetchData fetchData) {
-        sources.add(new TDef(name, dsName, fetchData));
+        sources.add(new TDef(name, fetchData));
     }
 
     /**
