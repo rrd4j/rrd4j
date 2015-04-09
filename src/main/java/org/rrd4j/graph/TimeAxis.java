@@ -2,27 +2,26 @@ package org.rrd4j.graph;
 
 import java.awt.Font;
 import java.awt.Paint;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 class TimeAxis implements RrdGraphConstants {
     private static final TimeAxisSetting[] tickSettings = {
-        new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, HH_MM),
-        new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, HH_MM),
-        new TimeAxisSetting(5, MINUTE, 2, MINUTE, 10, MINUTE, 10, 0, HH_MM),
-        new TimeAxisSetting(10, MINUTE, 5, MINUTE, 20, MINUTE, 20, 0, HH_MM),
-        new TimeAxisSetting(30, MINUTE, 10, HOUR, 1, HOUR, 1, 0, HH_MM),
-        new TimeAxisSetting(60, MINUTE, 30, HOUR, 2, HOUR, 2, 0, HH_MM),
-        new TimeAxisSetting(180, HOUR, 1, HOUR, 6, HOUR, 6, 0, HH_MM),
-        new TimeAxisSetting(600, HOUR, 6, DAY, 1, DAY, 1, 24 * 3600, "EEE"),
-        new TimeAxisSetting(1800, HOUR, 12, DAY, 1, DAY, 2, 24 * 3600, "EEE"),
-        new TimeAxisSetting(3600, DAY, 1, WEEK, 1, WEEK, 1, 7 * 24 * 3600, "'Week 'w"),
-        new TimeAxisSetting(3 * 3600, WEEK, 1, MONTH, 1, WEEK, 2, 7 * 24 * 3600, "'Week 'w"),
-        new TimeAxisSetting(6 * 3600, MONTH, 1, MONTH, 1, MONTH, 1, 30 * 24 * 3600, "MMM"),
-        new TimeAxisSetting(48 * 3600, MONTH, 1, MONTH, 3, MONTH, 3, 30 * 24 * 3600, "MMM"),
-        new TimeAxisSetting(10 * 24 * 3600, YEAR, 1, YEAR, 1, YEAR, 1, 365 * 24 * 3600, "yy"),
-        new TimeAxisSetting(-1, MONTH, 0, MONTH, 0, MONTH, 0, 0, "")
+            new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, HH_MM),
+            new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, HH_MM),
+            new TimeAxisSetting(5, MINUTE, 2, MINUTE, 10, MINUTE, 10, 0, HH_MM),
+            new TimeAxisSetting(10, MINUTE, 5, MINUTE, 20, MINUTE, 20, 0, HH_MM),
+            new TimeAxisSetting(30, MINUTE, 10, HOUR, 1, HOUR, 1, 0, HH_MM),
+            new TimeAxisSetting(60, MINUTE, 30, HOUR, 2, HOUR, 2, 0, HH_MM),
+            new TimeAxisSetting(180, HOUR, 1, HOUR, 6, HOUR, 6, 0, HH_MM),
+            new TimeAxisSetting(600, HOUR, 6, DAY, 1, DAY, 1, 24 * 3600, "EEE"),
+            new TimeAxisSetting(1800, HOUR, 12, DAY, 1, DAY, 2, 24 * 3600, "EEE"),
+            new TimeAxisSetting(3600, DAY, 1, WEEK, 1, WEEK, 1, 7 * 24 * 3600, "'Week 'w"),
+            new TimeAxisSetting(3 * 3600, WEEK, 1, MONTH, 1, WEEK, 2, 7 * 24 * 3600, "'Week 'w"),
+            new TimeAxisSetting(6 * 3600, MONTH, 1, MONTH, 1, MONTH, 1, 30 * 24 * 3600, "MMM"),
+            new TimeAxisSetting(48 * 3600, MONTH, 1, MONTH, 3, MONTH, 3, 30 * 24 * 3600, "MMM"),
+            new TimeAxisSetting(10 * 24 * 3600, YEAR, 1, YEAR, 1, YEAR, 1, 365 * 24 * 3600, "yy"),
+            new TimeAxisSetting(-1, MONTH, 0, MONTH, 0, MONTH, 0, 0, "")
     };
 
     private final ImageParameters im;
@@ -30,7 +29,7 @@ class TimeAxis implements RrdGraphConstants {
     private final RrdGraphDef gdef;
     private final Mapper mapper;
     private TimeAxisSetting tickSetting;
-    
+
     private final double secPerPix;
     private final Calendar calendar;
 
@@ -104,14 +103,12 @@ class TimeAxis implements RrdGraphConstants {
     }
 
     private void drawLabels() {
-        // escape strftime like format string
-        String labelFormat = tickSetting.format.replaceAll("([^%]|^)%([^%t])", "$1%t$2");
         Font font = gdef.getFont(FONTTAG_AXIS);
         Paint color = gdef.colors[COLOR_FONT];
         adjustStartingTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
         int y = im.yorigin + (int) worker.getFontHeight(font) + 2;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
-            String label = formatLabel(labelFormat, calendar.getTime());
+            String label = tickSetting.format.format(calendar, gdef.locale);
             long time = calendar.getTime().getTime() / 1000L;
             int x1 = mapper.xtr(time);
             int x2 = mapper.xtr(time + tickSetting.labelSpan);
@@ -121,20 +118,6 @@ class TimeAxis implements RrdGraphConstants {
                 worker.drawString(label, x, y, font, color);
             }
             findNextTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
-        }
-    }
-
-    private String formatLabel(String format, Date date) {
-        Calendar c = (Calendar) calendar.clone();
-        c.setTime(date);
-        if (format.contains("%")) {
-            // strftime like format string
-            return String.format(gdef.locale, format, c);
-        }
-        else {
-            SimpleDateFormat sdf = new SimpleDateFormat(format);
-            sdf.setCalendar(c);
-            return sdf.format(date);
         }
     }
 
@@ -217,7 +200,6 @@ class TimeAxis implements RrdGraphConstants {
         }
     }
 
-
     private void chooseTickSettings() {
         if (gdef.timeAxisSetting != null) {
             tickSetting = new TimeAxisSetting(gdef.timeAxisSetting);
@@ -226,6 +208,9 @@ class TimeAxis implements RrdGraphConstants {
             for (int i = 0; tickSettings[i].secPerPix >= 0 && secPerPix > tickSettings[i].secPerPix; i++) {
                 tickSetting = tickSettings[i];
             }
+        }
+        if (gdef.timeLabelFormat != null) {
+            tickSetting = tickSetting.withLabelFormat(gdef.timeLabelFormat);
         }
     }
 

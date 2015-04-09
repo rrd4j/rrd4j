@@ -52,6 +52,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     String filename = RrdGraphConstants.IN_MEMORY_IMAGE; // ok
     long startTime, endTime; // ok
     TimeAxisSetting timeAxisSetting = null; // ok
+    TimeLabelFormat timeLabelFormat = null; // ok
     ValueAxisSetting valueAxisSetting = null; // ok
     boolean altYGrid = false; // ok
     boolean noMinorGrid = false; // ok
@@ -247,7 +248,36 @@ public class RrdGraphDef implements RrdGraphConstants {
     public void setTimeAxis(int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
             int labelUnit, int labelUnitCount, int labelSpan, String simpleDateFormat) {
         timeAxisSetting = new TimeAxisSetting(minorUnit, minorUnitCount, majorUnit, majorUnitCount,
-                labelUnit, labelUnitCount, labelSpan, simpleDateFormat);
+                labelUnit, labelUnitCount, labelSpan, new SimpleTimeLabelFormat(simpleDateFormat));
+    }
+
+    /**
+     * It configure the x-axis grid in the same way than {@link #setTimeAxis(int, int, int, int, int, int, int, String)}, but it allows
+     * to use a {@link org.rrd4j.graph.TimeLabelFormat} to format the date label.
+     * 
+     * @param minorUnit
+     * @param minorUnitCount
+     * @param majorUnit
+     * @param majorUnitCount
+     * @param labelUnit
+     * @param labelUnitCount
+     * @param labelSpan
+     * @param format
+     */
+    public void setTimeAxis(int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
+            int labelUnit, int labelUnitCount, int labelSpan, TimeLabelFormat format) {
+        timeAxisSetting = new TimeAxisSetting(minorUnit, minorUnitCount, majorUnit, majorUnitCount,
+                labelUnit, labelUnitCount, labelSpan, format);
+    }
+
+    /**
+     * This allows to keep the default major and minor grid unit, but with changing only the label formatting,
+     * using a {@link org.rrd4j.graph.TimeLabelFormat}
+     * 
+     * @param format a custom dynamic time label format
+     */
+    public void setTimeLabelFormat(TimeLabelFormat format) {
+        timeLabelFormat = format;
     }
 
     /**

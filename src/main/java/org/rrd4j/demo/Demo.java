@@ -4,12 +4,17 @@ import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.ConsolFun.MAX;
 import static org.rrd4j.ConsolFun.TOTAL;
 import static org.rrd4j.DsType.GAUGE;
+import org.rrd4j.core.*;
+import org.rrd4j.graph.RrdGraph;
+import org.rrd4j.graph.RrdGraphDef;
+import org.rrd4j.graph.TimeLabelFormat;
 
 import java.awt.Color;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Random;
 
@@ -169,6 +174,7 @@ public class Demo {
         println("Creating graph " + Util.getLapTime());
         println("== Creating graph from the second file");
         RrdGraphDef gDef = new RrdGraphDef();
+        gDef.setTimeLabelFormat(new CustomTimeLabelFormat());
         gDef.setLocale(Locale.US);
         gDef.setWidth(IMG_WIDTH);
         gDef.setHeight(IMG_HEIGHT);
@@ -262,6 +268,26 @@ public class Demo {
                 value = 0;
             }
             return Math.round(oldValue);
+        }
+    }
+
+    static class CustomTimeLabelFormat implements TimeLabelFormat {
+        public String format(Calendar c, Locale locale) {
+            if (c.get(Calendar.MILLISECOND) != 0) {
+                return String.format(locale, "%1$tH:%1$tM:%1$tS.%1$tL", c);
+            } else if (c.get(Calendar.SECOND) != 0) {
+                return String.format(locale, "%1$tH:%1$tM:%1$tS", c);
+            } else if (c.get(Calendar.MINUTE) != 0) {
+                return String.format(locale, "%1$tH:%1$tM", c);
+            } else if (c.get(Calendar.HOUR_OF_DAY) != 0) {
+                return String.format(locale, "%1$tH:%1$tM", c);
+            } else if (c.get(Calendar.DAY_OF_MONTH) != 1) {
+                return String.format(locale, "%1$td %1$tb", c);
+            } else if (c.get(Calendar.DAY_OF_YEAR) != 1) {
+                return String.format(locale, "%1$td %1$tb", c);
+            } else {
+                return String.format(locale, "%1$tY", c);
+            }
         }
     }
 }

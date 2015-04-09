@@ -30,6 +30,7 @@ import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraphInfo;
+import org.rrd4j.graph.TimeLabelFormat;
 
 public class TestDemo {
     @Rule
@@ -163,6 +164,7 @@ public class TestDemo {
         gDef.setVerticalLabel("temperature");
         gDef.setColor(RrdGraphConstants.COLOR_XAXIS, Color.BLUE);
         gDef.setColor(RrdGraphConstants.COLOR_YAXIS, new Color(0, 255, 0, 40));
+        gDef.setTimeLabelFormat(new CustomTimeLabelFormat());
 
         gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
         gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE);
@@ -246,6 +248,26 @@ public class TestDemo {
                 value = 0;
             }
             return Math.round(oldValue);
+        }
+    }
+
+    static class CustomTimeLabelFormat implements TimeLabelFormat {
+        public String format(Calendar c, Locale locale) {
+            if (c.get(Calendar.MILLISECOND) != 0) {
+                return String.format(locale, "%1$tH:%1$tM:%1$tS.%1$tL", c);
+            } else if (c.get(Calendar.SECOND) != 0) {
+                return String.format(locale, "%1$tH:%1$tM:%1$tS", c);
+            } else if (c.get(Calendar.MINUTE) != 0) {
+                return String.format(locale, "%1$tH:%1$tM", c);
+            } else if (c.get(Calendar.HOUR_OF_DAY) != 0) {
+                return String.format(locale, "%1$tH:%1$tM", c);
+            } else if (c.get(Calendar.DAY_OF_MONTH) != 1) {
+                return String.format(locale, "%1$td %1$tb", c);
+            } else if (c.get(Calendar.DAY_OF_YEAR) != 1) {
+                return String.format(locale, "%1$td %1$tb", c);
+            } else {
+                return String.format(locale, "%1$tY", c);
+            }
         }
     }
 
