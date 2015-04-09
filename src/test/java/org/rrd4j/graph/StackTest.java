@@ -3,8 +3,7 @@ package org.rrd4j.graph;
 import java.awt.Color;
 import java.io.IOException;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
