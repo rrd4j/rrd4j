@@ -28,7 +28,7 @@
         <buildSource>1.7</buildSource>
         <buildTarget>1.7</buildTarget>
         <!-- current year. -->
-        <year>2013</year>
+        <year>2015</year>
     </properties>
     <licenses>
         <license>
@@ -48,13 +48,13 @@
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>4.0.92</version>
+            <version>5.0.73</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>2.11.1</version>
+            <version>2.13.0</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
