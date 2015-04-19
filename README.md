@@ -6,7 +6,8 @@ functionality in Java. It follows much of the same logic and uses the same data 
 
 RRD4J supports all standard operations on Round Robin Database (RRD) files: `CREATE`, `UPDATE`, `FETCH`, `LAST`, `DUMP`, `EXPORT` and `GRAPH`.
 RRD4J's API is made for those who are familiar with [RRDTool's](http://oss.oetiker.ch/rrdtool/) concepts and logic, but prefer to
-work with pure Java (no native functions or libraries, no Runtime.exec(), RRDTool does not have to be present).
+work with pure Java (no native functions or libraries, no Runtime.exec(), RRDTool does not have to be present). We help out our
+users [here](https://groups.google.com/forum/#!forum/rrd4j-discuss).
 
 ### Latest Version (requires Java 6+)
 
@@ -17,6 +18,18 @@ RRD4J 2.2 (released 2013-04-11) - [Download](https://github.com/rrd4j/rrd4j/rele
 RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/site). Automated builds are uploaded
 to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
+### Using with Maven
+
+Add this dependency to your project's POM file:
+
+```xml
+<dependency>
+	<groupId>org.rrd4j</groupId>
+	<artifactId>rrd4j</artifactId>
+	<version>2.2</version>
+</dependency>
+```
+
 ### Why RRD4J?
 
   * Portable files, RRDTool files are not
@@ -26,7 +39,7 @@ to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapsho
   * Supports almost all RRDTool RPN functions (wiki/see [RPNFuncs](RPNFuncs))
   * Multiple backends, e.g. use MongoDB as data store
 
-### Usage
+### Usage Example
 
 ```java
 import org.rrd4j.code.*;
@@ -81,10 +94,10 @@ Next to memory and file storage, RRD4J supports the following backends (using by
 
 Thanks to the [rrd4clj](https://github.com/maoe/rrd4clj) project Clojure now has a RRD API (using RRD4J). Check out their [examples](https://github.com/maoe/rrd4clj/blob/master/src/clj/rrd4clj/examples.clj).
 
-### Contributing to RRD4J
+### Contributing
 
-If you are interested in contributing to RRD4J, start by posting patches to issues that are important to you. Subscribe to the discussion
-group and introduce yourself.
+If you are interested in contributing to RRD4J, start by posting pull requests to issues that are important to you. Subscribe to the [discussion
+group](https://groups.google.com/forum/#!forum/rrd4j-discuss) and introduce yourself.
 
 If you can't contribute, please let us know about your RRD4J use case. Always good to hear your stories!
 
@@ -93,3 +106,7 @@ If you can't contribute, please let us know about your RRD4J use case. Always go
 ![http://jrds.fr/_media/myssqlops.png](http://jrds.fr/_media/myssqlops.png)
 
 ![http://jrds.fr/_media/screenshots/meminforam.png](http://jrds.fr/_media/screenshots/meminforam.png)
+
+### License
+
+Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
