@@ -146,6 +146,11 @@ public class DsDef {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return dsName.hashCode();
+    }
+
     boolean exactlyEqual(DsDef def) {
         return dsName.equals(def.dsName) && dsType == def.dsType &&
                 heartbeat == def.heartbeat && Util.equal(minValue, def.minValue) &&
