@@ -7,26 +7,13 @@ import org.rrd4j.core.Util;
 import java.io.IOException;
 
 class Def extends Source {
-    private final String path, dsName, backend;
-    private final ConsolFun consolFun;
+    private String path, dsName, backend;
+    private ConsolFun consolFun;
     private FetchData fetchData;
 
     Def(String name, FetchData fetchData) {
-<<<<<<< HEAD
         this(name, null, name, null, null);
         setFetchData(fetchData);
-=======
-        this(name, name, fetchData);
-    }
-
-    Def(String name, String dsName, FetchData fetchData) {
-        this(name,
-                fetchData.getRequest().getParentDb().getPath(),
-                dsName, fetchData.getRequest().getConsolFun(),
-                fetchData.getRequest().getParentDb().getRrdBackend().getFactory().getName()
-                );
-        this.fetchData = fetchData;
->>>>>>> 58ff233... FetchRequest fails on memory backend
     }
 
     Def(String name, String path, String dsName, ConsolFun consolFunc) {
