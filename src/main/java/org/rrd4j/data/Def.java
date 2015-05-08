@@ -2,14 +2,13 @@ package org.rrd4j.data;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
-import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.Util;
 
 import java.io.IOException;
 
 class Def extends Source {
-    private String path, dsName, backend;
-    private ConsolFun consolFun;
+    private final String path, dsName, backend;
+    private final ConsolFun consolFun;
     private FetchData fetchData;
 
     Def(String name, FetchData fetchData) {
@@ -17,16 +16,12 @@ class Def extends Source {
     }
 
     Def(String name, String dsName, FetchData fetchData) {
-        this(name, null, dsName, null, RrdBackendFactory.getDefaultFactory().getName());
-        setFetchData(fetchData);
-        setFetchData(fetchData);
-        consolFun = fetchData.getRequest().getConsolFun();
-        try {
-            path = fetchData.getRequest().getParentDb().getCanonicalPath();
-            backend = fetchData.getRequest().getParentDb().getRrdBackend().getFactory().getName();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this(name,
+                fetchData.getRequest().getParentDb().getPath(),
+                dsName, fetchData.getRequest().getConsolFun(),
+                fetchData.getRequest().getParentDb().getRrdBackend().getFactory().getName()
+                );
+        this.fetchData = fetchData;
     }
 
     Def(String name, String path, String dsName, ConsolFun consolFunc) {
