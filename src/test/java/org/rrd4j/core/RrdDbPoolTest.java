@@ -44,7 +44,7 @@ public class RrdDbPoolTest {
     }
 
 
-    @Test(timeout=100)
+    @Test(timeout=500)
     public void testPoolFull() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(10);
@@ -102,7 +102,7 @@ public class RrdDbPoolTest {
         Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
     }
 
-    @Test(timeout=100)
+    @Test(timeout=500)
     public void testMultiOpen() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(2);
