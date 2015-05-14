@@ -18,32 +18,32 @@ import org.rrd4j.data.Plottable;
 import org.rrd4j.data.Variable;
 
 /**
- * Class which should be used to define new Rrd4j graph. Once constructed and populated with data
+ * <p>Class which should be used to define new Rrd4j graph. Once constructed and populated with data
  * object of this class should be passed to the constructor of the {@link org.rrd4j.graph.RrdGraph} class which
- * will actually create the graph.
- * <p>
- * The text printed below the actual graph can be formated by appending
+ * will actually create the graph.</p>
+ * 
+ * <p>The text printed below the actual graph can be formated by appending
  * special escaped characters at the end of a text. When ever such a
  * character occurs, all pending text is pushed onto the graph according to
- * the character specified.
- * <p>
- * Valid markers are: \j for justified, \l for left aligned, \r for right
- * aligned and \c for centered.
- * <p>
- * Normally there are two space characters inserted between every two
+ * the character specified.</p>
+ * 
+ * <p>Valid markers are: \j for justified, \l for left aligned, \r for right
+ * aligned and \c for centered.</p>
+ * 
+ * <p>Normally there are two space characters inserted between every two
  * items printed into the graph. The space following a string can be
  * suppressed by putting a \g at the end of the string. The \g also squashes
  * any space inside the string if it is at the very end of the string.
- * This can be used in connection with %s to suppress empty unit strings.
- * <p>
- * A special case is COMMENT:\s this inserts some additional vertical
- * space before placing the next row of legends.
- * <p>
- * When text has to be formated without special instructions from your
+ * This can be used in connection with %s to suppress empty unit strings.</p>
+ * 
+ * <p>A special case is COMMENT:\s this inserts some additional vertical
+ * space before placing the next row of legends.</p>
+ * 
+ * <p>When text has to be formated without special instructions from your
  * side, RRDTool will automatically justify the text as soon as one string
  * goes over the right edge. If you want to prevent the justification
  * without forcing a newline, you can use the special tag \J at the end of
- * the string to disable the auto justification.
+ * the string to disable the auto justification.</p>
  */
 public class RrdGraphDef implements RrdGraphConstants {
     boolean poolUsed = false; // ok
@@ -199,36 +199,36 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Configures x-axis grid and labels. The x-axis label is quite complex to configure.
+     * <p>Configures x-axis grid and labels. The x-axis label is quite complex to configure.
      * So if you don't have very special needs, you can rely on the autoconfiguration to
-     * get this right.
-     * <p>
-     * Otherwise, you have to configure three elements making up the x-axis labels
+     * get this right.</p>
+     * 
+     * <p>Otherwise, you have to configure three elements making up the x-axis labels
      * and grid. The base grid, the major grid and the labels.
      * The configuration is based on the idea that you first specify a well
      * known amount of time and then say how many times
      * it has to pass between each minor/major grid line or label. For the label
      * you have to define two additional items: The precision of the label
      * in seconds and the format used to generate the text
-     * of the label.
-     * <p>
-     * For example, if you wanted a graph with a base grid every 10 minutes and a major
+     * of the label.</p>
+     * 
+     * <p>For example, if you wanted a graph with a base grid every 10 minutes and a major
      * one every hour, with labels every hour you would use the following
-     * x-axis definition.
-     * <p>
+     * x-axis definition.</p>
+     * 
      * <pre>
      * setTimeAxis(RrdGraphConstants.MINUTE, 10,
      *             RrdGraphConstants.HOUR, 1,
      *             RrdGraphConstants.HOUR, 1,
      *             0, "%H:%M")
      * </pre>
-     * <p>
-     * The precision in this example is 0 because the %X format is exact.
+     * 
+     * <p>The precision in this example is 0 because the %X format is exact.
      * If the label was the name of the day, we would have had a precision
      * of 24 hours, because when you say something like 'Monday' you mean
      * the whole day and not Monday morning 00:00. Thus the label should
      * be positioned at noon. By defining a precision of 24 hours or
-     * rather 86400 seconds, you make sure that this happens.
+     * rather 86400 seconds, you make sure that this happens.</p>
      *
      * @param minorUnit        Minor grid unit. Minor grid, major grid and label units
      *                         can be one of the following constants defined in
@@ -411,16 +411,16 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Creates additional image information.
+     * <p>Creates additional image information.
      * After the image has been created, the graph function uses imageInfo
      * format string (printf-like) to create output similar to
      * the {@link #print(String, ConsolFun, String)} function.
      * The format string is supplied with the following parameters:
-     * filename, xsize and ysize (in that particular order).
-     * <p>
-     * For example, in order to generate an IMG tag
+     * filename, xsize and ysize (in that particular order).</p>
+     * 
+     * <p>For example, in order to generate an IMG tag
      * suitable for including the graph into a web page, the command
-     * would look like this:
+     * would look like this:</p>
      * <pre>
      * setImageInfo(&quot;&lt;IMG SRC='/img/%s' WIDTH='%d' HEIGHT='%d' ALT='Demo'&gt;&quot;);
      * </pre>
@@ -491,12 +491,12 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Defines the value normally located at the upper border of the
+     * <p>Defines the value normally located at the upper border of the
      * graph. If the graph contains higher values, the upper border will
-     * move upwards to accommodate these values as well.
-     * <p>
-     * If you want to define an upper-limit which will not move in any
-     * event you have to use {@link #setRigid(boolean)} method as well.
+     * move upwards to accommodate these values as well.</p>
+     * 
+     * <p>If you want to define an upper-limit which will not move in any
+     * event you have to use {@link #setRigid(boolean)} method as well.</p>
      *
      * @param maxValue Maximal value displayed on the graph.
      */
@@ -897,16 +897,16 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Calculates the chosen consolidation function CF over the given datasource
+     * <p>Calculates the chosen consolidation function CF over the given datasource
      * and creates the result by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
-     * the place where the number should be printed.
-     * <p>
-     * If an additional '%s' is found AFTER the marker, the value will be
+     * the place where the number should be printed.</p>
+     * 
+     * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
-     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
-     * <p>
-     * If a '%S' is used instead of a '%s', then instead of calculating
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
+     * 
+     * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
      * want all the values in a print statement to have the same SI magnitude unit.
@@ -914,10 +914,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      * then '%S' behaves like a '%s', unless the value is 0, in which case
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
-     * for a non-zero value.
-     * <p>
-     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
-     * from the {@link RrdGraph object} once the graph is created.
+     * for a non-zero value.</p>
+     * 
+     * <p>Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
+     * from the {@link RrdGraph object} once the graph is created.</p>
      *
      * @param srcName   Virtual source name
      * @param consolFun Consolidation function to be applied to the source
@@ -932,15 +932,15 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Read the value of a variable (VDEF) and prints the value by using the given format string.  In
+     * <p>Read the value of a variable (VDEF) and prints the value by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
-     * the place where the number should be printed.
-     * <p>
-     * If an additional '%s' is found AFTER the marker, the value will be
+     * the place where the number should be printed.</p>
+     * 
+     * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
-     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
-     * <p>
-     * If a '%S' is used instead of a '%s', then instead of calculating
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
+     * 
+     * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
      * want all the values in a print statement to have the same SI magnitude unit.
@@ -948,10 +948,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      * then '%S' behaves like a '%s', unless the value is 0, in which case
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
-     * for a non-zero value.
-     * <p>
-     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
-     * from the {@link RrdGraph object} once the graph is created.
+     * for a non-zero value.</p>
+     * 
+     * <p>Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
+     * from the {@link RrdGraph object} once the graph is created.</p>
      *
      * @param srcName   Virtual source name
      * @param format    Format string (like "average = %10.3f %s")
@@ -961,17 +961,17 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Read the value of a variable (VDEF) and prints the the value or the time stamp, according to the strftime flag
+     * <p>Read the value of a variable (VDEF) and prints the the value or the time stamp, according to the strftime flag
      * by using the given format string.  In
      * and creates the result by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
-     * the place where the number should be printed.
-     * <p>
-     * If an additional '%s' is found AFTER the marker, the value will be
+     * the place where the number should be printed.</p>
+     * 
+     * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
-     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
-     * <p>
-     * If a '%S' is used instead of a '%s', then instead of calculating
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
+     * 
+     * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
      * want all the values in a print statement to have the same SI magnitude unit.
@@ -979,10 +979,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      * then '%S' behaves like a '%s', unless the value is 0, in which case
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
-     * for a non-zero value.
-     * <p>
-     * Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
-     * from the {@link RrdGraph object} once the graph is created.
+     * for a non-zero value.</p>
+     * 
+     * <p>Print results are collected in the {@link org.rrd4j.graph.RrdGraphInfo} object which is retrieved
+     * from the {@link RrdGraph object} once the graph is created.</p>
      *
      * @param srcName   Virtual source name
      * @param format    Format string (like "average = %10.3f %s")
@@ -1009,15 +1009,15 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Read the value of a variable (VDEF) and prints the value by using the given format string.  In
+     * <p>Read the value of a variable (VDEF) and prints the value by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
-     * the place where the number should be printed.
-     * <p>
-     * If an additional '%s' is found AFTER the marker, the value will be
+     * the place where the number should be printed.</p>
+     * 
+     * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
-     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
-     * <p>
-     * If a '%S' is used instead of a '%s', then instead of calculating
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
+     * 
+     * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
      * want all the values in a print statement to have the same SI magnitude unit.
@@ -1025,8 +1025,8 @@ public class RrdGraphDef implements RrdGraphConstants {
      * then '%S' behaves like a '%s', unless the value is 0, in which case
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
-     * for a non-zero value.
-     * <p>
+     * for a non-zero value.</p>
+     * 
      * print results are added to the graph as a legend
      *
      * @param srcName   Virtual source name
@@ -1037,17 +1037,17 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Read the value of a variable (VDEF) and prints the the value or the time stamp, according to the strftime flag
+     * <p>Read the value of a variable (VDEF) and prints the the value or the time stamp, according to the strftime flag
      * by using the given format string.  In
      * and creates the result by using the given format string.  In
      * the format string there should be a '%[l]f', '%[l]g' or '%[l]e' marker in
-     * the place where the number should be printed.
-     * <p>
-     * If an additional '%s' is found AFTER the marker, the value will be
+     * the place where the number should be printed.</p>
+     * 
+     * <p>If an additional '%s' is found AFTER the marker, the value will be
      * scaled and an appropriate SI magnitude unit will be printed in
-     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!
-     * <p>
-     * If a '%S' is used instead of a '%s', then instead of calculating
+     * place of the '%s' marker. The scaling will take the '--base' argument into consideration!</p>
+     * 
+     * <p>If a '%S' is used instead of a '%s', then instead of calculating
      * the appropriate SI magnitude unit for this value, the previously
      * calculated SI magnitude unit will be used.  This is useful if you
      * want all the values in a print statement to have the same SI magnitude unit.
@@ -1055,9 +1055,9 @@ public class RrdGraphDef implements RrdGraphConstants {
      * then '%S' behaves like a '%s', unless the value is 0, in which case
      * it does not remember a SI magnitude unit and a SI magnitude unit
      * will only be calculated when the next '%s' is seen or the next '%S'
-     * for a non-zero value.
-     * <p>
-     * print results are added to the graph as a legend
+     * for a non-zero value.</p>
+     * 
+     * <p>print results are added to the graph as a legend.</p>
      *
      * @param srcName   Virtual source name
      * @param format    Format string (like "average = %10.3f %s")
@@ -1377,15 +1377,15 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Does the same as {@link #line(String, java.awt.Paint)},
+     * <p>Does the same as {@link #line(String, java.awt.Paint)},
      * but the graph gets stacked on top of the
      * previous LINE, AREA or STACK graph. Depending on the type of the
      * previous graph, the STACK will be either a LINE or an AREA.  This
      * obviously implies that the first STACK must be preceded by an AREA
-     * or LINE.
-     * <p>
-     * Note, that when you STACK onto *UNKNOWN* data, Rrd4j will not
-     * draw any graphics ... *UNKNOWN* is not zero.
+     * or LINE.</p>
+     * 
+     * <p>Note, that when you STACK onto *UNKNOWN* data, Rrd4j will not
+     * draw any graphics ... *UNKNOWN* is not zero.</p>
      *
      * @param srcName Virtual source name
      * @param color   Stacked graph color
@@ -1397,13 +1397,13 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
-     * Does the same as {@link #line(String, java.awt.Paint, String)},
+     * <p>Does the same as {@link #line(String, java.awt.Paint, String)},
      * but the graph gets stacked on top of the
      * previous LINE, AREA or STACK graph. Depending on the type of the
      * previous graph, the STACK will be either a LINE or an AREA.  This
      * obviously implies that the first STACK must be preceded by an AREA
-     * or LINE.
-     * <p>
+     * or LINE.</p>
+     * 
      * Note, that when you STACK onto *UNKNOWN* data, Rrd4j will not
      * draw any graphics ... *UNKNOWN* is not zero.
      *

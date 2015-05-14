@@ -10,16 +10,14 @@ import java.io.OutputStream;
 import java.util.*;
 
 /**
- * Class to represent definition of new Round Robin Database (RRD).
+ * <p>Class to represent definition of new Round Robin Database (RRD).
  * Object of this class is used to create
  * new RRD from scratch - pass its reference as a <code>RrdDb</code> constructor
  * argument (see documentation for {@link org.rrd4j.core.RrdDb RrdDb} class). <code>RrdDef</code>
  * object <b>does not</b> actually create new RRD. It just holds all necessary
- * information which will be used during the actual creation process
- * <p>
+ * information which will be used during the actual creation process.</p>
  *
- * RRD definition (RrdDef object) consists of the following elements:
- * <p>
+ * <p>RRD definition (RrdDef object) consists of the following elements:</p>
  *
  * <ul>
  * <li> path to RRD that will be created
@@ -29,9 +27,9 @@ import java.util.*;
  * <li> one or more datasource definitions
  * <li> one or more archive definitions
  * </ul>
- * RrdDef provides API to set all these elements. For the complete explanation of all
+ * <p>RrdDef provides API to set all these elements. For the complete explanation of all
  * RRD definition parameters, see RRDTool's
- * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a>.
+ * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a>.</p>
  *
  * @author Sasa Markovic
  */
@@ -224,14 +222,13 @@ public class RrdDef {
     }
 
     /**
-     * Adds single datasource to RRD definition by specifying its data source name, source type,
+     * <p>Adds single datasource to RRD definition by specifying its data source name, source type,
      * heartbeat, minimal and maximal value. For the complete explanation of all data
      * source definition parameters see RRDTool's
-     * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a>.
-     * <p>
-     * <b>IMPORTANT NOTE:</b> If datasource name ends with '!', corresponding archives will never
+     * <a href="../../../../man/rrdcreate.html" target="man">rrdcreate man page</a>.</p>
+     * <p><b>IMPORTANT NOTE:</b> If datasource name ends with '!', corresponding archives will never
      * store NaNs as datasource values. In that case, NaN datasource values will be silently
-     * replaced with zeros by the framework.
+     * replaced with zeros by the framework.</p>
      *
      * @param dsName    Data source name.
      * @param dsType    Data source type. Valid types are "COUNTER",
@@ -248,20 +245,18 @@ public class RrdDef {
     }
 
     /**
-     * Adds single datasource to RRD definition from a RRDTool-like
+     * <p>Adds single datasource to RRD definition from a RRDTool-like
      * datasource definition string. The string must have six elements separated with colons
-     * (:) in the following order:
-     * <p>
+     * (:) in the following order:</p>
      * <pre>
      * DS:name:type:heartbeat:minValue:maxValue
      * </pre>
-     * For example:
-     * <p>
+     * <p>For example:</p>
      * <pre>
      * DS:input:COUNTER:600:0:U
      * </pre>
-     * For more information on datasource definition parameters see <code>rrdcreate</code>
-     * man page.<p>
+     * <p>For more information on datasource definition parameters see <code>rrdcreate</code>
+     * man page.</p>
      *
      * @param rrdToolDsDef Datasource definition string with the syntax borrowed from RRDTool.
      * @throws java.lang.IllegalArgumentException Thrown if invalid string is supplied.
@@ -369,20 +364,18 @@ public class RrdDef {
     }
 
     /**
-     * Adds single archive to RRD definition from a RRDTool-like
+     * <p>Adds single archive to RRD definition from a RRDTool-like
      * archive definition string. The string must have five elements separated with colons
-     * (:) in the following order:
-     * <p>
+     * (:) in the following order:</p>
      * <pre>
      * RRA:consolidationFunction:XFilesFactor:steps:rows
      * </pre>
-     * For example:
-     * <p>
+     * <p>For example:</p>
      * <pre>
      * RRA:AVERAGE:0.5:10:1000
      * </pre>
-     * For more information on archive definition parameters see <code>rrdcreate</code>
-     * man page.
+     * <p>For more information on archive definition parameters see <code>rrdcreate</code>
+     * man page.</p>
      *
      * @param rrdToolArcDef Archive definition string with the syntax borrowed from RRDTool.
      * @throws java.lang.IllegalArgumentException Thrown if invalid string is supplied.
@@ -612,8 +605,7 @@ public class RrdDef {
     /**
      * {@inheritDoc}
      *
-     * Compares the current RrdDef with another. RrdDefs are considered equal if:
-     * <p>
+     * <p>Compares the current RrdDef with another. RrdDefs are considered equal if:</p>
      * <ul>
      * <li>RRD steps match
      * <li>all datasources have exactly the same definition in both RrdDef objects (datasource names,

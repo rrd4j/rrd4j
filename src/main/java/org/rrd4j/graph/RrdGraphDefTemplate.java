@@ -13,13 +13,13 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 /**
- * Class used to create an arbitrary number of RrdGraphDef (graph definition) objects
+ * <p>Class used to create an arbitrary number of RrdGraphDef (graph definition) objects
  * from a single XML template. XML template can be supplied as an XML InputSource,
- * XML file or XML formatted string.
- * <p>
- * Here is an example of a properly formatted XML template with all available options in it
- * (unwanted options can be removed/ignored):
- * <p>
+ * XML file or XML formatted string.</p>
+ * 
+ * <p>Here is an example of a properly formatted XML template with all available options in it
+ * (unwanted options can be removed/ignored):</p>
+ * 
  * <pre>
  * &lt;rrd_graph_def&gt;
  *     &lt;!-- use '-' to represent in-memory graph --&gt;
@@ -186,8 +186,8 @@ import org.xml.sax.InputSource;
  *     &lt;/graph&gt;
  * &lt;/rrd_graph_def&gt;
  * </pre>
- * Notes on the template syntax:
- * <p>
+ * <p>Notes on the template syntax:</p>
+ * 
  * <ul>
  * <li>There is a strong relation between the XML template syntax and the syntax of
  * {@link org.rrd4j.graph.RrdGraphDef} class methods. If you are not sure what some XML tag means, check javadoc
@@ -210,9 +210,9 @@ import org.xml.sax.InputSource;
  * {@link org.rrd4j.core.XmlTemplate#setVariable(String, String) setVariable()}
  * methods from the base class to replace
  * template variables with real values at runtime.
- * <p>
- * Typical usage scenario:
- * <p>
+ *
+ * <p>Typical usage scenario:</p>
+ *
  * <ul>
  * <li>Create your XML template and save it to a file (template.xml, for example)
  * <li>Replace template values with variables if you want to change them during runtime.

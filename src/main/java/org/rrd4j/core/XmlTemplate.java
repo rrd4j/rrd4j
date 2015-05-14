@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
  * Methods are provided to specify variable values at runtime.
  * Note that this class has limited functionality: XML source gets parsed, and variable
  * values are collected. You have to extend this class to do something more useful.
- * <p>
  */
 public abstract class XmlTemplate {
     private static final String PATTERN_STRING = "\\$\\{(\\w+)\\}";

@@ -3,11 +3,10 @@ package org.rrd4j.core;
 import java.io.IOException;
 
 /**
- * Base implementation class for all backend classes. Each Round Robin Database object
+ * <p>Base implementation class for all backend classes. Each Round Robin Database object
  * ({@link org.rrd4j.core.RrdDb} object) is backed with a single RrdBackend object which performs
  * actual I/O operations on the underlying storage. Rrd4j supports
- * multiple backends out of the box. E.g.:
- * <p>
+ * multiple backends out of the box. E.g.:</p>
  * <ul>
  * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
  * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
@@ -25,9 +24,8 @@ import java.io.IOException;
  * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
  * </ul>
  *
- * To create your own backend in order to provide some custom type of RRD storage,
- * you should do the following:
- * <p>
+ * <p>To create your own backend in order to provide some custom type of RRD storage,
+ * you should do the following:</p>
  *
  * <ul>
  * <li>Create your custom RrdBackend class (RrdCustomBackend, for example)

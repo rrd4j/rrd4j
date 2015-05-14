@@ -252,8 +252,7 @@ public class Util {
     }
 
     /**
-     * Parses at-style time specification and returns the corresponding timestamp. For example:
-     * <p>
+     * <p>Parses at-style time specification and returns the corresponding timestamp. For example:</p>
      * <pre>
      * long t = Util.getTimestamp("now-1d");
      * </pre>
@@ -268,8 +267,7 @@ public class Util {
     }
 
     /**
-     * Parses two related at-style time specifications and returns corresponding timestamps. For example:
-     * <p>
+     * <p>Parses two related at-style time specifications and returns corresponding timestamps. For example:</p>
      * <pre>
      * long[] t = Util.getTimestamps("end-1d","now");
      * </pre>
@@ -648,12 +646,11 @@ public class Util {
     }
 
     /**
-     * Returns the root directory of the Rrd4j distribution. Useful in some demo applications,
-     * probably of no use anywhere else.
-     * <p>
-     * The function assumes that all Rrd4j .class files are placed under
+     * <p>Returns the root directory of the Rrd4j distribution. Useful in some demo applications,
+     * probably of no use anywhere else.</p>
+     * <p>The function assumes that all Rrd4j .class files are placed under
      * the &lt;root&gt;/classes subdirectory and that all jars (libraries) are placed in the
-     * &lt;root&gt;/lib subdirectory (the original Rrd4j directory structure).
+     * &lt;root&gt;/lib subdirectory (the original Rrd4j directory structure).</p>
      *
      * @return absolute path to Rrd4j's home directory
      */

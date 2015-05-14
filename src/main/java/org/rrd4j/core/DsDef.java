@@ -3,9 +3,8 @@ package org.rrd4j.core;
 import org.rrd4j.DsType;
 
 /**
- * Class to represent single data source definition within the RRD.
- * Datasource definition consists of the following five elements:
- * <p>
+ * <p>Class to represent single data source definition within the RRD.
+ * Datasource definition consists of the following five elements:</p>
  * <ul>
  * <li>data source name
  * <li>data source type

@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Each factory creates unlimited number of specific backend objects.
  *
  * Rrd4j supports four different backend types (backend factories) out of the box:
- * <p>
  * <ul>
  * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
  * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
@@ -71,7 +70,6 @@ public abstract class RrdBackendFactory {
      * Returns backend factory for the given backend factory name.
      *
      * @param name Backend factory name. Initially supported names are:
-     *             <p>
      *             <ul>
      *             <li><b>FILE</b>: Default factory which creates backends based on the
      *             java.io.* package. RRD data is stored in files on the disk

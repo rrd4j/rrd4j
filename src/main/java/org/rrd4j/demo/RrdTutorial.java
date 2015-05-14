@@ -47,7 +47,8 @@ public class RrdTutorial {
      * java -cp rrd4j-{version}.jar org.rrd4j.demo.RrdTutorial
      * </pre>
      * 
-     * @throws IOException
+     * @param args not used
+     * @throws IOException for many failure case
      */
     public static void main(String[] args) throws IOException {
         System.setProperty("java.awt.headless","true");

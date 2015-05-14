@@ -11,10 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Small swing-based utility to convert timestamps (seconds since epoch) to readable dates and vice versa.
+ * <p>Small swing-based utility to convert timestamps (seconds since epoch) to readable dates and vice versa.
  * Supports at-style time specification (like "now-2d", "noon yesterday") and other human-readable
- * data formats:
- * <p>
+ * data formats:</p>
  * <ul>
  * <li>MM/dd/yy HH:mm:ss
  * <li>dd.MM.yy HH:mm:ss

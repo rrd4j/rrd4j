@@ -67,7 +67,7 @@ public class TimeSpec {
     }
 
     /**
-     * Returns the corresponding timestamp (seconds since Epoch). Example:<p>
+     * <p>Returns the corresponding timestamp (seconds since Epoch). Example:</p>
      * <pre>
      * TimeParser p = new TimeParser("now-1day");
      * TimeSpec ts = p.parse();
@@ -89,8 +89,8 @@ public class TimeSpec {
     }
 
     /**
-     * Use this static method to resolve relative time references and obtain the corresponding
-     * Calendar objects. Example:<p>
+     * <p>Use this static method to resolve relative time references and obtain the corresponding
+     * Calendar objects. Example:</p>
      * <pre>
      * TimeParser pStart = new TimeParser("now-1month"); // starting time
      * TimeParser pEnd = new TimeParser("start+1week");  // ending time
@@ -116,8 +116,8 @@ public class TimeSpec {
     }
 
     /**
-     * Use this static method to resolve relative time references and obtain the corresponding
-     * timestamps (seconds since epoch). Example:<p>
+     * <p>Use this static method to resolve relative time references and obtain the corresponding
+     * timestamps (seconds since epoch). Example:</p>
      * <pre>
      * TimeParser pStart = new TimeParser("now-1month"); // starting time
      * TimeParser pEnd = new TimeParser("start+1week");  // ending time
