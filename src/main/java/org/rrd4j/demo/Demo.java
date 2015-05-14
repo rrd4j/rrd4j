@@ -1,10 +1,11 @@
 package org.rrd4j.demo;
 
-import org.rrd4j.core.*;
-import org.rrd4j.graph.RrdGraph;
-import org.rrd4j.graph.RrdGraphDef;
+import static org.rrd4j.ConsolFun.AVERAGE;
+import static org.rrd4j.ConsolFun.MAX;
+import static org.rrd4j.ConsolFun.TOTAL;
+import static org.rrd4j.DsType.GAUGE;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,8 +13,16 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Random;
 
-import static org.rrd4j.ConsolFun.*;
-import static org.rrd4j.DsType.GAUGE;
+import org.rrd4j.core.FetchData;
+import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdSafeFileBackend;
+import org.rrd4j.core.Sample;
+import org.rrd4j.core.Util;
+import org.rrd4j.data.Variable;
+import org.rrd4j.graph.RrdGraph;
+import org.rrd4j.graph.RrdGraphDef;
 
 /**
  * Simple demo just to check that everything is OK with this library. Creates two files in your
@@ -42,7 +51,7 @@ public class Demo {
      */
     public static void main(String[] args) throws IOException {
         System.setProperty("java.awt.headless","true");
-        
+
         println("== Starting demo");
         long startMillis = System.currentTimeMillis();
         if (args.length > 0) {
@@ -84,6 +93,7 @@ public class Demo {
             println("Checking RRD file structure... OK");
         } else {
             println("Invalid RRD file created. This is a serious bug, bailing out");
+            log.close();
             return;
         }
         rrdDb.close();
@@ -155,6 +165,10 @@ public class Demo {
         gDef.setLocale(Locale.US);
         gDef.setWidth(IMG_WIDTH);
         gDef.setHeight(IMG_HEIGHT);
+
+        // To use rrdtool font set or not
+        //gDef.setFontSet(true);
+
         gDef.setFilename(imgPath);
         gDef.setStartTime(start);
         gDef.setEndTime(end);
@@ -178,10 +192,22 @@ public class Demo {
 
         gDef.comment("\\r");
 
-        gDef.gprint("sun", MAX, "maxSun = %.3f%s");
-        gDef.gprint("sun", AVERAGE, "avgSun = %.3f%S\\c");
-        gDef.gprint("shade", MAX, "maxShade = %.3f%S");
-        gDef.gprint("shade", AVERAGE, "avgShade = %.3f%S\\c");
+        Variable sunmax = new Variable.MAX();
+        Variable sunaverage = new Variable.AVERAGE();
+        gDef.datasource("sunmax", "sun", sunmax);
+        gDef.datasource("sunaverage", "sun", sunaverage);
+        gDef.gprint("sunmax", "maxSun = %.3f%s");
+        gDef.gprint("sunaverage", "avgSun = %.3f%S\\c");
+        gDef.print("sunmax", "maxSun = %.3f%s");
+        gDef.print("sunmax", "maxSun time = %ts", true);
+        gDef.print("sunaverage", "avgSun = %.3f%S\\c");
+
+        gDef.datasource("shademax", "shade", new Variable.MAX());
+        gDef.datasource("shadeverage", "shade", new Variable.AVERAGE());
+        gDef.gprint("shademax", "maxShade = %.3f%S");
+        gDef.gprint("shadeverage", "avgShade = %.3f%S\\c");
+        gDef.print("shademax", "maxShade = %.3f%S");
+        gDef.print("shadeverage", "avgShade = %.3f%S\\c");
 
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);
