@@ -1,4 +1,4 @@
-Changes in version 2.2.1 - XXX 2015
+Changes in version 2.2.1 - 14 may 2015
 ----------------------------------------
 Except for some added RPN and default version for rrd, this is strictly a bug fix release.
 A new faster and deadlock free pool.

@@ -10,7 +10,7 @@ work with pure Java (no native functions or libraries, no Runtime.exec(), RRDToo
 
 ### Latest Version (requires Java 6+)
 
-RRD4J 2.2 (released 2013-04-11) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
+RRD4J 2.2.1 (released 2015-0514) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
 
 ### Building (optional)
 

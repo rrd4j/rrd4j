@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>2.2.1-SNAPSHOT</version>
+    <version>2.2.1</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <!-- Use the Sonatype parent to be able to sync to central. -->
@@ -21,10 +21,10 @@
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mavenJavadocPluginVersion>2.10.2</mavenJavadocPluginVersion>
+        <maven.plugin.javadoc.version>2.10.2</maven.plugin.javadoc.version>
         <mavenResourcesPlugin>2.7</mavenResourcesPlugin>
-        <mavenSurefirePlugin>2.18.1</mavenSurefirePlugin>
-        <junitVersion>4.12</junitVersion>
+        <maven.plugin.surefire.version>2.18.1</maven.plugin.surefire.version>
+        <junit.version>4.12</junit.version>
         <buildSource>1.6</buildSource>
         <buildTarget>1.6</buildTarget>
         <!-- current year. -->
