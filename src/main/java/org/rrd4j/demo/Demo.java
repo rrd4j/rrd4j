@@ -3,12 +3,15 @@ package org.rrd4j.demo;
 import org.rrd4j.core.*;
 import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphDef;
+import org.rrd4j.graph.TimeLabelFormat;
 
 import java.awt.*;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
@@ -42,7 +45,7 @@ public class Demo {
      */
     public static void main(String[] args) throws IOException {
         System.setProperty("java.awt.headless","true");
-        
+
         println("== Starting demo");
         long startMillis = System.currentTimeMillis();
         if (args.length > 0) {
@@ -152,6 +155,7 @@ public class Demo {
         println("Creating graph " + Util.getLapTime());
         println("== Creating graph from the second file");
         RrdGraphDef gDef = new RrdGraphDef();
+        //gDef.setTimeLabelFormat(new CustomTimeLabelFormat());
         gDef.setLocale(Locale.US);
         gDef.setWidth(IMG_WIDTH);
         gDef.setHeight(IMG_HEIGHT);
@@ -229,6 +233,28 @@ public class Demo {
                 value = 0;
             }
             return Math.round(oldValue);
+        }
+    }
+
+    static class CustomTimeLabelFormat implements TimeLabelFormat {
+        public String format(Calendar calendar, Locale locale, Date date) {
+            Calendar c = (Calendar) calendar.clone();
+            c.setTime(date);
+            if (c.get(Calendar.MILLISECOND) != 0) {
+                return String.format(locale, "%1$tH:%1$tM:%1$tS.%1$tL", c);
+            } else if (c.get(Calendar.SECOND) != 0) {
+                return String.format(locale, "%1$tH:%1$tM:%1$tS", c);
+            } else if (c.get(Calendar.MINUTE) != 0) {
+                return String.format(locale, "%1$tH:%1$tM", c);
+            } else if (c.get(Calendar.HOUR_OF_DAY) != 0) {
+                return String.format(locale, "%1$tH:%1$tM", c);
+            } else if (c.get(Calendar.DAY_OF_MONTH) != 1) {
+                return String.format(locale, "%1$tb%1$td", c);
+            } else if (c.get(Calendar.DAY_OF_YEAR) != 1) {
+                return String.format(locale, "%1$tb%1$td", c);
+            } else {
+                return String.format(locale, "%1$tY", c);
+            }
         }
     }
 }

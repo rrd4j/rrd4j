@@ -4,10 +4,10 @@ class TimeAxisSetting {
     final long secPerPix;
     final int minorUnit, minorUnitCount, majorUnit, majorUnitCount;
     final int labelUnit, labelUnitCount, labelSpan;
-    final String format;
+    final TimeLabelFormat format;
 
     TimeAxisSetting(long secPerPix, int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
-                    int labelUnit, int labelUnitCount, int labelSpan, String format) {
+                    int labelUnit, int labelUnitCount, int labelSpan, TimeLabelFormat format) {
         this.secPerPix = secPerPix;
         this.minorUnit = minorUnit;
         this.minorUnitCount = minorUnitCount;
@@ -32,9 +32,26 @@ class TimeAxisSetting {
     }
 
     TimeAxisSetting(int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
-                    int labelUnit, int labelUnitCount, int labelSpan, String format) {
+                    int labelUnit, int labelUnitCount, int labelSpan, TimeLabelFormat format) {
         this(0, minorUnit, minorUnitCount, majorUnit, majorUnitCount,
                 labelUnit, labelUnitCount, labelSpan, format);
     }
 
+    TimeAxisSetting(long secPerPix, int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
+                    int labelUnit, int labelUnitCount, int labelSpan, String format) {
+        this(secPerPix, minorUnit, minorUnitCount, majorUnit, majorUnitCount,
+                labelUnit, labelUnitCount, labelSpan, new SimpleTimeLabelFormat(format));
+    }
+
+    TimeAxisSetting(int minorUnit, int minorUnitCount, int majorUnit, int majorUnitCount,
+                    int labelUnit, int labelUnitCount, int labelSpan, String format) {
+        this(0, minorUnit, minorUnitCount, majorUnit, majorUnitCount,
+                labelUnit, labelUnitCount, labelSpan, new SimpleTimeLabelFormat(format));
+    }
+
+    TimeAxisSetting withLabelFormat(TimeLabelFormat f) {
+        return new TimeAxisSetting(
+            secPerPix, minorUnit, minorUnitCount, majorUnit, majorUnitCount,
+            labelUnit, labelUnitCount, labelSpan, f);
+    }
 }
