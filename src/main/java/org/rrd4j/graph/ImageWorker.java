@@ -218,13 +218,17 @@ class ImageWorker {
 
         try {
             writer.write(null, new IIOImage(outputImage, null, null), iwp);
+            imageStream.flush();
         } catch (IOException e) {
             writer.abort();
             throw e;
+        } finally {
+            try {
+                imageStream.close();
+            } catch (Exception inner) {
+            }
+            writer.dispose();
         }
-        writer.dispose();
-
-        imageStream.flush();
     }
 
     byte[] saveImage(String path, String type, float quality, boolean interlaced) throws IOException {
