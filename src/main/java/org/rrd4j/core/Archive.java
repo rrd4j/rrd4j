@@ -56,6 +56,10 @@ public class Archive implements RrdUpdater {
             robins = new RobinMatrix[n];
             for (int i = 0; i < n; i++) {
                 pointers[i] = new RrdInt(this);
+                //Purge old pointers content, avoid problems with file reuse
+                if(shouldInitialize) {
+                    pointers[i].set(0);
+                }
                 states[i] = new ArcState(this, shouldInitialize);
             }
             RrdDoubleMatrix values = new RrdDoubleMatrix(this, numRows, n, shouldInitialize);
