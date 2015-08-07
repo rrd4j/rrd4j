@@ -50,42 +50,45 @@ public class RrdDbPoolTest {
         instance.setCapacity(10);
         final Queue<RrdDb> dbs = new ConcurrentLinkedQueue<RrdDb>();
         final AtomicInteger done = new AtomicInteger(0);
+        final AtomicInteger created = new AtomicInteger(0);
         final CountDownLatch full = new CountDownLatch(10);
+        //A thread that will count all release db
         Thread t = new Thread() {
-
             @Override
             public void run() {
                 try {
+                    //Wait until pool was filled once
                     full.await();
-                    while(instance.getOpenFileCount() > 0) {
+                    while(created.get() < 12 || instance.getOpenFileCount() > 0) {
                         Assert.assertTrue("too much open files", instance.getOpenFileCount() <= 10);
                         if(dbs.size() > 0) {
                             RrdDb release = dbs.poll();
                             instance.release(release);
                             done.incrementAndGet();
-                            Thread.yield();
                         }
+                        Thread.yield();
                     }
-
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
         };
+        t.start();
         final CountDownLatch barrier = new CountDownLatch(1);
         for(int i=0; i < 12; i++) {
             final int locali = i;
             new Thread() {
-
                 @Override
                 public void run() {
                     try {
                         RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test" + locali + ".rrd").getCanonicalPath());
                         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
                         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+                        //All thread are synchronized and will try to create a db at the same time
                         barrier.await();
                         RrdDb db = instance.requestRrdDb(def);
-                        dbs.add(db);                        
+                        dbs.add(db);
+                        created.incrementAndGet();
                         full.countDown();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -93,13 +96,14 @@ public class RrdDbPoolTest {
                 }                
             }.start();
         }
+        Thread.yield();
+        //launch all the sub-threads
         barrier.countDown();
-        full.await();
-        t.start();
+        //Finished when pool is empty
         t.join();
-        Assert.assertEquals("failure in sub thread", 12, done.get()); 
         String[] files = instance.getOpenFiles();
         Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
+        Assert.assertEquals("finished, but not all db seen", 12, done.get()); 
     }
 
     @Test(timeout=500)
