@@ -142,5 +142,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
          * The default thread pool used to periodically sync the mapped file to disk with.
          */
         static RrdSyncThreadPool INSTANCE = new RrdSyncThreadPool(syncPoolSize);
+
+        private DefaultSyncThreadPool() {}
     }
 }

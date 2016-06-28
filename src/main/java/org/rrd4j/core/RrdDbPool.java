@@ -20,6 +20,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
         static final RrdDbPool instance = new RrdDbPool();
+
+        private RrdDbPoolSingletonHolder() {}
     }
 
     /**

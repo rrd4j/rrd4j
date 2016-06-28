@@ -40,6 +40,8 @@ public class Demo {
     static final int IMG_WIDTH = 500;
     static final int IMG_HEIGHT = 300;
 
+    private Demo() {}
+
     /**
      * <p>To start the demo, use the following command:</p>
      * <pre>
