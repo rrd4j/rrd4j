@@ -20,7 +20,7 @@ import java.util.Locale;
  */
 public class Archive {
 
-    static private enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha};
+    private static enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha};
 
     final RRDatabase db;
     final long offset;

@@ -30,10 +30,10 @@ public class HashRange {
 
     // statics
 
-    private final static BigInteger INT_MINIMUM = BigInteger.valueOf(Integer.MIN_VALUE);
-    private final static BigInteger INT_MAXIMUM = BigInteger.valueOf(Integer.MAX_VALUE);
-    private final static BigInteger LONG_MINIMUM = BigInteger.valueOf(Long.MIN_VALUE);
-    private final static BigInteger LONG_MAXIMUM = BigInteger.valueOf(Long.MAX_VALUE);
+    private static final BigInteger INT_MINIMUM = BigInteger.valueOf(Integer.MIN_VALUE);
+    private static final BigInteger INT_MAXIMUM = BigInteger.valueOf(Integer.MAX_VALUE);
+    private static final BigInteger LONG_MINIMUM = BigInteger.valueOf(Long.MIN_VALUE);
+    private static final BigInteger LONG_MAXIMUM = BigInteger.valueOf(Long.MAX_VALUE);
 
     public static HashRange FULL_INT_RANGE = new HashRange(INT_MINIMUM, INT_MAXIMUM);
     public static HashRange POSITIVE_INT_RANGE = new HashRange(BigInteger.ONE, INT_MAXIMUM);

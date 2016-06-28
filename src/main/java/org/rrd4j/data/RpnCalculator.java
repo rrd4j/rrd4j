@@ -629,8 +629,8 @@ class RpnCalculator {
         abstract void do_method(RpnCalculator c, State s);
     }
 
-    static private final Token_Symbol[] symbols;
-    static private final PerfectStringHash perfect;
+    private static final Token_Symbol[] symbols;
+    private static final PerfectStringHash perfect;
     static
     {
         List<String> tokenStrings = new ArrayList<String>(Token_Symbol.values().length);

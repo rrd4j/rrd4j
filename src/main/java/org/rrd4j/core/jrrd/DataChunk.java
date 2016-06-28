@@ -17,10 +17,10 @@ public class DataChunk {
     private final long startTime;
     final int start;
     final int end;
-    final private long step;
+    private final long step;
     final int dsCount;
     final double[][] data;
-    final private int rows;
+    private final int rows;
     private final Map<String, Integer> nameindex;
 
     DataChunk(Map<String, Integer> nameindex, long startTime, int start, int end, long step, int dsCount, int rows) {

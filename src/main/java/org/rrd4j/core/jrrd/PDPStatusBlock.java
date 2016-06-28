@@ -15,7 +15,7 @@ public class PDPStatusBlock {
     String lastReading;
     int unknownSeconds;
     double value;
-    static private enum pdp_par_en {PDP_unkn_sec_cnt, PDP_val};
+    private static enum pdp_par_en {PDP_unkn_sec_cnt, PDP_val};
 
     PDPStatusBlock(RRDFile file) throws IOException {
 

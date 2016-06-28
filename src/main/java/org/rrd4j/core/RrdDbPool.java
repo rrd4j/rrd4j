@@ -28,7 +28,7 @@ public class RrdDbPool {
      */
     public static final int INITIAL_CAPACITY = 200;
 
-    static private class RrdEntry {
+    private static class RrdEntry {
         RrdDb rrdDb = null;
         int count = 0;
         final CountDownLatch waitempty;
