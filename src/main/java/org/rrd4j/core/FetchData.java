@@ -295,6 +295,7 @@ public class FetchData {
      *                  (these string constants are conveniently defined in the {@link org.rrd4j.ConsolFun} class)
      * @throws java.lang.IllegalArgumentException Thrown if the given datasource name cannot be found in fetched data.
      * @return a double.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public double getAggregate(String dsName, ConsolFun consolFun) {
@@ -313,6 +314,7 @@ public class FetchData {
      * @param consolFun     Consolidation function (MIN, MAX, LAST, FIRST, AVERAGE or TOTAL)
      * @return Aggregated value
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
+     * @deprecated This method is deprecated
      */
     @Deprecated
     public double getRpnAggregate(String rpnExpression, ConsolFun consolFun) {
@@ -327,6 +329,7 @@ public class FetchData {
      * @param dsName Datasource name.
      * @return Simple object containing all aggregated values.
      * @throws java.lang.IllegalArgumentException Thrown if the given datasource name cannot be found in the fetched data.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public Aggregates getAggregates(String dsName) {
@@ -346,6 +349,7 @@ public class FetchData {
      * @return Object containing all aggregated values
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
      * @throws java.io.IOException if any.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public Aggregates getRpnAggregates(String rpnExpression) throws IOException {
@@ -369,6 +373,7 @@ public class FetchData {
      * @param dsName Datasource name
      * @return 95th percentile of fetched source values
      * @throws java.lang.IllegalArgumentException Thrown if invalid source name is supplied
+     * @deprecated This method is deprecated
      */
     @Deprecated
     public double get95Percentile(String dsName) {
@@ -383,6 +388,7 @@ public class FetchData {
      * @param rpnExpression RRDTool-like RPN expression
      * @return 95-percentile
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
+     * @deprecated This method is deprecated
      */
     @Deprecated
     public double getRpn95Percentile(String rpnExpression) {

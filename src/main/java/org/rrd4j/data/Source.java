@@ -30,12 +30,25 @@ abstract class Source {
         return timestamps;
     }
 
+    /**
+     * @param tStart
+     * @param tEnd
+     * @return
+     * @deprecated This method is deprecated.
+     */
     @Deprecated
     Aggregates getAggregates(long tStart, long tEnd) {
         Aggregator agg = new Aggregator(timestamps, values);
         return agg.getAggregates(tStart, tEnd);
     }
 
+    /**
+     * @param tStart
+     * @param tEnd
+     * @param percentile
+     * @return
+     * @deprecated This method is deprecated.
+     */
     @Deprecated
     double getPercentile(long tStart, long tEnd, double percentile) {
         Variable vpercent = new Variable.PERCENTILE((float) percentile);
