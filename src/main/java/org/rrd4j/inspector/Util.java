@@ -5,6 +5,8 @@ import java.awt.*;
 import java.util.Vector;
 
 class Util {
+    private Util() {}
+
     static void centerOnScreen(Window window) {
         Toolkit t = Toolkit.getDefaultToolkit();
         Dimension screenSize = t.getScreenSize();

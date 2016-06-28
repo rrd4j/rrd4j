@@ -258,6 +258,8 @@ public interface RrdGraphConstants {
      * Font constructor, to use embedded fonts
      */
     static class FontConstructor {
+        private FontConstructor() {}
+
         /**
          * Return the default RRD4J's default font for the given strength
          * @param type {@link java.awt.Font#BOLD} for a bold fond, any other value return plain style.
