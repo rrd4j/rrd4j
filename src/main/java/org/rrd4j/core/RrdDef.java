@@ -275,7 +275,7 @@ public class RrdDef {
         for (int curTok = 0; tokenizer.hasMoreTokens(); curTok++) {
             tokens[curTok] = tokenizer.nextToken();
         }
-        if (!tokens[0].equalsIgnoreCase("DS")) {
+        if (!"DS".equalsIgnoreCase(tokens[0])) {
             throw illArgException;
         }
         String dsName = tokens[1];
@@ -288,7 +288,7 @@ public class RrdDef {
             throw illArgException;
         }
         double minValue = Double.NaN;
-        if (!tokens[4].equalsIgnoreCase("U")) {
+        if (!"U".equalsIgnoreCase(tokens[4])) {
             try {
                 minValue = Double.parseDouble(tokens[4]);
             }
@@ -297,7 +297,7 @@ public class RrdDef {
             }
         }
         double maxValue = Double.NaN;
-        if (!tokens[5].equalsIgnoreCase("U")) {
+        if (!"U".equalsIgnoreCase(tokens[5])) {
             try {
                 maxValue = Double.parseDouble(tokens[5]);
             }
@@ -391,7 +391,7 @@ public class RrdDef {
         for (int curTok = 0; tokenizer.hasMoreTokens(); curTok++) {
             tokens[curTok] = tokenizer.nextToken();
         }
-        if (!tokens[0].equalsIgnoreCase("RRA")) {
+        if (!"RRA".equalsIgnoreCase(tokens[0])) {
             throw illArgException;
         }
         ConsolFun consolFun = ConsolFun.valueOf(tokens[1]);

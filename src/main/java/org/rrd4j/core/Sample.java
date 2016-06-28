@@ -166,7 +166,7 @@ public class Sample {
             time = Long.parseLong(timeToken);
         }
         catch (NumberFormatException nfe) {
-            if (timeToken.equalsIgnoreCase("N") || timeToken.equalsIgnoreCase("NOW")) {
+            if ("N".equalsIgnoreCase(timeToken) || "NOW".equalsIgnoreCase(timeToken)) {
                 time = Util.getTime();
             }
             else {
