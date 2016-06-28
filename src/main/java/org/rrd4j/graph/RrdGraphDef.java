@@ -666,6 +666,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * font is selected.
      *
      * @param smallFont Default font for graphing. Use only monospaced fonts.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public void setSmallFont(final Font smallFont) {
@@ -676,6 +677,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * Sets title font.
      *
      * @param largeFont Font to be used for graph title.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public void setLargeFont(final Font largeFont) {
@@ -828,6 +830,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param name      Source name
      * @param defName   Other source name
      * @param consolFun Consolidation function to be applied to other datasource.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public void datasource(String name, String defName, ConsolFun consolFun) {
@@ -878,6 +881,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param name    Source name.
      * @param defName Other source name.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public void percentile(String name, String defName) {
@@ -889,7 +893,8 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param name    Source name.
      * @param defName Other source name.
-     * @param percent The percent value
+     * @param percent The percent value.
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public void percentile(String name, String defName, double percent) {
@@ -922,6 +927,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param srcName   Virtual source name
      * @param consolFun Consolidation function to be applied to the source
      * @param format    Format string (like "average = %10.3f %s")
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public void print(String srcName, ConsolFun consolFun, String format) {
@@ -996,9 +1002,10 @@ public class RrdGraphDef implements RrdGraphConstants {
      * This method does basically the same thing as {@link #print(String, ConsolFun, String)},
      * but the result is printed on the graph itself, below the chart area.
      *
-     * @param srcName   Virtual source name
-     * @param consolFun Consolidation function to be applied to the source
+     * @param srcName   Virtual source name.
+     * @param consolFun Consolidation function to be applied to the source.
      * @param format    Format string (like "average = %10.3f %s")
+     * @deprecated This method is deprecated.
      */
     @Deprecated
     public void gprint(String srcName, ConsolFun consolFun, String format) {
