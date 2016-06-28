@@ -160,7 +160,7 @@ public class RrdDefTemplate extends XmlTemplate {
      *                                  method call
      */
     public RrdDef getRrdDef() {
-        if (!root.getTagName().equals("rrd_def")) {
+        if (!"rrd_def".equals(root.getTagName())) {
             throw new IllegalArgumentException("XML definition must start with <rrd_def>");
         }
         validateTagsOnlyOnce(root, new String[]{
