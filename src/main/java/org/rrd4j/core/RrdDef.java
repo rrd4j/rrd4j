@@ -463,10 +463,11 @@ public class RrdDef {
      */
     public String dump() {
         StringBuilder sb = new StringBuilder("create \"");
-        sb.append(path).append("\"");
-        sb.append(" --version ").append(getVersion());
-        sb.append(" --start ").append(getStartTime());
-        sb.append(" --step ").append(getStep()).append(" ");
+        sb.append(path)
+          .append("\"")
+          .append(" --version ").append(getVersion())
+          .append(" --start ").append(getStartTime())
+          .append(" --step ").append(getStep()).append(" ");
         for (DsDef dsDef : dsDefs) {
             sb.append(dsDef.dump()).append(" ");
         }

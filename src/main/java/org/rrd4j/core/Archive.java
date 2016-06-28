@@ -98,8 +98,20 @@ public class Archive implements RrdUpdater {
 
     String dump() throws IOException {
         StringBuilder sb = new StringBuilder("== ARCHIVE ==\n");
-        sb.append("RRA:").append(consolFun.get()).append(":").append(xff.get()).append(":").append(steps.get()).append(":").append(rows.get()).append("\n");
-        sb.append("interval [").append(getStartTime()).append(", ").append(getEndTime()).append("]" + "\n");
+        sb.append("RRA:")
+          .append(consolFun.get())
+          .append(":")
+          .append(xff.get())
+          .append(":")
+          .append(steps.get())
+          .append(":")
+          .append(rows.get())
+          .append("\n")
+          .append("interval [")
+          .append(getStartTime())
+          .append(", ")
+          .append(getEndTime())
+          .append("]" + "\n");
         for (int i = 0; i < robins.length; i++) {
             sb.append(states[i].dump());
             sb.append(robins[i].dump());

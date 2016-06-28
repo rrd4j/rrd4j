@@ -257,8 +257,8 @@ public class FetchData {
     public String toString() {
         // print header row
         StringBuilder buff = new StringBuilder();
-        buff.append(padWithBlanks("", 10));
-        buff.append(" ");
+        buff.append(padWithBlanks("", 10))
+            .append(" ");
         for (String dsName : dsNames) {
             buff.append(padWithBlanks(dsName, 18));
         }

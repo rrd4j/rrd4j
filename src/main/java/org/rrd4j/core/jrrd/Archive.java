@@ -341,20 +341,20 @@ public class Archive {
 
         StringBuilder sb = new StringBuilder("[Archive: OFFSET=0x");
 
-        sb.append(Long.toHexString(offset));
-        sb.append(", SIZE=0x");
-        sb.append(Long.toHexString(size));
-        sb.append(", type=");
-        sb.append(type);
-        sb.append(", rowCount=");
-        sb.append(rowCount);
-        sb.append(", pdpCount=");
-        sb.append(pdpCount);
-        sb.append(", xff=");
-        sb.append(xff);
-        sb.append(", currentRow=");
-        sb.append(currentRow);
-        sb.append("]");
+        sb.append(Long.toHexString(offset))
+          .append(", SIZE=0x")
+          .append(Long.toHexString(size))
+          .append(", type=")
+          .append(type)
+          .append(", rowCount=")
+          .append(rowCount)
+          .append(", pdpCount=")
+          .append(pdpCount)
+          .append(", xff=")
+          .append(xff)
+          .append(", currentRow=")
+          .append(currentRow)
+          .append("]");
 
         for(CDPStatusBlock cdp: cdpStatusBlocks) {
             sb.append("\n\t\t");
