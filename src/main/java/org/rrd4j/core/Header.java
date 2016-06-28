@@ -21,7 +21,7 @@ public class Header implements RrdUpdater {
     static final String DEFAULT_SIGNATURE = "RRD4J, version 0.1";
     static final String RRDTOOL_VERSION1 = "0001";
     static final String RRDTOOL_VERSION3 = "0003";
-    static final private String VERSIONS[] = {"version 0.1", "version 0.2"};
+    private static final String VERSIONS[] = {"version 0.1", "version 0.2"};
 
     private RrdDb parentDb;
     private int version = -1;

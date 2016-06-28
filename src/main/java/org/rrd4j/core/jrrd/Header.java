@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class Header implements Constants {
 
-    private final static double FLOAT_COOKIE = 8.642135E130;
+    private static final double FLOAT_COOKIE = 8.642135E130;
     private static final long offset = 0;
     private long size;
     String version = UNDEFINED_VERSION;

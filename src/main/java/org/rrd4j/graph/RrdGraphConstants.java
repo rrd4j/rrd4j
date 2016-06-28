@@ -266,7 +266,7 @@ public interface RrdGraphConstants {
          * @param size the size for the new Font
          * @return a new {@link java.awt.Font} instance
          */
-        static public Font getFont(int type, int size) {
+        public static Font getFont(int type, int size) {
             String fontPath;
             if (type == Font.BOLD)
                 fontPath = "/DejaVuSansMono-Bold.ttf";

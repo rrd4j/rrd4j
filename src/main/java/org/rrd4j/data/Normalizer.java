@@ -5,7 +5,7 @@ import org.rrd4j.core.Util;
 import java.util.Arrays;
 
 class Normalizer {
-    final private long[] timestamps;
+    private final long[] timestamps;
     final int count;
     final long step;
 

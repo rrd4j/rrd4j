@@ -56,7 +56,7 @@ public abstract class RrdFileBackend extends RrdBackend {
      *
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    abstract public void close() throws IOException;
+    public abstract void close() throws IOException;
 
     /**
      * {@inheritDoc}

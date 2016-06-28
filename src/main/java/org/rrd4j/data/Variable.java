@@ -19,15 +19,15 @@ public abstract class Variable {
      * It will be used by graph rendering legend
      */
     public static final class Value {
-        final public double value;
-        final public long timestamp;
+        public final double value;
+        public final long timestamp;
         Value(long timestamp, double value) {
             this.value = value;
             this.timestamp = timestamp;
         }
     };
 
-    static public final Value INVALIDVALUE = new Value(0, Double.NaN);
+    public static final Value INVALIDVALUE = new Value(0, Double.NaN);
 
     private Value val = null;
 
@@ -105,7 +105,7 @@ public abstract class Variable {
      * @param end the end of the period
      * @return a filled Value object
      */
-    abstract protected Value fill(long timestamps[], double[] values, long start, long end);
+     protected abstract Value fill(long timestamps[], double[] values, long start, long end);
 
     /**
      * Find the first valid data point and it's timestamp
@@ -271,7 +271,7 @@ public abstract class Variable {
         }
 
         @Override
-        final public boolean equals(Object arg0) {
+        public final boolean equals(Object arg0) {
             return timestamp == ((PercentElem) arg0).timestamp;
         }
         @Override
@@ -290,7 +290,7 @@ public abstract class Variable {
      */
     static final class ComparPercentElemen implements Comparator<PercentElem> {
         @Override
-        final public int compare(PercentElem arg0, PercentElem arg1) {
+        public final int compare(PercentElem arg0, PercentElem arg1) {
             if(Double.isNaN(arg0.value) && Double.isNaN(arg1.value))
                 return Long.signum(arg0.timestamp - arg1.timestamp);
             else if(Double.isNaN(arg0.value))
