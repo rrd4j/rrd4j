@@ -80,12 +80,12 @@ class DatasourceTableModel extends AbstractTableModel {
                         values = new Object[]{
                                 ds.getName(),
                                 ds.getType(),
-                                "" + ds.getHeartbeat(),
+                                Long.toString(ds.getHeartbeat()),
                                 InspectorModel.formatDouble(ds.getMinValue()),
                                 InspectorModel.formatDouble(ds.getMaxValue()),
                                 InspectorModel.formatDouble(ds.getLastValue()),
                                 InspectorModel.formatDouble(ds.getAccumValue()),
-                                "" + ds.getNanSeconds()
+                                Long.toString(ds.getNanSeconds())
                         };
                     }
                     finally {

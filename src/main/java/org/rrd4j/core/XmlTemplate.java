@@ -169,7 +169,7 @@ public abstract class XmlTemplate {
      * @param value value to be set in the XML template
      */
     public void setVariable(String name, boolean value) {
-        valueMap.put(name, "" + value);
+        valueMap.put(name, Boolean.toString(value));
     }
 
     /**

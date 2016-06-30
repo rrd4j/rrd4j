@@ -63,11 +63,11 @@ class HeaderTableModel extends AbstractTableModel {
             try {
                 Header header = rrd.getHeader();
                 String signature = header.getSignature();
-                String step = "" + header.getStep();
+                String step = Long.toString(header.getStep());
                 String lastTimestamp = header.getLastUpdateTime() + " [" +
                         new Date(header.getLastUpdateTime() * 1000L) + "]";
-                String datasources = "" + header.getDsCount();
-                String archives = "" + header.getArcCount();
+                String datasources = Integer.toString(header.getDsCount());
+                String archives = Integer.toString(header.getArcCount());
                 String size = rrd.getRrdBackend().getLength() + " bytes";
                 values = new Object[]{
                         path, signature, step, lastTimestamp, datasources, archives, size

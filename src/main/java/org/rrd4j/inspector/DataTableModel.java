@@ -109,7 +109,7 @@ class DataTableModel extends AbstractTableModel {
                             String date = new Date(timestamp * 1000L).toString();
                             String value = InspectorModel.formatDouble(robinValues[i]);
                             values[i] = new Object[]{
-                                    "" + timestamp, date, value
+                                    Long.toString(timestamp), date, value
                             };
                         }
                     }

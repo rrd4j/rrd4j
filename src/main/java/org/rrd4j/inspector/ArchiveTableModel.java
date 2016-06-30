@@ -75,13 +75,13 @@ class ArchiveTableModel extends AbstractTableModel {
                         ArcState state = arc.getArcState(dsIndex);
                         values = new Object[]{
                                 arc.getConsolFun(),
-                                "" + arc.getXff(),
-                                "" + arc.getSteps(),
-                                "" + arc.getRows(),
+                                Double.toString(arc.getXff()),
+                                Integer.toString(arc.getSteps()),
+                                Integer.toString(arc.getRows()),
                                 InspectorModel.formatDouble(state.getAccumValue()),
-                                "" + state.getNanSteps(),
-                                "" + arc.getStartTime() + " [" + new Date(arc.getStartTime() * 1000L) + "]",
-                                "" + arc.getEndTime() + " [" + new Date(arc.getEndTime() * 1000L) + "]"
+                                Long.toString(state.getNanSteps()),
+                                Long.toString(arc.getStartTime()) + " [" + new Date(arc.getStartTime() * 1000L) + "]",
+                                Long.toString(arc.getEndTime()) + " [" + new Date(arc.getEndTime() * 1000L) + "]"
                         };
                     }
                     finally {

@@ -74,9 +74,9 @@ class EditDatasourceDialog extends JDialog {
             nameField.setEnabled(false);
             typeCombo.setSelectedItem(dsDef.getDsType());
             typeCombo.setEnabled(false);
-            heartbeatField.setText("" + dsDef.getHeartbeat());
-            minField.setText("" + dsDef.getMinValue());
-            maxField.setText("" + dsDef.getMaxValue());
+            heartbeatField.setText(Long.toString(dsDef.getHeartbeat()));
+            minField.setText(Double.toString(dsDef.getMinValue()));
+            maxField.setText(Double.toString(dsDef.getMaxValue()));
         }
 
         // layout

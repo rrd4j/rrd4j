@@ -39,7 +39,7 @@ class ValueAxisMrtg implements RrdGraphConstants {
             labfmt += " ";
         }
         if (im.symbol != ' ') {
-            labfmt += im.symbol;
+            labfmt += Character.toString(im.symbol);
         }
         if (im.unit != null) {
             labfmt += im.unit;

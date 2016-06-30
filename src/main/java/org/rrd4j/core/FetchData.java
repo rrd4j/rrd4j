@@ -264,7 +264,7 @@ public class FetchData {
         }
         buff.append("\n \n");
         for (int i = 0; i < timestamps.length; i++) {
-            buff.append(padWithBlanks("" + timestamps[i], 10));
+            buff.append(padWithBlanks(Long.toString(timestamps[i]), 10));
             buff.append(":");
             for (int j = 0; j < dsNames.length; j++) {
                 double value = values[j][i];

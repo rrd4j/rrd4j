@@ -147,11 +147,11 @@ public class Util {
         if (forceExponents) {
             return df.format(x);
         }
-        return "" + x;
+        return Double.toString(x);
     }
 
     static String formatDouble(double x, boolean forceExponents) {
-        return formatDouble(x, "" + Double.NaN, forceExponents);
+        return formatDouble(x, Double.toString(Double.NaN), forceExponents);
     }
 
     /**
