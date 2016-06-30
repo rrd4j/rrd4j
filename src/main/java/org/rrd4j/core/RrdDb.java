@@ -44,7 +44,7 @@ public class RrdDb implements RrdUpdater {
     /**
      * Prefix to identify external RRDTool file source used in various RrdDb constructors.
      */
-    public static final String PREFIX_RRDTool = "rrdtool:/";
+    public static final String PREFIX_RRD_TOOL = "rrdtool:/";
 
     // static final String RRDTOOL = "rrdtool";
     static final int XML_BUFFER_CAPACITY = 100000; // bytes
@@ -336,8 +336,8 @@ public class RrdDb implements RrdUpdater {
      */
     public RrdDb(String rrdPath, String externalPath, RrdBackendFactory factory) throws IOException {
         DataImporter reader;
-        if (externalPath.startsWith(PREFIX_RRDTool)) {
-            String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
+        if (externalPath.startsWith(PREFIX_RRD_TOOL)) {
+            String rrdToolPath = externalPath.substring(PREFIX_RRD_TOOL.length());
             reader = new RrdToolReader(rrdToolPath);
         }
         else if (externalPath.startsWith(PREFIX_XML)) {

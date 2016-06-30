@@ -62,7 +62,7 @@ public class Converter {
                     " " + rrdFile.getName() + " ");
             String sourcePath = rrdFile.getCanonicalPath();
             String destPath = sourcePath + SUFFIX;
-            RrdDb rrd = new RrdDb(destPath, RrdDb.PREFIX_RRDTool + sourcePath);
+            RrdDb rrd = new RrdDb(destPath, RrdDb.PREFIX_RRD_TOOL + sourcePath);
             rrd.close();
             goodCount++;
             double seconds = (System.currentTimeMillis() - start) / 1000.0;

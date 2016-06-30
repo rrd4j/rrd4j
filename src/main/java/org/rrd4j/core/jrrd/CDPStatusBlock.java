@@ -12,9 +12,9 @@ import java.io.PrintStream;
 public class CDPStatusBlock {
 
     private static enum cdp_par_en {
-        CDP_val, CDP_unkn_pdp_cnt, CDP_hw_intercept, CDP_hw_last_intercept, CDP_hw_slope, 
-        CDP_hw_last_slope, CDP_null_count,
-        CDP_last_null_count, CDP_primary_val, CDP_secondary_val
+        CDP_VAL, CDP_UNKN_PDP_CNT, CDP_HW_INTERCEPT, CDP_HW_LAST_INTERCEPT, CDP_HW_SLOPE,
+        CDP_HW_LAST_SLOPE, CDP_NULL_COUNT,
+        CDP_LAST_NULL_COUNT, CDP_PRIMARY_VAL, CDP_SECONDARY_VAL
     };
 
     final long offset;
@@ -30,10 +30,10 @@ public class CDPStatusBlock {
         //Size should be 0x50
         offset = file.getFilePointer();
         UnivalArray scratch = file.getUnivalArray(10);
-        value = scratch.getDouble(cdp_par_en.CDP_val);
-        unknownDatapoints = (int) scratch.getDouble(cdp_par_en.CDP_unkn_pdp_cnt);
-        primary_value = scratch.getDouble(cdp_par_en.CDP_primary_val);
-        secondary_value = scratch.getDouble(cdp_par_en.CDP_secondary_val);
+        value = scratch.getDouble(cdp_par_en.CDP_VAL);
+        unknownDatapoints = (int) scratch.getDouble(cdp_par_en.CDP_UNKN_PDP_CNT);
+        primary_value = scratch.getDouble(cdp_par_en.CDP_PRIMARY_VAL);
+        secondary_value = scratch.getDouble(cdp_par_en.CDP_SECONDARY_VAL);
 
         size = file.getFilePointer() - offset;
     }

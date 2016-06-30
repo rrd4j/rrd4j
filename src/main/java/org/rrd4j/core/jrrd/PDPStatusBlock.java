@@ -15,15 +15,15 @@ public class PDPStatusBlock {
     String lastReading;
     int unknownSeconds;
     double value;
-    private static enum pdp_par_en {PDP_unkn_sec_cnt, PDP_val};
+    private static enum pdp_par_en {PDP_UNKN_SEC_CNT, PDP_VAL};
 
     PDPStatusBlock(RRDFile file) throws IOException {
 
         offset = file.getFilePointer();
         lastReading = file.readString(Constants.LAST_DS_LEN);
         UnivalArray scratch = file.getUnivalArray(10);
-        unknownSeconds = (int) scratch.getLong(pdp_par_en.PDP_unkn_sec_cnt);
-        value = scratch.getDouble(pdp_par_en.PDP_val);
+        unknownSeconds = (int) scratch.getLong(pdp_par_en.PDP_UNKN_SEC_CNT);
+        value = scratch.getDouble(pdp_par_en.PDP_VAL);
 
         size = file.getFilePointer() - offset;
     }

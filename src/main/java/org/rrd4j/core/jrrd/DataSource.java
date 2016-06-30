@@ -12,7 +12,7 @@ import java.text.NumberFormat;
  */
 public class DataSource {
 
-    private static enum ds_param_en { DS_mrhb_cnt, DS_min_val, DS_max_val, DS_cde }
+    private static enum ds_param_en {DS_MRHB_CNT, DS_MIN_VAL, DS_MAX_VAL, DS_CDE}
 
     private long offset;
     private long size;
@@ -30,9 +30,9 @@ public class DataSource {
         type = DataSourceType.valueOf(file.readString(Constants.DST_SIZE).toUpperCase());
 
         UnivalArray par = file.getUnivalArray(10);
-        minimumHeartbeat = (int) par.getLong(ds_param_en.DS_mrhb_cnt);
-        minimum = par.getDouble(ds_param_en.DS_min_val);
-        maximum = par.getDouble(ds_param_en.DS_max_val);
+        minimumHeartbeat = (int) par.getLong(ds_param_en.DS_MRHB_CNT);
+        minimum = par.getDouble(ds_param_en.DS_MIN_VAL);
+        maximum = par.getDouble(ds_param_en.DS_MAX_VAL);
         size = file.getFilePointer() - offset;
     }
 

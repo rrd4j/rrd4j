@@ -20,7 +20,7 @@ import java.util.Locale;
  */
 public class Archive {
 
-    private static enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha};
+    private static enum rra_par_en {RRA_CDP_XFF_VAL, RRA_HW_ALPHA};
 
     final RRDatabase db;
     final long offset;
@@ -48,7 +48,7 @@ public class Archive {
         pdpCount = file.readLong();
 
         UnivalArray par = file.getUnivalArray(10);
-        xff = par.getDouble(rra_par_en.RRA_cdp_xff_val);
+        xff = par.getDouble(rra_par_en.RRA_CDP_XFF_VAL);
 
         size = file.getFilePointer() - offset;
     }
