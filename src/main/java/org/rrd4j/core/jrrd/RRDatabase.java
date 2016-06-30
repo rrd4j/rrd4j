@@ -350,7 +350,7 @@ public class RRDatabase {
         int firstFull = 1;
         long bestMatch = 0;
         long bestStepDiff = 0;
-        long tmpStepDiff = 0;
+        long tmpStepDiff;
 
         for (Archive archive1 : archives) {
             archive = archive1;

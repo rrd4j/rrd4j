@@ -569,7 +569,7 @@ class RpnCalculator {
                 int doshifts = Math.abs(num_shifts);
                 for (int loop = 0; loop < doshifts; loop++) {
                     /* calculate shift step */
-                    int shiftstep = 1;
+                    int shiftstep;
                     if (num_shifts < 0) {
                         shiftstep = loop * (int) multipliers[0];
                     } else {
