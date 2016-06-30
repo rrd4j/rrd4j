@@ -127,7 +127,7 @@ public class Epoch extends JFrame {
             catch (NumberFormatException nfe) {
                 // failed, try as a date
                 try {
-                    inputField.setText("" + parseDate(time));
+                    inputField.setText(Long.toString(parseDate(time)));
                 }
                 catch (Exception e) {
                     inputField.setText("Could not convert, sorry");

@@ -78,7 +78,7 @@ public class XmlWriter {
      * @param value value to be placed between <code>&lt;tag&gt;</code> and <code>&lt;/tag&gt;</code>
      */
     public void writeTag(String tag, int value) {
-        writeTag(tag, "" + value);
+        writeTag(tag, Integer.toString(value));
     }
 
     /**
@@ -88,7 +88,7 @@ public class XmlWriter {
      * @param value value to be placed between <code>&lt;tag&gt;</code> and <code>&lt;/tag&gt;</code>
      */
     public void writeTag(String tag, long value) {
-        writeTag(tag, "" + value);
+        writeTag(tag, Long.toString(value));
     }
 
     /**
@@ -119,7 +119,7 @@ public class XmlWriter {
      * @param value value to be placed between <code>&lt;tag&gt;</code> and <code>&lt;/tag&gt;</code>
      */
     public void writeTag(String tag, boolean value) {
-        writeTag(tag, "" + value);
+        writeTag(tag, Boolean.toString(value));
     }
 
     /**

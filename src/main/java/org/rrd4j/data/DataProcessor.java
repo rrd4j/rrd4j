@@ -686,7 +686,7 @@ public class DataProcessor {
         }
         buffer.append("\n");
         for (int i = 0; i < timestamps.length; i++) {
-            buffer.append(format("" + timestamps[i], 12));
+            buffer.append(format(Long.toString(timestamps[i]), 12));
             for (int j = 0; j < names.length; j++) {
                 buffer.append(format(Util.formatDouble(values[j][i]), 20));
             }

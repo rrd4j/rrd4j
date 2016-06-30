@@ -45,16 +45,16 @@ class EditArchiveDialog extends JDialog {
         consolFunCombo.setSelectedIndex(0);
         if (arcDef == null) {
             // NEW
-            xffField.setText("" + 0.5);
+            xffField.setText(Double.toString(0.5));
         }
         else {
             // EDIT
             consolFunCombo.setSelectedItem(arcDef.getConsolFun());
             consolFunCombo.setEnabled(false);
-            xffField.setText("" + arcDef.getXff());
-            stepsField.setText("" + arcDef.getSteps());
+            xffField.setText(Double.toString(arcDef.getXff()));
+            stepsField.setText(Integer.toString(arcDef.getSteps()));
             stepsField.setEnabled(false);
-            rowsField.setText("" + arcDef.getRows());
+            rowsField.setText(Integer.toString(arcDef.getRows()));
             // rowsField.setEnabled(false);
         }
 

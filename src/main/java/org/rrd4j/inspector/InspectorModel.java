@@ -70,6 +70,6 @@ class InspectorModel {
     }
 
     static String formatDouble(double x) {
-        return formatDouble(x, "" + Double.NaN);
+        return formatDouble(x, Double.toString(Double.NaN));
     }
 }
