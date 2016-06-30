@@ -31,6 +31,9 @@ public class RrdInspector extends JFrame {
 
     static final String ABOUT = "RRD4J\nRRD File Inspector\n" +
             "Copyright (c) 2013 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc. Licensed under the Apache License, Version 2.0.";
+    private static final String JSCROLL_BAR_FAST_WHEEL_SCROLLING = "JScrollBar.fastWheelScrolling";
+    private static final String OPEN_A_VALID_RRD_FILE_FIRST = "Open a valid RRD file first.";
+    private static final String SELECT_ARCHIVE_FIRST = "Select archive first";
 
     JTabbedPane tabbedPane = new JTabbedPane();
     private JTree mainTree = new JTree();
@@ -93,7 +96,7 @@ public class RrdInspector extends JFrame {
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
         JScrollPane treePane = new JScrollPane(mainTree);
-        treePane.putClientProperty("JScrollBar.fastWheelScrolling", Boolean.TRUE);
+        treePane.putClientProperty(JSCROLL_BAR_FAST_WHEEL_SCROLLING, Boolean.TRUE);
         leftPanel.add(treePane);
         leftPanel.setPreferredSize(MAIN_TREE_SIZE);
 
@@ -115,7 +118,7 @@ public class RrdInspector extends JFrame {
 
         // GENERAL TAB
         JScrollPane spGeneral = new JScrollPane(generalTable);
-        spGeneral.putClientProperty("JScrollBar.fastWheelScrolling", Boolean.TRUE);
+        spGeneral.putClientProperty(JSCROLL_BAR_FAST_WHEEL_SCROLLING, Boolean.TRUE);
         spGeneral.setPreferredSize(INFO_PANE_SIZE);
         tabbedPane.add("General info", spGeneral);
         generalTable.setModel(inspectorModel.getGeneralTableModel());
@@ -124,7 +127,7 @@ public class RrdInspector extends JFrame {
 
         // DATASOURCE TAB
         JScrollPane spDatasource = new JScrollPane(datasourceTable);
-        spDatasource.putClientProperty("JScrollBar.fastWheelScrolling", Boolean.TRUE);
+        spDatasource.putClientProperty(JSCROLL_BAR_FAST_WHEEL_SCROLLING, Boolean.TRUE);
         spDatasource.setPreferredSize(INFO_PANE_SIZE);
         tabbedPane.add("Datasource info", spDatasource);
         datasourceTable.setModel(inspectorModel.getDatasourceTableModel());
@@ -133,7 +136,7 @@ public class RrdInspector extends JFrame {
 
         // ARCHIVE TAB
         JScrollPane spArchive = new JScrollPane(archiveTable);
-        spArchive.putClientProperty("JScrollBar.fastWheelScrolling", Boolean.TRUE);
+        spArchive.putClientProperty(JSCROLL_BAR_FAST_WHEEL_SCROLLING, Boolean.TRUE);
         archiveTable.setModel(inspectorModel.getArchiveTableModel());
         archiveTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         archiveTable.getColumnModel().getColumn(0).setMaxWidth(150);
@@ -142,7 +145,7 @@ public class RrdInspector extends JFrame {
 
         // DATA TAB
         JScrollPane spData = new JScrollPane(dataTable);
-        spData.putClientProperty("JScrollBar.fastWheelScrolling", Boolean.TRUE);
+        spData.putClientProperty(JSCROLL_BAR_FAST_WHEEL_SCROLLING, Boolean.TRUE);
         dataTable.setModel(inspectorModel.getDataTableModel());
         dataTable.getColumnModel().getColumn(0).setPreferredWidth(100);
         dataTable.getColumnModel().getColumn(0).setMaxWidth(100);
@@ -371,7 +374,7 @@ public class RrdInspector extends JFrame {
 
     private void addDatasource() {
         if (!inspectorModel.isOk()) {
-            Util.error(this, "Open a valid RRD file first.");
+            Util.error(this, OPEN_A_VALID_RRD_FILE_FIRST);
             return;
         }
         DsDef newDsDef = new EditDatasourceDialog(this, null).getDsDef();
@@ -391,7 +394,7 @@ public class RrdInspector extends JFrame {
 
     private void addArchive() {
         if (!inspectorModel.isOk()) {
-            Util.error(this, "Open a valid RRD file first.");
+            Util.error(this, OPEN_A_VALID_RRD_FILE_FIRST);
             return;
         }
         ArcDef newArcDef = new EditArchiveDialog(this, null).getArcDef();
@@ -411,7 +414,7 @@ public class RrdInspector extends JFrame {
 
     private void editDatasource() {
         if (!inspectorModel.isOk()) {
-            Util.error(this, "Open a valid RRD file first.");
+            Util.error(this, OPEN_A_VALID_RRD_FILE_FIRST);
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
@@ -448,13 +451,13 @@ public class RrdInspector extends JFrame {
 
     private void editArchive() {
         if (!inspectorModel.isOk()) {
-            Util.error(this, "Open a valid RRD file first.");
+            Util.error(this, OPEN_A_VALID_RRD_FILE_FIRST);
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
         int arcIndex = -1;
         if (rrdNode == null || (arcIndex = rrdNode.getArcIndex()) < 0) {
-            Util.error(this, "Select archive first");
+            Util.error(this, SELECT_ARCHIVE_FIRST);
             return;
         }
         try {
@@ -487,7 +490,7 @@ public class RrdInspector extends JFrame {
 
     private void removeDatasource() {
         if (!inspectorModel.isOk()) {
-            Util.error(this, "Open a valid RRD file first.");
+            Util.error(this, OPEN_A_VALID_RRD_FILE_FIRST);
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
@@ -516,13 +519,13 @@ public class RrdInspector extends JFrame {
 
     private void removeArchive() {
         if (!inspectorModel.isOk()) {
-            Util.error(this, "Open a valid RRD file first.");
+            Util.error(this, OPEN_A_VALID_RRD_FILE_FIRST);
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
         int arcIndex = -1;
         if (rrdNode == null || (arcIndex = rrdNode.getArcIndex()) < 0) {
-            Util.error(this, "Select archive first");
+            Util.error(this, SELECT_ARCHIVE_FIRST);
             return;
         }
         try {
@@ -549,13 +552,13 @@ public class RrdInspector extends JFrame {
 
     private void plotArchive() {
         if (!inspectorModel.isOk()) {
-            Util.error(this, "Open a valid RRD file first.");
+            Util.error(this, OPEN_A_VALID_RRD_FILE_FIRST);
             return;
         }
 
         RrdNode rrdNode = getSelectedRrdNode();
         if (!isArchiveNode(rrdNode)) {
-            Util.error(this, "Select archive first");
+            Util.error(this, SELECT_ARCHIVE_FIRST);
             return;
         }
 

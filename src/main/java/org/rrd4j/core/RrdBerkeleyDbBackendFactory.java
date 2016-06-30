@@ -14,6 +14,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
 public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
+    private static final String UTF_8 = "UTF-8";
     private final Database rrdDatabase;
 
     private final Set<String> pathCache = new CopyOnWriteArraySet<String>();
@@ -35,7 +36,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         if (pathCache.contains(path)) {
-            DatabaseEntry theKey = new DatabaseEntry(path.getBytes("UTF-8"));
+            DatabaseEntry theKey = new DatabaseEntry(path.getBytes(UTF_8));
             DatabaseEntry theData = new DatabaseEntry();
 
             try {
@@ -59,7 +60,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
      */
     public void delete(String path) {
         try {
-            rrdDatabase.delete(null, new DatabaseEntry(path.getBytes("UTF-8")));
+            rrdDatabase.delete(null, new DatabaseEntry(path.getBytes(UTF_8)));
         }
         catch (DatabaseException de) {
             throw new RuntimeException(de.getMessage(), de);
@@ -80,7 +81,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         if (pathCache.contains(path)) {
             return true;
         } else {
-            DatabaseEntry theKey = new DatabaseEntry(path.getBytes("UTF-8"));
+            DatabaseEntry theKey = new DatabaseEntry(path.getBytes(UTF_8));
             theKey.setPartial(0, 0, true); // avoid returning rrd data since we're only checking for existence
 
             DatabaseEntry theData = new DatabaseEntry();

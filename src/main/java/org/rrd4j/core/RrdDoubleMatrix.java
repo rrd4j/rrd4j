@@ -3,6 +3,7 @@ package org.rrd4j.core;
 import java.io.IOException;
 
 class RrdDoubleMatrix extends RrdPrimitive {
+    private static final String LENGTH = ", length=";
     private final int rows;
     private final int columns;
 
@@ -21,7 +22,7 @@ class RrdDoubleMatrix extends RrdPrimitive {
     void set(int column, int index, double value, int count) throws IOException {
         // rollovers not allowed!
         assert index + count <= rows : "Invalid robin index supplied: index=" + index +
-                ", count=" + count + ", length=" + rows;
+                ", count=" + count + LENGTH + rows;
         for (int i = columns * index + column, c = 0; c < count; i += columns, c++)
             writeDouble(i, value);
     }
@@ -38,13 +39,13 @@ class RrdDoubleMatrix extends RrdPrimitive {
         int count = newValues.length;
         // rollovers not allowed!
         assert index + count <= rows : "Invalid robin index supplied: index=" + index +
-                ", count=" + count + ", length=" + rows;
+                ", count=" + count + LENGTH + rows;
         for (int i = columns * index + column, c = 0; c < count; i += columns, c++)
             writeDouble(i, newValues[c]);
     }
 
     double get(int column, int index) throws IOException {
-        assert index < rows : "Invalid index supplied: " + index + ", length=" + rows;
+        assert index < rows : "Invalid index supplied: " + index + LENGTH + rows;
         return readDouble(columns * index + column);
     }
 

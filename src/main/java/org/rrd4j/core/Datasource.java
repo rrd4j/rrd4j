@@ -16,6 +16,7 @@ import java.io.IOException;
 public class Datasource implements RrdUpdater {
     private static final double MAX_32_BIT = Math.pow(2, 32);
     private static final double MAX_64_BIT = Math.pow(2, 64);
+    private static final String INVALID_MIN_MAX_VALUES = "Invalid min/max values: ";
 
     private final RrdDb parentDb;
 
@@ -375,7 +376,7 @@ public class Datasource implements RrdUpdater {
     public void setMinValue(double minValue, boolean filterArchivedValues) throws IOException {
         double maxValue = this.maxValue.get();
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
-            throw new IllegalArgumentException("Invalid min/max values: " + minValue + "/" + maxValue);
+            throw new IllegalArgumentException(INVALID_MIN_MAX_VALUES + minValue + "/" + maxValue);
         }
 
         this.minValue.set(minValue);
@@ -403,7 +404,7 @@ public class Datasource implements RrdUpdater {
     public void setMaxValue(double maxValue, boolean filterArchivedValues) throws IOException {
         double minValue = this.minValue.get();
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
-            throw new IllegalArgumentException("Invalid min/max values: " + minValue + "/" + maxValue);
+            throw new IllegalArgumentException(INVALID_MIN_MAX_VALUES + minValue + "/" + maxValue);
         }
 
         this.maxValue.set(maxValue);
@@ -432,7 +433,7 @@ public class Datasource implements RrdUpdater {
      */
     public void setMinMaxValue(double minValue, double maxValue, boolean filterArchivedValues) throws IOException {
         if (!Double.isNaN(minValue) && !Double.isNaN(maxValue) && minValue >= maxValue) {
-            throw new IllegalArgumentException("Invalid min/max values: " + minValue + "/" + maxValue);
+            throw new IllegalArgumentException(INVALID_MIN_MAX_VALUES + minValue + "/" + maxValue);
         }
         this.minValue.set(minValue);
         this.maxValue.set(maxValue);

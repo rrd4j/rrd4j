@@ -39,6 +39,11 @@ public class Demo {
 
     static final int IMG_WIDTH = 500;
     static final int IMG_HEIGHT = 300;
+    private static final String SHADE = "shade";
+    private static final String SUNMAX = "sunmax";
+    private static final String SUNAVERAGE = "sunaverage";
+    private static final String SHADEMAX = "shademax";
+    private static final String SHADEVERAGE = "shadeverage";
 
     private Demo() {}
 
@@ -73,7 +78,7 @@ public class Demo {
         RrdDef rrdDef = new RrdDef(rrdPath, start - 1, 300);
         rrdDef.setVersion(2);
         rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);
-        rrdDef.addDatasource("shade", GAUGE, 600, 0, Double.NaN);
+        rrdDef.addDatasource(SHADE, GAUGE, 600, 0, Double.NaN);
         rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700);
         rrdDef.addArchive(AVERAGE, 0.5, 24, 775);
@@ -114,7 +119,7 @@ public class Demo {
         while (t <= end + 172800L) {
             sample.setTime(t);
             sample.setValue("sun", sunSource.getValue());
-            sample.setValue("shade", shadeSource.getValue());
+            sample.setValue(SHADE, shadeSource.getValue());
             log.println(sample.dump());
             sample.update();
             t += RANDOM.nextDouble() * MAX_STEP + 1;
@@ -178,13 +183,13 @@ public class Demo {
         gDef.setVerticalLabel("temperature");
 
         gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
-        gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE);
+        gDef.datasource(SHADE, rrdRestoredPath, SHADE, AVERAGE);
         gDef.datasource("median", "sun,shade,+,2,/");
         gDef.datasource("diff", "sun,shade,-,ABS,-1,*");
         gDef.datasource("sine", "TIME," + start + ",-," + (end - start) + ",/,2,PI,*,*,SIN,1000,*");
 
         gDef.line("sun", Color.GREEN, "sun temp");
-        gDef.line("shade", Color.BLUE, "shade temp");
+        gDef.line(SHADE, Color.BLUE, "shade temp");
         gDef.line("median", Color.MAGENTA, "median value");
         gDef.area("diff", Color.YELLOW, "difference");
         gDef.line("diff", Color.RED, null);
@@ -196,20 +201,20 @@ public class Demo {
 
         Variable sunmax = new Variable.MAX();
         Variable sunaverage = new Variable.AVERAGE();
-        gDef.datasource("sunmax", "sun", sunmax);
-        gDef.datasource("sunaverage", "sun", sunaverage);
-        gDef.gprint("sunmax", "maxSun = %.3f%s");
-        gDef.gprint("sunaverage", "avgSun = %.3f%S\\c");
-        gDef.print("sunmax", "maxSun = %.3f%s");
-        gDef.print("sunmax", "maxSun time = %ts", true);
-        gDef.print("sunaverage", "avgSun = %.3f%S\\c");
+        gDef.datasource(SUNMAX, "sun", sunmax);
+        gDef.datasource(SUNAVERAGE, "sun", sunaverage);
+        gDef.gprint(SUNMAX, "maxSun = %.3f%s");
+        gDef.gprint(SUNAVERAGE, "avgSun = %.3f%S\\c");
+        gDef.print(SUNMAX, "maxSun = %.3f%s");
+        gDef.print(SUNMAX, "maxSun time = %ts", true);
+        gDef.print(SUNAVERAGE, "avgSun = %.3f%S\\c");
 
-        gDef.datasource("shademax", "shade", new Variable.MAX());
-        gDef.datasource("shadeverage", "shade", new Variable.AVERAGE());
-        gDef.gprint("shademax", "maxShade = %.3f%S");
-        gDef.gprint("shadeverage", "avgShade = %.3f%S\\c");
-        gDef.print("shademax", "maxShade = %.3f%S");
-        gDef.print("shadeverage", "avgShade = %.3f%S\\c");
+        gDef.datasource(SHADEMAX, SHADE, new Variable.MAX());
+        gDef.datasource(SHADEVERAGE, SHADE, new Variable.AVERAGE());
+        gDef.gprint(SHADEMAX, "maxShade = %.3f%S");
+        gDef.gprint(SHADEVERAGE, "avgShade = %.3f%S\\c");
+        gDef.print(SHADEMAX, "maxShade = %.3f%S");
+        gDef.print(SHADEVERAGE, "avgShade = %.3f%S\\c");
 
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);

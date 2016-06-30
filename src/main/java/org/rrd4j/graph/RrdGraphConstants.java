@@ -20,6 +20,11 @@ public interface RrdGraphConstants {
     String DEFAULT_END = "now";
 
     /**
+     * HH:mm time format
+     */
+    String HH_MM = "HH:mm";
+
+    /**
      * Constant to represent second
      */
     int SECOND = Calendar.SECOND;
