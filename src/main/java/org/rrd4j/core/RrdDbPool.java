@@ -159,6 +159,7 @@ public class RrdDbPool {
                     full.signalAll();
                     countLock.unlock();
                 } catch (InterruptedException e1) {
+                    Thread.currentThread().interrupt();
                 }
             }
             break;
@@ -186,6 +187,7 @@ public class RrdDbPool {
         try {
             ref = getEntry(rrdDb.getPath(), false);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("release interrupted for " + rrdDb, e);
         }
         if(ref == null) {
@@ -231,6 +233,7 @@ public class RrdDbPool {
         try {
             ref = getEntry(path, true);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("request interrupted for " + path, e);
         }
 
@@ -307,6 +310,7 @@ public class RrdDbPool {
             ref.rrdDb = new RrdDb(rrdDef);
             return ref.rrdDb;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("request interrupted for new rrdDef " + rrdDef.getPath(), e);
         } finally {
             if(ref != null) {
@@ -341,6 +345,7 @@ public class RrdDbPool {
             ref.rrdDb = new RrdDb(path, sourcePath);
             return ref.rrdDb;
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("request interrupted for new rrd " + path, e);
         } finally {
             if(ref != null) {
@@ -404,6 +409,7 @@ public class RrdDbPool {
                 return ref.count;
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("getOpenCount interrupted", e);
         } finally {
             if(ref != null) {
