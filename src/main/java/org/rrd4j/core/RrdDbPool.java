@@ -103,7 +103,7 @@ public class RrdDbPool {
 
     private RrdEntry getEntry(String path, boolean cancreate) throws IOException, InterruptedException {
         String canonicalPath = Util.getCanonicalPath(path);
-        RrdEntry ref = null;
+        RrdEntry ref;
         do {
             ref = pool.get(canonicalPath);
             if(ref == null) {

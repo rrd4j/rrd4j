@@ -51,7 +51,7 @@ class ValueAxis implements RrdGraphConstants {
         Paint mGridColor = gdef.colors[COLOR_MGRID];
         Paint fontColor = gdef.colors[COLOR_FONT];
         int labelOffset = (int) (worker.getFontAscent(font) / 2);
-        int labfact = 2;
+        int labfact;
         double range = im.maxval - im.minval;
         double scaledrange = range / im.magfact;
         double gridstep;
