@@ -8,13 +8,13 @@ import java.util.Date;
 
 class TimeAxis implements RrdGraphConstants {
     private static final TimeAxisSetting[] tickSettings = {
-        new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, "HH:mm"),
-        new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, "HH:mm"),
-        new TimeAxisSetting(5, MINUTE, 2, MINUTE, 10, MINUTE, 10, 0, "HH:mm"),
-        new TimeAxisSetting(10, MINUTE, 5, MINUTE, 20, MINUTE, 20, 0, "HH:mm"),
-        new TimeAxisSetting(30, MINUTE, 10, HOUR, 1, HOUR, 1, 0, "HH:mm"),
-        new TimeAxisSetting(60, MINUTE, 30, HOUR, 2, HOUR, 2, 0, "HH:mm"),
-        new TimeAxisSetting(180, HOUR, 1, HOUR, 6, HOUR, 6, 0, "HH:mm"),
+        new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, HH_MM),
+        new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, HH_MM),
+        new TimeAxisSetting(5, MINUTE, 2, MINUTE, 10, MINUTE, 10, 0, HH_MM),
+        new TimeAxisSetting(10, MINUTE, 5, MINUTE, 20, MINUTE, 20, 0, HH_MM),
+        new TimeAxisSetting(30, MINUTE, 10, HOUR, 1, HOUR, 1, 0, HH_MM),
+        new TimeAxisSetting(60, MINUTE, 30, HOUR, 2, HOUR, 2, 0, HH_MM),
+        new TimeAxisSetting(180, HOUR, 1, HOUR, 6, HOUR, 6, 0, HH_MM),
         new TimeAxisSetting(600, HOUR, 6, DAY, 1, DAY, 1, 24 * 3600, "EEE"),
         new TimeAxisSetting(1800, HOUR, 12, DAY, 1, DAY, 2, 24 * 3600, "EEE"),
         new TimeAxisSetting(3600, DAY, 1, WEEK, 1, WEEK, 1, 7 * 24 * 3600, "'Week 'w"),

@@ -32,6 +32,8 @@ import java.util.List;
  */
 public class RrdToolkit {
 
+    private static final String SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME = "Source and destination paths are the same";
+
     private RrdToolkit() {
 
     }
@@ -64,7 +66,7 @@ public class RrdToolkit {
     public static void addDatasources(String sourcePath, String destPath, Iterable<DsDef> newDatasources)
             throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
-            throw new IllegalArgumentException("Source and destination paths are the same");
+            throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
         RrdDb rrdSource = new RrdDb(sourcePath);
         try {
@@ -139,7 +141,7 @@ public class RrdToolkit {
     public static void removeDatasource(String sourcePath, String destPath, String dsName)
             throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
-            throw new IllegalArgumentException("Source and destination paths are the same");
+            throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
 
         RrdDb rrdSource = new RrdDb(sourcePath);
@@ -252,7 +254,7 @@ public class RrdToolkit {
      */
     public static void addArchive(String sourcePath, String destPath, ArcDef newArchive) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
-            throw new IllegalArgumentException("Source and destination paths are the same");
+            throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
         RrdDb rrdSource = new RrdDb(sourcePath);
         try {
@@ -305,7 +307,7 @@ public class RrdToolkit {
      */
     public static void removeArchive(String sourcePath, String destPath, ConsolFun consolFun, int steps) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
-            throw new IllegalArgumentException("Source and destination paths are the same");
+            throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
 
         RrdDb rrdSource = new RrdDb(sourcePath);
@@ -530,7 +532,7 @@ public class RrdToolkit {
     public static void resizeArchive(String sourcePath, String destPath, ConsolFun consolFun,
             int numSteps, int newRows) throws IOException {
         if (Util.sameFilePath(sourcePath, destPath)) {
-            throw new IllegalArgumentException("Source and destination paths are the same");
+            throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
         if (newRows < 2) {
             throw new IllegalArgumentException("New archive size must be at least 2");

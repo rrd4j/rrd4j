@@ -32,11 +32,15 @@ public class RrdTutorial {
     static final long START = 920804400;
     // End is 80 minutes later
     static final long END = START + 80 * 60;
+    private static final String SPEED = "speed";
     // For graphs
-    static final String FILE = "speed";
+    static final String FILE = SPEED;
     static final int IMG_WIDTH = 500;
     static final int IMG_HEIGHT = 300;
     static final String FILE_FORMAT = "png";
+    private static final String MYSPEED = "myspeed";
+    private static final String IMG_SRC_S_WIDTH_D_HEIGHT_D = "<img src='%s' width='%d' height = '%d'>";
+    private static final String REALSPEED = "realspeed";
 
     /**
      * <p>
@@ -55,7 +59,7 @@ public class RrdTutorial {
 
         println("== Starting tutorial code");
         final String rrdPath = Util.getRrd4jDemoPath(FILE + ".rrd");
-        final String speedSource = "speed";
+        final String speedSource = SPEED;
 
         // rrdtool create test.rrd \
         // --start 920804400 \
@@ -174,10 +178,10 @@ public class RrdTutorial {
         gDef1.setFilename(img1Path);
         gDef1.setStartTime(920804400);
         gDef1.setEndTime(920808000);
-        gDef1.datasource("myspeed", rrdPath, "speed", AVERAGE);
-        gDef1.line("myspeed", new Color(0xFF, 0x00, 0x00), "speed");
+        gDef1.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
+        gDef1.line(MYSPEED, new Color(0xFF, 0x00, 0x00), SPEED);
         gDef1.comment("Graph 1\\r");
-        gDef1.setImageInfo("<img src='%s' width='%d' height = '%d'>");
+        gDef1.setImageInfo(IMG_SRC_S_WIDTH_D_HEIGHT_D);
         gDef1.setImageFormat(FILE_FORMAT);
         println("Rendering graph 1");
         RrdGraph graph1 = new RrdGraph(gDef1);
@@ -200,11 +204,11 @@ public class RrdTutorial {
         gDef2.setStartTime(920804400);
         gDef2.setEndTime(920808000);
         gDef2.setVerticalLabel("m/s");
-        gDef2.datasource("myspeed", rrdPath, "speed", AVERAGE);
-        gDef2.datasource("realspeed", "myspeed,1000,*");
-        gDef2.line("realspeed", new Color(0xFF, 0x00, 0x00), "realspeed");
+        gDef2.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
+        gDef2.datasource(REALSPEED, "myspeed,1000,*");
+        gDef2.line(REALSPEED, new Color(0xFF, 0x00, 0x00), REALSPEED);
         gDef2.comment("Graph 2\\r");
-        gDef2.setImageInfo("<img src='%s' width='%d' height = '%d'>");
+        gDef2.setImageInfo(IMG_SRC_S_WIDTH_D_HEIGHT_D);
         gDef2.setImageFormat(FILE_FORMAT);
         println("Rendering graph 2");
         RrdGraph graph2 = new RrdGraph(gDef2);
@@ -231,7 +235,7 @@ public class RrdTutorial {
         gDef3.setStartTime(920804400);
         gDef3.setEndTime(920808000);
         gDef3.setVerticalLabel("km/h");
-        gDef3.datasource("myspeed", rrdPath, "speed", AVERAGE);
+        gDef3.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
         gDef3.datasource("kmh", "myspeed,3600,*");
         gDef3.datasource("fast", "kmh,100,GT,kmh,0,IF");
         gDef3.datasource("good", "kmh,100,GT,0,kmh,IF");
@@ -239,7 +243,7 @@ public class RrdTutorial {
         gDef3.area("good", new Color(0x00, 0xFF, 0x00), "Good Speed");
         gDef3.area("fast", new Color(0xFF, 0x00, 0x00), "Too fast");
         gDef3.comment("Graph 3\\r");
-        gDef3.setImageInfo("<img src='%s' width='%d' height = '%d'>");
+        gDef3.setImageInfo(IMG_SRC_S_WIDTH_D_HEIGHT_D);
         gDef3.setImageFormat(FILE_FORMAT);
         println("Rendering graph 3");
         RrdGraph graph3 = new RrdGraph(gDef3);
@@ -269,7 +273,7 @@ public class RrdTutorial {
         gDef4.setStartTime(920804400);
         gDef4.setEndTime(920808000);
         gDef4.setVerticalLabel("km/h");
-        gDef4.datasource("myspeed", rrdPath, "speed", AVERAGE);
+        gDef4.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
         gDef4.datasource("nonans", "myspeed,UN,0,myspeed,IF");
         gDef4.datasource("kmh", "nonans,3600,*");
         gDef4.datasource("fast", "kmh,100,GT,100,0,IF");
@@ -280,7 +284,7 @@ public class RrdTutorial {
         gDef4.area("fast", new Color(0x55, 00, 00), "Too fast");
         gDef4.stack("over", new Color(0xff, 0x00, 0x00), "Over speed");
         gDef4.comment("Graph 4\\r");
-        gDef4.setImageInfo("<img src='%s' width='%d' height = '%d'>");
+        gDef4.setImageInfo(IMG_SRC_S_WIDTH_D_HEIGHT_D);
         gDef4.setImageFormat(FILE_FORMAT);
         println("Rendering graph 4");
         RrdGraph graph4 = new RrdGraph(gDef4);

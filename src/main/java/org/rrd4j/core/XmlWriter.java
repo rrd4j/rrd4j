@@ -11,6 +11,7 @@ import java.util.Stack;
  */
 public class XmlWriter {
     static final String INDENT_STR = "   ";
+    private static final String STYLE = "style";
 
     private final PrintWriter writer;
     private final StringBuilder indent = new StringBuilder("");
@@ -144,16 +145,16 @@ public class XmlWriter {
         writeTag("name", value.getName());
         int style = value.getStyle();
         if ((style & Font.BOLD) != 0 && (style & Font.ITALIC) != 0) {
-            writeTag("style", "BOLDITALIC");
+            writeTag(STYLE, "BOLDITALIC");
         }
         else if ((style & Font.BOLD) != 0) {
-            writeTag("style", "BOLD");
+            writeTag(STYLE, "BOLD");
         }
         else if ((style & Font.ITALIC) != 0) {
-            writeTag("style", "ITALIC");
+            writeTag(STYLE, "ITALIC");
         }
         else {
-            writeTag("style", "PLAIN");
+            writeTag(STYLE, "PLAIN");
         }
         writeTag("size", value.getSize());
         closeTag();

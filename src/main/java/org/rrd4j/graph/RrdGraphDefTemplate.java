@@ -251,6 +251,12 @@ import org.xml.sax.InputSource;
  */
 public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstants {
 
+    private static final String COLOR = "color";
+    private static final String LEGEND = "legend";
+    private static final String DATASOURCE = "datasource";
+    private static final String WIDTH = "width";
+    private static final String SOURCE = "source";
+    private static final String SHOW_GRID = "show_grid";
     private RrdGraphDef rrdGraphDef;
 
     /**
@@ -360,7 +366,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveVRule(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"time", "color", "legend"});
+        validateTagsOnlyOnce(parentNode, new String[]{"time", COLOR, LEGEND});
         long timestamp = Long.MIN_VALUE;
         Paint color = null;
         String legend = null;
@@ -370,10 +376,10 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             if (nodeName.equals("time")) {
                 timestamp = Util.getTimestamp(getValue(childNode));
             }
-            else if (nodeName.equals("color")) {
+            else if (nodeName.equals(COLOR)) {
                 color = getValueAsColor(childNode);
             }
-            else if (nodeName.equals("legend")) {
+            else if (nodeName.equals(LEGEND)) {
                 legend = getValue(childNode);
             }
         }
@@ -386,7 +392,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveHRule(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"value", "color", "legend"});
+        validateTagsOnlyOnce(parentNode, new String[]{"value", COLOR, LEGEND});
         double value = Double.NaN;
         Paint color = null;
         String legend = null;
@@ -396,10 +402,10 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             if (nodeName.equals("value")) {
                 value = getValueAsDouble(childNode);
             }
-            else if (nodeName.equals("color")) {
+            else if (nodeName.equals(COLOR)) {
                 color = getValueAsColor(childNode);
             }
-            else if (nodeName.equals("legend")) {
+            else if (nodeName.equals(LEGEND)) {
                 legend = getValue(childNode);
             }
         }
@@ -413,13 +419,13 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
 
     @SuppressWarnings("deprecation")
     private void resolvePrint(Node parentNode, boolean isInGraph) {
-        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "cf", "format"});
+        validateTagsOnlyOnce(parentNode, new String[]{DATASOURCE, "cf", "format"});
         String datasource = null, format = null;
         ConsolFun consolFun = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
-            if (nodeName.equals("datasource")) {
+            if (nodeName.equals(DATASOURCE)) {
                 datasource = getValue(childNode);
             }
             else if (nodeName.equals("cf")) {
@@ -451,19 +457,19 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveStack(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend"});
+        validateTagsOnlyOnce(parentNode, new String[]{DATASOURCE, COLOR, LEGEND});
         String datasource = null, legend = null;
         Paint color = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
-            if (nodeName.equals("datasource")) {
+            if (nodeName.equals(DATASOURCE)) {
                 datasource = getValue(childNode);
             }
-            else if (nodeName.equals("color")) {
+            else if (nodeName.equals(COLOR)) {
                 color = getValueAsColor(childNode);
             }
-            else if (nodeName.equals("legend")) {
+            else if (nodeName.equals(LEGEND)) {
                 legend = getValue(childNode);
             }
         }
@@ -481,23 +487,23 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveLine(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend", "width"});
+        validateTagsOnlyOnce(parentNode, new String[]{DATASOURCE, COLOR, LEGEND, WIDTH});
         String datasource = null, legend = null;
         Paint color = null;
         float width = 1.0F;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
-            if (nodeName.equals("datasource")) {
+            if (nodeName.equals(DATASOURCE)) {
                 datasource = getValue(childNode);
             }
-            else if (nodeName.equals("color")) {
+            else if (nodeName.equals(COLOR)) {
                 color = getValueAsColor(childNode);
             }
-            else if (nodeName.equals("legend")) {
+            else if (nodeName.equals(LEGEND)) {
                 legend = getValue(childNode);
             }
-            else if (nodeName.equals("width")) {
+            else if (nodeName.equals(WIDTH)) {
                 width = (float) getValueAsDouble(childNode);
             }
         }
@@ -515,19 +521,19 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveArea(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"datasource", "color", "legend"});
+        validateTagsOnlyOnce(parentNode, new String[]{DATASOURCE, COLOR, LEGEND});
         String datasource = null, legend = null;
         Paint color = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
-            if (nodeName.equals("datasource")) {
+            if (nodeName.equals(DATASOURCE)) {
                 datasource = getValue(childNode);
             }
-            else if (nodeName.equals("color")) {
+            else if (nodeName.equals(COLOR)) {
                 color = getValueAsColor(childNode);
             }
-            else if (nodeName.equals("legend")) {
+            else if (nodeName.equals(LEGEND)) {
                 legend = getValue(childNode);
             }
         }
@@ -562,7 +568,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveSDef(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"name", "source", "cf", "percentile"});
+        validateTagsOnlyOnce(parentNode, new String[]{"name", SOURCE, "cf", "percentile"});
         String name = null, source = null;
         ConsolFun consolFun = null;
         boolean ispercentile = false;
@@ -573,7 +579,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             if (nodeName.equals("name")) {
                 name = getValue(childNode);
             }
-            else if (nodeName.equals("source")) {
+            else if (nodeName.equals(SOURCE)) {
                 source = getValue(childNode);
             }
             else if (nodeName.equals("cf")) {
@@ -622,7 +628,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveDef(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"name", "rrd", "source", "cf", "backend"});
+        validateTagsOnlyOnce(parentNode, new String[]{"name", "rrd", SOURCE, "cf", "backend"});
         String name = null, rrd = null, source = null, backend = null;
         ConsolFun consolFun = null;
         Node[] childNodes = getChildNodes(parentNode);
@@ -634,7 +640,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             else if (nodeName.equals("rrd")) {
                 rrd = getValue(childNode);
             }
-            else if (nodeName.equals("source")) {
+            else if (nodeName.equals(SOURCE)) {
                 source = getValue(childNode);
             }
             else if (nodeName.equals("cf")) {
@@ -670,7 +676,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         validateTagsOnlyOnce(rootOptionNode, new String[]{
                 "anti_aliasing", "use_pool", "time_grid", "value_grid", "alt_y_grid", "alt_y_mrtg",
                 "no_minor_grid", "alt_autoscale", "alt_autoscale_max", "units_exponent", "units_length",
-                "vertical_label", "width", "height", "interlaced", "image_info", "image_format",
+                "vertical_label", WIDTH, "height", "interlaced", "image_info", "image_format",
                 "image_quality", "background_image", "overlay_image", "unit", "lazy",
                 "min_value", "max_value", "rigid", "base", "logarithmic", "colors",
                 "no_legend", "only_graph", "force_rules_legend", "title", "step", "fonts",
@@ -715,7 +721,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             else if (option.equals("vertical_label")) {
                 rrdGraphDef.setVerticalLabel(getValue(optionNode));
             }
-            else if (option.equals("width")) {
+            else if (option.equals(WIDTH)) {
                 rrdGraphDef.setWidth(getValueAsInt(optionNode));
             }
             else if (option.equals("height")) {
@@ -884,14 +890,14 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     }
 
     private void resolveValueGrid(Node parentNode) {
-        validateTagsOnlyOnce(parentNode, new String[]{"show_grid", "grid_step", "label_factor"});
+        validateTagsOnlyOnce(parentNode, new String[]{SHOW_GRID, "grid_step", "label_factor"});
         boolean showGrid = true;
         double gridStep = Double.NaN;
         int NOT_SET = Integer.MIN_VALUE, labelFactor = NOT_SET;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
-            if (nodeName.equals("show_grid")) {
+            if (nodeName.equals(SHOW_GRID)) {
                 showGrid = getValueAsBoolean(childNode);
             }
             else if (nodeName.equals("grid_step")) {
@@ -912,7 +918,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
 
     private void resolveTimeGrid(Node parentNode) {
         validateTagsOnlyOnce(parentNode, new String[]{
-                "show_grid", "minor_grid_unit",
+                SHOW_GRID, "minor_grid_unit",
                 "minor_grid_unit_count", "major_grid_unit",
                 "major_grid_unit_count", "label_unit", "label_unit_count",
                 "label_span", "label_format"
@@ -926,7 +932,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
-            if (nodeName.equals("show_grid")) {
+            if (nodeName.equals(SHOW_GRID)) {
                 showGrid = getValueAsBoolean(childNode);
             }
             else if (nodeName.equals("minor_grid_unit")) {
