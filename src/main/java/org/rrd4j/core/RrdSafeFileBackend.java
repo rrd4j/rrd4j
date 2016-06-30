@@ -51,6 +51,7 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
                 Thread.sleep(lockRetryPeriod);
             }
             catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 // NOP
             }
             lock = channel.tryLock(0, Long.MAX_VALUE, false);
