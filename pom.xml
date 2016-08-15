@@ -24,11 +24,11 @@
         <maven.plugin.javadoc.version>2.10.3</maven.plugin.javadoc.version>
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
         <maven.plugin.surefire.version>2.18.1</maven.plugin.surefire.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.12</junit.version>
         <buildSource>1.7</buildSource>
         <buildTarget>1.7</buildTarget>
         <!-- current year. -->
-        <year>2015</year>
+        <year>2016</year>
     </properties>
     <licenses>
         <license>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>2.13.0</version>
+            <version>2.14.0</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
@@ -67,8 +67,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.1</version>
-            <type>jar</type>
+            <version>3.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -312,10 +311,9 @@
                     <version>${maven.plugin.javadoc.version}</version>
                     <configuration>
                         <aggregate>true</aggregate>
-                        <detectLinks />
                         <links>
-                            <link>http://docs.oracle.com/javase/6/docs/api/</link>
-                            <link>http://api.mongodb.org/java/2.0/index.html</link>
+                            <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                            <link>http://api.mongodb.org/java/2.0/</link>
                             <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
                         </links>
@@ -337,7 +335,6 @@
                 <version>${maven.plugin.javadoc.version}</version>
                 <configuration>
                     <quiet>false</quiet>
-                    <detectLinks>true</detectLinks>
                     <detectJavaApiLink>true</detectJavaApiLink>
                     <show>protected</show>
                     <bottom><![CDATA[
@@ -345,8 +342,8 @@
                         ]]>
                     </bottom>
                     <links>
-                        <link>http://docs.oracle.com/javase/6/docs/api/</link>
-                        <link>http://api.mongodb.org/java/2.0/index.html</link>
+                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                        <link>http://api.mongodb.org/java/2.0/</link>
                         <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
                         <link>http://junit.sourceforge.net/javadoc/</link>
                     </links>
