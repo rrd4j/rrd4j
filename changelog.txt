@@ -1,4 +1,24 @@
-Changes in version 2.2.1 - XXX 2015
+Changes in version 3 - 15 Aug 2016
+----------------------------------
+
+Dropped support for Java 6.
+Removed gradle and ant build.
+Improved the RPN calculator performance.
+Added support for VDEF like datasources. They are functions that take a datasource and output a single value. They can be user defined by implementing the abstract 
+class org.rrd4j.data.Variable. A Variable class return a Value that can contain both a numerical value and a time stamp ; it's useful for functions like Max 
+that can return both an maximum value and when it occurred. They deprecated old aggregation functions.
+More precise font selection, with more configurable elements.
+gprint can take any previously defined datasource that is a defined from a Variable.
+Line, vrule and hrule can be defined using a java's Stroke, not just a float width.
+Line and Area can be stacked at will, without the needs of a stack.
+
+* Fix imageio*.tmp not cleaned up in temporary dir when graphing
+* Initialize more values when creating a rrd, allow .rrd file reuse without breaking (cf issue #75).
+* Merge pull 71: Request Added hashCode method to DsDef class
+* Fixed Issue 58: Glue marker doesn't work correctly
+* Fixed Issue 60: Expose org.rrd4j.core.jrrd.DataChunk internals
+
+Changes in version 2.2.1 - 14 may 2015
 ----------------------------------------
 Except for some added RPN and default version for rrd, this is strictly a bug fix release.
 A new faster and deadlock free pool.
