@@ -198,7 +198,7 @@ class ImageWorker {
                 throw new RuntimeException("Invalid image type");
             }            
         }
-
+        
         //If lossy compression, use the quality
         if(! imgProvider.isFormatLossless()) {
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);

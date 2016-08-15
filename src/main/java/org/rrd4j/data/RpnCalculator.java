@@ -646,7 +646,7 @@ class RpnCalculator {
         for(Token_Symbol s: Token_Symbol.values()) {
             int hash = perfect.hashAsInt(s.token_string);
             if(hash >= 0) {
-                symbols[hash] = s;                
+                symbols[hash] = s;
             }
         }
     }
