@@ -545,32 +545,33 @@ public class RrdDb implements RrdUpdater {
         long fetchStart = request.getFetchStart();
         long fetchEnd = request.getFetchEnd();
         long resolution = request.getResolution();
-        Archive bestFullMatch = null, bestPartialMatch = null;
-        long bestStepDiff = 0, bestMatch = 0;
+        Archive bestFullMatch = null;
+        Archive bestPartialMatch = null;
+        long bestStepDiff = 0;
+        long bestMatch = 0;
         for (Archive archive : archives) {
             if (archive.getConsolFun() == consolFun) {
                 long arcStep = archive.getArcStep();
                 long arcStart = archive.getStartTime() - arcStep;
-                long arcEnd = archive.getEndTime();
                 long fullMatch = fetchEnd - fetchStart;
-                if (arcEnd >= fetchEnd && arcStart <= fetchStart) {
-                    long tmpStepDiff = Math.abs(archive.getArcStep() - resolution);
-
-                    if (tmpStepDiff < bestStepDiff || bestFullMatch == null) {
+                // we need step difference in either full or partial case
+                long tmpStepDiff = Math.abs(archive.getArcStep() - resolution);
+                if (arcStart <= fetchStart) {
+                    // best full match
+                    if (bestFullMatch == null || tmpStepDiff < bestStepDiff) {
                         bestStepDiff = tmpStepDiff;
                         bestFullMatch = archive;
                     }
                 }
                 else {
+                    // best partial match
                     long tmpMatch = fullMatch;
-
                     if (arcStart > fetchStart) {
                         tmpMatch -= (arcStart - fetchStart);
                     }
-                    if (arcEnd < fetchEnd) {
-                        tmpMatch -= (fetchEnd - arcEnd);
-                    }
-                    if (bestPartialMatch == null || bestMatch < tmpMatch) {
+                    if (bestPartialMatch == null ||
+                            bestMatch < tmpMatch ||
+                            (bestMatch == tmpMatch && tmpStepDiff < bestStepDiff) ) {
                         bestPartialMatch = archive;
                         bestMatch = tmpMatch;
                     }
