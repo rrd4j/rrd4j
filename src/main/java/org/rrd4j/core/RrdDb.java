@@ -1101,7 +1101,7 @@ public class RrdDb implements RrdUpdater {
         System.out.println("Current time: " + time + ": " + new Date(time * 1000L));
         System.out.println("-------------------------------------------------------------------------------");
         System.out.println("See https://github.com/rrd4j/rrd4j for more information and the latest version.");
-        System.out.println("Copyright 2015 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc.. Licensed under the Apache License, Version 2.0.");
+        System.out.println("Copyright 2016 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc.. Licensed under the Apache License, Version 2.0.");
     }
 
 }
