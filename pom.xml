@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <!-- Use the Sonatype parent to be able to sync to central. -->
