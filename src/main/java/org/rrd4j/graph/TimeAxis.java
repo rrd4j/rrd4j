@@ -25,16 +25,40 @@ class TimeAxis implements RrdGraphConstants {
         new TimeAxisSetting(-1, MONTH, 0, MONTH, 0, MONTH, 0, 0, "")
     };
 
+    private final ImageParameters im;
+    private final ImageWorker worker;
+    private final RrdGraphDef gdef;
+    private final Mapper mapper;
     private TimeAxisSetting tickSetting;
-    private final RrdGraph rrdGraph;
+    
     private final double secPerPix;
     private final Calendar calendar;
 
     TimeAxis(RrdGraph rrdGraph) {
-        this.rrdGraph = rrdGraph;
-        this.secPerPix = (rrdGraph.im.end - rrdGraph.im.start) / (double) rrdGraph.im.xsize;
-        this.calendar = Calendar.getInstance(rrdGraph.gdef.tz, rrdGraph.gdef.locale);
-        this.calendar.setFirstDayOfWeek(rrdGraph.gdef.firstDayOfWeek);
+        this.im = rrdGraph.im;
+        this.worker = rrdGraph.worker;
+        this.gdef = rrdGraph.gdef;
+        this.mapper = rrdGraph.mapper;
+        this.secPerPix = (im.end - im.start) / (double) im.xsize;
+        this.calendar = Calendar.getInstance(gdef.tz, gdef.locale);
+        this.calendar.setFirstDayOfWeek(gdef.firstDayOfWeek);
+    }
+
+    /**
+     * Used for test
+     * @param im
+     * @param worker
+     * @param gdef
+     * @param mapper
+     */
+    TimeAxis(ImageParameters im, ImageWorker worker, RrdGraphDef gdef, Mapper mapper) {
+        this.im = im;
+        this.worker = worker;
+        this.gdef = gdef;
+        this.mapper = mapper;
+        this.secPerPix = (im.end - im.start) / (double) im.xsize;
+        this.calendar = Calendar.getInstance(gdef.tz, gdef.locale);
+        this.calendar.setFirstDayOfWeek(gdef.firstDayOfWeek);
     }
 
     void draw() {
@@ -48,16 +72,16 @@ class TimeAxis implements RrdGraphConstants {
     }
 
     private void drawMinor() {
-        if (!rrdGraph.gdef.noMinorGrid) {
+        if (!gdef.noMinorGrid) {
             adjustStartingTime(tickSetting.minorUnit, tickSetting.minorUnitCount);
-            Paint color = rrdGraph.gdef.colors[COLOR_GRID];
-            int y0 = rrdGraph.im.yorigin, y1 = y0 - rrdGraph.im.ysize;
+            Paint color = gdef.colors[COLOR_GRID];
+            int y0 = im.yorigin, y1 = y0 - im.ysize;
             for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
                 if (status == 0) {
                     long time = calendar.getTime().getTime() / 1000L;
-                    int x = rrdGraph.mapper.xtr(time);
-                    rrdGraph.worker.drawLine(x, y0 - 1, x, y0 + 1, color, rrdGraph.gdef.tickStroke);
-                    rrdGraph.worker.drawLine(x, y0, x, y1, color, rrdGraph.gdef.gridStroke);
+                    int x = mapper.xtr(time);
+                    worker.drawLine(x, y0 - 1, x, y0 + 1, color, gdef.tickStroke);
+                    worker.drawLine(x, y0, x, y1, color, gdef.gridStroke);
                 }
                 findNextTime(tickSetting.minorUnit, tickSetting.minorUnitCount);
             }
@@ -66,14 +90,14 @@ class TimeAxis implements RrdGraphConstants {
 
     private void drawMajor() {
         adjustStartingTime(tickSetting.majorUnit, tickSetting.majorUnitCount);
-        Paint color = rrdGraph.gdef.colors[COLOR_MGRID];
-        int y0 = rrdGraph.im.yorigin, y1 = y0 - rrdGraph.im.ysize;
+        Paint color = gdef.colors[COLOR_MGRID];
+        int y0 = im.yorigin, y1 = y0 - im.ysize;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
             if (status == 0) {
                 long time = calendar.getTime().getTime() / 1000L;
-                int x = rrdGraph.mapper.xtr(time);
-                rrdGraph.worker.drawLine(x, y0 - 2, x, y0 + 2, color, rrdGraph.gdef.tickStroke);
-                rrdGraph.worker.drawLine(x, y0, x, y1, color, rrdGraph.gdef.gridStroke);
+                int x = mapper.xtr(time);
+                worker.drawLine(x, y0 - 2, x, y0 + 2, color, gdef.tickStroke);
+                worker.drawLine(x, y0, x, y1, color, gdef.gridStroke);
             }
             findNextTime(tickSetting.majorUnit, tickSetting.majorUnitCount);
         }
@@ -82,19 +106,19 @@ class TimeAxis implements RrdGraphConstants {
     private void drawLabels() {
         // escape strftime like format string
         String labelFormat = tickSetting.format.replaceAll("([^%]|^)%([^%t])", "$1%t$2");
-        Font font = rrdGraph.gdef.getFont(FONTTAG_AXIS);
-        Paint color = rrdGraph.gdef.colors[COLOR_FONT];
+        Font font = gdef.getFont(FONTTAG_AXIS);
+        Paint color = gdef.colors[COLOR_FONT];
         adjustStartingTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
-        int y = rrdGraph.im.yorigin + (int) rrdGraph.worker.getFontHeight(font) + 2;
+        int y = im.yorigin + (int) worker.getFontHeight(font) + 2;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
             String label = formatLabel(labelFormat, calendar.getTime());
             long time = calendar.getTime().getTime() / 1000L;
-            int x1 = rrdGraph.mapper.xtr(time);
-            int x2 = rrdGraph.mapper.xtr(time + tickSetting.labelSpan);
-            int labelWidth = (int) rrdGraph.worker.getStringWidth(label, font);
+            int x1 = mapper.xtr(time);
+            int x2 = mapper.xtr(time + tickSetting.labelSpan);
+            int labelWidth = (int) worker.getStringWidth(label, font);
             int x = x1 + (x2 - x1 - labelWidth) / 2;
-            if (x >= rrdGraph.im.xorigin && x + labelWidth <= rrdGraph.im.xorigin + rrdGraph.im.xsize) {
-                rrdGraph.worker.drawString(label, x, y, font, color);
+            if (x >= im.xorigin && x + labelWidth <= im.xorigin + im.xsize) {
+                worker.drawString(label, x, y, font, color);
             }
             findNextTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
         }
@@ -105,7 +129,7 @@ class TimeAxis implements RrdGraphConstants {
         c.setTime(date);
         if (format.contains("%")) {
             // strftime like format string
-            return String.format(rrdGraph.gdef.locale, format, c);
+            return String.format(gdef.locale, format, c);
         }
         else {
             SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -142,11 +166,11 @@ class TimeAxis implements RrdGraphConstants {
 
     private int getTimeShift() {
         long time = calendar.getTime().getTime() / 1000L;
-        return (time < rrdGraph.im.start) ? -1 : (time > rrdGraph.im.end) ? +1 : 0;
+        return (time < im.start) ? -1 : (time > im.end) ? +1 : 0;
     }
 
     private void adjustStartingTime(int timeUnit, int timeUnitCount) {
-        calendar.setTime(new Date(rrdGraph.im.start * 1000L));
+        calendar.setTime(new Date(im.start * 1000L));
         switch (timeUnit) {
         case SECOND:
             calendar.add(Calendar.SECOND, -(calendar.get(Calendar.SECOND) % timeUnitCount));
@@ -195,8 +219,8 @@ class TimeAxis implements RrdGraphConstants {
 
 
     private void chooseTickSettings() {
-        if (rrdGraph.gdef.timeAxisSetting != null) {
-            tickSetting = new TimeAxisSetting(rrdGraph.gdef.timeAxisSetting);
+        if (gdef.timeAxisSetting != null) {
+            tickSetting = new TimeAxisSetting(gdef.timeAxisSetting);
         }
         else {
             for (int i = 0; tickSettings[i].secPerPix >= 0 && secPerPix > tickSettings[i].secPerPix; i++) {
