@@ -42,7 +42,7 @@ public class Epoch extends JFrame {
     };
 
     private static final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
-    private static final String helpText;
+    private static final String HELP_TEXT;
 
     private Timer timer = new Timer(1000, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -62,7 +62,7 @@ public class Epoch extends JFrame {
         tooltipBuff.append("<b>AT-style time specification</b><br>");
         tooltipBuff.append("timestamp<br><br>");
         tooltipBuff.append("Copyright (c) 2013 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc. Licensed under the Apache License, Version 2.0.</html>");
-        helpText = tooltipBuff.toString();
+        HELP_TEXT = tooltipBuff.toString();
     }
 
     private JLabel topLabel = new JLabel("Enter timestamp or readable date:");
@@ -85,7 +85,7 @@ public class Epoch extends JFrame {
         c.add(topLabel, BorderLayout.NORTH);
         c.add(inputField, BorderLayout.WEST);
         c.add(convertButton, BorderLayout.CENTER);
-        convertButton.setToolTipText(helpText);
+        convertButton.setToolTipText(HELP_TEXT);
         convertButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 convert();
@@ -94,7 +94,7 @@ public class Epoch extends JFrame {
         c.add(helpButton, BorderLayout.EAST);
         helpButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(helpButton, helpText, "Epoch Help", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(helpButton, HELP_TEXT, "Epoch Help", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         inputField.requestFocus();

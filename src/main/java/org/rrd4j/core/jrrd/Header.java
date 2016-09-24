@@ -11,7 +11,7 @@ import java.io.IOException;
 public class Header implements Constants {
 
     private static final double FLOAT_COOKIE = 8.642135E130;
-    private static final long offset = 0;
+    private static final long OFFSET = 0;
     private long size;
     String version = UNDEFINED_VERSION;
     private int iVersion = UNDEFINED_VERSION_AS_INT;
@@ -50,7 +50,7 @@ public class Header implements Constants {
         @SuppressWarnings("unused")
         UnivalArray par = file.getUnivalArray(10);
 
-        size = file.getFilePointer() - offset;
+        size = file.getFilePointer() - OFFSET;
     }
 
     /**
