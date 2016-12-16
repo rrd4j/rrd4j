@@ -157,6 +157,14 @@ public class RpnCalculatorTest {
     }
 
     @Test
+    public void testMAXNAN() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 4);
+        dp.addDatasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
+        dp.addDatasource("source2", new Myplottable(2.0, Double.NaN, 1.0, Double.NaN));
+        expected(dp, "source1, source2, MAXNAN", 2.0, 1.0, 1.0, Double.NaN);
+    }
+
+    @Test
     public void testMIN() throws IOException {
         DataProcessor dp = new DataProcessor(1, 2);
         expected(dp, "1, 2, MIN, 3 , MIN", 1);
