@@ -171,6 +171,14 @@ public class RpnCalculatorTest {
     }
 
     @Test
+    public void testMINNAN() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 4);
+        dp.addDatasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
+        dp.addDatasource("source2", new Myplottable(2.0, Double.NaN, 1.0, Double.NaN));
+        expected(dp, "source1, source2, MINNAN", 1.0, 1.0, 1.0, Double.NaN);
+    }
+
+    @Test
     public void testINF() throws IOException {
         DataProcessor dp = new DataProcessor(1, 2);
         expected(dp, "INF", Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
