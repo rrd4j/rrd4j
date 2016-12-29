@@ -259,6 +259,14 @@ class RpnCalculator {
                 c.push(Math.max(c.pop(), c.pop()));                
             }
         },
+        TKN_MAXNAN("MAXNAN") {
+            @Override
+            void do_method(RpnCalculator c, State s) {
+                double x1 = c.pop();
+                double x2 = c.pop();
+                c.push(Double.isNaN(x1) ? x2 : (Double.isNaN(x2) ? x1 : Math.max(x1, x2)));
+            }
+        },
         TKN_LIMIT("LIMIT") {
             @Override
             void do_method(RpnCalculator c, State s) {
