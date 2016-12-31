@@ -127,7 +127,13 @@ public class Archive {
             rowIndexPointer = currentRow + chunk.startOffset + 1;
         }
 
-        db.rrdFile.seek((dataOffset + (chunk.dsCount * rowIndexPointer * Constants.SIZE_OF_DOUBLE)));
+        if (rowIndexPointer < rowCount) {
+            db.rrdFile.seek((dataOffset + (chunk.dsCount * rowIndexPointer * Constants.SIZE_OF_DOUBLE)));
+        } else {
+            // Safety net: prevent from reading random portions of file
+            // if something went wrong
+            db.rrdFile.seekToEndOfFile();
+        }
 
         double[][] data = chunk.data;
 

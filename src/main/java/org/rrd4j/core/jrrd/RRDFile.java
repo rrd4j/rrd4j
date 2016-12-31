@@ -195,4 +195,8 @@ class RRDFile implements Constants {
     public void seek(long position) {
         mappedByteBuffer.position((int) position);
     }
+
+    public void seekToEndOfFile() {
+        mappedByteBuffer.position(mappedByteBuffer.limit());
+    }
 }

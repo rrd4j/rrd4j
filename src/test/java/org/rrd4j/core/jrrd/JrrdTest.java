@@ -102,6 +102,9 @@ public class JrrdTest {
         DataChunk data = rrd.getData(ConsolidationFunctionType.AVERAGE, 920802300, 920808900, 300);
         Assert.assertEquals(0.02, data.toPlottable("speed").getValue(920802300), 1e-7);
         Assert.assertEquals(1.0, data.toPlottable("weight").getValue(920802300), 1e-7);
+        
+        // Just check it does not crash
+        rrd.getData(ConsolidationFunctionType.AVERAGE, Integer.MAX_VALUE - 100000, Integer.MAX_VALUE - 80000, 300);
     }
 
     Double readDouble(RRDFile rrdFile) throws IOException {
