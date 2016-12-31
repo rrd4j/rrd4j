@@ -14,13 +14,14 @@ public class DataSource {
 
     private static enum ds_param_en { DS_mrhb_cnt, DS_min_val, DS_max_val, DS_cde }
 
-    private long offset;
-    private long size;
-    private String name;
-    private DataSourceType type;
-    private int minimumHeartbeat;
-    private double minimum;
-    private double maximum;
+    private final long offset;
+    private final long size;
+    private final String name;
+    private final DataSourceType type;
+    private final int minimumHeartbeat;
+    private final double minimum;
+    private final double maximum;
+    // initialized during RRDatabase construction
     private PDPStatusBlock pdpStatusBlock;
 
     DataSource(RRDFile file) throws IOException {

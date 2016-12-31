@@ -15,9 +15,11 @@ public class CDPStatusBlock {
         CDP_val, CDP_unkn_pdp_cnt, CDP_hw_intercept, CDP_hw_last_intercept, CDP_hw_slope, 
         CDP_hw_last_slope, CDP_null_count,
         CDP_last_null_count, CDP_primary_val, CDP_secondary_val
-    };
+    }
 
+    /** Byte offset within file */
     final long offset;
+    /** Size of block in bytes */
     final long size;
     final int unknownDatapoints;
     final double value;

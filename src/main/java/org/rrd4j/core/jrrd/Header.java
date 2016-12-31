@@ -12,12 +12,14 @@ public class Header implements Constants {
 
     private static final double FLOAT_COOKIE = 8.642135E130;
     private static final long offset = 0;
-    private long size;
-    String version = UNDEFINED_VERSION;
-    private int iVersion = UNDEFINED_VERSION_AS_INT;
-    int dsCount;
-    int rraCount;
-    int pdpStep;
+    private final long size;
+    final String version;
+    private final int iVersion;
+    /** Number of data sources */
+    final int dsCount;
+    /** Number of archives within file */
+    final int rraCount;
+    final int pdpStep;
 
     Header(RRDFile file) throws IOException {
 

@@ -7,6 +7,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -23,16 +24,27 @@ public class Archive {
     private static enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha};
 
     final RRDatabase db;
-    final long offset;
+    /** Header offset within file in bytes */
+    final long headerOffset;
+    /** Header size in bytes */
+    private final long headerSize;
+    /** Data offset within file in bytes */
     long dataOffset;
-    long size;
-    final ConsolidationFunctionType type;
+    private final ConsolidationFunctionType type;
+    /** Data row count */
     final int rowCount;
     final int pdpCount;
     final double xff;
+
+    /// Following fields are initialized during RRDatabase construction
+    /// and in fact immutable
+
+    /** Consolitation data points */
     List<CDPStatusBlock> cdpStatusBlocks;
+    /** Row for last modification time of database */
     int currentRow;
 
+    /** Cached content */
     private double[][] values;
 
     Archive(RRDatabase db) throws IOException {
@@ -41,7 +53,7 @@ public class Archive {
 
         RRDFile file = db.rrdFile;
 
-        offset = file.getFilePointer();
+        headerOffset = file.getFilePointer();
         type = ConsolidationFunctionType.valueOf(file.readString(Constants.CF_NAM_SIZE).toUpperCase());
         file.align(file.getBits() / 8);
         rowCount = file.readLong();
@@ -50,7 +62,7 @@ public class Archive {
         UnivalArray par = file.getUnivalArray(10);
         xff = par.getDouble(rra_par_en.RRA_cdp_xff_val);
 
-        size = file.getFilePointer() - offset;
+        headerSize = file.getFilePointer() - headerOffset;
     }
 
     /**
@@ -100,22 +112,22 @@ public class Archive {
         dataOffset = file.getFilePointer();
 
         // Skip over the data to position ourselves at the start of the next archive
-        file.skipBytes(8 * rowCount * dsCount);
+        file.skipBytes(Constants.SIZE_OF_DOUBLE * rowCount * dsCount);
     }
 
     void loadData(DataChunk chunk)
             throws IOException {
 
-        long pointer;
+        long rowIndexPointer;
 
-        if (chunk.start < 0) {
-            pointer = currentRow + 1;
+        if (chunk.startOffset < 0) {
+            rowIndexPointer = currentRow + 1;
         }
         else {
-            pointer = currentRow + chunk.start + 1;
+            rowIndexPointer = currentRow + chunk.startOffset + 1;
         }
 
-        db.rrdFile.seek((dataOffset + (chunk.dsCount * pointer * 8)));
+        db.rrdFile.seek((dataOffset + (chunk.dsCount * rowIndexPointer * Constants.SIZE_OF_DOUBLE)));
 
         double[][] data = chunk.data;
 
@@ -123,29 +135,25 @@ public class Archive {
          * This is also terrible - cleanup - CT
          */
         int row = 0;
-        for (int i = chunk.start; i < rowCount - chunk.end; i++, row++) {
+        for (int i = chunk.startOffset; i < rowCount - chunk.endOffset; i++, row++) {
             if (i < 0) {                   // no valid data yet
-                for (int ii = 0; ii < chunk.dsCount; ii++) {
-                    data[row][ii] = Double.NaN;
-                }
+                Arrays.fill(data[row], Double.NaN);
             }
             else if (i >= rowCount) {    // past valid data area
-                for (int ii = 0; ii < chunk.dsCount; ii++) {
-                    data[row][ii] = Double.NaN;
-                }
+                Arrays.fill(data[row], Double.NaN);
             }
             else {                       // inside the valid are but the pointer has to be wrapped
-                if (pointer >= rowCount) {
-                    pointer -= rowCount;
+                if (rowIndexPointer >= rowCount) {
+                    rowIndexPointer -= rowCount;
 
-                    db.rrdFile.seek(dataOffset + (chunk.dsCount * pointer * 8));
+                    db.rrdFile.seek(dataOffset + (chunk.dsCount * rowIndexPointer * Constants.SIZE_OF_DOUBLE));
                 }
 
                 for (int ii = 0; ii < chunk.dsCount; ii++) {
                     data[row][ii] = db.rrdFile.readDouble();
                 }
 
-                pointer++;
+                rowIndexPointer++;
             }
         }
     }
@@ -220,7 +228,7 @@ public class Archive {
             int counter = 0;
             int row = currentRow;
 
-            db.rrdFile.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
+            db.rrdFile.seek(dataOffset + (row + 1) * db.header.dsCount * Constants.SIZE_OF_DOUBLE);
 
             long lastUpdate = db.lastUpdate.getTime() / 1000;
             int pdpStep = db.header.pdpStep;
@@ -288,7 +296,7 @@ public class Archive {
         }
         values = new double[db.header.dsCount][rowCount];
         int row = currentRow;
-        db.rrdFile.seek(dataOffset + (row + 1) * db.header.dsCount * 8);
+        db.rrdFile.seek(dataOffset + (row + 1) * db.header.dsCount * Constants.SIZE_OF_DOUBLE);
         for (int counter = 0; counter < rowCount; counter++) {
             row++;
             if (row == rowCount) {
@@ -341,9 +349,9 @@ public class Archive {
 
         StringBuilder sb = new StringBuilder("[Archive: OFFSET=0x");
 
-        sb.append(Long.toHexString(offset))
+        sb.append(Long.toHexString(headerOffset))
           .append(", SIZE=0x")
-          .append(Long.toHexString(size))
+          .append(Long.toHexString(headerSize))
           .append(", type=")
           .append(type)
           .append(", rowCount=")

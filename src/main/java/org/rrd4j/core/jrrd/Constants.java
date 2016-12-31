@@ -33,4 +33,6 @@ interface Constants {
     static final byte[] FLOAT_COOKIE_LITTLE_ENDIAN = {0x2F, 0x25, (byte) 0xC0,
         (byte) 0xC7, 0x43, 0x2B, 0x1F,
         0x5B};
+
+    public static final int SIZE_OF_DOUBLE = 8;
 }

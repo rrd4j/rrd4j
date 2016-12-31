@@ -14,20 +14,26 @@ import org.rrd4j.data.Plottable;
 public class DataChunk {
 
     private static final String NEWLINE = System.getProperty("line.separator");
+    /** Start time in seconds since epoch */
     private final long startTime;
-    final int start;
-    final int end;
+    /** Row number offset relative to current row. Can be negative */
+    final int startOffset;
+    /** Row number offset relative to current row */
+    final int endOffset;
+    /** Step in seconds */
     private final long step;
+    /** Number of datasources must be equal to number of datasources in file */
     final int dsCount;
     final double[][] data;
     private final int rows;
+    /** Map datasource name to datasource index */
     private final Map<String, Integer> nameindex;
 
-    DataChunk(Map<String, Integer> nameindex, long startTime, int start, int end, long step, int dsCount, int rows) {
+    DataChunk(Map<String, Integer> nameindex, long startTime, int startOffset, int endOffset, long step, int dsCount, int rows) {
         this.nameindex = nameindex;
         this.startTime = startTime;
-        this.start = start;
-        this.end = end;
+        this.startOffset = startOffset;
+        this.endOffset = endOffset;
         this.step = step;
         this.dsCount = dsCount;
         this.rows = rows;
@@ -62,11 +68,11 @@ public class DataChunk {
     }
 
     public int getStart() {
-        return start;
+        return startOffset;
     }
 
     public int getEnd() {
-        return end;
+        return endOffset;
     }
 
     public long getStep() {
@@ -85,7 +91,7 @@ public class DataChunk {
     public double[][] getData() {
         return data;
     }
-    
+
     /**
      * <p>Getter for the time stamps values.</p>
      *
