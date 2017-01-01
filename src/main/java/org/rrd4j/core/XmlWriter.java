@@ -1,10 +1,15 @@
 package org.rrd4j.core;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Stack;
+import java.util.TimeZone;
 
 /**
  * Extremely simple utility class used to create XML documents.
@@ -12,6 +17,10 @@ import java.util.Stack;
 public class XmlWriter {
     static final String INDENT_STR = "   ";
     private static final String STYLE = "style";
+    private static final SimpleDateFormat ISOLIKE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ", Locale.ENGLISH);
+    static {
+        ISOLIKE.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     private final PrintWriter writer;
     private final StringBuilder indent = new StringBuilder("");
@@ -183,10 +192,13 @@ public class XmlWriter {
      * @param comment comment string
      */
     public void writeComment(Object comment) {
+        if (comment instanceof Date) {
+            comment = ISOLIKE.format((Date) comment);
+        }
         writer.println(indent + "<!-- " + escape(comment.toString()) + " -->");
-	}
+    }
 
-	private static String escape(String s) {
-		return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-	}
+    private static String escape(String s) {
+        return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
 }
