@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.plugin.javadoc.version>2.10.3</maven.plugin.javadoc.version>
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
-        <maven.plugin.surefire.version>2.18.1</maven.plugin.surefire.version>
+        <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
         <junit.version>4.12</junit.version>
         <buildSource>1.7</buildSource>
         <buildTarget>1.7</buildTarget>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>2.14.0</version>
+            <version>2.14.3</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.2</version>
+            <version>3.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
