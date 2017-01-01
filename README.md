@@ -9,7 +9,7 @@ RRD4J's API is made for those who are familiar with [RRDTool's](http://oss.oetik
 work with pure Java (no native functions or libraries, no Runtime.exec(), RRDTool does not have to be present). We help out our
 users [here](https://groups.google.com/forum/#!forum/rrd4j-discuss).
 
-### Latest Version (requires Java 6+)
+### Latest Version (requires Java 7+)
 
 RRD4J 3.0 (released 2016-08-15) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
 
