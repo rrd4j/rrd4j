@@ -1,3 +1,13 @@
+Changes in version 3.1 - 1 Jan 2017
+----------------------------------
+
+Added improved control on time label, by using custom instance of org.rrd4j.graph.TimeLabelFormat instances, thanks to brharrington (https://github.com/brharrington).
+Added support for MAXNAN, MINNAN
+The XML export format date use an ISO8601 like format, and output time in UTC.
+
+* Fixed Issue 80: Error with resolution in fetch requests
+* Fixed Issue 65: Fix crash when requested time is outside of archive range (for rrdtool archives).
+
 Changes in version 3 - 15 Aug 2016
 ----------------------------------
 
