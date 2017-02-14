@@ -28,7 +28,7 @@ public class RrdDbTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    public void testRrdDb(RrdDb db) throws IOException {
+    public static void testRrdDb(RrdDb db) throws IOException {
 
         Assert.assertEquals("Invalid step", 300L, db.getHeader().getStep());
 
@@ -59,7 +59,7 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid XFF for second archive", 0.5, db.getArchive(1).getXff(), 1e-7);
     }
 
-    public void testRrdDbXml(RrdDb db) throws IOException {
+    public static void testRrdDbXml(RrdDb db) throws IOException {
         double value;
 
         Assert.assertEquals("Invalid date", 920808900L, db.getLastUpdateTime());
@@ -109,7 +109,7 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid value for second ds in second archive: " + value, 6.0, value, 1e-5);
     }
 
-    public void checkValues(RrdDb db) throws IOException {
+    public static void checkValues(RrdDb db) throws IOException {
         double value;
 
         Assert.assertEquals("Invalid date", 1278107831, db.getLastUpdateTime());
@@ -181,9 +181,13 @@ public class RrdDbTest {
 
     @Test
     public void testBuild2() throws IOException {
+    	testBuild2(testFolder.newFile("testBuild.rrd").getCanonicalPath(), RrdBackendFactory.getFactory("NIO"));
+    }
+    
+    public static RrdDb testBuild2(String path, RrdBackendFactory rrdBackendFactory) throws IOException {
         long start = START;
 
-        RrdDef rrdDef = new RrdDef(testFolder.newFile("testBuild.rrd").getCanonicalPath(), start - 1, 300);
+        RrdDef rrdDef = new RrdDef(path, start - 1, 300);
         rrdDef.setVersion(2);
         rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);
         rrdDef.addDatasource("shade", GAUGE, 600, 0, Double.NaN);
@@ -199,10 +203,11 @@ public class RrdDbTest {
         rrdDef.addArchive(MAX, 0.5, 6, 700);
         rrdDef.addArchive(MAX, 0.5, 24, 775);
         rrdDef.addArchive(MAX, 0.5, 288, 797);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = new RrdDb(rrdDef, rrdBackendFactory);
         testRrdDb(rrdDb);
 
         Assert.assertEquals("not expected version", 2, rrdDb.getRrdDef().getVersion());
+        return rrdDb;
     }
 
     @Test
