@@ -1,7 +1,10 @@
 package org.rrd4j.core;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -17,16 +20,17 @@ import com.amazonaws.util.IOUtils;
  * @author Paul Melici
  */
 public class RrdS3Backend extends RrdByteArrayBackend {
-	private final int S3_STATUS_CODE_NOT_FOUND = 404;
+	static final int S3_STATUS_CODE_NOT_FOUND = 404;
 
 	private final AmazonS3 amazonS3;
 	private final String s3Bucket;
+	private final RrdBackendCompression.Compressor compressor;
 
 	private volatile boolean dirty = false;
 
 	/**
 	 * <p>
-	 * Constructor for RrdMongoDBBackend.
+	 * Constructor for RrdS3Backend.
 	 * </p>
 	 *
 	 * @param path
@@ -37,18 +41,26 @@ public class RrdS3Backend extends RrdByteArrayBackend {
 	 *            <a href=
 	 *            "http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html">S3
 	 *            bucket</a> to use. The specified bucket must already exist and
-	 *            the caller must have
-	 *            {@link com.amazonaws.services.s3.model.Permission#Write}
-	 *            permission to the bucket to upload an object.
+	 *            the caller must have appropriate permissions to the bucket.
+	 * @param compressor
+	 *            Use the specified {@link RrdBackendCompression.Compressor}.
+	 *            <code>null</code> to disable compression.
 	 * @throws IOException
+	 *             if any
 	 */
-	public RrdS3Backend(String path, AmazonS3 amazonS3, String s3Bucket) throws IOException {
+	public RrdS3Backend(String path, AmazonS3 amazonS3, String s3Bucket, RrdBackendCompression.Compressor compressor)
+			throws IOException {
 		super(path);
 		this.amazonS3 = amazonS3;
 		this.s3Bucket = s3Bucket;
+		this.compressor = compressor;
 
 		try (S3Object s3Object = amazonS3.getObject(s3Bucket, path)) {
-			this.buffer = IOUtils.toByteArray(s3Object.getObjectContent());
+			InputStream in = s3Object.getObjectContent();
+			if (compressor != null) {
+				in = compressor.decompress(in);
+			}
+			this.buffer = IOUtils.toByteArray(in);
 		} catch (AmazonServiceException ase) {
 			if (ase.getStatusCode() == S3_STATUS_CODE_NOT_FOUND) {
 				// this is OK on creation. means the object doesn't exist.
@@ -83,11 +95,32 @@ public class RrdS3Backend extends RrdByteArrayBackend {
 	@Override
 	public void close() throws IOException {
 		if (dirty) {
+
+			// get data to write to S3. Will be raw RRD data if no compression,
+			// or compressed data if there is a compressor.
+			//
+			// In the case of compressed data, we need to compress it up-front
+			// (as opposed to streaming compressing) because S3 needs content
+			// size for upload.
+			byte[] bytesToWrite;
+			if (compressor == null) {
+				bytesToWrite = buffer;
+			} else {
+				// assume reasonable compression ratio for buffer sizing
+				int size = (int) (buffer.length * 0.7);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
+
+				try (OutputStream compressedOut = compressor.compress(baos)) {
+					compressedOut.write(buffer);
+				}
+				bytesToWrite = baos.toByteArray();
+			}
+
 			ObjectMetadata objectMetadata = new ObjectMetadata();
-			objectMetadata.setContentLength(buffer.length);
+			objectMetadata.setContentLength(bytesToWrite.length);
 
-			PutObjectResult putObject = amazonS3.putObject(s3Bucket, getPath(), new ByteArrayInputStream(buffer), objectMetadata);
-
+			PutObjectResult putObject = amazonS3.putObject(s3Bucket, getPath(), new ByteArrayInputStream(bytesToWrite),
+					objectMetadata);
 		}
 	}
 }

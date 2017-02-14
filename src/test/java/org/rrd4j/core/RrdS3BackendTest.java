@@ -7,6 +7,7 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
@@ -28,6 +29,18 @@ public class RrdS3BackendTest {
 							+ "enviornmental variables or use any of the other configuration options described by "
 							+ "http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3ClientBuilder.html#standard--",
 					e);
+		}
+		
+		// ensure the test file is not already there.
+		try {
+			amazonS3.deleteObject(BUCKET, PATH);
+		} catch (AmazonServiceException ase) {
+			if( ase.getStatusCode() == RrdS3Backend.S3_STATUS_CODE_NOT_FOUND ) {
+				// Suppress exception. OK if file was not there.
+			} else {
+				throw ase;
+			}
+			
 		}
 
 	}
@@ -56,5 +69,18 @@ public class RrdS3BackendTest {
 		RrdDbTest.testRrdDb(rrdDb);
 
 	}
+	
+	@Test
+	public void testBuild2WithCompression() throws IOException {
+		RrdS3BackendFactory rrdBackendFactory = new RrdS3BackendFactory(BUCKET, amazonS3, RrdBackendCompression.GZIP);
+		RrdDb rrdDb = RrdDbTest.testBuild2(PATH, rrdBackendFactory);
+		rrdDb.close(); // flushes data to S3
+
+		// download from s3
+		rrdDb = new RrdDb(PATH, rrdBackendFactory);
+		RrdDbTest.testRrdDb(rrdDb);
+
+	}
+
 
 }
