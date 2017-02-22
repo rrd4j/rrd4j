@@ -35,7 +35,7 @@ import java.util.Date;
  * @see RrdBackend
  * @see RrdBackendFactory
  */
-public class RrdDb implements RrdUpdater, Closeable {
+public class RrdDb implements RrdUpdater {
     /**
      * Prefix to identify external XML file source used in various RrdDb constructors.
      */
