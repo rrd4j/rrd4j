@@ -119,25 +119,6 @@ public abstract class RrdBackendFactory {
         registerFactory(factory);
         setDefaultFactory(factory.getName());
     }
-    
-	/**
-	 * Registers new (custom) backend factory within the Rrd4j framework if it
-	 * has not already been registered and sets this factory as the default if
-	 * it is possible to set the default factory (if no RRD files have been
-	 * created yet) .
-	 *
-	 * @param factory
-	 *            Factory to be registered and set as default
-	 */
-	public static void tryRegisterAndSetAsDefaultFactory(RrdBackendFactory factory) {
-		if (!factories.containsKey(factory.getName())) {
-			registerFactory(factory);
-		}
-		if (!RrdBackend.isInstanceCreated()) {
-			setDefaultFactory(factory.getName());
-		}
-
-	}
 
     /**
      * Returns the default backend factory. This factory is used to construct

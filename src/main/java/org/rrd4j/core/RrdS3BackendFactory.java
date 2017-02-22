@@ -89,7 +89,18 @@ public class RrdS3BackendFactory extends RrdBackendFactory {
 		this.s3Bucket = s3Bucket;
 		this.compressor = compressor;
 
-		tryRegisterAndSetAsDefaultFactory(this);
+		try {
+			registerAndSetAsDefaultFactory(this);
+		} catch (IllegalStateException | IllegalArgumentException e) {
+			// Ignored.
+			// We will get IllegalArgumentException when attempting registering
+			// ourselves if another instance of RrdS3BackendFactory has been
+			// created. And we will get IllegalStateException when attempting to
+			// set ourselves as default factory if another RrdBackendFactory has
+			// created an RRD. We ignore both of these because we want to allow
+			// the user to create multiple instances of RrdS3BackendFactory with
+			// different settings.
+		}
 	}
 
 	/** {@inheritDoc} */
