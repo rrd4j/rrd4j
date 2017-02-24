@@ -1,6 +1,9 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
 
 /**
  * <p>Base implementation class for all backend classes. Each Round Robin Database object
@@ -45,9 +48,19 @@ import java.io.IOException;
  * @author Sasa Markovic
  */
 public abstract class RrdBackend {
+
+    private static final ByteOrder BYTEORDER = ByteOrder.BIG_ENDIAN;
+    private static final char STARTPRIVATEAREA = '\ue000';
+    private static final char ENDPRIVATEAREA = '\uf8ff';
+    private static final int STARTPRIVATEAREACODEPOINT = Character.codePointAt(new char[]{STARTPRIVATEAREA}, 0);
+    private static final int ENDPRIVATEAREACODEPOINT = Character.codePointAt(new char[]{ENDPRIVATEAREA}, 0);
+    private static final int PRIVATEAREASIZE = ENDPRIVATEAREACODEPOINT - STARTPRIVATEAREACODEPOINT + 1;
+    private static final int MAXUNSIGNEDSHORT = Short.MAX_VALUE - Short.MIN_VALUE;
+
     private static boolean instanceCreated = false;
     private final String path;
     private RrdBackendFactory factory;
+    private long nextBigStringOffset = -1;
 
     /**
      * Creates backend for a RRD storage with the given path.
@@ -140,6 +153,13 @@ public abstract class RrdBackend {
         return b;
     }
 
+    private void writeShort(long offset, short value) throws IOException {
+        byte[] b = new byte[2];
+        b[0] = (byte) ((value >>> 8) & 0xFF);
+        b[1] = (byte) ((value >>> 0) & 0xFF);
+        write(offset, b);
+    }
+
     final void writeInt(long offset, int value) throws IOException {
         write(offset, getIntBytes(value));
     }
@@ -186,15 +206,53 @@ public abstract class RrdBackend {
     }
 
     final void writeString(long offset, String value) throws IOException {
-        value = value.trim();
-        byte[] b = new byte[RrdPrimitive.STRING_LENGTH * 2];
-        for (int i = 0, k = 0; i < RrdPrimitive.STRING_LENGTH; i++) {
-            char c = (i < value.length()) ? value.charAt(i) : ' ';
-            byte[] cb = getCharBytes(c);
-            b[k++] = cb[0];
-            b[k++] = cb[1];
+        if (nextBigStringOffset < 0) {
+            nextBigStringOffset = getLength() - (Short.SIZE / 8);
         }
-        write(offset, b);
+        value = value.trim();
+        // Over-sized string are appended at the end of the RRD
+        // The real position is encoded in the "short" ds name, using the private use area from Unicode
+        // This area span the range E000-F8FF, that' a 6400 char area, 
+        if (value.length() > RrdPrimitive.STRING_LENGTH) {
+            String bigString = value;
+            int byteStringLength = (int) Math.min(MAXUNSIGNEDSHORT, bigString.length());
+            long bigStringOffset = nextBigStringOffset;
+            nextBigStringOffset -= byteStringLength * 2 + (Short.SIZE / 8);
+            writeShort(bigStringOffset, (short)byteStringLength);
+            writeString(bigStringOffset - bigString.length() * 2, bigString, byteStringLength);
+            // Now we generate the new string that encode the position
+            long reminder = bigStringOffset;
+            StringBuilder newValue = new StringBuilder(value.substring(0, RrdPrimitive.STRING_LENGTH));
+            int i = RrdPrimitive.STRING_LENGTH;
+            // Read in inverse order, so write in inverse order
+            while (reminder > 0) {
+                // Only the first char is kept, as it will never byte a multi-char code point
+                newValue.setCharAt(--i, Character.toChars((int)(reminder % PRIVATEAREASIZE + STARTPRIVATEAREACODEPOINT))[0]);
+                reminder = (long) Math.floor( ((float)reminder) / (float)PRIVATEAREASIZE);
+            }
+            value = newValue.toString();
+        }
+        writeString(offset, value, RrdPrimitive.STRING_LENGTH);
+    }
+
+    private void writeString(long offset, String value, int length) throws IOException {
+        ByteBuffer bbuf = ByteBuffer.allocate(length * 2);
+        bbuf.order(BYTEORDER);
+        bbuf.position(0);
+        bbuf.limit(length * 2);
+        CharBuffer cbuf = bbuf.asCharBuffer();
+        cbuf.put(value);
+        while (cbuf.position() < cbuf.limit()) {
+            cbuf.put(' ');
+        }
+        write(offset, bbuf.array());
+    }
+
+    private short readShort(long offset) throws IOException {
+        byte[] b = new byte[2];
+        read(offset, b);
+        return (short) (((b[0] << 8) & 0x0000FF00) + ((b[1] << 0) & 0x000000FF));
+
     }
 
     final int readInt(long offset) throws IOException {
@@ -231,14 +289,36 @@ public abstract class RrdBackend {
     }
 
     final String readString(long offset) throws IOException {
-        byte[] b = new byte[RrdPrimitive.STRING_LENGTH * 2];
-        char[] c = new char[RrdPrimitive.STRING_LENGTH];
-        read(offset, b);
-        for (int i = 0, k = -1; i < RrdPrimitive.STRING_LENGTH; i++) {
-            byte[] cb = new byte[]{b[++k], b[++k]};
-            c[i] = getChar(cb);
+        ByteBuffer bbuf = ByteBuffer.allocate(RrdPrimitive.STRING_LENGTH * 2);
+        bbuf.order(BYTEORDER);
+        read(offset, bbuf.array());
+        bbuf.position(0);
+        bbuf.limit(RrdPrimitive.STRING_LENGTH * 2);
+        CharBuffer cbuf = bbuf.asCharBuffer();
+        long realStringOffset = 0;
+        int i = -1;
+        while (++i < RrdPrimitive.STRING_LENGTH) {
+            char c = cbuf.charAt(RrdPrimitive.STRING_LENGTH - i - 1);
+            if (c >= STARTPRIVATEAREA && c <= ENDPRIVATEAREA) {
+                realStringOffset += ((long) c - STARTPRIVATEAREACODEPOINT) * Math.pow(PRIVATEAREASIZE, i);
+                cbuf.put(i, ' ');
+            } else {
+                break;
+            }
         }
-        return new String(c).trim();
+        if (realStringOffset > 0) {
+            int bigStringSize = readShort(realStringOffset);
+            // Signed to unsigned arithmetic
+            if (bigStringSize < 0) {
+                bigStringSize += MAXUNSIGNEDSHORT + 1;
+            }
+            ByteBuffer realStringbuf = ByteBuffer.allocate(bigStringSize * 2);
+            bbuf.order(BYTEORDER);
+            read(realStringOffset - bigStringSize * 2, realStringbuf.array());
+            return realStringbuf.asCharBuffer().toString().trim();
+        } else {
+            return new String(cbuf.toString()).trim();
+        }
     }
 
     // static helper methods
@@ -265,12 +345,6 @@ public abstract class RrdBackend {
         return b;
     }
 
-    private static byte[] getCharBytes(char value) {
-        byte[] b = new byte[2];
-        b[0] = (byte) ((value >>> 8) & 0xFF);
-        b[1] = (byte) ((value >>> 0) & 0xFF);
-        return b;
-    }
 
     private static byte[] getDoubleBytes(double value) {
         byte[] bytes = getLongBytes(Double.doubleToLongBits(value));
@@ -290,19 +364,14 @@ public abstract class RrdBackend {
         return ((long) (high) << 32) + (low & 0xFFFFFFFFL);
     }
 
-    private static char getChar(byte[] b) {
-        assert b.length == 2 : "Invalid number of bytes for char conversion";
-        return (char) (((b[0] << 8) & 0x0000FF00) + ((b[1] << 0) & 0x000000FF));
-    }
-
     private static double getDouble(byte[] b) {
         assert b.length == 8 : "Invalid number of bytes for double conversion";
-		return Double.longBitsToDouble(getLong(b));
-	}
+        return Double.longBitsToDouble(getLong(b));
+    }
 
-	static boolean isInstanceCreated() {
-		return instanceCreated;
-	}
+    static boolean isInstanceCreated() {
+        return instanceCreated;
+    }
 
     /**
      * @return the factory

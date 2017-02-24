@@ -592,15 +592,24 @@ public class RrdDef {
         for (ArcDef arcDef : arcDefs) {
             rowsCount += arcDef.getRows();
         }
-        return calculateSize(dsCount, arcCount, rowsCount);
+        String[] dsNames = new String[dsCount];
+        for (int i = 0; i < dsNames.length ; i++) {
+            dsNames[i] = dsDefs.get(i).getDsName();
+        }
+        return calculateSize(dsCount, arcCount, rowsCount, dsNames);
     }
 
-    static long calculateSize(int dsCount, int arcCount, int rowsCount) {
-        // return 64L + 128L * dsCount + 56L * arcCount +
-        //	20L * dsCount * arcCount + 8L * dsCount * rowsCount;
+    static long calculateSize(int dsCount, int arcCount, int rowsCount, String[] dsNames) {
+        int postStorePayload = 0;
+        for(String n: dsNames) {
+            if (n.length() > RrdPrimitive.STRING_LENGTH) {
+                postStorePayload += n.length() * 2 + Short.SIZE / 8;
+            }
+        }
         return (24L + 48L * dsCount + 16L * arcCount +
                 20L * dsCount * arcCount + 8L * dsCount * rowsCount) +
-                (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH;
+                (1L + 2L * dsCount + arcCount) * 2L * RrdPrimitive.STRING_LENGTH +
+                postStorePayload;
     }
 
     /**

@@ -331,9 +331,6 @@ public class Datasource implements RrdUpdater {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public void setDsName(String newDsName) throws IOException {
-        if (newDsName != null && newDsName.length() > RrdString.STRING_LENGTH) {
-            throw new IllegalArgumentException("Invalid datasource name specified: " + newDsName);
-        }
         if (parentDb.containsDs(newDsName)) {
             throw new IllegalArgumentException("Datasource already defined in this RRD: " + newDsName);
         }

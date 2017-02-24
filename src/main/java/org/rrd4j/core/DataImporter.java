@@ -58,7 +58,11 @@ abstract class DataImporter {
         for (int i = 0; i < arcCount; i++) {
             rowCount += getRows(i);
         }
-        return RrdDef.calculateSize(dsCount, arcCount, rowCount);
+        String[] dsNames = new String[getDsCount()];
+        for (int i = 0 ; i < dsNames.length; i++) {
+            dsNames[i] = getDsName(i);
+        }
+        return RrdDef.calculateSize(dsCount, arcCount, rowCount, dsNames);
     }
 
     void release() throws IOException {
