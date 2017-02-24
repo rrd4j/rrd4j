@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
+import org.rrd4j.graph.DownSampler.DataSet;
 
 /**
  * Class which actually creates Rrd4j graphs (does the hard work).
@@ -243,22 +244,30 @@ public class RrdGraph implements RrdGraphConstants {
         worker.setAntiAliasing(gdef.antiAliasing);
         worker.clip(im.xorigin, im.yorigin - gdef.height - 1, gdef.width, gdef.height + 2);
         double areazero = mapper.ytr((im.minval > 0.0) ? im.minval : (im.maxval < 0.0) ? im.maxval : 0.0);
-        double[] x = xtr(dproc.getTimestamps()), lastY = null;
+        double[] x = gdef.downsampler == null ? xtr(dproc.getTimestamps()) : null;
+        double[] lastY = null;
         // draw line, area and stack
         for (PlotElement plotElement : gdef.plotElements) {
             if (plotElement instanceof SourcedPlotElement) {
                 SourcedPlotElement source = (SourcedPlotElement) plotElement;
-                double[] y = ytr(source.getValues());
+                double[] y;
+                if (gdef.downsampler != null) {
+                    DataSet set = gdef.downsampler.downsize(dproc.getTimestamps(), source.getValues());
+                    x = xtr(set.timestamps);
+                    y = ytr(set.values);
+                } else {
+                    y = ytr(source.getValues());
+                }
                 if (Line.class.isAssignableFrom(source.getClass())) {
                     worker.drawPolyline(x, y, source.color, ((Line)source).stroke );
                 }
                 else if (Area.class.isAssignableFrom(source.getClass())) {
                     if(source.parent == null) {
-                        worker.fillPolygon(x, areazero, y, source.color);                        
+                        worker.fillPolygon(x, areazero, y, source.color);
                     }
                     else {
                         worker.fillPolygon(x, lastY, y, source.color);
-                        worker.drawPolyline(x, lastY, source.getParentColor(), new BasicStroke(0));                        
+                        worker.drawPolyline(x, lastY, source.getParentColor(), new BasicStroke(0));
                     }
                 }
                 else if (source instanceof Stack) {
@@ -680,13 +689,6 @@ public class RrdGraph implements RrdGraphConstants {
     }
 
     double[] xtr(long[] timestamps) {
-        /*
-          double[] timestampsDev = new double[timestamps.length];
-          for (int i = 0; i < timestamps.length; i++) {
-              timestampsDev[i] = mapper.xtr(timestamps[i]);
-          }
-          return timestampsDev;
-         */
         double[] timestampsDev = new double[2 * timestamps.length - 1];
         for (int i = 0, j = 0; i < timestamps.length; i += 1, j += 2) {
             timestampsDev[j] = mapper.xtr(timestamps[i]);

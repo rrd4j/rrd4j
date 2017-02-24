@@ -32,6 +32,8 @@ import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraphInfo;
 import org.rrd4j.graph.TimeLabelFormat;
 
+import eu.bengreen.data.utility.DownSampleImpl;
+
 public class TestDemo {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
@@ -165,6 +167,7 @@ public class TestDemo {
         gDef.setColor(RrdGraphConstants.COLOR_XAXIS, Color.BLUE);
         gDef.setColor(RrdGraphConstants.COLOR_YAXIS, new Color(0, 255, 0, 40));
         gDef.setTimeLabelFormat(new CustomTimeLabelFormat());
+        gDef.setDownsampler(new DownSampleImpl.LargestTriangleThreeBuckets(500));
 
         gDef.datasource("sun", rrdRestoredPath, "sun", AVERAGE);
         gDef.datasource("shade", rrdRestoredPath, "shade", AVERAGE);

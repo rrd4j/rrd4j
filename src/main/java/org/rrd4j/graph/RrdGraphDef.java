@@ -113,6 +113,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     boolean showSignature = true;
     Stroke gridStroke = GRID_STROKE;
     Stroke tickStroke = TICK_STROKE;
+    DownSampler downsampler = null;
 
     final List<Source> sources = new ArrayList<Source>();
     final List<CommentText> comments = new ArrayList<CommentText>();
@@ -1602,6 +1603,17 @@ public class RrdGraphDef implements RrdGraphConstants {
         this.tickStroke = tickStroke;
     }
 
+    /**
+     * Allows to set a downsampler, used to improved the visual representation of graph.
+     * <p>
+     * More details can be found on <a href="http://skemman.is/en/item/view/1946/15343">Sveinn Steinarsson's thesis</a>
+     * 
+     * @param downsampler The downsampler that will be used
+     */
+    public void setDownsampler(DownSampler downsampler) {
+        this.downsampler = downsampler;
+    }
+
     int printStatementCount() {
         int count = 0;
         for (CommentText comment : comments) {
@@ -1625,4 +1637,5 @@ public class RrdGraphDef implements RrdGraphConstants {
         }
         return false;
     }
+
 }
