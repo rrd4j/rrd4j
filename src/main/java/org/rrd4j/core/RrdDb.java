@@ -2,7 +2,12 @@ package org.rrd4j.core;
 
 import org.rrd4j.ConsolFun;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 
 /**
@@ -35,7 +40,7 @@ import java.util.Date;
  * @see RrdBackend
  * @see RrdBackendFactory
  */
-public class RrdDb implements RrdUpdater {
+public class RrdDb implements RrdUpdater, Closeable {
     /**
      * Prefix to identify external XML file source used in various RrdDb constructors.
      */

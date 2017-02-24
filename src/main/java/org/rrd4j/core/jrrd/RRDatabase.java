@@ -1,5 +1,6 @@
 package org.rrd4j.core.jrrd;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -21,7 +22,7 @@ import java.util.Set;
  * @author <a href="mailto:ciaran@codeloop.com">Ciaran Treanor</a>
  * @version $Revision: 1.1 $
  */
-public class RRDatabase {
+public class RRDatabase implements Closeable {
 
     final RRDFile rrdFile;
 
