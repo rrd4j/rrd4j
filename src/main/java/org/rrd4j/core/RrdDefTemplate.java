@@ -7,6 +7,8 @@ import org.rrd4j.ConsolFun;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 
 /**
@@ -164,11 +166,23 @@ public class RrdDefTemplate extends XmlTemplate {
             throw new IllegalArgumentException("XML definition must start with <rrd_def>");
         }
         validateTagsOnlyOnce(root, new String[]{
-                "path", "start", "step", "datasource*", "archive*"
+                "path*", "uri*", "start", "step", "datasource*", "archive*"
         });
         // PATH must be supplied or exception is thrown
-        String path = getChildValue(root, "path");
-        RrdDef rrdDef = new RrdDef(path);
+        RrdDef rrdDef;
+        if (hasChildNode(root, "path")) {
+            String path = getChildValue(root, "path");
+            rrdDef = new RrdDef(path);
+        } else if (hasChildNode(root, "uri")) {
+            String uri = getChildValue(root, "uri");
+            try {
+                rrdDef = new RrdDef(new URI(uri));
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Wrong URI: " + uri);
+            }
+        } else {
+            throw new IllegalArgumentException("Neither path or URI defined");
+        }
         try {
             String startStr = getChildValue(root, "start");
             Calendar startGc = Util.getCalendar(startStr);

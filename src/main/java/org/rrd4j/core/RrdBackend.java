@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -81,6 +82,15 @@ public abstract class RrdBackend {
      */
     public String getPath() {
         return path;
+    }
+
+    /**
+     * Return the URI associated to this backend, using the factory to generate it from the path.
+     * 
+     * @return URI to this backend's rrd.
+     */
+    public URI getUri() {
+        return factory.getUri(path);
     }
 
     /**
@@ -386,4 +396,5 @@ public abstract class RrdBackend {
     public void setFactory(RrdBackendFactory factory) {
         this.factory = factory;
     }
+
 }

@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Date;
 
 /**
@@ -64,7 +65,9 @@ public class RrdDb implements RrdUpdater, Closeable {
     private boolean closed = false;
 
     /**
-     * <p>Constructor used to create new RRD object from the definition. This RRD object will be backed
+     * <p>Constructor used to create new RRD object from the definition. If the rrdDef was constructed
+     * giving an {@link java.net.URI}, {@link org.rrd4j.core.RrdBackendFactory#findFactory(URI)} will be used to resolve the needed factory. If not, or a relative
+     * URI was given, this RRD object will be backed
      * with a storage (backend) of the default type. Initially, storage type defaults to "NIO"
      * (RRD bytes will be put in a file on the disk). Default storage type can be changed with a static
      * {@link org.rrd4j.core.RrdBackendFactory#setDefaultFactory(String)} method call.</p>
@@ -95,7 +98,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdDb(RrdDef rrdDef) throws IOException {
-        this(rrdDef, RrdBackendFactory.getDefaultFactory());
+        this(rrdDef, null);
     }
 
     /**
@@ -129,6 +132,9 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @see RrdBackendFactory
      */
     public RrdDb(RrdDef rrdDef, RrdBackendFactory factory) throws IOException {
+
+        factory = checkFactory(rrdDef.getUri(), factory);
+
         if (!rrdDef.hasDatasources()) {
             throw new IllegalArgumentException("No RRD datasource specified. At least one is needed.");
         }
@@ -163,9 +169,9 @@ public class RrdDb implements RrdUpdater, Closeable {
     }
 
     /**
-     * Constructor used to open already existing RRD. This RRD object will be backed
-     * with a storage (backend) of the default type (file on the disk). Constructor
-     * obtains read or read/write access to this RRD.
+     * <p>Constructor used to open already existing RRD. The path will be parsed as an URI and checked against the active factories. If
+     * it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
+     * <p>Constructor obtains read or read/write access to this RRD.</p>
      *
      * @param path     Path to existing RRD.
      * @param readOnly Should be set to <code>false</code> if you want to update
@@ -176,7 +182,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdDb(String path, boolean readOnly) throws IOException {
-        this(path, readOnly, RrdBackendFactory.getDefaultFactory());
+        this(URI.create(path), readOnly, null);
     }
 
     /**
@@ -196,6 +202,67 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @see RrdBackendFactory
      */
     public RrdDb(String path, boolean readOnly, RrdBackendFactory factory) throws IOException {
+        this(URI.create(path), readOnly, factory);
+    }
+
+    /**
+     * <p>Constructor used to open already existing RRD. The URI will checked against the active factories. If
+     * it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
+     * <p>Constructor obtains read or read/write access to this RRD.</p>
+     *
+     * @param path     Path to existing RRD.
+     * @param readOnly Should be set to <code>false</code> if you want to update
+     *                 the underlying RRD. If you want just to fetch data from the RRD file
+     *                 (read-only access), specify <code>true</code>. If you try to update RRD file
+     *                 open in read-only mode (<code>readOnly</code> set to <code>true</code>),
+     *                 <code>IOException</code> will be thrown.
+     * @throws java.io.IOException Thrown in case of I/O error.
+     */
+    public RrdDb(URI path, boolean readOnly) throws IOException {
+        this(path, readOnly, null);
+    }
+
+    /**
+     * <p>Constructor used to open already existing RRD. The path will be parsed as an URI and checked against the active factories. If
+     * it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
+     * <p>Constructor obtains read/write access to this RRD.</p>
+     *
+     * @param path Path to existing RRD.
+     * @throws java.io.IOException Thrown in case of I/O error.
+     */
+    public RrdDb(String path) throws IOException {
+        this(path, false, null);
+    }
+
+    /**
+     * <p>Constructor used to open already existing RRD. The URI will checked against the active factories. If
+     * it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
+     * <p>Constructor obtains read/write access to this RRD.</p>
+     *
+     * @param path Path to existing RRD.
+     * @throws java.io.IOException Thrown in case of I/O error.
+     */
+    public RrdDb(URI path) throws IOException {
+        this(path, false, null);
+    }
+
+    /**
+     * Constructor used to open already existing RRD in R/W mode with a storage (backend) type
+     * different from default.
+     *
+     * @param path    Path to existing RRD.
+     * @param factory Backend factory used to create this RRD.
+     * @throws java.io.IOException Thrown in case of I/O error.
+     * @see RrdBackendFactory
+     */
+    public RrdDb(String path, RrdBackendFactory factory) throws IOException {
+        this(path, false, factory);
+    }
+
+    private RrdDb(URI path, boolean readOnly, RrdBackendFactory factory) throws IOException {
+
+        factory = checkFactory(path, factory);
+
         // opens existing RRD file - throw exception if the file does not exist...
         if (!factory.exists(path)) {
             throw new FileNotFoundException("Could not open " + path + " [non existent]");
@@ -230,38 +297,14 @@ public class RrdDb implements RrdUpdater, Closeable {
     }
 
     /**
-     * Constructor used to open already existing RRD in R/W mode, with a default storage
-     * (backend) type (file on the disk).
-     *
-     * @param path Path to existing RRD.
-     * @throws java.io.IOException Thrown in case of I/O error.
-     */
-    public RrdDb(String path) throws IOException {
-        this(path, false);
-    }
-
-    /**
-     * Constructor used to open already existing RRD in R/W mode with a storage (backend) type
-     * different from default.
-     *
-     * @param path    Path to existing RRD.
-     * @param factory Backend factory used to create this RRD.
-     * @throws java.io.IOException Thrown in case of I/O error.
-     * @see RrdBackendFactory
-     */
-    public RrdDb(String path, RrdBackendFactory factory) throws IOException {
-        this(path, false, factory);
-    }
-
-    /**
      * <p>Constructor used to create RRD files from external file sources.
      * Supported external file sources are:</p>
      * <ul>
      * <li>RRDTool/Rrd4j XML file dumps (i.e files created with <code>rrdtool dump</code> command).
      * <li>RRDTool binary files.
      * </ul>
-     * <p>Newly created RRD will be backed with a default storage (backend) type
-     * (file on the disk).</p>
+     * <p>The path for the new rrd will be parsed as an URI and checked against the active factories. If
+     * it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
      * <p>Rrd4j and RRDTool use the same format for XML dump and this constructor should be used to
      * (re)create Rrd4j RRD files from XML dumps. First, dump the content of a RRDTool
      * RRD file (use command line):</p>
@@ -295,7 +338,52 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb(String rrdPath, String externalPath) throws IOException {
-        this(rrdPath, externalPath, RrdBackendFactory.getDefaultFactory());
+        this(URI.create(rrdPath), externalPath, null);
+    }
+
+    /**
+     * <p>Constructor used to create RRD files from external file sources.
+     * Supported external file sources are:</p>
+     * <ul>
+     * <li>RRDTool/Rrd4j XML file dumps (i.e files created with <code>rrdtool dump</code> command).
+     * <li>RRDTool binary files.
+     * </ul>
+     * <p>The path for the new rrd will be parsed as an URI and checked against the active factories. If
+     * it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
+     * <p>Rrd4j and RRDTool use the same format for XML dump and this constructor should be used to
+     * (re)create Rrd4j RRD files from XML dumps. First, dump the content of a RRDTool
+     * RRD file (use command line):</p>
+     * <pre>
+     * rrdtool dump original.rrd &gt; original.xml
+     * </pre>
+     * <p>Than, use the file <code>original.xml</code> to create Rrd4j RRD file named
+     * <code>copy.rrd</code>:</p>
+     * <pre>
+     * RrdDb rrd = new RrdDb("copy.rrd", "original.xml");
+     * </pre>
+     * <p>or:</p>
+     * <pre>
+     * RrdDb rrd = new RrdDb("copy.rrd", "xml:/original.xml");
+     * </pre>
+     * <p>See documentation for {@link #dumpXml(String) dumpXml()} method
+     * to see how to convert Rrd4j files to RRDTool's format.</p>
+     * <p>To read RRDTool files directly, specify <code>rrdtool:/</code> prefix in the
+     * <code>externalPath</code> argument. For example, to create Rrd4j compatible file named
+     * <code>copy.rrd</code> from the file <code>original.rrd</code> created with RRDTool, use
+     * the following code:</p>
+     * <pre>
+     * RrdDb rrd = new RrdDb("copy.rrd", "rrdtool:/original.rrd");
+     * </pre>
+     * <p>Note that the prefix <code>xml:/</code> or <code>rrdtool:/</code> is necessary to distinguish
+     * between XML and RRDTool's binary sources. If no prefix is supplied, XML format is assumed.</p>
+     *
+     * @param rrdPath      Path to a RRD file which will be created
+     * @param externalPath Path to an external file which should be imported, with an optional
+     *                     <code>xml:/</code> or <code>rrdtool:/</code> prefix.
+     * @throws java.io.IOException Thrown in case of I/O error
+     */
+    public RrdDb(URI rrdPath, String externalPath) throws IOException {
+        this(rrdPath, externalPath, null);
     }
 
     /**
@@ -340,6 +428,13 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @see RrdBackendFactory
      */
     public RrdDb(String rrdPath, String externalPath, RrdBackendFactory factory) throws IOException {
+        this(URI.create(rrdPath), externalPath, factory);
+    }
+
+    private RrdDb(URI rrdUri, String externalPath, RrdBackendFactory factory) throws IOException {
+
+        factory = checkFactory(rrdUri, factory);
+
         DataImporter reader;
         if (externalPath.startsWith(PREFIX_RRDTool)) {
             String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
@@ -352,7 +447,7 @@ public class RrdDb implements RrdUpdater, Closeable {
         else {
             reader = new XmlReader(externalPath);
         }
-        backend = factory.open(rrdPath, false);
+        backend = factory.open(rrdUri, false);
         backend.setFactory(factory);
         try {
             backend.setLength(reader.getEstimatedSize());
@@ -376,6 +471,20 @@ public class RrdDb implements RrdUpdater, Closeable {
         catch (IOException e) {
             backend.close();
             throw e;
+        }
+    }
+
+    private RrdBackendFactory checkFactory(URI uri, RrdBackendFactory factory) {
+        if (factory == null) {
+            String scheme = uri.getScheme();
+            // If no scheme given, the rrdDef was constructed with a relative URI, use the default factory to resolve it.
+            if ( scheme == null || scheme.isEmpty()) {
+                return RrdBackendFactory.getDefaultFactory();
+            } else {
+                return RrdBackendFactory.findFactory(uri);
+            }
+        } else {
+            return factory;
         }
     }
 
@@ -963,12 +1072,21 @@ public class RrdDb implements RrdUpdater, Closeable {
     }
 
     /**
-     * Returns path to this RRD.
+     * Returns the path to this RRD.
      *
      * @return Path to this RRD.
      */
     public String getPath() {
         return backend.getPath();
+    }
+
+    /**
+     * Returns the URI to this RRD, as seen by the backend.
+     *
+     * @return URI to this RRD.
+     */
+    public URI getUri() {
+        return backend.getUri();
     }
 
     /**

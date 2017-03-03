@@ -1,6 +1,10 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,8 +51,16 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public abstract class RrdBackendFactory {
+
+    /**
+     * The default factory type. It will also put in the active factories list.
+     * 
+     */
+    public static final String DEFAULTFACTORY = "NIO";
+
     private static final Map<String, RrdBackendFactory> factories = new ConcurrentHashMap<String, RrdBackendFactory>();
     private static RrdBackendFactory defaultFactory;
+    private static final List<RrdBackendFactory> activeFactories = new ArrayList<>();
 
     static {
         RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
@@ -59,11 +71,8 @@ public abstract class RrdBackendFactory {
         registerFactory(nioFactory);
         RrdSafeFileBackendFactory safeFactory = new RrdSafeFileBackendFactory();
         registerFactory(safeFactory);
-        selectDefaultFactory();
-    }
-
-    private static void selectDefaultFactory() {
-        setDefaultFactory("NIO");
+        setDefaultFactory(DEFAULTFACTORY);
+        setActiveFactories(RrdBackendFactory.getFactory(DEFAULTFACTORY));
     }
 
     /**
@@ -151,6 +160,41 @@ public abstract class RrdBackendFactory {
     }
 
     /**
+     * Set the list of active factories, i.e. the factory used to resolve URI.
+     * 
+     * @param newFactories the new active factories.
+     */
+    public static void setActiveFactories(RrdBackendFactory... newFactories) {
+        activeFactories.clear();
+        activeFactories.addAll(Arrays.asList(newFactories));
+    }
+
+    /**
+     * Add factories to the list of active factories, i.e. the factory used to resolve URI.
+     * 
+     * @param newFactories active factories to add.
+     */
+    public static void addFactories(RrdBackendFactory... newFactories) {
+        activeFactories.addAll(Arrays.asList(newFactories));
+    }
+
+    /**
+     * For a given URI, try to find a factory that can manage it.
+     * 
+     * @param uri URI to try.
+     * @return a {@link RrdBackendFactory} that can manage that URI.
+     * @throws IllegalArgumentException when no matching factory is found.
+     */
+    public static RrdBackendFactory findFactory(URI uri) {
+        for (RrdBackendFactory tryfactory: activeFactories) {
+            if (tryfactory.canStore(uri)) {
+                return tryfactory;
+            }
+        }
+        throw new IllegalArgumentException("no matching backend factory for " + uri);
+    }
+
+    /**
      * Creates RrdBackend object for the given storage path.
      *
      * @param path     Storage path
@@ -162,6 +206,19 @@ public abstract class RrdBackendFactory {
     protected abstract RrdBackend open(String path, boolean readOnly) throws IOException;
 
     /**
+     * Creates RrdBackend object for the given storage path.
+     *
+     * @param uri     Storage uri
+     * @param readOnly True, if the storage should be accessed in read/only mode.
+     *                 False otherwise.
+     * @return Backend object which handles all I/O operations for the given storage path
+     * @throws java.io.IOException Thrown in case of I/O error.
+     */
+    protected RrdBackend open(URI uri, boolean readOnly) throws IOException {
+        return open(getPath(uri), readOnly);
+    }
+
+    /**
      * Determines if a storage with the given path already exists.
      *
      * @param path Storage path
@@ -169,6 +226,17 @@ public abstract class RrdBackendFactory {
      * @return a boolean.
      */
     protected abstract boolean exists(String path) throws IOException;
+
+    /**
+     * Determines if a storage with the given URI already exists.
+     *
+     * @param uri Storage URI.
+     * @throws java.io.IOException in case of I/O error.
+     * @return a boolean.
+     */
+    protected boolean exists(URI uri) throws IOException {
+        return exists(getPath(uri));
+    }
 
     /**
      * Determines if the header should be validated.
@@ -179,10 +247,38 @@ public abstract class RrdBackendFactory {
      */
     protected abstract boolean shouldValidateHeader(String path) throws IOException;
 
-	/**
-	 * Returns the name (primary ID) for the factory.
-	 *
-	 * @return Name of the factory.
-	 */
-	public abstract String getName();
+    /**
+     * Determines if the header should be validated.
+     *
+     * @param uri Storage URI
+     * @throws java.io.IOException if header validation fails
+     * @return a boolean.
+     */
+    protected boolean shouldValidateHeader(URI uri) throws IOException {
+        return shouldValidateHeader(getPath(uri));
+    }
+
+    /**
+     * Returns the name (primary ID) for the factory.
+     *
+     * @return Name of the factory.
+     */
+    public abstract String getName();
+
+    public boolean canStore(URI uri) {
+        return false;
+    }
+
+    public URI getUri(String path) {
+        return URI.create(path);
+    }
+
+    public String getPath(URI uri) {
+        if (uri.isOpaque()) {
+            return uri.getSchemeSpecificPart();
+        } else {
+            return uri.getPath();
+        }
+    }
+
 }

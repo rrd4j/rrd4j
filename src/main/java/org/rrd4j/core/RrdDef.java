@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -48,7 +49,7 @@ public class RrdDef {
     /** Constant <code>DEFAULTVERSION=2</code> */
     public static final int DEFAULTVERSION = 2;
 
-    private String path;
+    private URI uri;
     private long startTime = Util.getTime() + DEFAULT_INITIAL_SHIFT;
     private long step = DEFAULT_STEP;
     private int version = DEFAULTVERSION;
@@ -57,10 +58,11 @@ public class RrdDef {
     private List<ArcDef> arcDefs = new ArrayList<ArcDef>();
 
     /**
-     * Creates new RRD definition object with the given path.
+     * <p>Creates new RRD definition object with the given path.
      * When this object is passed to
      * <code>RrdDb</code> constructor, new RRD will be created using the
-     * specified path.
+     * specified path.<p>
+     * <p>The will be transformed internally to an URI using the default backend factory.</p>
      *
      * @param path Path to new RRD.
      */
@@ -68,13 +70,26 @@ public class RrdDef {
         if (path == null || path.length() == 0) {
             throw new IllegalArgumentException("No path specified");
         }
-        this.path = path;
+        this.uri = RrdBackendFactory.getDefaultFactory().getUri(path);
     }
 
     /**
-     * Creates new RRD definition object with the given path and step.
+     * Creates new RRD definition object with the given path.
+     * When this object is passed to
+     * <code>RrdDb</code> constructor, new RRD will be created using the
+     * specified path.
      *
-     * @param path Path to new RRD.
+     * @param uri URI to the new RRD.
+     */
+    public RrdDef(URI uri) {
+        this.uri = uri;
+    }
+
+    /**
+     * <p>Creates new RRD definition object with the given path and step.</p>
+     * <p>The will be transformed internally to an URI using the default backend factory.</p>
+     *
+     * @param path URI to new RRD.
      * @param step RRD step.
      */
     public RrdDef(String path, long step) {
@@ -86,8 +101,23 @@ public class RrdDef {
     }
 
     /**
-     * Creates new RRD definition object with the given path, starting timestamp
-     * and step.
+     * Creates new RRD definition object with the given path and step.
+     *
+     * @param uri  URI to new RRD.
+     * @param step RRD step.
+     */
+    public RrdDef(URI uri, long step) {
+        this(uri);
+        if (step <= 0) {
+            throw new IllegalArgumentException("Invalid RRD step specified: " + step);
+        }
+        this.step = step;
+    }
+
+    /**
+     * <p>Creates new RRD definition object with the given path, starting timestamp
+     * and step.</p>
+     * <p>The will be transformed internally to an URI using the default backend factory.</p>
      *
      * @param path      Path to new RRD.
      * @param startTime RRD starting timestamp.
@@ -102,13 +132,30 @@ public class RrdDef {
     }
 
     /**
-     * Creates new RRD definition object with the given path, starting timestamp,
-     * step and version.
+     * Creates new RRD definition object with the given path, starting timestamp
+     * and step.
+     *
+     * @param uri       URI to new RRD.
+     * @param startTime RRD starting timestamp.
+     * @param step      RRD step.
+     */
+    public RrdDef(URI uri, long startTime, long step) {
+        this(uri, step);
+        if (startTime < 0) {
+            throw new IllegalArgumentException("Invalid RRD start time specified: " + startTime);
+        }
+        this.startTime = startTime;
+    }
+
+    /**
+     * <p>Creates new RRD definition object with the given path, starting timestamp,
+     * step and version.</p>
+     * <p>The will be transformed internally to an URI using the default backend factory.</p>
      *
      * @param path Path to new RRD.
      * @param startTime RRD starting timestamp.
-     * @param step RRD step.
-     * @param version RRD's file version.
+     * @param step      RRD step.
+     * @param version   RRD's file version.
      */
     public RrdDef(String path, long startTime, long step, int version) {
         this(path, startTime, step);
@@ -118,20 +165,49 @@ public class RrdDef {
         this.version = version;
     }
 
+    /**
+     * Creates new RRD definition object with the given path, starting timestamp,
+     * step and version.
+     *
+     * @param uri       URI to new RRD.
+     * @param startTime RRD starting timestamp.
+     * @param step      RRD step.
+     * @param version   RRD's file version.
+     */
+    public RrdDef(URI uri, long startTime, long step, int version) {
+        this(uri, startTime, step);
+        if(startTime < 0) {
+            throw new IllegalArgumentException("Invalid RRD start time specified: " + startTime);
+        }
+        this.version = version;
+    }
 
     /**
-     * Returns path for the new RR
+     * Returns path for the new RRD. It's extracted from the URI. If it's an opaque URI, it return the scheme specific part.
      *
      * @return path to the new RRD which should be created
      */
     public String getPath() {
-        return path;
+        if (uri.isOpaque()) {
+            return uri.getSchemeSpecificPart();
+        } else {
+            return uri.getPath();
+        }
     }
 
     /**
-     * Returns starting timestamp for the RRD that should be created.
+     * Returns URI for the new RRD
      *
-     * @return RRD starting timestamp
+     * @return URI to the new RRD which should be created
+     */
+    public URI getUri() {
+        return uri;
+    }
+
+    /**
+     * Returns starting time stamp for the RRD that should be created.
+     *
+     * @return RRD starting time stamp
      */
     public long getStartTime() {
         return startTime;
@@ -156,18 +232,28 @@ public class RrdDef {
     }
 
     /**
-     * Sets path to RRD.
+     * <p>Sets path to RRD.</p>
+     * <p>The will be transformed internally to an URI using the default backend factory.</p>
      *
-     * @param path to new RRD.
+     * @param path path to new RRD.
      */
     public void setPath(String path) {
-        this.path = path;
+        this.uri = RrdBackendFactory.getDefaultFactory().getUri(path);
+    }
+
+    /**
+     * Sets URI to RRD.
+     *
+     * @param uri URI to new RRD.
+     */
+    public void setPath(URI uri) {
+        this.uri = uri;
     }
 
     /**
      * Sets RRD's starting timestamp.
      *
-     * @param startTime starting timestamp.
+     * @param startTime Starting timestamp.
      */
     public void setStartTime(long startTime) {
         this.startTime = startTime;
@@ -463,11 +549,11 @@ public class RrdDef {
      */
     public String dump() {
         StringBuilder sb = new StringBuilder("create \"");
-        sb.append(path)
-          .append("\"")
-          .append(" --version ").append(getVersion())
-          .append(" --start ").append(getStartTime())
-          .append(" --step ").append(getStep()).append(" ");
+        sb.append(uri)
+        .append("\"")
+        .append(" --version ").append(getVersion())
+        .append(" --start ").append(getStartTime())
+        .append(" --step ").append(getStep()).append(" ");
         for (DsDef dsDef : dsDefs) {
             sb.append(dsDef.dump()).append(" ");
         }
@@ -519,15 +605,34 @@ public class RrdDef {
     }
 
     /**
-     * Exports RrdDef object to output stream in XML format. Generated XML code can be parsed
-     * with {@link org.rrd4j.core.RrdDefTemplate} class.
+     * <p>Exports RrdDef object to output stream in XML format. Generated XML code can be parsed
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.</p>
+     * <p>It use a format compatible with previous RRD4J's version, using
+     * a path, instead of an URI.</p>
      *
      * @param out Output stream
      */
     public void exportXmlTemplate(OutputStream out) {
+        exportXmlTemplate(out, true);
+    }
+
+    /**
+     * Exports RrdDef object to output stream in XML format. Generated XML code can be parsed
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.
+     * <p>If <code>compatible</code> is set to true, it returns an XML compatible with previous RRD4J's versions, using
+     * a path, instead of an URI.</p>
+     *
+     * @param out Output stream
+     * @param compatible Compatible with previous versions.
+     */
+    public void exportXmlTemplate(OutputStream out, boolean compatible) {
         XmlWriter xml = new XmlWriter(out);
         xml.startTag("rrd_def");
-        xml.writeTag("path", getPath());
+        if (compatible) {
+            xml.writeTag("path", getPath());
+        } else {
+            xml.writeTag("uri", getUri());
+        }
         xml.writeTag("step", getStep());
         xml.writeTag("start", getStartTime());
         // datasources
@@ -555,8 +660,24 @@ public class RrdDef {
     }
 
     /**
-     * Exports RrdDef object to string in XML format. Generated XML string can be parsed
-     * with {@link org.rrd4j.core.RrdDefTemplate} class.
+     * <p>Exports RrdDef object to string in XML format. Generated XML string can be parsed
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.</p>
+     * <p>If <code>compatible</code> is set to true, it returns an XML compatible with previous RRD4J's versions, using
+     * a path, instead of an URI.</p>
+     * 
+     *
+     * @param compatible Compatible with previous versions.
+     * @return XML formatted string representing this RrdDef object
+     */
+    public String exportXmlTemplate(boolean compatible) {
+        return exportXmlTemplate(true);
+    }
+
+    /**
+     * <p>Exports RrdDef object to string in XML format. Generated XML string can be parsed
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.</p>
+     * <p>It use a format compatible with previous RRD4J's version, using
+     * a path, instead of an URI.</p>
      *
      * @return XML formatted string representing this RrdDef object
      */
@@ -567,15 +688,31 @@ public class RrdDef {
     }
 
     /**
-     * Exports RrdDef object to a file in XML format. Generated XML code can be parsed
-     * with {@link org.rrd4j.core.RrdDefTemplate} class.
+     * <p>Exports RrdDef object to a file in XML format. Generated XML code can be parsed
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.</p>
+     * <p>It use a format compatible with previous RRD4J's version, using
+     * a path, instead of an URI.</p>
      *
      * @param filePath Path to the file
      * @throws java.io.IOException if any.
      */
     public void exportXmlTemplate(String filePath) throws IOException {
+        exportXmlTemplate(filePath, true);
+    }
+
+    /**
+     * <p>Exports RrdDef object to a file in XML format. Generated XML code can be parsed
+     * with {@link org.rrd4j.core.RrdDefTemplate} class.</p>
+     * <p>If <code>compatible</code> is set to true, it returns an XML compatible with previous RRD4J versions, using
+     * a path, instead of an URI.</p>
+     *
+     * @param filePath Path to the file
+     * @param compatible Compatible with previous versions.
+     * @throws java.io.IOException if any.
+     */
+    public void exportXmlTemplate(String filePath, boolean compatible) throws IOException {
         FileOutputStream out = new FileOutputStream(filePath, false);
-        exportXmlTemplate(out);
+        exportXmlTemplate(out, compatible);
         out.close();
     }
 
@@ -704,4 +841,5 @@ public class RrdDef {
     public void removeArchives() {
         arcDefs.clear();
     }
+
 }
