@@ -1,3 +1,18 @@
+Changes in version 3.2 - ?
+--------------------------
+
+Better management of multiple backend of the same kind. To do that, URI can be used instead of path and the RrdBackendFactory can take a list of active backend that will be checked in order.
+Each backend managed and generate URI using different kind of scheme. 
+As URI is used internally now, it's dangerous to change the default backend once some rrd are used because it can change the internally generated URI. To avoid that,
+either change the default factory once at the beginning or only use URI for rrd's path.
+
+Allows longer that 20 characters in datasource names, the new limit is now 65535 characters.
+A offset is encoded in the datasource name, using the private use area from unicode (https://en.wikipedia.org/wiki/Private_Use_Areas). So if a long name is used and the rrd read
+by an old library, the name returned will be the long name reduced to about 17 or 18 characters, depending of the length of the file, with a 
+few undisplayable characters appended. But if this area is already used for some custom usage, some strange results will happens.
+
+RrdBackend.setFactory should not be public it's not to be used by end user. But to late to make it private and final as it should be.
+
 Changes in version 3.1 - 1 Jan 2017
 ----------------------------------
 
