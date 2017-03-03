@@ -391,9 +391,11 @@ public abstract class RrdBackend {
     }
 
     /**
+     * Privately called method.
+     * 
      * @param factory the factory to set
      */
-    public void setFactory(RrdBackendFactory factory) {
+    void setFactory(RrdBackendFactory factory) {
         this.factory = factory;
     }
 
