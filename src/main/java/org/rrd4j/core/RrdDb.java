@@ -142,8 +142,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             throw new IllegalArgumentException("No RRD archive specified. At least one is needed.");
         }
 
-        String path = rrdDef.getPath();
-        backend = factory.open(path, false);
+        backend = factory.open(rrdDef.getUri(), false);
         backend.setFactory(factory);
         try {
             backend.setLength(rrdDef.getEstimatedSize());
