@@ -17,15 +17,6 @@ public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
         return new RrdRandomAccessFileBackend(path, readOnly);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Method to determine if a file with the given path already exists.
-     */
-    protected boolean exists(String path) {
-        return Util.fileExists(path);
-    }
-
     /** {@inheritDoc} */
     protected boolean shouldValidateHeader(String path) throws IOException {
         return true;

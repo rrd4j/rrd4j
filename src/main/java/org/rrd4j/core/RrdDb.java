@@ -475,13 +475,7 @@ public class RrdDb implements RrdUpdater, Closeable {
 
     private RrdBackendFactory checkFactory(URI uri, RrdBackendFactory factory) {
         if (factory == null) {
-            String scheme = uri.getScheme();
-            // If no scheme given, the rrdDef was constructed with a relative URI, use the default factory to resolve it.
-            if ( scheme == null || scheme.isEmpty()) {
-                return RrdBackendFactory.getDefaultFactory();
-            } else {
-                return RrdBackendFactory.findFactory(uri);
-            }
+            return RrdBackendFactory.findFactory(uri);
         } else {
             return factory;
         }

@@ -350,7 +350,8 @@ public class RrdDbPool {
     public RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
         RrdEntry ref = null;
         try {
-            ref = requestEmpty(rrdDef.getUri());
+            URI uri = RrdBackendFactory.findFactory(rrdDef.getUri()).getCanonicalUri(rrdDef.getUri());
+            ref = requestEmpty(uri);
             ref.rrdDb = new RrdDb(rrdDef);
             return ref.rrdDb;
         } catch (InterruptedException e) {
@@ -479,7 +480,7 @@ public class RrdDbPool {
     /**
      * Returns the number of usage for a RRD.
      *
-     * @param path RRD file for which informations is needed.
+     * @param path RRD's path for which informations is needed.
      * @return the number of request for this file
      * @throws java.io.IOException if any.
      */
@@ -487,6 +488,13 @@ public class RrdDbPool {
         return getOpenCount(defaultFactory.getUri(path));
     }
 
+    /**
+     * Returns the number of usage for a RRD.
+     *
+     * @param uri RRD's uri for which informations is needed.
+     * @return the number of request for this file
+     * @throws java.io.IOException if any.
+     */
     public int getOpenCount(URI path) throws IOException {
         RrdEntry ref = null;
         try {

@@ -70,7 +70,7 @@ public class RrdDef {
         if (path == null || path.length() == 0) {
             throw new IllegalArgumentException("No path specified");
         }
-        this.uri = RrdBackendFactory.getDefaultFactory().getUri(path);
+        this.uri = URI.create(path);
     }
 
     /**

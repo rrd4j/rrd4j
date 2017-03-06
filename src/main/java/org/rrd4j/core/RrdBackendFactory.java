@@ -2,6 +2,7 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -195,6 +196,99 @@ public abstract class RrdBackendFactory {
     }
 
     /**
+     * @return the scheme name for URI, default to getName().toLowerCase()
+     */
+    public String getScheme() {
+        return getName().toLowerCase();
+    }
+
+    protected URI getRootUri() {
+        try {
+            return new URI(getScheme(), null, "/", null, null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid scheme " + getScheme());
+        }
+    }
+
+    public boolean canStore(URI uri) {
+        return false;
+    }
+
+    /**
+     * Try to match an URI against a root URI using a few rules:
+     * <ul>
+     * <li>scheme must match if they are given
+     * <li>if uri is opaque (scheme:nonabsolute), the scheme specific part is resolve as a relative path
+     * <li>
+     * </ul>
+     * 
+     * @param rootUri
+     * @param uri
+     * @return a calculate normalized absolute URI or null if the tried URL don't match against the root.
+     */
+    protected URI resolve(URI rootUri, URI uri, boolean relative) {
+        String scheme = uri.getScheme();
+        if (scheme != null && ! scheme.equals(rootUri.getScheme())) {
+            return null;
+        } else if (scheme == null) {
+            scheme = rootUri.getScheme();
+        }
+        String authority = uri.getAuthority();
+        if (authority != null && ! authority.equals(rootUri.getAuthority())) {
+            return null;
+        } else if (authority == null) {
+            authority = rootUri.getAuthority();
+        }
+        String path;
+        if (uri.isOpaque()) {
+            // try to resolve an opaque uri as scheme:relativepath
+            path = uri.getSchemeSpecificPart();
+        } else if (! uri.isAbsolute()) {
+            // A relative URI, resolve it against the root
+            path = rootUri.resolve(uri).normalize().getPath();
+        } else {
+            path = uri.normalize().getPath();
+        }
+        if (! path.startsWith(rootUri.getPath())) {
+            return null;
+        }
+        String query = uri.getQuery();
+        String fragment = uri.getFragment();
+        String newUriString = String.format("%s://%s%s%s%s", scheme, authority, path , query != null ? "?" + query : "", fragment != null ? "#" + fragment : "");
+        URI newURI = URI.create(newUriString);
+        if (relative) {
+            return rootUri.relativize(newURI);
+        } else {
+            return newURI;
+        }
+    }
+
+    public URI getCanonicalUri(URI uri) {
+        return resolve(getRootUri(), uri, false);
+    }
+
+    public URI getUri(String path) {
+        URI rootUri = getRootUri();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        try {
+            return new URI(getScheme(), rootUri.getAuthority(), rootUri.getPath() + path, null, null);
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
+
+    public String getPath(URI uri) {
+        URI rootUri = getRootUri();
+        uri = resolve(rootUri, uri, true);
+        if (uri == null) {
+            return null;
+        }
+        return "/" + uri.getPath();
+    }
+
+    /**
      * Creates RrdBackend object for the given storage path.
      *
      * @param path     Storage path
@@ -264,21 +358,5 @@ public abstract class RrdBackendFactory {
      * @return Name of the factory.
      */
     public abstract String getName();
-
-    public boolean canStore(URI uri) {
-        return false;
-    }
-
-    public URI getUri(String path) {
-        return URI.create(path);
-    }
-
-    public String getPath(URI uri) {
-        if (uri.isOpaque()) {
-            return uri.getSchemeSpecificPart();
-        } else {
-            return uri.getPath();
-        }
-    }
 
 }

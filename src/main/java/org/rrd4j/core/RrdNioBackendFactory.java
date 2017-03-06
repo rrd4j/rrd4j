@@ -113,9 +113,9 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         // Instantiate a thread pool if none was provided
-        if(syncThreadPool == null)
+        if(syncThreadPool == null) {
             syncThreadPool = DefaultSyncThreadPool.INSTANCE;
-
+        }
         return new RrdNioBackend(path, readOnly, syncThreadPool, syncPeriod);
     }
 
