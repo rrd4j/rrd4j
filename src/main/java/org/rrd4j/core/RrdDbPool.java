@@ -495,10 +495,10 @@ public class RrdDbPool {
      * @return the number of request for this file
      * @throws java.io.IOException if any.
      */
-    public int getOpenCount(URI path) throws IOException {
+    public int getOpenCount(URI uri) throws IOException {
         RrdEntry ref = null;
         try {
-            ref = getEntry(path, false);
+            ref = getEntry(uri, false);
             if(ref == null)
                 return 0;
             else {

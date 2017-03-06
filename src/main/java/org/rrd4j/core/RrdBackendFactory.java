@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Factory classes are used to create concrete {@link org.rrd4j.core.RrdBackend} implementations.
  * Each factory creates unlimited number of specific backend objects.
  *
- * Rrd4j supports four different backend types (backend factories) out of the box:
+ * Rrd4j supports six different backend types (backend factories) out of the box:
  * <ul>
  * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
  * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
@@ -41,13 +41,27 @@ import java.util.concurrent.ConcurrentHashMap;
  * <li>{@link org.rrd4j.core.RrdMemoryBackend}: objects of this class are created from the
  * {@link org.rrd4j.core.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
  * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
+ * 
+ * <li>{@link org.rrd4j.core.RrdBerkeleyDbBackend}: objects of this class are created from the 
+ * {@link org.rrd4j.core.RrdBerkeleyDbBackendFactory} class. It stores RRD data to ordinary disk files 
+ * using <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index-093405.html">Oracle Berkeley DB</a> Java Edition.
+ * 
+ * <li>{@link org.rrd4j.core.RrdMongoDBBackend}: objects of this class are created from the {@link org.rrd4j.core.RrdMongoDBBackendFactory} class.
+ * It stores data in a {@link com.mongodb.DBCollection} from <a href="http://www.mongodb.org/">MongoDB</a>.
  * </ul>
  *
- * Each backend factory is identified by its {@link #getName() name}. Constructors
+ * Each backend factory used to be identified by its {@link #getName() name}. Constructors
  * are provided in the {@link org.rrd4j.core.RrdDb} class to create RrdDb objects (RRD databases)
  * backed with a specific backend.
  * <p>
- *
+ * A more generic management was added in version 3.2 that allows multiple instance of a backend to be used. Each backend can
+ * manage custom URL. They are tried in the declared order by the {@link #setActiveFactories(RrdBackendFactory...)} or
+ * {@link #addFactories(RrdBackendFactory...)} and the method {@link #canStore(URI)} return true when  it can manage the given
+ * URI.
+ * <p>
+ * For default implementation, the path is separated in a root URI prefix and the path components. The root URI can be
+ * used to identify different name spaces or just be ```/```.
+ * <p>
  * See javadoc for {@link org.rrd4j.core.RrdBackend} to find out how to create your custom backends.
  *
  */
@@ -91,6 +105,10 @@ public abstract class RrdBackendFactory {
      *             java.nio.* package. RRD data is stored in files on the disk
      *             <li><b>MEMORY</b>: Factory which creates memory-oriented backends.
      *             RRD data is stored in memory, it gets lost as soon as JVM exits.
+     *             <li><b>BERKELEY</b>: a memory-oriented backend that ensure persistens
+     *             in a <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index-093405.html">Berkeley Db</a> storage.
+     *             <li><b>MONGODB</b>: a memory-oriented backend that ensure persistens
+     *             in a <a href="http://www.mongodb.org/">MongoDB</a> storage.
      *             </ul>
      * @return Backend factory for the given factory name
      */
@@ -144,10 +162,7 @@ public abstract class RrdBackendFactory {
      * Replaces the default backend factory with a new one. This method must be called before
      * the first RRD gets created. <p>
      *
-     * @param factoryName Name of the default factory. Out of the box, Rrd4j supports four
-     *                    different RRD backends: "FILE" (java.io.* based), "SAFE" (java.io.* based - use this
-     *                    backend if RRD files may be accessed from several JVMs at the same time),
-     *                    "NIO" (java.nio.* based) and "MEMORY" (byte[] based).
+     * @param factoryName Name of the default factory..
      */
     public static void setDefaultFactory(String factoryName) {
         // We will allow this only if no RRDs are created
@@ -217,9 +232,10 @@ public abstract class RrdBackendFactory {
     /**
      * Try to match an URI against a root URI using a few rules:
      * <ul>
-     * <li>scheme must match if they are given
-     * <li>if uri is opaque (scheme:nonabsolute), the scheme specific part is resolve as a relative path
-     * <li>
+     * <li>scheme must match if they are given.
+     * <li>authority must match if they are given.
+     * <li>if uri is opaque (scheme:nonabsolute), the scheme specific part is resolve as a relative path.
+     * <li>query and fragment is kept as is.
      * </ul>
      * 
      * @param rootUri
@@ -263,10 +279,22 @@ public abstract class RrdBackendFactory {
         }
     }
 
+    /**
+     * Ensure that an URI is returned in a non-ambiguous way.
+     * 
+     * @param uri a valid URI for this backend.
+     * @return the canonized URI.
+     */
     public URI getCanonicalUri(URI uri) {
         return resolve(getRootUri(), uri, false);
     }
 
+    /**
+     * Transform an path in a valid URI for ths backend.
+     * 
+     * @param path
+     * @return
+     */
     public URI getUri(String path) {
         URI rootUri = getRootUri();
         if (path.startsWith("/")) {
@@ -279,6 +307,12 @@ public abstract class RrdBackendFactory {
         }
     }
 
+    /**
+     * Extract the local path from an URI.
+     * 
+     * @param uri The URI to parse.
+     * @return the local path from the URI.
+     */
     public String getPath(URI uri) {
         URI rootUri = getRootUri();
         uri = resolve(rootUri, uri, true);
