@@ -110,7 +110,6 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         try {
             URI tryUri = new URI(uri.getScheme(), null, uri.getPath(), uri.getQuery(), uri.getFragment());
             URI resolvedUri = super.resolve(rootUri, tryUri, relative);
-            System.out.printf("'%s' '%s' '%s' '%s'\n", rootUri, uri, tryUri, resolvedUri);
             if (resolvedUri == null) {
                 return null;
             }
