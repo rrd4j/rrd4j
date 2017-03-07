@@ -136,8 +136,8 @@ public abstract class RrdBackendFactory {
      */
     public static void registerFactory(RrdBackendFactory factory) {
         lock.writeLock().lock();
-        String name = factory.getName();
         try {
+            String name = factory.getName();
             if (!factories.containsKey(name)) {
                 factories.put(name, factory);
             }

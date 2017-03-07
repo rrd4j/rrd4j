@@ -1,5 +1,6 @@
 package org.rrd4j.data;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -105,7 +106,7 @@ public abstract class Variable {
      * @param end the end of the period
      * @return a filled Value object
      */
-     protected abstract Value fill(long timestamps[], double[] values, long start, long end);
+    protected abstract Value fill(long timestamps[], double[] values, long start, long end);
 
     /**
      * Find the first valid data point and it's timestamp
@@ -247,7 +248,7 @@ public abstract class Variable {
                 else {
                     double dM = cursVal - M;
                     M += dM/count;
-                    S += dM * (cursVal - M);                        
+                    S += dM * (cursVal - M);
                 }
             }
             if(count > 1) {
@@ -271,13 +272,24 @@ public abstract class Variable {
         }
 
         @Override
-        public final boolean equals(Object arg0) {
-            return timestamp == ((PercentElem) arg0).timestamp;
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            PercentElem other = (PercentElem) obj;
+            if (timestamp != other.timestamp)
+                return false;
+            return true;
         }
+
         @Override
         public int hashCode() {
-            return new Long(timestamp).hashCode();
+            return Long.valueOf(timestamp).hashCode();
         }
+
         @Override
         public String toString() {
             return String.format("[%d, %f]", timestamp, value);
@@ -285,10 +297,10 @@ public abstract class Variable {
     }
 
     /**
-     * The sort used by rrdtool for percent, where NaN < -INF < finite values < INF
+     * The sort used by rrdtool for percent, where NaN &lt; -INF &lt; finite values &lt; INF
      *
      */
-    static final class ComparPercentElemen implements Comparator<PercentElem> {
+    static final class ComparPercentElemen implements Comparator<PercentElem>, Serializable {
         @Override
         public final int compare(PercentElem arg0, PercentElem arg1) {
             if(Double.isNaN(arg0.value) && Double.isNaN(arg1.value))

@@ -1,6 +1,6 @@
 package org.rrd4j.graph;
 
-import java.awt.*;
+import java.awt.Paint;
 
 class HSpan extends Span {
     final double start;
@@ -18,8 +18,8 @@ class HSpan extends Span {
     }
 
     void setLegendVisibility(double min, double max, boolean forceLegend) {
-        legend.enabled &= (forceLegend
-            || checkRange(start, min, max)
-            || checkRange(end, min, max));
+        legend.enabled = legend.enabled && (forceLegend
+                || checkRange(start, min, max)
+                || checkRange(end, min, max));
     }
 }

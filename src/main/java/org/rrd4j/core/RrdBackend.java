@@ -327,7 +327,7 @@ public abstract class RrdBackend {
             read(realStringOffset - bigStringSize * 2, realStringbuf.array());
             return realStringbuf.asCharBuffer().toString().trim();
         } else {
-            return new String(cbuf.toString()).trim();
+            return cbuf.toString().trim();
         }
     }
 

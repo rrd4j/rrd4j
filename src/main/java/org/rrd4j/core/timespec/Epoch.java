@@ -36,12 +36,13 @@ import java.util.Date;
  */
 public class Epoch extends JFrame {
     private static final String[] supportedFormats = {
-        "MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
-        "dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
-        "HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
+            "MM/dd/yy HH:mm:ss", "dd.MM.yy HH:mm:ss", "yy-MM-dd HH:mm:ss", "MM/dd/yy HH:mm",
+            "dd.MM.yy HH:mm", "yy-MM-dd HH:mm", "MM/dd/yy", "dd.MM.yy", "yy-MM-dd", "HH:mm MM/dd/yy",
+            "HH:mm dd.MM.yy", "HH:mm yy-MM-dd", "HH:mm:ss MM/dd/yy", "HH:mm:ss dd.MM.yy", "HH:mm:ss yy-MM-dd"
     };
 
-    private static final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
+    @SuppressWarnings("unchecked")
+    private static final ThreadLocal<SimpleDateFormat>[] parsers = new ThreadLocal[supportedFormats.length];
     private static final String helpText;
 
     private Timer timer = new Timer(1000, new ActionListener() {
@@ -52,8 +53,15 @@ public class Epoch extends JFrame {
 
     static {
         for (int i = 0; i < parsers.length; i++) {
-            parsers[i] = new SimpleDateFormat(supportedFormats[i]);
-            parsers[i].setLenient(true);
+            final String format = supportedFormats[i];
+            parsers[i] = new ThreadLocal<SimpleDateFormat>() {
+                @Override
+                protected SimpleDateFormat initialValue() {
+                    SimpleDateFormat sdf = new SimpleDateFormat(format);
+                    sdf.setLenient(true);
+                    return sdf;
+                }
+            };
         }
         StringBuilder tooltipBuff = new StringBuilder("<html><b>Supported input formats:</b><br>");
         for (String supportedFormat : supportedFormats) {
@@ -70,8 +78,12 @@ public class Epoch extends JFrame {
     private JButton convertButton = new JButton("Convert");
     private JButton helpButton = new JButton("Help");
 
-    private static final SimpleDateFormat OUTPUT_DATE_FORMAT =
-            new SimpleDateFormat("MM/dd/yy HH:mm:ss EEE");
+    private static final ThreadLocal<SimpleDateFormat> OUTPUT_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("MM/dd/yy HH:mm:ss EEE");
+        }
+    };
 
     Epoch() {
         super("Epoch");
@@ -142,13 +154,13 @@ public class Epoch extends JFrame {
     }
 
     void formatDate(Date date) {
-        inputField.setText(OUTPUT_DATE_FORMAT.format(date));
+        inputField.setText(OUTPUT_DATE_FORMAT.get().format(date));
     }
 
     private long parseDate(String time) {
-        for (SimpleDateFormat parser : parsers) {
+        for (ThreadLocal<SimpleDateFormat> parser : parsers) {
             try {
-                return Util.getTimestamp(parser.parse(time));
+                return Util.getTimestamp(parser.get().parse(time));
             }
             catch (ParseException e) {
             }

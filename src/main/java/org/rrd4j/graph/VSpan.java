@@ -1,6 +1,6 @@
 package org.rrd4j.graph;
 
-import java.awt.*;
+import java.awt.Paint;
 
 class VSpan extends Span {
     final long start;
@@ -18,8 +18,8 @@ class VSpan extends Span {
     }
 
     void setLegendVisibility(long min, long max, boolean forceLegend) {
-        legend.enabled &= (forceLegend
-            || checkRange(start, min, max)
-            || checkRange(end, min, max));
+        legend.enabled = legend.enabled && (forceLegend
+                || checkRange(start, min, max)
+                || checkRange(end, min, max));
     }
 }

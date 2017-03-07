@@ -134,17 +134,16 @@ public final class RrdSyncThreadPool
     {
         final ThreadGroup group;
         final AtomicInteger threadNumber = new AtomicInteger(1);
-        final String namePrefix;
-        final String nameSuffix = "]";
+        final String poolName;
 
         DaemonThreadFactory(String poolName) {
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            namePrefix = poolName + " [Thread-";
+            this.poolName = poolName;
         }
 
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement() + nameSuffix);
+            Thread t = new Thread(group, r, poolName + " [Thread-" + threadNumber.getAndIncrement() + "]");
             t.setDaemon(true);
             t.setContextClassLoader(null);
             if (t.getPriority() != Thread.NORM_PRIORITY)

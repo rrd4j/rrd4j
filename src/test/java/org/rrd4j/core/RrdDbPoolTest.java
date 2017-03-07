@@ -93,7 +93,7 @@ public class RrdDbPoolTest {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }                
+                }
             }.start();
         }
         Thread.yield();
@@ -138,7 +138,7 @@ public class RrdDbPoolTest {
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
         final RrdDb db = instance.requestRrdDb(def);
-        dbs.add(db);                        
+        dbs.add(db);
 
         final CountDownLatch barrier = new CountDownLatch(1);
         for(int i=0; i < 12; i++) {
@@ -149,12 +149,12 @@ public class RrdDbPoolTest {
                     try {
                         barrier.await();
                         RrdDb againdb = instance.requestRrdDb(db.getCanonicalPath());
-                        dbs.add(againdb);                        
+                        dbs.add(againdb);
                         full.countDown();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }                
+                }
             }.start();
         }
         barrier.countDown();

@@ -670,7 +670,9 @@ public class RrdDef {
      * @return XML formatted string representing this RrdDef object
      */
     public String exportXmlTemplate(boolean compatible) {
-        return exportXmlTemplate(true);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        exportXmlTemplate(out, compatible);
+        return out.toString();
     }
 
     /**

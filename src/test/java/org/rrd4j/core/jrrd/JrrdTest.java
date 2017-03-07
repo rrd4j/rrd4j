@@ -76,35 +76,37 @@ public class JrrdTest {
     }
 
     private void testFile(String file, String version) throws IOException {
-        URL url = getClass().getResource(file); 
-        RRDatabase rrd = new RRDatabase(url.getFile());
-        Assert.assertEquals("Invalid date", new Date(920808900000L), rrd.getLastUpdate());
-        Assert.assertEquals("Invalid number of archives", 2, rrd.getNumArchives());
-        Assert.assertEquals("Invalid number of datasources", 2, rrd.getDataSourcesName().size());
-        Assert.assertEquals("Invalid heartbeat for datasource 0", 600, rrd.getDataSource(0).getMinimumHeartbeat());
-        Assert.assertEquals("Invalid heartbeat for datasource 1", 600, rrd.getDataSource(1).getMinimumHeartbeat());
-        Assert.assertEquals("Invalid version", version, rrd.header.getVersion());
-        Assert.assertEquals("Invalid number of row", 24, rrd.getArchive(0).getRowCount());
-        Assert.assertEquals("Invalid number of row", 10, rrd.getArchive(1).getRowCount());
-        boolean b0 = "12405".equals(rrd.getDataSource(0).getPDPStatusBlock().lastReading);
-        boolean b1 = "UNKN".equals(rrd.getDataSource(1).getPDPStatusBlock().lastReading);
-        boolean b2 = "3".equals(rrd.getDataSource(1).getPDPStatusBlock().lastReading);
-        Assert.assertTrue("Failed getting last reading", b0 && (b1 || b2));
-        if("0003".equals(version) ) {
-            Assert.assertEquals("bad primary value", 1.43161853E7, rrd.getArchive(0).getCDPStatusBlock(0).primary_value, 1);
+        URL url = getClass().getResource(file);
+        try(RRDatabase rrd = new RRDatabase(url.getFile());) {
+            Assert.assertEquals("Invalid date", new Date(920808900000L), rrd.getLastUpdate());
+            Assert.assertEquals("Invalid number of archives", 2, rrd.getNumArchives());
+            Assert.assertEquals("Invalid number of datasources", 2, rrd.getDataSourcesName().size());
+            Assert.assertEquals("Invalid heartbeat for datasource 0", 600, rrd.getDataSource(0).getMinimumHeartbeat());
+            Assert.assertEquals("Invalid heartbeat for datasource 1", 600, rrd.getDataSource(1).getMinimumHeartbeat());
+            Assert.assertEquals("Invalid version", version, rrd.header.getVersion());
+            Assert.assertEquals("Invalid number of row", 24, rrd.getArchive(0).getRowCount());
+            Assert.assertEquals("Invalid number of row", 10, rrd.getArchive(1).getRowCount());
+            boolean b0 = "12405".equals(rrd.getDataSource(0).getPDPStatusBlock().lastReading);
+            boolean b1 = "UNKN".equals(rrd.getDataSource(1).getPDPStatusBlock().lastReading);
+            boolean b2 = "3".equals(rrd.getDataSource(1).getPDPStatusBlock().lastReading);
+            Assert.assertTrue("Failed getting last reading", b0 && (b1 || b2));
+            if("0003".equals(version) ) {
+                Assert.assertEquals("bad primary value", 1.43161853E7, rrd.getArchive(0).getCDPStatusBlock(0).primary_value, 1);
+            }
+            Assert.assertEquals("bad primary value", 1.4316557620000001E7, rrd.getArchive(1).getCDPStatusBlock(0).value, 1);
+            rrd.rrdFile.seek( rrd.getArchive(0).dataOffset + 16 * rrd.getArchive(0).currentRow);
+            double speed = readDouble(rrd.rrdFile);
+            double weight = readDouble(rrd.rrdFile);
+            Assert.assertEquals(1.4316185300e+07, speed, 1e-7);
+            Assert.assertEquals(3, weight, 1e-7);
+            DataChunk data = rrd.getData(ConsolidationFunctionType.AVERAGE, 920802300, 920808900, 300);
+            Assert.assertEquals(0.02, data.toPlottable("speed").getValue(920802300), 1e-7);
+            Assert.assertEquals(1.0, data.toPlottable("weight").getValue(920802300), 1e-7);
+            
+            // Just check it does not crash
+            rrd.getData(ConsolidationFunctionType.AVERAGE, Integer.MAX_VALUE - 100000, Integer.MAX_VALUE - 80000, 300);
         }
-        Assert.assertEquals("bad primary value", 1.4316557620000001E7, rrd.getArchive(1).getCDPStatusBlock(0).value, 1);
-        rrd.rrdFile.seek( rrd.getArchive(0).dataOffset + 16 * rrd.getArchive(0).currentRow);
-        double speed = readDouble(rrd.rrdFile);
-        double weight = readDouble(rrd.rrdFile);
-        Assert.assertEquals(1.4316185300e+07, speed, 1e-7);
-        Assert.assertEquals(3, weight, 1e-7);
-        DataChunk data = rrd.getData(ConsolidationFunctionType.AVERAGE, 920802300, 920808900, 300);
-        Assert.assertEquals(0.02, data.toPlottable("speed").getValue(920802300), 1e-7);
-        Assert.assertEquals(1.0, data.toPlottable("weight").getValue(920802300), 1e-7);
         
-        // Just check it does not crash
-        rrd.getData(ConsolidationFunctionType.AVERAGE, Integer.MAX_VALUE - 100000, Integer.MAX_VALUE - 80000, 300);
     }
 
     Double readDouble(RRDFile rrdFile) throws IOException {

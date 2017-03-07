@@ -17,10 +17,14 @@ import java.util.TimeZone;
 public class XmlWriter {
     static final String INDENT_STR = "   ";
     private static final String STYLE = "style";
-    private static final SimpleDateFormat ISOLIKE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ", Locale.ENGLISH);
-    static {
-        ISOLIKE.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
+    private static final ThreadLocal<SimpleDateFormat> ISOLIKE = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ", Locale.ENGLISH);
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return sdf;
+        }
+    };
 
     private final PrintWriter writer;
     private final StringBuilder indent = new StringBuilder("");
@@ -193,7 +197,7 @@ public class XmlWriter {
      */
     public void writeComment(Object comment) {
         if (comment instanceof Date) {
-            comment = ISOLIKE.format((Date) comment);
+            comment = ISOLIKE.get().format((Date) comment);
         }
         writer.println(indent + "<!-- " + escape(comment.toString()) + " -->");
     }
@@ -201,4 +205,5 @@ public class XmlWriter {
     private static String escape(String s) {
         return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
+
 }
