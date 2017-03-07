@@ -74,7 +74,6 @@ public abstract class RrdBackendFactory {
     public static final String DEFAULTFACTORY = "NIO";
 
     private static final Map<String, RrdBackendFactory> factories = new ConcurrentHashMap<String, RrdBackendFactory>();
-    private static RrdBackendFactory defaultFactory;
     private static final List<RrdBackendFactory> activeFactories = new ArrayList<>();
 
     static {
@@ -86,7 +85,6 @@ public abstract class RrdBackendFactory {
         registerFactory(nioFactory);
         RrdSafeFileBackendFactory safeFactory = new RrdSafeFileBackendFactory();
         registerFactory(safeFactory);
-        setDefaultFactory(DEFAULTFACTORY);
         setActiveFactories(RrdBackendFactory.getFactory(DEFAULTFACTORY));
     }
 
@@ -155,19 +153,23 @@ public abstract class RrdBackendFactory {
      * @return Default backend factory.
      */
     public static RrdBackendFactory getDefaultFactory() {
-        return defaultFactory;
+        return activeFactories.get(0);
     }
 
     /**
      * Replaces the default backend factory with a new one. This method must be called before
-     * the first RRD gets created. <p>
+     * the first RRD gets created.
+     * <p>
+     * It also clear the list of actives factories and set it to the default factory.
+     * <p>
      *
      * @param factoryName Name of the default factory..
      */
     public static void setDefaultFactory(String factoryName) {
         // We will allow this only if no RRDs are created
         if (!RrdBackend.isInstanceCreated()) {
-            defaultFactory = getFactory(factoryName);
+            activeFactories.clear();
+            activeFactories.add(getFactory(factoryName));
         }
         else {
             throw new IllegalStateException("Could not change the default backend factory. " +
