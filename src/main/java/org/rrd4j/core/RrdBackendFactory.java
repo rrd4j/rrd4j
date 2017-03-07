@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Base (abstract) backend factory class which holds references to all concrete
@@ -75,6 +77,7 @@ public abstract class RrdBackendFactory {
 
     private static final Map<String, RrdBackendFactory> factories = new ConcurrentHashMap<String, RrdBackendFactory>();
     private static final List<RrdBackendFactory> activeFactories = new ArrayList<>();
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     static {
         RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
@@ -111,12 +114,18 @@ public abstract class RrdBackendFactory {
      * @return Backend factory for the given factory name
      */
     public static RrdBackendFactory getFactory(String name) {
-        RrdBackendFactory factory = factories.get(name);
-        if (factory != null) {
-            return factory;
-        }
-        else {
-            throw new IllegalArgumentException("No backend factory found with the name specified [" + name + "]");
+        lock.readLock().lock();
+        try {
+            RrdBackendFactory factory = factories.get(name);
+            if (factory != null) {
+                return factory;
+            } else {
+                throw new IllegalArgumentException(
+                        "No backend factory found with the name specified ["
+                                + name + "]");
+            } 
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
@@ -126,12 +135,17 @@ public abstract class RrdBackendFactory {
      * @param factory Factory to be registered
      */
     public static void registerFactory(RrdBackendFactory factory) {
+        lock.writeLock().lock();
         String name = factory.getName();
-        if (!factories.containsKey(name)) {
-            factories.put(name, factory);
-        }
-        else {
-            throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
+        try {
+            if (!factories.containsKey(name)) {
+                factories.put(name, factory);
+            }
+            else {
+                throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -142,8 +156,13 @@ public abstract class RrdBackendFactory {
      * @param factory Factory to be registered and set as default
      */
     public static void registerAndSetAsDefaultFactory(RrdBackendFactory factory) {
-        registerFactory(factory);
-        setDefaultFactory(factory.getName());
+        lock.writeLock().lock();
+        try {
+            registerFactory(factory);
+            setDefaultFactory(factory.getName());
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
@@ -153,7 +172,12 @@ public abstract class RrdBackendFactory {
      * @return Default backend factory.
      */
     public static RrdBackendFactory getDefaultFactory() {
-        return activeFactories.get(0);
+        lock.readLock().lock();
+        try {
+            return activeFactories.get(0);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -166,14 +190,19 @@ public abstract class RrdBackendFactory {
      * @param factoryName Name of the default factory..
      */
     public static void setDefaultFactory(String factoryName) {
-        // We will allow this only if no RRDs are created
-        if (!RrdBackend.isInstanceCreated()) {
-            activeFactories.clear();
-            activeFactories.add(getFactory(factoryName));
-        }
-        else {
-            throw new IllegalStateException("Could not change the default backend factory. " +
-                    "This method must be called before the first RRD gets created");
+        lock.writeLock().lock();
+        try {
+            // We will allow this only if no RRDs are created
+            if (!RrdBackend.isInstanceCreated()) {
+                activeFactories.clear();
+                activeFactories.add(getFactory(factoryName));
+            } else {
+                throw new IllegalStateException(
+                        "Could not change the default backend factory. "
+                                + "This method must be called before the first RRD gets created");
+            } 
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -183,8 +212,13 @@ public abstract class RrdBackendFactory {
      * @param newFactories the new active factories.
      */
     public static void setActiveFactories(RrdBackendFactory... newFactories) {
-        activeFactories.clear();
-        activeFactories.addAll(Arrays.asList(newFactories));
+        lock.writeLock().lock();
+        try {
+            activeFactories.clear();
+            activeFactories.addAll(Arrays.asList(newFactories));
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
@@ -193,7 +227,12 @@ public abstract class RrdBackendFactory {
      * @param newFactories active factories to add.
      */
     public static void addFactories(RrdBackendFactory... newFactories) {
-        activeFactories.addAll(Arrays.asList(newFactories));
+        lock.writeLock().lock();
+        try {
+            activeFactories.addAll(Arrays.asList(newFactories));
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
@@ -204,12 +243,18 @@ public abstract class RrdBackendFactory {
      * @throws IllegalArgumentException when no matching factory is found.
      */
     public static RrdBackendFactory findFactory(URI uri) {
-        for (RrdBackendFactory tryfactory: activeFactories) {
-            if (tryfactory.canStore(uri)) {
-                return tryfactory;
+        lock.readLock().lock();
+        try {
+            for (RrdBackendFactory tryfactory : activeFactories) {
+                if (tryfactory.canStore(uri)) {
+                    return tryfactory;
+                }
             }
+            throw new IllegalArgumentException(
+                    "no matching backend factory for " + uri);
+        } finally {
+            lock.readLock().unlock();
         }
-        throw new IllegalArgumentException("no matching backend factory for " + uri);
     }
 
     /**
