@@ -2,8 +2,9 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
+import org.rrd4j.core.RrdMongoDBBackendFactory.MongoWrapper;
+
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 /**
@@ -12,24 +13,23 @@ import com.mongodb.DBObject;
  * @author Mathias Bogaert
  */
 public class RrdMongoDBBackend extends RrdByteArrayBackend {
-    private final DBCollection rrdCollection;
+    private final MongoWrapper wrapper;
     private volatile boolean dirty = false;
 
     /**
      * <p>Constructor for RrdMongoDBBackend.</p>
      *
      * @param path a {@link java.lang.String} object.
-     * @param rrdCollection a {@link com.mongodb.DBCollection} object.
+     * @param wrapper a {@link MongoWrapper} object.
      */
-    public RrdMongoDBBackend(String path, DBCollection rrdCollection) {
+    public RrdMongoDBBackend(String path, MongoWrapper wrapper) {
         super(path);
-        this.rrdCollection = rrdCollection;
+        this.wrapper = wrapper;
 
-        BasicDBObject query = new BasicDBObject();
-        query.put("path", path);
-        DBObject rrdObject = rrdCollection.findOne(query);
+        BasicDBObject query = new BasicDBObject("path", path);
+        DBObject rrdObject = wrapper.get(query);
         if (rrdObject != null) {
-            this.buffer = (byte[]) rrdObject.get("rrd");
+            buffer = (byte[]) rrdObject.get("rrd");
         }
     }
 
@@ -49,16 +49,9 @@ public class RrdMongoDBBackend extends RrdByteArrayBackend {
     @Override
     public void close() throws IOException {
         if (dirty) {
-            BasicDBObject query = new BasicDBObject();
-            query.put("path", getPath());
-
-            DBObject rrdObject = rrdCollection.findOne(query);
-            if (rrdObject == null) {
-                rrdObject = new BasicDBObject();
-                rrdObject.put("path", getPath());
-            }
-            rrdObject.put("rrd", buffer);
-            rrdCollection.save(rrdObject);
+            BasicDBObject query = new BasicDBObject("path", getPath());
+            wrapper.save(query, buffer);
         }
     }
+
 }
