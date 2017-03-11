@@ -28,13 +28,14 @@ class MinMax {
         rrdDef.addArchive(AVERAGE, 0.5, 1, 300);
         rrdDef.addArchive(MIN, 0.5, 12, 300);
         rrdDef.addArchive(MAX, 0.5, 12, 300);
-        RrdDb rrdDb = new RrdDb(rrdDef);
-        // update
-        for (long t = start; t < end; t += 300) {
-            Sample sample = rrdDb.createSample(t);
-            sample.setValue("a", Math.sin(t / 3000.0) * 50 + 50);
-            sample.update();
-        }
+        try(RrdDb rrdDb = new RrdDb(rrdDef)) {
+            // update
+            for (long t = start; t < end; t += 300) {
+                Sample sample = rrdDb.createSample(t);
+                sample.setValue("a", Math.sin(t / 3000.0) * 50 + 50);
+                sample.update();
+            }
+        };
         // graph
         RrdGraphDef gDef = new RrdGraphDef();
         gDef.setFilename(pngFile);

@@ -149,12 +149,11 @@ public class TestLSL {
 
         RrdGraph graph = new RrdGraph(gdef);
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
-        System.out.println(graphinfo.dump());
         String[] lines = graphinfo.getPrintLines();
         Assert.assertEquals("  Reach   90% at Wed Apr 28 10:30:00 CEST 2010 ", lines[0]);
         Assert.assertEquals("  Reach   90% at Wed Apr 28 11:00:00 CEST 2010", lines[1]);
         Assert.assertEquals("  Reach  100% at Sat May 01 00:00:00 CEST 2010 ", lines[2]);
         Assert.assertEquals("  Reach  100% at Sat May 01 00:00:00 CEST 2010", lines[3]);
-
+        rrdDb.close();
     }
 }

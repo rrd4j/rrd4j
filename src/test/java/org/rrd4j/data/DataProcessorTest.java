@@ -24,11 +24,12 @@ public class DataProcessorTest {
         RrdDef rrdDef = new RrdDef(testFolder.newFile("testBuild.rrd").getCanonicalPath());
         rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);
         rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
-        RrdDb rrdDb = new RrdDb(rrdDef, RrdBackendFactory.getFactory("MEMORY"));        
-        FetchRequest fr = rrdDb.createFetchRequest(ConsolFun.AVERAGE, 10000, 20000);
-        DataProcessor dp = new DataProcessor(10000, 20000);
-        dp.addDatasource("sun", fr.fetchData());
-        dp.processData();
+        try (RrdDb rrdDb = new RrdDb(rrdDef, RrdBackendFactory.getFactory("MEMORY"))){
+            FetchRequest fr = rrdDb.createFetchRequest(ConsolFun.AVERAGE, 10000, 20000);
+            DataProcessor dp = new DataProcessor(10000, 20000);
+            dp.addDatasource("sun", fr.fetchData());
+            dp.processData();
+        }
     }
 
 }

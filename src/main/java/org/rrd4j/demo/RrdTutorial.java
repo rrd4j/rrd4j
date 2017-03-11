@@ -86,18 +86,18 @@ public class RrdTutorial {
         // Create and check the database
         println(rrdDef.dump());
         println("Estimated file size: " + rrdDef.getEstimatedSize());
-        RrdDb rrdDb = new RrdDb(rrdDef);
-        println("== RRD file created.");
-        if (rrdDb.getRrdDef().equals(rrdDef)) {
-            println("Checking RRD file structure... OK");
-        } else {
-            println("Invalid RRD file created. This is a serious bug, bailing out");
-            return;
+        try (RrdDb rrdDb = new RrdDb(rrdDef)){
+            println("== RRD file created.");
+            if (rrdDb.getRrdDef().equals(rrdDef)) {
+                println("Checking RRD file structure... OK");
+            } else {
+                println("Invalid RRD file created. This is a serious bug, bailing out");
+                return;
+            }
         }
-        rrdDb.close();
 
         // Reopen and get ready to update
-        rrdDb = new RrdDb(rrdPath);
+        RrdDb rrdDb = new RrdDb(rrdPath);
         Sample sample = rrdDb.createSample();
 
         // Add these data points:

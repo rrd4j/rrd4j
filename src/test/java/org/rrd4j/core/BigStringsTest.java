@@ -19,7 +19,6 @@ public class BigStringsTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-
     @Test
     public void testBackend() throws IOException {
         RrdMemoryBackend backend = new RrdMemoryBackend("");
@@ -60,6 +59,7 @@ public class BigStringsTest {
         for(Datasource ds: rrdDb.getDatasources()) {
             Assert.assertTrue("Unexpected ds name: " + ds.getName(), dsNamesSet.contains(ds.getName()));
         }
+        rrdDb.close();
     }
 
 }

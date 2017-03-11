@@ -24,6 +24,7 @@ public class AggregatorTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
+    @SuppressWarnings("deprecation")
     private double testCf(ConsolFun cf) throws IOException {
         long startTime = Util.normalize(Util.getTimestamp(new Date()), 60);
 
@@ -32,26 +33,27 @@ public class AggregatorTest {
         rrdDef.addArchive(ConsolFun.AVERAGE, 0, 1, 10);
         rrdDef.addDatasource("total", DsType.GAUGE, 60, 0, Double.NaN);
 
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        try (RrdDb rrdDb = new RrdDb(rrdDef)){
 
-        Sample sample = rrdDb.createSample();
-        sample.setTime(startTime+60);
-        sample.setValue("total", 0);
-        sample.update();
+            Sample sample = rrdDb.createSample();
+            sample.setTime(startTime+60);
+            sample.setValue("total", 0);
+            sample.update();
 
-        sample = rrdDb.createSample();
-        sample.setTime(startTime + 120);
-        sample.setValue("total", 1);
-        sample.update();
+            sample = rrdDb.createSample();
+            sample.setTime(startTime + 120);
+            sample.setValue("total", 1);
+            sample.update();
 
-        sample = rrdDb.createSample();
-        sample.setTime(startTime + 180);
-        sample.setValue("total", 0);
-        sample.update();
+            sample = rrdDb.createSample();
+            sample.setTime(startTime + 180);
+            sample.setValue("total", 0);
+            sample.update();
 
-        FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, startTime, startTime + 240);
+            FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, startTime, startTime + 240);
 
-        return fetchRequest.fetchData().getAggregate("total", cf);
+            return fetchRequest.fetchData().getAggregate("total", cf);
+        }
 
     }
 
@@ -92,4 +94,3 @@ public class AggregatorTest {
     }
 
 }
-

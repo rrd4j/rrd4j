@@ -4,10 +4,6 @@ import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.ConsolFun.MAX;
 import static org.rrd4j.ConsolFun.TOTAL;
 import static org.rrd4j.DsType.GAUGE;
-import org.rrd4j.core.*;
-import org.rrd4j.graph.RrdGraph;
-import org.rrd4j.graph.RrdGraphDef;
-import org.rrd4j.graph.TimeLabelFormat;
 
 import java.awt.Color;
 import java.io.BufferedOutputStream;
@@ -28,6 +24,7 @@ import org.rrd4j.core.Util;
 import org.rrd4j.data.Variable;
 import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphDef;
+import org.rrd4j.graph.TimeLabelFormat;
 
 /**
  * Simple demo just to check that everything is OK with this library. Creates two files in your
@@ -99,16 +96,16 @@ public class Demo {
         println(rrdDef.dump());
         log.println(rrdDef.dump());
         println("Estimated file size: " + rrdDef.getEstimatedSize());
-        RrdDb rrdDb = new RrdDb(rrdDef);
-        println("== RRD file created.");
-        if (rrdDb.getRrdDef().equals(rrdDef)) {
-            println("Checking RRD file structure... OK");
-        } else {
-            println("Invalid RRD file created. This is a serious bug, bailing out");
-            log.close();
-            return;
+        try (RrdDb rrdDb = new RrdDb(rrdDef)){
+            println("== RRD file created.");
+            if (rrdDb.getRrdDef().equals(rrdDef)) {
+                println("Checking RRD file structure... OK");
+            } else {
+                println("Invalid RRD file created. This is a serious bug, bailing out");
+                log.close();
+                return;
+            }
         }
-        rrdDb.close();
         println("== RRD file closed.");
 
         // update database
@@ -118,29 +115,26 @@ public class Demo {
                 MAX_STEP + " seconds (* denotes 1000 updates)");
         long t = start;
         int n = 0;
-        rrdDb = new RrdDb(rrdPath);
-        Sample sample = rrdDb.createSample();
-
-        while (t <= end + 172800L) {
-            sample.setTime(t);
-            sample.setValue("sun", sunSource.getValue());
-            sample.setValue(SHADE, shadeSource.getValue());
-            log.println(sample.dump());
-            sample.update();
-            t += RANDOM.nextDouble() * MAX_STEP + 1;
-            if (((++n) % 1000) == 0) {
-                System.out.print("*");
-            }
+        try (RrdDb rrdDb = new RrdDb(rrdPath)){
+            Sample sample = rrdDb.createSample();
+            while (t <= end + 172800L) {
+                sample.setTime(t);
+                sample.setValue("sun", sunSource.getValue());
+                sample.setValue(SHADE, shadeSource.getValue());
+                log.println(sample.dump());
+                sample.update();
+                t += RANDOM.nextDouble() * MAX_STEP + 1;
+                if (((++n) % 1000) == 0) {
+                    System.out.print("*");
+                }
+            } 
         }
-
-        rrdDb.close();
 
         println("");
         println("== Finished. RRD file updated " + n + " times");
-        //rrdDb.close();
 
         // test read-only access!
-        rrdDb = new RrdDb(rrdPath, true);
+        RrdDb rrdDb = new RrdDb(rrdPath, true);
         println("File reopen in read-only mode");
         println("== Last update time was: " + rrdDb.getLastUpdateTime());
         println("== Last info was: " + rrdDb.getInfo());
@@ -225,6 +219,7 @@ public class Demo {
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);
         gDef.setImageFormat("png");
+        gDef.setDownsampler(new eu.bengreen.data.utility.LargestTriangleThreeBuckets((int)(IMG_WIDTH * 1)));
         println("Rendering graph " + Util.getLapTime());
         // create graph finally
         RrdGraph graph = new RrdGraph(gDef);
@@ -291,7 +286,4 @@ public class Demo {
         }
     }
 }
-
-
-
 

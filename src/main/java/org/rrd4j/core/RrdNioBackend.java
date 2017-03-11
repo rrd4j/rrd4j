@@ -13,6 +13,7 @@ import sun.nio.ch.DirectBuffer;
  * using java.nio.* package. This is the default backend engine.
  *
  */
+@SuppressWarnings("restriction")
 public class RrdNioBackend extends RrdRandomAccessFileBackend {
     private MappedByteBuffer byteBuffer;
 
