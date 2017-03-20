@@ -4,6 +4,7 @@ import org.rrd4j.ConsolFun;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -181,7 +182,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdDb(String path, boolean readOnly) throws IOException {
-        this(URI.create(path), readOnly, null);
+        this(path, readOnly, null);
     }
 
     /**
@@ -201,7 +202,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @see RrdBackendFactory
      */
     public RrdDb(String path, boolean readOnly, RrdBackendFactory factory) throws IOException {
-        this(URI.create(path), readOnly, factory);
+        this(path, null, readOnly, factory);
     }
 
     /**
@@ -218,7 +219,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdDb(URI path, boolean readOnly) throws IOException {
-        this(path, readOnly, null);
+        this(null, path, readOnly, null);
     }
 
     /**
@@ -242,7 +243,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdDb(URI path) throws IOException {
-        this(path, false, null);
+        this(null, path, false, null);
     }
 
     /**
@@ -255,24 +256,25 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @see RrdBackendFactory
      */
     public RrdDb(String path, RrdBackendFactory factory) throws IOException {
-        this(path, false, factory);
+        this(path, null, false, factory);
     }
 
-    private RrdDb(URI path, boolean readOnly, RrdBackendFactory factory) throws IOException {
+    private RrdDb(String rrdPath, URI rrdUri, boolean readOnly, RrdBackendFactory factory) throws IOException {
 
-        factory = checkFactory(path, factory);
+        rrdUri = buildUri(rrdPath, rrdUri, factory);
+        factory = checkFactory(rrdUri, factory);
 
         // opens existing RRD file - throw exception if the file does not exist...
-        if (!factory.exists(path)) {
-            throw new FileNotFoundException("Could not open " + path + " [non existent]");
+        if (!factory.exists(rrdUri)) {
+            throw new FileNotFoundException("Could not open " + rrdUri + " [non existent]");
         }
-        backend = factory.open(path, readOnly);
+        backend = factory.open(rrdUri, readOnly);
         backend.setFactory(factory);
         try {
             // restore header
             header = new Header(this, (RrdDef) null);
 
-            if (factory.shouldValidateHeader(path)) {
+            if (factory.shouldValidateHeader(rrdUri)) {
                 header.validateHeader();
             }
 
@@ -337,7 +339,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb(String rrdPath, String externalPath) throws IOException {
-        this(URI.create(rrdPath), externalPath, null);
+        this(rrdPath, null, externalPath, null);
     }
 
     /**
@@ -382,7 +384,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb(URI rrdPath, String externalPath) throws IOException {
-        this(rrdPath, externalPath, null);
+        this(null, rrdPath, externalPath, null);
     }
 
     /**
@@ -427,11 +429,12 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @see RrdBackendFactory
      */
     public RrdDb(String rrdPath, String externalPath, RrdBackendFactory factory) throws IOException {
-        this(URI.create(rrdPath), externalPath, factory);
+        this(rrdPath, null, externalPath, factory);
     }
 
-    private RrdDb(URI rrdUri, String externalPath, RrdBackendFactory factory) throws IOException {
+    private RrdDb(String rrdPath, URI rrdUri, String externalPath, RrdBackendFactory factory) throws IOException {
 
+        rrdUri = buildUri(rrdPath, rrdUri, factory);
         factory = checkFactory(rrdUri, factory);
 
         DataImporter reader;
@@ -479,6 +482,21 @@ public class RrdDb implements RrdUpdater, Closeable {
         } else {
             return factory;
         }
+    }
+
+    private URI buildUri(String path, URI uri, RrdBackendFactory factory) {
+        if (uri != null) {
+            return uri;
+        } else if (factory != null) {
+            return factory.getUri(path);
+        } else {
+            if (File.separatorChar != '/') {
+                URI.create(path.replace(File.separatorChar, '/'));
+            } else {
+                return URI.create(path);
+            }
+        }
+        return null;
     }
 
     /**

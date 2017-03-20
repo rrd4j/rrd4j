@@ -4,6 +4,7 @@ import org.rrd4j.DsType;
 import org.rrd4j.ConsolFun;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -69,6 +70,9 @@ public class RrdDef {
     public RrdDef(String path) {
         if (path == null || path.length() == 0) {
             throw new IllegalArgumentException("No path specified");
+        }
+        if (File.separatorChar != '/') {
+            path = path.replace(File.separatorChar, '/');
         }
         this.uri = URI.create(path);
     }
