@@ -10,10 +10,6 @@ public class UriTest {
 
     private void test(String Uri, String scheme, String ssp, String authority, String path) {
         URI generated = RrdBackendFactory.buildGenericUri(Uri);
-        System.out.format("    %s\n", generated);
-        System.out.format("    +- %s\n", generated.getScheme());
-        System.out.format("    +- %s\n", generated.getSchemeSpecificPart());
-        System.out.format("    +- %s\n", generated.getPath());
         Assert.assertEquals("scheme mismatch", scheme, generated.getScheme());
         if (ssp != null) {
             Assert.assertEquals("scheme specific part mismatch", ssp, generated.getSchemeSpecificPart());
