@@ -1,16 +1,15 @@
 package org.rrd4j.core;
 
-import org.rrd4j.ConsolFun;
-
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Date;
+
+import org.rrd4j.ConsolFun;
 
 /**
  * <p>Main class used to create and manipulate round robin databases (RRDs). Use this class to perform
@@ -52,7 +51,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * Prefix to identify external RRDTool file source used in various RrdDb constructors.
      */
     public static final String PREFIX_RRDTool = "rrdtool:/";
-
+    
     // static final String RRDTOOL = "rrdtool";
     static final int XML_BUFFER_CAPACITY = 100000; // bytes
 
@@ -484,19 +483,14 @@ public class RrdDb implements RrdUpdater, Closeable {
         }
     }
 
-    private URI buildUri(String path, URI uri, RrdBackendFactory factory) {
-        if (uri != null) {
-            return uri;
-        } else if (factory != null) {
-            return factory.getUri(path);
-        } else {
-            if (File.separatorChar != '/') {
-                URI.create(path.replace(File.separatorChar, '/'));
-            } else {
-                return URI.create(path);
-            }
+    private URI buildUri(String rrdPath, URI rrdUri, RrdBackendFactory factory) {
+        if (rrdUri != null) {
+            return rrdUri;
+        } else if (factory == null) {
+            return RrdBackendFactory.buildGenericUri(rrdPath);
+        } else{
+            return factory.getUri(rrdPath);
         }
-        return null;
     }
 
     /**

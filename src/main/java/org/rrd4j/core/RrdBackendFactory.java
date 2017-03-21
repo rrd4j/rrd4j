@@ -1,5 +1,6 @@
 package org.rrd4j.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,6 +11,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Base (abstract) backend factory class which holds references to all concrete
@@ -255,6 +258,44 @@ public abstract class RrdBackendFactory {
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    private static final Pattern URIPATTERN = Pattern.compile("^(?:(?<scheme>[a-zA-Z][a-zA-Z0-9+-\\.]*):)?(?://(?<authority>[^/\\?#]*))?(?<path>[^\\?#]*)(?:\\?(?<query>[^#]*))?(?:#(?<fragment>.*))?$");
+
+    /**
+     * Try to detect an URI from a path. It's needed because of windows path that look's like an URI
+     * and to URL-encode the path.
+     * 
+     * @param rrdpath
+     * @return an URI
+     */
+    public static URI buildGenericUri(String rrdpath) {
+        Matcher urimatcher = URIPATTERN.matcher(rrdpath);
+        if (urimatcher.matches()) {
+            String scheme = urimatcher.group("scheme");
+            String authority = urimatcher.group("authority");
+            String path = urimatcher.group("path");
+            String query = urimatcher.group("query");
+            String fragment = urimatcher.group("fragment");
+            try {
+                // If scheme is a single letter, it's not a scheme, but a windows path
+                if (scheme != null && scheme.length() == 1) {
+                    return new File(rrdpath).toURI();
+                }
+                // A scheme and a not absolute path, it's an opaque URI
+                if (scheme != null && path.charAt(0) != '/') {
+                    return new URI(scheme, path, query);
+                }
+                // A relative file was given, ensure that it's OK if it was on a non-unix plateform
+                if (File.separatorChar != '/' && scheme == null) {
+                    path = path.replace(File.separatorChar, '/');
+                }
+                return new URI(scheme, authority, path, query, fragment);
+            } catch (URISyntaxException ex) {
+                throw new IllegalArgumentException(ex.getMessage(), ex);
+            }
+        }
+        throw new IllegalArgumentException("Not an URI pattern");
     }
 
     /**

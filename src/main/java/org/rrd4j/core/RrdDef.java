@@ -1,15 +1,19 @@
 package org.rrd4j.core;
 
-import org.rrd4j.DsType;
-import org.rrd4j.ConsolFun;
-
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import org.rrd4j.ConsolFun;
+import org.rrd4j.DsType;
 
 /**
  * <p>Class to represent definition of new Round Robin Database (RRD).
@@ -40,7 +44,7 @@ public class RrdDef {
      * Default RRD step to be used if not specified in constructor (300 seconds).
      */
     public static final long DEFAULT_STEP = 300L;
-
+    
     /**
      * If not specified in constructor, starting timestamp will be set to the
      * current timestamp plus DEFAULT_INITIAL_SHIFT seconds (-10).
@@ -65,16 +69,13 @@ public class RrdDef {
      * specified path.<p>
      * <p>The will be transformed internally to an URI using the default backend factory.</p>
      *
-     * @param path Path to new RRD.
+     * @param rrdpath Path to new RRD.
      */
-    public RrdDef(String path) {
-        if (path == null || path.length() == 0) {
+    public RrdDef(String rrdpath) {
+        if (rrdpath == null || rrdpath.length() == 0) {
             throw new IllegalArgumentException("No path specified");
         }
-        if (File.separatorChar != '/') {
-            path = path.replace(File.separatorChar, '/');
-        }
-        this.uri = URI.create(path);
+        this.uri = RrdBackendFactory.buildGenericUri(rrdpath);
     }
 
     /**
