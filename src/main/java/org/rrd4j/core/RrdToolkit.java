@@ -364,25 +364,13 @@ public class RrdToolkit {
         deleteFile(dest);
         if (!source.renameTo(dest)) {
             //Rename failed so try to copy and erase
-            FileChannel sourceStream = null;
-            FileChannel destinationStream = null;
-            try {
-                sourceStream = new FileInputStream(source).getChannel();
-                destinationStream = new FileOutputStream(dest).getChannel();
+            try(FileChannel sourceStream = new FileInputStream(source).getChannel(); FileChannel destinationStream = new FileOutputStream(dest).getChannel()) {
                 long count = 0;
                 final long size = sourceStream.size();
                 while(count < size) {
                     count += destinationStream.transferFrom(sourceStream, count, size-count);
                 }
                 deleteFile(source);
-            }
-            finally {
-                if(sourceStream != null) {
-                    sourceStream.close();
-                }
-                if(destinationStream != null) {
-                    destinationStream.close();
-                }
             }
         }
     }
