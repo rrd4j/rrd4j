@@ -17,11 +17,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.*;
+import java.net.JarURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Class defines various utility functions used in Rrd4j.
@@ -45,13 +51,17 @@ public class Util {
     // directory under $USER_HOME used for demo graphs storing
     static final String RRD4J_DIR = "rrd4j-demo";
 
-    static final DecimalFormat df;
+    static final ThreadLocal<NumberFormat> df = new ThreadLocal<NumberFormat>() {
+        @Override
+        protected NumberFormat initialValue() {
+            DecimalFormat ldf = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
+            ldf.applyPattern(PATTERN);
+            ldf.setPositivePrefix("+");
+            return ldf;
+        }
+    };
 
-    static {
-        df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
-        df.applyPattern(PATTERN);
-        df.setPositivePrefix("+");
-    }
+    private static final Pattern SPRINTF_PATTERN = Pattern.compile("([^%]|^)%([^a-zA-Z%]*)l(f|g|e)");
 
     private Util() {
 
@@ -145,7 +155,7 @@ public class Util {
             return nanString;
         }
         if (forceExponents) {
-            return df.format(x);
+            return df.get().format(x);
         }
         return Double.toString(x);
     }
@@ -407,9 +417,7 @@ public class Util {
     }
 
     static boolean sameFilePath(String path1, String path2) throws IOException {
-        File file1 = new File(path1);
-        File file2 = new File(path2);
-        return file1.getCanonicalPath().equals(file2.getCanonicalPath());
+        return Files.isSameFile(Paths.get(path1), Paths.get(path2));
     }
 
     static int getMatchingDatasourceIndex(RrdDb rrd1, int dsIndex, RrdDb rrd2) throws IOException {
@@ -486,7 +494,7 @@ public class Util {
                 throw exception;
             }
         };
-        
+
         private Xml() {
 
         }
@@ -655,31 +663,25 @@ public class Util {
      * @return absolute path to Rrd4j's home directory
      */
     public static String getRrd4jHomeDirectory() {
-        String className = Util.class.getName().replace('.', '/');
-        String uri = Util.class.getResource("/" + className + ".class").toString();
-        //System.out.println(uri);
-        if (uri.startsWith("file:/")) {
-            uri = uri.substring(6);
-            File file = new File(uri);
-            // let's go 5 steps backwards
-            for (int i = 0; i < 5; i++) {
-                file = file.getParentFile();
+        String homedir = null;
+        try {
+            String className = Util.class.getName().replace('.', '/');
+            URI uri = Util.class.getResource("/" + className + ".class").toURI();
+            if ("file".equals(uri.getScheme())) {
+                homedir = Paths.get(uri).toString();
             }
-            uri = file.getAbsolutePath();
-        }
-        else if (uri.startsWith("jar:file:/")) {
-            uri = uri.substring(9, uri.lastIndexOf('!'));
-            File file = new File(uri);
-            // let's go 2 steps backwards
-            for (int i = 0; i < 2; i++) {
-                file = file.getParentFile();
+            else if ("jar".equals(uri.getScheme())) {
+                // JarURLConnection doesn't open the JAR
+                JarURLConnection connection = (JarURLConnection) uri.toURL().openConnection();
+                homedir = connection.getJarFileURL().getFile();
             }
-            uri = file.getAbsolutePath();
+        } catch (URISyntaxException | IOException e) {
         }
-        else {
-            uri = null;
+        if (homedir != null) {
+            return Paths.get(homedir).toAbsolutePath().toString();
+        } else {
+            return null;
         }
-        return uri;
     }
 
     /**
@@ -764,7 +766,7 @@ public class Util {
      * @param l a {@link java.util.Locale} object.
      */
     public static String sprintf(Locale l, String format, Object... args) {
-        String fmt = format.replaceAll("([^%]|^)%([^a-zA-Z%]*)l(f|g|e)", "$1%$2$3");
+        String fmt =  SPRINTF_PATTERN.matcher(format).replaceAll("$1%$2$3");
         return String.format(l, fmt, args);
     }
 }
