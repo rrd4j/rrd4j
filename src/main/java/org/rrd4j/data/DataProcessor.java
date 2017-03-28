@@ -1,10 +1,24 @@
 package org.rrd4j.data;
 
-import org.rrd4j.core.*;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.FetchData;
+import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdDbPool;
+import org.rrd4j.core.Util;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * <p>Class which should be used for all calculations based on the data fetched from RRD files. This class
@@ -310,6 +324,19 @@ public class DataProcessor {
         else {
             throw new IllegalArgumentException(String.format("%s is not a Variable source", source.getName()));            
         }
+    }
+
+    /**
+     * Returns single aggregated value for a single datasource.
+     * 
+     * @param sourceName Datasource name
+     * @param var variable that will generate value
+     * @return A combined time and value extracted calculated from the datasource
+     */
+    public Variable.Value getVariable(String sourceName, Variable var) {
+        Source source = getSource(sourceName);
+        var.calculate(source, tStart, tEnd);
+        return var.getValue();
     }
 
     /**
