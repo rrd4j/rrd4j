@@ -42,7 +42,7 @@ Add this dependency to your project's POM file:
 ### Usage Example
 
 ```java
-import org.rrd4j.code.*;
+import org.rrd4j.core.*;
 import static org.rrd4j.DsType.*;
 import static org.rrd4j.ConsolFun.*;
 ...
