@@ -212,13 +212,17 @@ public class Header implements RrdUpdater {
         return version;
     }
 
-    boolean isRrd4jHeader() throws IOException {
-        return signature.get().startsWith(SIGNATURE) || signature.get().startsWith("JR"); // backwards compatible with JRobin
+    boolean isRrd4jHeader() {
+        try {
+            return signature.get().startsWith(SIGNATURE) || signature.get().startsWith("JR"); // backwards compatible with JRobin
+        } catch (IOException ioe) {
+            return false;
+        }
     }
 
     void validateHeader() throws IOException {
         if (!isRrd4jHeader()) {
-            throw new IOException("Invalid file header. File [" + parentDb.getCanonicalPath() + "] is not a RRD4J RRD file");
+            throw new InvalidRrdException("Invalid file header. File [" + parentDb.getCanonicalPath() + "] is not a RRD4J RRD file");
         }
     }
 
