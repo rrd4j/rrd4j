@@ -1,5 +1,6 @@
 package org.rrd4j.core;
 
+import static org.junit.Assert.*;
 import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.ConsolFun.MAX;
 import static org.rrd4j.ConsolFun.TOTAL;
@@ -222,6 +223,30 @@ public class RrdDbTest {
         checkValues(rrd);
     }
 
+    @Test
+    public void testReadCorruptSignature() throws Exception {
+        URL url = getClass().getResource("/corrupt.rrd"); 
+        RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
+       
+        try {
+            new RrdDb(url.getFile(), backendFactory);
+            fail();
+        } catch (InvalidRrdException expected) {
+        }
+    }
+    
+    @Test
+    public void testReadEmpty() throws Exception {
+        URL url = getClass().getResource("/empty.rrd"); 
+        RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
+       
+        try {
+            new RrdDb(url.getFile(), backendFactory);
+            fail();
+        } catch (InvalidRrdException expected) {
+        }
+    }
+    
     @Test
     public void testXml1Import() throws IOException {
         URL url = getClass().getResource("/rrdtool/rrdtool1.xml"); 
