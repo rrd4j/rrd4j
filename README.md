@@ -46,7 +46,7 @@ import org.rrd4j.core.*;
 import static org.rrd4j.DsType.*;
 import static org.rrd4j.ConsolFun.*;
 
-String rrdPath = "my.rrd"
+String rrdPath = "my.rrd";
 
 // first, define the RRD
 RrdDef rrdDef = new RrdDef(rrdPath, 300);
