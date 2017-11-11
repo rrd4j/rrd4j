@@ -309,7 +309,7 @@ public class DataProcessor {
         Source source = getSource(sourceName);
         return source.getAggregates(tStart, tEnd);
     }
-    
+
     /**
      * Extract the variable value from an already define Variable datasource (a VDEF)
      * 

@@ -50,7 +50,7 @@ public abstract class Variable {
                 long rightdown = Math.min(s.timestamps[i], end);
                 if(rightdown > leftdown) {
                     first = i;
-                }                
+                }
             }
 
             if(last == -1) {
@@ -58,7 +58,7 @@ public abstract class Variable {
                 long rightup = Math.min(s.timestamps[j], end);
                 if(rightup > leftup ) {
                     last = j;
-                }                
+                }
             }
         }
         if( first == -1 || last == -1) {
@@ -85,7 +85,7 @@ public abstract class Variable {
             System.arraycopy(s.timestamps, first, timestamps, 0, timestamps.length);
             double[] values = new double[ last - first + 1];
             System.arraycopy(s.getValues(), first, values, 0, values.length);
-            val = fill(timestamps, values, start, end);            
+            val = fill(timestamps, values, start, end);
         }
     }
 
@@ -152,7 +152,7 @@ public abstract class Variable {
             for(int i = values.length -1 ; i >=0 ; i--) {
                 if(! Double.isNaN(values[i]) && Double.isNaN(value)) {
                     timestamp = timestamps[i];
-                    value = values[i];                    
+                    value = values[i];
                 } else if( ! Double.isNaN(values[i]) && value > values[i]) {
                     timestamp = timestamps[i];
                     value = values[i];
@@ -174,7 +174,7 @@ public abstract class Variable {
             for(int i = values.length -1 ; i >=0 ; i--) {
                 if(! Double.isNaN(values[i]) && Double.isNaN(value)) {
                     timestamp = timestamps[i];
-                    value = values[i];                    
+                    value = values[i];
                 } else if(!Double.isNaN(values[i]) && value < values[i]) {
                     timestamp = timestamps[i];
                     value = values[i];

@@ -229,5 +229,5 @@ public class Header implements RrdUpdater {
      */
     public RrdAllocator getRrdAllocator() {
         return parentDb.getRrdAllocator();
-	}
+    }
 }
