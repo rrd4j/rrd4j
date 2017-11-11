@@ -322,7 +322,7 @@ public class DataProcessor {
             return ((VDef) source).getValue();
         }
         else {
-            throw new IllegalArgumentException(String.format("%s is not a Variable source", source.getName()));            
+            throw new IllegalArgumentException(String.format("%s is not a Variable source", source.getName()));
         }
     }
 
@@ -915,7 +915,7 @@ public class DataProcessor {
         dp.addDatasource("Z", "X,Y,+,2,/");
         dp.addDatasource("DERIVE[Z]", "Z,PREV(Z),-,STEP,/");
         dp.addDatasource("TREND[Z]", "DERIVE[Z],SIGN");
-        dp.addDatasource("AVG[Z]", "Z", ConsolFun.AVERAGE);
+        dp.addDatasource("AVG[Z]", "Z", new Variable.AVERAGE());
         dp.addDatasource("DELTA", "Z,AVG[Z],-");
 
         // action
@@ -934,8 +934,9 @@ public class DataProcessor {
         System.out.println(agg.dump());
 
         // 95-percentile
-        System.out.println("\n95-percentile for X: " + Util.formatDouble(dp.get95Percentile("X")));
-        System.out.println("95-percentile for Y: " + Util.formatDouble(dp.get95Percentile("Y")));
+
+        System.out.println("\n95-percentile for X: " + Util.formatDouble(dp.getVariable("X", new Variable.PERCENTILE(95)).value));
+        System.out.println("95-percentile for Y: " + Util.formatDouble(dp.getVariable("Y", new Variable.PERCENTILE(95)).value));
 
         // lastArchiveUpdateTime
         System.out.println("\nLast archive update time was: " + dp.getLastRrdArchiveUpdateTime());
