@@ -603,6 +603,11 @@ public class Util {
 
         public static Element getRootElement(InputSource inputSource) throws IOException {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            try {
+                factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            } catch (ParserConfigurationException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
             factory.setValidating(false);
             factory.setNamespaceAware(false);
             try {
