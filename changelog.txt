@@ -1,5 +1,5 @@
-Changes in version 3.2 - ?
---------------------------
+Changes in version 3.2 - 11 Nov 2017
+------------------------------------
 
 Better management of multiple backend of the same kind. To do that, URI can be used instead of path and the RrdBackendFactory can take a list of active backend that will be checked in order.
 Each backend managed and generate URI using different kind of scheme. 
@@ -12,6 +12,18 @@ by an old library, the name returned will be the long name reduced to about 17 o
 few undisplayable characters appended. But if this area is already used for some custom usage, some strange results will happens.
 
 RrdBackend.setFactory should not be public it's not to be used by end user. But to late to make it private and final as it should be.
+
+MongoDB backed end updated to 3.5.0.
+
+Adding an experimental features, that try to downsample before rendering, see http://skemman.is/en/item/view/1946/15343 for rational. It's used
+by calling RrdGraphDef.setDownsampler(). It must be given an implementation of DownSampler. Two example one, eu.bengreen.data.utility.LargestTriangleThreeBuckets and
+eu.bengreen.data.utility.LargestTriangleThreeBucketsTime are given.
+
+Findbugs run resolve somes bugs.
+
+RrdDb is now java.io.Closeable.
+
+Not yet ready for Java 9.
 
 Changes in version 3.1 - 1 Jan 2017
 ----------------------------------
