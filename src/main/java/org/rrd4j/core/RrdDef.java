@@ -817,6 +817,16 @@ public class RrdDef {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((arcDefs == null) ? 0 : arcDefs.hashCode());
+        result = prime * result + ((dsDefs == null) ? 0 : dsDefs.hashCode());
+        result = prime * result + (int) (step ^ (step >>> 32));
+        return result;
+    }
+
     /**
      * <p>hasDatasources.</p>
      *
