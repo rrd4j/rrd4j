@@ -9,6 +9,7 @@ import java.util.TimeZone;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
 import org.rrd4j.core.XmlTemplate;
+import org.rrd4j.data.Variable;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -570,7 +571,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     private void resolveSDef(Node parentNode) {
         validateTagsOnlyOnce(parentNode, new String[]{"name", SOURCE, "cf", "percentile"});
         String name = null, source = null;
-        ConsolFun consolFun = null;
+        Variable variable = null;
         boolean ispercentile = false;
         double percentile = Double.NaN; 
         Node[] childNodes = getChildNodes(parentNode);
@@ -588,18 +589,19 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                     ispercentile = true;
                 }
                 else {
-                    consolFun = ConsolFun.valueOf(cfName);                    
+                    variable = ConsolFun.valueOf(cfName).getVariable();
                 }
             }
             else if(nodeName.equals("percentile")) {
                 percentile = getValueAsDouble(childNode);
             }
         }
-        if (name != null && source != null && consolFun != null) {
-            rrdGraphDef.datasource(name, source, consolFun);
+        if (name != null && source != null && variable != null) {
+            rrdGraphDef.datasource(name, source, variable);
         }
         else if(ispercentile && ! Double.isNaN(percentile)) {
-            rrdGraphDef.percentile(name, source, percentile);
+            variable = new Variable.PERCENTILE(percentile);
+            rrdGraphDef.datasource(name, source, variable);
         }
         else {
             throw new IllegalArgumentException("Incomplete SDEF settings");

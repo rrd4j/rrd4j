@@ -65,7 +65,7 @@ class Aggregator {
             long left = Math.max(timestamps[i] - step, tStart);
             long right = Math.min(timestamps[i], tEnd);
             if (right > left && !Double.isNaN(values[i])) {
-                valueList.add(new Double(values[i]));
+                valueList.add(Double.valueOf(values[i]));
             }
         }
         // create an array to work with

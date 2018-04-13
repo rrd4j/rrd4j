@@ -1,7 +1,6 @@
 package org.rrd4j.graph;
 
 import org.rrd4j.core.FetchData;
-import org.rrd4j.core.XmlWriter;
 import org.rrd4j.data.DataProcessor;
 
 /** @author Mathias Bogaert */

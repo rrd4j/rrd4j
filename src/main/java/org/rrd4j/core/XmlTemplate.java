@@ -109,7 +109,7 @@ public abstract class XmlTemplate {
      * @param value value to be set in the XML template
      */
     public void setVariable(String name, double value) {
-        valueMap.put(name, new Double(value));
+        valueMap.put(name, Double.valueOf(value));
     }
 
     /**
@@ -443,23 +443,23 @@ public abstract class XmlTemplate {
         }
         Node[] childs = getChildNodes(parentNode);
         main:
-        for (Node child : childs) {
-            String childName = child.getNodeName();
-            for (int j = 0; j < allowedChildNames.length; j++) {
-                if (allowedChildNames[j].equals(childName)) {
-                    // only one such tag is allowed
-                    allowedChildNames[j] = "<--removed-->";
-                    continue main;
+            for (Node child : childs) {
+                String childName = child.getNodeName();
+                for (int j = 0; j < allowedChildNames.length; j++) {
+                    if (allowedChildNames[j].equals(childName)) {
+                        // only one such tag is allowed
+                        allowedChildNames[j] = "<--removed-->";
+                        continue main;
+                    }
+                    else if (allowedChildNames[j].equals(childName + "*")) {
+                        // several tags allowed
+                        continue main;
+                    }
                 }
-                else if (allowedChildNames[j].equals(childName + "*")) {
-                    // several tags allowed
-                    continue main;
+                if (!isEmptyNode(child)) {
+                    throw new IllegalArgumentException("Unexpected tag encountered: <" + childName + ">");
                 }
             }
-            if (!isEmptyNode(child)) {
-                throw new IllegalArgumentException("Unexpected tag encountered: <" + childName + ">");
-            }
-        }
         // everything is OK
         validatedNodes.add(parentNode);
     }
