@@ -19,7 +19,7 @@ class EditArchiveDialog extends JDialog {
     private JLabel stepsLabel = new JLabel("Steps: ");
     private JLabel rowsLabel = new JLabel("Rows: ");
 
-    private JComboBox consolFunCombo = new JComboBox();
+    private JComboBox<ConsolFun> consolFunCombo = new JComboBox<>();
     private JTextField xffField = new JTextField(FIELD_SIZE);
     private JTextField stepsField = new JTextField(FIELD_SIZE);
     private JTextField rowsField = new JTextField(FIELD_SIZE);
