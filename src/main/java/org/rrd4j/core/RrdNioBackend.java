@@ -1,20 +1,36 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import sun.nio.ch.DirectBuffer;
+import sun.misc.Unsafe;
 
 /**
  * Backend which is used to store RRD data to ordinary disk files
  * using java.nio.* package. This is the default backend engine.
  *
  */
-@SuppressWarnings("restriction")
 public class RrdNioBackend extends RrdRandomAccessFileBackend {
+
+    /**
+     * Provide access to sun.misc.Unsafe::invokeCleaner
+     */
+    private static final Unsafe unsafe;
+    static {
+        try {
+            Field singleoneInstanceField = Unsafe.class.getDeclaredField("theUnsafe");
+            singleoneInstanceField.setAccessible(true);
+            unsafe = (Unsafe) singleoneInstanceField.get(null);
+        } catch (NoSuchFieldException | SecurityException
+                | IllegalArgumentException | IllegalAccessException e) {
+            throw new UnsupportedOperationException("Unusable sun.misc.Unsafe", e);
+        }
+    }
+
     private MappedByteBuffer byteBuffer;
 
     private final Runnable syncRunnable = new Runnable() {
@@ -67,10 +83,13 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
         }
     }
 
+    /**
+     * This version only works in Java9+ (see https://bugs.openjdk.java.net/browse/JDK-8171377)
+     */
     private void unmapFile() {
         if (byteBuffer != null) {
-            if (byteBuffer instanceof DirectBuffer) {
-                ((DirectBuffer) byteBuffer).cleaner().clean();
+            if (byteBuffer.isDirect()) {
+                unsafe.invokeCleaner(byteBuffer);
             }
             byteBuffer = null;
         }
