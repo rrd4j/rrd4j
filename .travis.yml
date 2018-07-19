@@ -3,11 +3,14 @@ sudo: false
 services:
   - mongodb
 jdk:
-  - oraclejdk9
   - oraclejdk8
+  - oraclejdk9
+  - oraclejdk10
 cache:
   directories:
-    - $HOME/.m2
+    - "$HOME/.m2"
+script:
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
 notifications:
   webhooks:
     urls:
@@ -15,3 +18,8 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
+addons:
+  sonarcloud:
+    organization: rrd4j
+    token:
+      secure: XxnoeymN4XWFEn/XxBycJv6whPHc2w28sAYWw8e5x4ow5ZXc4kFPgTTuQEuioSf/CZMeiFj/IoqoTr/7YpJagTF42QG7DmP6PC2UXash9jESMG8MAgw4Vrgjy6NV91Ur7htXRVc21eEEIpzQeNN8m5O30bbS6RanRCFGLEZmIA8=
