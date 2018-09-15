@@ -629,15 +629,8 @@ public class Util {
         }
 
         public static Element getRootElement(File xmlFile) throws IOException {
-            Reader reader = null;
-            try {
-                reader = new FileReader(xmlFile);
+            try (Reader reader = new FileReader(xmlFile)) {
                 return getRootElement(new InputSource(reader));
-            }
-            finally {
-                if (reader != null) {
-                    reader.close();
-                }
             }
         }
     }

@@ -198,7 +198,7 @@ class ImageWorker {
                 throw new RuntimeException("Invalid image type");
             }            
         }
-        
+
         //If lossy compression, use the quality
         if(! imgProvider.isFormatLossless()) {
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
@@ -233,14 +233,9 @@ class ImageWorker {
 
     byte[] saveImage(String path, String type, float quality, boolean interlaced) throws IOException {
         byte[] bytes = getImageBytes(type, quality, interlaced);
-        BufferedOutputStream out = null;
-        try {
-            out = new BufferedOutputStream(new FileOutputStream(path));
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(path))) {
             out.write(bytes);
             return bytes;
-        }
-        finally {
-            if (out != null) out.close();
         }
     }
 
