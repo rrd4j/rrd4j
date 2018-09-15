@@ -1,12 +1,16 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import sun.nio.ch.DirectBuffer;
+import sun.misc.Unsafe;
 
 /**
  * Backend which is used to store RRD data to ordinary disk files
@@ -15,6 +19,50 @@ import sun.nio.ch.DirectBuffer;
  */
 @SuppressWarnings("restriction")
 public class RrdNioBackend extends RrdRandomAccessFileBackend {
+
+    // The java 8- methods
+    private static final Method cleanerMethod;
+    private static final Method cleanMethod;
+    // The java 9+ methods
+    private static final Method invokeCleaner;
+    private static final Unsafe unsafe;
+    static {
+        // Temporary variable, because destinations variables are final
+        // And it interfere with exceptions
+        Method cleanerMethodTemp;
+        Method cleanMethodTemp;
+        Method invokeCleanerTemp;
+        Unsafe unsafeTemp;
+        try {
+            // The java 8- way, using sun.nio.ch.DirectBuffer.cleaner().clean()
+            Class<?> directBufferClass = RrdNioBackend.class.getClassLoader().loadClass("sun.nio.ch.DirectBuffer");
+            Class<?> cleanerClass = RrdNioBackend.class.getClassLoader().loadClass("sun.misc.Cleaner");
+            cleanerMethodTemp = directBufferClass.getMethod("cleaner");
+            cleanerMethodTemp.setAccessible(true);
+            cleanMethodTemp = cleanerClass.getMethod("clean");
+            cleanMethodTemp.setAccessible(true);
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+            cleanerMethodTemp = null;
+            cleanMethodTemp = null;
+        }
+        try {
+            // The java 9+ way, using unsafe.invokeCleaner(buffer)
+            Field singleoneInstanceField = Unsafe.class.getDeclaredField("theUnsafe");
+            singleoneInstanceField.setAccessible(true);
+            unsafeTemp = (Unsafe) singleoneInstanceField.get(null);
+            invokeCleanerTemp = unsafeTemp.getClass().getMethod("invokeCleaner", ByteBuffer.class);
+        } catch (NoSuchFieldException | SecurityException
+                | IllegalArgumentException | IllegalAccessException
+                | NoSuchMethodException e) {
+            invokeCleanerTemp = null;
+            unsafeTemp = null;
+        }
+        cleanerMethod = cleanerMethodTemp;
+        cleanMethod = cleanMethodTemp;
+        invokeCleaner = invokeCleanerTemp;
+        unsafe = unsafeTemp;
+    }
+
     private MappedByteBuffer byteBuffer;
 
     private final Runnable syncRunnable = new Runnable() {
@@ -68,12 +116,19 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
     }
 
     private void unmapFile() {
-        if (byteBuffer != null) {
-            if (byteBuffer instanceof DirectBuffer) {
-                ((DirectBuffer) byteBuffer).cleaner().clean();
+        if (byteBuffer != null && byteBuffer.isDirect()) {
+            try {
+                if (cleanMethod != null) {
+                    Object cleaner = cleanerMethod.invoke(byteBuffer);
+                    cleanMethod.invoke(cleaner);
+                } else {
+                    invokeCleaner.invoke(unsafe, byteBuffer);
+                }
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                throw new RuntimeException(ex);
             }
-            byteBuffer = null;
         }
+        byteBuffer = null;
     }
 
     /**
