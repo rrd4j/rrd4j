@@ -28,4 +28,8 @@ matrix:
     - jdk: openjdk10
       after_success:
         - mvn sonar:sonar
-        - mvn deploy -DskipTests --settings deploy-settings.xml
+      deploy:
+        provider: script
+        script: mvn deploy:deploy --settings deploy-settings.xml
+        on:
+          branch: master
