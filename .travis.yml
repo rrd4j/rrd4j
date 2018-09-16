@@ -26,10 +26,7 @@ addons:
 matrix:
   include:
     - jdk: openjdk10
-      after_success:
-        - mvn sonar:sonar
-      deploy:
-        provider: script
-        script: mvn deploy:deploy --settings deploy-settings.xml
-        on:
+      script:
+        - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar deploy --settings deploy-settings.xml
+      on:
           branch: master
