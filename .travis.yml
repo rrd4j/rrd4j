@@ -3,6 +3,7 @@ sudo: false
 services:
   - mongodb
 jdk:
+  - oraclejdk7
   - oraclejdk8
   - oraclejdk9
   - oraclejdk10
@@ -10,7 +11,7 @@ cache:
   directories:
     - "$HOME/.m2"
 script:
-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package
 notifications:
   webhooks:
     urls:
@@ -23,3 +24,10 @@ addons:
     organization: rrd4j
     token:
       secure: "jQYJJtZwMLL584h/D3DMyF/N2GUHVucEAsH6EbvlPPhEkArZh97/HFOMLJhqxi/RRndpd0fVIUqwToIBfYepnkgZlsbLEVFztZoFqIWygCOu1rbTXVpU0mTX/dsxxzPyyJI3YhmvWQpwuKQrSk8DL9RUOr6niSbr9wgloPIPgtQ="
+matrix:
+  include:
+    - jdk: oraclejdk10
+      after_success:
+        - mvn sonar:sonar
+      deploy:
+        - mvn deploy -DskipTests --settings deploy-settings.xml
