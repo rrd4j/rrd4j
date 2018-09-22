@@ -1,8 +1,8 @@
 {
   "package": {
     "name": "${project.name}",
-    "repo": "maven",
-    "subject": "fbacchella",
+    "repo": "RRD4J",
+    "subject": "rrd4j",
     "desc": "A high performance data logging and graphing system for time series data.",
     "website_url": "https://github.com/rrd4j/rrd4j",
     "issue_tracker_url": "https://github.com/rrd4j/rrd4j/issues",
