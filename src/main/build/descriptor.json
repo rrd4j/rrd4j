@@ -1,0 +1,27 @@
+{
+  "package": {
+    "name": "${project.name}",
+    "repo": "maven",
+    "subject": "fbacchella",
+    "desc": "A high performance data logging and graphing system for time series data.",
+    "website_url": "https://github.com/rrd4j/rrd4j",
+    "issue_tracker_url": "https://github.com/rrd4j/rrd4j/issues",
+    "vcs_url": "https://github.com/rrd4j/rrd4j.git",
+    "github_use_tag_release_notes": false,
+    "licenses": [
+      "Apache License 2.0"
+    ],
+    "public_download_numbers": true,
+    "public_stats": true
+  },
+  "version": {
+    "name": "${project.version}"
+  },
+  "files": [
+      {
+        "includePattern": "target/deploy/(org/rrd4j/rrd4j/${project.version}/.*)",
+        "uploadPattern": "$1"
+      }
+  ],
+  "publish": true
+}
