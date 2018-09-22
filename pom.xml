@@ -15,9 +15,6 @@
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
-    <prerequisites>
-        <maven>3.2.5</maven>
-    </prerequisites>
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,13 +45,13 @@
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>5.0.73</version>
+            <version>18.3.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.5.0</version>
+            <version>3.8.2</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
@@ -67,7 +64,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.5</version>
+            <version>3.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
