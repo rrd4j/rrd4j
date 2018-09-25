@@ -9,9 +9,10 @@ jdk:
   - openjdk11
 cache:
   directories:
-    - "$HOME/.m2"
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
 script:
-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package
+  - mvn clean package
 notifications:
   webhooks:
     urls:
@@ -19,6 +20,8 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
+  irc:
+    - irc.freenode.org#jrds
 addons:
   sonarcloud:
     organization: rrd4j
@@ -26,7 +29,7 @@ addons:
       secure: "jQYJJtZwMLL584h/D3DMyF/N2GUHVucEAsH6EbvlPPhEkArZh97/HFOMLJhqxi/RRndpd0fVIUqwToIBfYepnkgZlsbLEVFztZoFqIWygCOu1rbTXVpU0mTX/dsxxzPyyJI3YhmvWQpwuKQrSk8DL9RUOr6niSbr9wgloPIPgtQ="
 matrix:
   include:
-    - jdk: openjdk10
+    - jdk: openjdk11
       script:
         - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar deploy --settings deploy-settings.xml
       on:
