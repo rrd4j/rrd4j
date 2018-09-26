@@ -18,7 +18,7 @@
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.plugin.javadoc.version>2.10.3</maven.plugin.javadoc.version>
+        <maven.plugin.javadoc.version>3.0.1</maven.plugin.javadoc.version>
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
         <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
         <junit.version>4.12</junit.version>
@@ -96,7 +96,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>default-jar</id>
@@ -197,7 +197,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-source</id>
