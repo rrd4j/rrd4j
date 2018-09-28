@@ -22,7 +22,7 @@ class EditDatasourceDialog extends JDialog {
     private JLabel maxLabel = new JLabel("Max value: ");
 
     private JTextField nameField = new JTextField(FIELD_SIZE);
-    private JComboBox typeCombo = new JComboBox();
+    private JComboBox<DsType> typeCombo = new JComboBox<>();
     private JTextField heartbeatField = new JTextField(FIELD_SIZE);
     private JTextField minField = new JTextField(FIELD_SIZE);
     private JTextField maxField = new JTextField(FIELD_SIZE);

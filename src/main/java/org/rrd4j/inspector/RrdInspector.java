@@ -1,12 +1,33 @@
 package org.rrd4j.inspector;
 
-import org.rrd4j.ConsolFun;
-import org.rrd4j.core.ArcDef;
-import org.rrd4j.core.DsDef;
-import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdToolkit;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -14,9 +35,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
+
+import org.rrd4j.ConsolFun;
+import org.rrd4j.core.ArcDef;
+import org.rrd4j.core.DsDef;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdToolkit;
 
 /**
  * Utility application (swing) to analyze, change and plot content of Rrd4j RRD files.
@@ -586,6 +610,7 @@ public class RrdInspector extends JFrame {
      * @throws java.lang.Exception if any.
      */
     public static void main(String[] args) throws Exception {
+
         if (args.length > 1) {
             printUsageAndExit();
         }

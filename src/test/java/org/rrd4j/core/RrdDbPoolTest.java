@@ -24,7 +24,7 @@ public class RrdDbPoolTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    @Test(timeout=500)
+    @Test(timeout=2000)
     public void testCount() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(10);
@@ -44,7 +44,7 @@ public class RrdDbPoolTest {
     }
 
 
-    @Test(timeout=500)
+    @Test(timeout=2000)
     public void testPoolFull() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(10);
@@ -106,7 +106,7 @@ public class RrdDbPoolTest {
         Assert.assertEquals("finished, but not all db seen", 12, done.get()); 
     }
 
-    @Test(timeout=500)
+    @Test(timeout=2000)
     public void testMultiOpen() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(2);
@@ -166,7 +166,7 @@ public class RrdDbPoolTest {
         Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
     }
 
-    @Test(timeout=500)
+    @Test(timeout=2000)
     public void testWaitEmpty() throws IOException, InterruptedException {
         final RrdDbPool instance = new RrdDbPool();
         final RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());

@@ -444,15 +444,8 @@ public class FetchData {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public void exportXml(String filepath) throws IOException {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(filepath);
+        try(OutputStream outputStream = new FileOutputStream(filepath)) {
             exportXml(outputStream);
-        }
-        finally {
-            if (outputStream != null) {
-                outputStream.close();
-            }
         }
     }
 

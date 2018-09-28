@@ -284,7 +284,7 @@ public class DataProcessor {
      *                                  or if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
      * @return a aggregate value as a double calculated from the source.
-     * @deprecated This method is deprecated.
+     * @deprecated Use {@link Variable} based method instead.
      */
     @Deprecated
     public double getAggregate(String sourceName, ConsolFun consolFun) {
@@ -302,7 +302,7 @@ public class DataProcessor {
      * @throws java.lang.IllegalArgumentException Thrown if invalid datasource name is specified,
      *                                  or if datasource values are not yet calculated (method {@link #processData()}
      *                                  was not called)
-     * @deprecated This method is deprecated
+     * @deprecated Use {@link Variable} based method instead.
      */
     @Deprecated
     public Aggregates getAggregates(String sourceName) {
@@ -354,7 +354,7 @@ public class DataProcessor {
      *
      * @param sourceName Datasource name
      * @return 95th percentile of fetched source values
-     * @deprecated This method is deprecated
+     * @deprecated Use {@link Variable} based method instead.
      */
     @Deprecated
     public double get95Percentile(String sourceName) {
@@ -374,7 +374,7 @@ public class DataProcessor {
      *
      * @param sourceName Datasource name
      * @return 95th percentile of fetched source values
-     * @deprecated This method is deprecated
+     * @deprecated Use {@link Variable} based method instead.
      */
     @Deprecated
     public double getPercentile(String sourceName) {
@@ -389,7 +389,7 @@ public class DataProcessor {
      * @param percentile Boundary percentile. Value of 95 (%) is suitable in most cases, but you are free
      *                   to provide your own percentile boundary between zero and 100.
      * @return Requested percentile of fetched source values
-     * @deprecated This method is deprecated
+     * @deprecated Use {@link Variable} based method instead.
      */
     @Deprecated
     public double getPercentile(String sourceName, double percentile) {
@@ -489,7 +489,7 @@ public class DataProcessor {
      * @param name      source name.
      * @param defName   Name of the datasource to calculate the value from.
      * @param consolFun Consolidation function to use for value calculation
-     * @deprecated This method is deprecated.
+     * @deprecated Use {@link Variable} based method instead.
      */
     @Deprecated
     public void addDatasource(String name, String defName, ConsolFun consolFun) {
@@ -508,7 +508,7 @@ public class DataProcessor {
      * @param sourceName - the datasource from which to extract the percentile.  Must be a previously
      *                     defined virtual datasource
      * @param percentile - the percentile to extract from the source datasource
-     * @deprecated This method is deprecated.
+     * @deprecated Use {@link Variable} based method instead.
      */
     @Deprecated
     public void addDatasource(String name, String sourceName, double percentile) {

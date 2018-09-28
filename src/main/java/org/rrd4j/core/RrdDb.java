@@ -51,7 +51,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      * Prefix to identify external RRDTool file source used in various RrdDb constructors.
      */
     public static final String PREFIX_RRDTool = "rrdtool:/";
-    
+
     // static final String RRDTOOL = "rrdtool";
     static final int XML_BUFFER_CAPACITY = 100000; // bytes
 
@@ -895,15 +895,8 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @throws java.io.IOException Thrown in case of I/O related error.
      */
     public synchronized void dumpXml(String filename) throws IOException {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(filename, false);
+        try (OutputStream outputStream= new FileOutputStream(filename, false)) {
             dumpXml(outputStream);
-        }
-        finally {
-            if (outputStream != null) {
-                outputStream.close();
-            }
         }
     }
 

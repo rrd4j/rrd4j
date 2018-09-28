@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>3.2</version>
+    <version>3.3</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <!-- Use the Sonatype parent to be able to sync to central. -->
@@ -15,13 +15,10 @@
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
-    <prerequisites>
-        <maven>3.2.5</maven>
-    </prerequisites>
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.plugin.javadoc.version>2.10.3</maven.plugin.javadoc.version>
+        <maven.plugin.javadoc.version>3.0.1</maven.plugin.javadoc.version>
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
         <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
         <junit.version>4.12</junit.version>
@@ -48,13 +45,13 @@
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>5.0.73</version>
+            <version>18.3.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.5.0</version>
+            <version>3.8.2</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
@@ -67,7 +64,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.5</version>
+            <version>3.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -122,7 +119,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>default-jar</id>
@@ -223,7 +220,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-source</id>
@@ -242,7 +239,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
+                <version>0.8.2</version>
                 <configuration>
                     <destfile>${basedir}/target/coverage-reports/jacoco-unit.exec</destfile>
                     <datafile>${basedir}/target/coverage-reports/jacoco-unit.exec</datafile>
@@ -256,7 +253,7 @@
                     </execution>
                     <execution>
                         <id>jacoco-site</id>
-                        <phase>package</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -413,9 +410,7 @@
             <name>Sasa Markovic</name>
         </developer>
         <developer>
-            <id>mathias.bogaert</id>
             <name>Mathias Bogaert</name>
-            <email>mathias.bogaert@gmail.com</email>
         </developer>
         <developer>
             <id>fbacchella</id>

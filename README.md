@@ -1,5 +1,9 @@
-rrd4j <a href='http://jrds.fr/jenkins/job/rrd4j/'><img src='http://jrds.fr/jenkins/job/rrd4j/badge/icon?file=.png' /></a>
+rrd4j
 =====
+
+[![Gitter chat](https://badges.gitter.im/rrd4j/Lobby.png)](https://gitter.im/rrd4j/Lobby)
+[![Jenkins status](http://jrds.fr/jenkins/job/rrd4j/badge/icon?file=.png)](http://jrds.fr/jenkins/job/rrd4j/)
+[![Javadocs](https://www.javadoc.io/badge/org.rrd4j/rrd4j.svg)](https://www.javadoc.io/doc/org.rrd4j/rrd4j)
 
 RRD4J is a high performance data logging and graphing system for time series data, implementing [RRDTool's](http://oss.oetiker.ch/rrdtool/)
 functionality in Java. It follows much of the same logic and uses the same data sources, archive types and definitions as RRDTool does.
@@ -11,7 +15,7 @@ users [here](https://groups.google.com/forum/#!forum/rrd4j-discuss).
 
 ### Latest Version (requires Java 7+)
 
-RRD4J 3.2 (released 2017-11-11) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
+RRD4J 3.3 (released 2018-09-28) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
 
 ### Building (optional)
 
@@ -26,7 +30,7 @@ Add this dependency to your project's POM file:
 <dependency>
 	<groupId>org.rrd4j</groupId>
 	<artifactId>rrd4j</artifactId>
-	<version>3.1</version>
+	<version>3.3</version>
 </dependency>
 ```
 

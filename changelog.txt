@@ -1,3 +1,9 @@
+Changes in version 3.3 - 28 Sep 2018
+------------------------------------
+
+Updated NIO backend to work on java 9+.
+A few update to code from sonarcloud recommendations.
+
 Changes in version 3.2 - 11 Nov 2017
 ------------------------------------
 

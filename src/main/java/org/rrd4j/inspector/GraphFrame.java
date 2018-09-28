@@ -22,7 +22,7 @@ class GraphFrame extends JFrame {
 
     private Color color = COLOR;
     private GraphPanel graphPanel = new GraphPanel();
-    private JComboBox graphCombo = new JComboBox();
+    private JComboBox<GraphComboItem> graphCombo = new JComboBox<>();
     private RrdGraph rrdGraph;
 
     private String sourcePath;
@@ -115,7 +115,7 @@ class GraphFrame extends JFrame {
                         }
                     }
                 }
-                graphCombo.setModel(new DefaultComboBoxModel(items));
+                graphCombo.setModel(new DefaultComboBoxModel<GraphComboItem>(items));
                 graphCombo.setSelectedIndex(selectedItem);
             }
             finally {

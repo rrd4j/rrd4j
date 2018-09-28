@@ -5,11 +5,9 @@ import org.rrd4j.data.DataProcessor;
 import java.awt.*;
 
 class Stack extends SourcedPlotElement {
-    private final SourcedPlotElement parent;
 
     Stack(SourcedPlotElement parent, String srcName, Paint color) {
-        super(srcName, color);
-        this.parent = parent;
+        super(srcName, color, parent);
     }
 
     void assignValues(DataProcessor dproc) {

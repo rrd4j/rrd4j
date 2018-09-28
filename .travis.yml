@@ -3,10 +3,10 @@ sudo: false
 services:
   - mongodb
 jdk:
-  - openjdk8
+  - openjdk11
 cache:
   directories:
-  - "$HOME/.m2"
+    - '$HOME/.m2/repository'
 before_deploy:
   - mvn deploy -Dmaven.test.skip=true -Dmaven.install.skip=true -DaltDeploymentRepository=travis::default::file:target/deploy
 deploy:
