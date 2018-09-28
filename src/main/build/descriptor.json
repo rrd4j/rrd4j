@@ -1,7 +1,7 @@
 {
   "package": {
     "name": "${project.name}",
-    "repo": "RRD4J",
+    "repo": "org.rrd4j:rrd4j",
     "subject": "rrd4j",
     "desc": "A high performance data logging and graphing system for time series data.",
     "website_url": "https://github.com/rrd4j/rrd4j",
