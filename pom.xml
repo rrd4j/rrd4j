@@ -237,6 +237,11 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.5.0.1254</version>
+            </plugin>
         </plugins>
         <pluginManagement>
             <!-- Set all plugin versions here, make sure all used plugins 
