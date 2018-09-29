@@ -218,8 +218,8 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.2</version>
                 <configuration>
-                    <destfile>${basedir}/target/coverage-reports/jacoco-unit.exec</destfile>
-                    <datafile>${basedir}/target/coverage-reports/jacoco-unit.exec</datafile>
+                    <output>file</output>
+                    <append>true</append>
                 </configuration>
                 <executions>
                     <execution>
