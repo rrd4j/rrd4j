@@ -1,3 +1,9 @@
+Changes in version 3.3 - 28 Sep 2018
+------------------------------------
+
+Updated NIO backend to work on java 9+.
+A few update to code from sonarcloud recommendations.
+
 Changes in version 3.2 - 11 Nov 2017
 ------------------------------------
 
@@ -68,7 +74,7 @@ Added a lot of missing RPN operator.
 * Fixed Issue 59: ArcDef - please override hashcode
 * Fixed Issue 56: ImageWriterTest.testGif fails
 * Fixed Issue 52: Normalizer is broken when input data are sparse
-* Fixed Issue 49:	Graph: clipping region is off in x dimension by 1, so data point at t0 does not show on graph
+* Fixed Issue 49:   Graph: clipping region is off in x dimension by 1, so data point at t0 does not show on graph
 * Fixed Issue 48: Graph: out of range values forced to min & max give the illusion of data at those values when there is none
 * Fixed Issue 45: ADDNAN patch for rrd4j
 and many more bugs.
