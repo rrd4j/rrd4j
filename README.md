@@ -46,8 +46,10 @@ Add this dependency to your project's POM file:
 ### Usage Example
 
 ```java
+import java.awt.Color;
+
 import org.rrd4j.core.*;
-import static org.rrd4j.DsType.*;
+import org.rrd4j.graph.*;
 import static org.rrd4j.ConsolFun.*;
 
 String rrdPath = "my.rrd";
@@ -59,16 +61,16 @@ rrdDef.addArchive(AVERAGE, 0.5, 6, 700); // 6 steps, 700 rows
 rrdDef.addArchive(MAX, 0.5, 1, 600);
 
 // then, create a RrdDb from the definition and start adding data
-RrdDb rrdDb = new RrdDb(rrdDef);
-Sample sample = rrdDb.createSample();
-while (...) {
-    double inbytes = ...
-    double outbytes = ...
-    sample.setValue("inbytes", inbytes);
-    sample.setValue("outbytes", outbytes);
-    sample.update();
+try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+    Sample sample = rrdDb.createSample();
+    while (...) {
+        double inbytes = ...
+        double outbytes = ...
+        sample.setValue("inbytes", inbytes);
+        sample.setValue("outbytes", outbytes);
+        sample.update();
+    }
 }
-rrdDb.close();
 
 // then create a graph definition
 RrdGraphDef gDef = new RrdGraphDef();
@@ -78,7 +80,7 @@ gDef.setFilename("inbytes.png");
 gDef.setTitle("My Title");
 gDef.setVerticalLabel("bytes");
 gDef.datasource("inbytes-average", rrdPath, "inbytes", AVERAGE);
-gDef.line("inbytes-average", Color.BLUE, "Bytes In")
+gDef.line("inbytes-average", Color.BLUE, "Bytes In");
 gDef.hrule(2568, Color.GREEN, "hrule");
 gDef.setImageFormat("png");
 
