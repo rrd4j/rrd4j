@@ -16,21 +16,8 @@ public class LargestTriangleThreeBucketsTime extends DownSampleImpl {
     }
 
     @Override
-    public DataSet downsize(long[] timestamps, double[] values) {
-        DownSampler.DataSet sampled = new DownSampler.DataSet(new long[threshold], new double[threshold]);
-        if (timestamps == null || values == null) {
-            throw new NullPointerException("Cannot cope with a null data input array.");
-        }
-        if (threshold <= 2) {
-            throw new IllegalArgumentException("What am I supposed to do with that?");
-        }
-        if (timestamps.length != values.length) {
-            throw new IllegalArgumentException("Unmatched size with input arrays");
-        }
+    public DataSet downsizeImpl(DownSampler.DataSet sampled, long[] timestamps, double[] values) {
         int inputLength = timestamps.length;
-        if (inputLength <= threshold) {
-            return new DownSampler.DataSet(timestamps, values);
-        }
         int bucket_interval = (int)((timestamps[inputLength - 1] - timestamps[0]) / threshold);
         int sampled_index = 0;
         double every = (double)(inputLength - 2) / (double)(threshold - 2);
@@ -38,7 +25,6 @@ public class LargestTriangleThreeBucketsTime extends DownSampleImpl {
         long max_area_point_timestamp = -1;
         double max_area_point_value;
         double max_area;
-
 
         setDataSetLine(sampled, sampled_index++, timestamps[a], values[a]);
 
