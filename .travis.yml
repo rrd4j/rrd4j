@@ -9,9 +9,9 @@ cache:
     - '$HOME/.m2/repository'
 install: true
 before_script:
-    bash install-jdk.sh -F 7 -L GPL --target $JAVA_HOME --workspace ${TRAVIS_HOME}/.cache/install-jdk
+    $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk7 --target ${TRAVIS_HOME}/openjdk7
 script:
-    JAVA_HOME=${TRAVIS_HOME}/openjdk11 mvn clean compile site -Dmaven.test.skip=true -Djdk.home={TRAVIS_HOME}/openjdk7 && JAVA_HOME=${TRAVIS_HOME}/openjdk7 mvn verify -Dmaven.main.skip
+    JAVA_HOME=${TRAVIS_HOME}/openjdk11 mvn clean compile site -Dmaven.test.skip=true -Djdk.home=${TRAVIS_HOME}/openjdk7 && JAVA_HOME=${TRAVIS_HOME}/openjdk7 mvn verify -Dmaven.main.skip
 before_deploy:
   - mvn deploy -Dmaven.test.skip=true -Dmaven.install.skip=true -DaltDeploymentRepository=travis::default::file:target/deploy
 deploy:
