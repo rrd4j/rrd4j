@@ -1,3 +1,8 @@
+Changes in version 3.3.1 - 5 Oct 2018
+------------------------------------
+
+A rebuild of 3.3. Since Java 9, it's dangerous to build pre-9 java without checking against the old runtime.
+
 Changes in version 3.3 - 28 Sep 2018
 ------------------------------------
 
