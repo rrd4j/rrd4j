@@ -8,10 +8,8 @@ cache:
   directories:
     - '$HOME/.m2/repository'
 install: true
-before_script:
-    $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk7 --target ${TRAVIS_HOME}/openjdk7
 script:
-    JAVA_HOME=${TRAVIS_HOME}/openjdk11 mvn clean compile site -Dmaven.test.skip=true -Djdk.home=${TRAVIS_HOME}/openjdk7 && JAVA_HOME=${TRAVIS_HOME}/openjdk7 mvn verify -Dmaven.main.skip
+  - JAVA_HOME=$HOME/openjdk11 mvn clean compile site -Dmaven.test.skip=true -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64 && JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 mvn verify -Dmaven.main.skip -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64
 before_deploy:
   - mvn deploy -Dmaven.test.skip=true -Dmaven.install.skip=true -DaltDeploymentRepository=travis::default::file:target/deploy
 deploy:
