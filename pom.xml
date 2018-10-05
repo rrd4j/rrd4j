@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>3.3</version>
+    <version>3.3.1-SNAPSHOT</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <!-- Use the Sonatype parent to be able to sync to central. -->
@@ -22,10 +22,11 @@
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
         <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
         <junit.version>4.12</junit.version>
-        <buildSource>1.7</buildSource>
-        <buildTarget>1.7</buildTarget>
+        <jdk.home>${jdk.7.home}</jdk.home>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <!-- current year. -->
-        <year>2017</year>
+        <year>2018</year>
     </properties>
     <licenses>
         <license>
@@ -109,11 +110,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.8.0</version>
                 <configuration>
-                    <source>${buildSource}</source>
-                    <target>${buildTarget}</target>
-                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <!-- check the path for the rt.jar, allows to compile with JDK > 9 but still generate JDK <9 compatible code-->
+                        <!-- Will break when base version will be >=9 !-->
+                     <arg>-Xbootclasspath:${jdk.home}/jre/lib/rt.jar</arg>
+                    </compilerArgs>
+                    <showWarnings>false</showWarnings>
                 </configuration>
             </plugin>
             <plugin>
