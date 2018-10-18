@@ -4,7 +4,7 @@ services:
   - mongodb
 jdk:
   - openjdk7
-  - openjdk8
+  - openjdk11
 cache:
   directories:
     - '$HOME/.m2/repository'
@@ -27,7 +27,9 @@ addons:
       secure: "jQYJJtZwMLL584h/D3DMyF/N2GUHVucEAsH6EbvlPPhEkArZh97/HFOMLJhqxi/RRndpd0fVIUqwToIBfYepnkgZlsbLEVFztZoFqIWygCOu1rbTXVpU0mTX/dsxxzPyyJI3YhmvWQpwuKQrSk8DL9RUOr6niSbr9wgloPIPgtQ="
 matrix:
   include:
-    - jdk: openjdk11
+      # Sonarcloud don't work on jdk11 yet
+      # See https://github.com/SonarSource/sonar-scanner-maven/pull/47
+    - jdk: openjdk8
       script:
         - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar deploy --settings deploy-settings.xml
       on:
