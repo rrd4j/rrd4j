@@ -112,6 +112,9 @@
                                 <exclude>*.gif</exclude>
                                 <exclude>*.png</exclude>
                             </excludes>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
                         </configuration>
                     </execution>
                     <execution>
@@ -241,6 +244,33 @@
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.5.0.1254</version>
+            </plugin>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+                <version>4.1.0</version>
+                <configuration>
+                    <bnd><![CDATA[
+Import-Package: com.mongodb.*;resolution:=optional, \
+    com.sleepycat.*;resolution:=optional, \
+    org.bson.*;resolution:=optional, \
+    sun.misc;resolution:=optional, \
+    *
+Export-Package: !org.rrd4j.inspector, \
+    !org.rrd4j.converter, \
+    !org.rrd4j.demo, \
+    org.rrd4j.*, \
+    com.tomgibara.crinch.hashing.*, \
+    eu.bengreen.data.utility
+                    ]]></bnd>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>bnd-process</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <pluginManagement>
