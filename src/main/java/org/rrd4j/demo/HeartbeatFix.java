@@ -38,16 +38,16 @@ public class HeartbeatFix {
             RrdToolkit.setDsHeartbeat(files[i].getAbsolutePath(), 1, heartbeat);
             System.out.print("fixed");
             // check consistency of the file
-            RrdDb rrd = new RrdDb(path);
-            if (rrd.getRrdDef().getEstimatedSize() == files[i].length() &&
-                    rrd.getDatasource(0).getHeartbeat() == heartbeat &&
-                    rrd.getDatasource(1).getHeartbeat() == heartbeat) {
-                System.out.println(", verified");
+            try (RrdDb rrd = new RrdDb(path)) {
+                if (rrd.getRrdDef().getEstimatedSize() == files[i].length() &&
+                        rrd.getDatasource(0).getHeartbeat() == heartbeat &&
+                        rrd.getDatasource(1).getHeartbeat() == heartbeat) {
+                    System.out.println(", verified");
+                }
+                else {
+                    System.out.println(", ********** ERROR **********");
+                }
             }
-            else {
-                System.out.println(", ********** ERROR **********");
-            }
-            rrd.close();
         }
         System.out.println("FINISHED!");
     }

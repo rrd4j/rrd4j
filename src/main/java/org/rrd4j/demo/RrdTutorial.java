@@ -97,73 +97,71 @@ public class RrdTutorial {
         }
 
         // Reopen and get ready to update
-        RrdDb rrdDb = new RrdDb(rrdPath);
-        Sample sample = rrdDb.createSample();
+        try (RrdDb rrdDb = new RrdDb(rrdPath)) {
+            Sample sample = rrdDb.createSample();
 
-        // Add these data points:
-        // 12:05 12345 km
-        // 12:10 12357 km
-        // 12:15 12363 km
-        // 12:20 12363 km
-        // 12:25 12363 km
-        // 12:30 12373 km
-        // 12:35 12383 km
-        // 12:40 12393 km
-        // 12:45 12399 km
-        // 12:50 12405 km
-        // 12:55 12411 km
-        // 13:00 12415 km
-        // 13:05 12420 km
-        // 13:10 12422 km
-        // 13:15 12423 km
-        final int[] odoData = { 12345, 12357, 12363, 12363, 12363, 12373,
-                12383, 12393, 12399, 12405, 12411, 12415, 12420, 12422, 12423 };
-        println("== Adding odometer data");
-        final int fiveMinutes = 5 * 60;
-        for (int i = 0; i < odoData.length; ++i) {
-            // First sample is 12:05, so use i + 1
-            sample.setTime(START + (i + 1) * fiveMinutes);
-            sample.setValue(speedSource, odoData[i]);
-            // Store the value
-            sample.update();
+            // Add these data points:
+            // 12:05 12345 km
+            // 12:10 12357 km
+            // 12:15 12363 km
+            // 12:20 12363 km
+            // 12:25 12363 km
+            // 12:30 12373 km
+            // 12:35 12383 km
+            // 12:40 12393 km
+            // 12:45 12399 km
+            // 12:50 12405 km
+            // 12:55 12411 km
+            // 13:00 12415 km
+            // 13:05 12420 km
+            // 13:10 12422 km
+            // 13:15 12423 km
+            final int[] odoData = { 12345, 12357, 12363, 12363, 12363, 12373,
+                    12383, 12393, 12399, 12405, 12411, 12415, 12420, 12422, 12423 };
+            println("== Adding odometer data");
+            final int fiveMinutes = 5 * 60;
+            for (int i = 0; i < odoData.length; ++i) {
+                // First sample is 12:05, so use i + 1
+                sample.setTime(START + (i + 1) * fiveMinutes);
+                sample.setValue(speedSource, odoData[i]);
+                // Store the value
+                sample.update();
+            }
+            println("== Finished. RRD file updated " + odoData.length + " times");
         }
-        rrdDb.close();
-        println("== Finished. RRD file updated " + odoData.length + " times");
 
         // test read-only access!
-        rrdDb = new RrdDb(rrdPath, true);
-        println("File reopen in read-only mode");
-        println("== Last update time was: " + rrdDb.getLastUpdateTime());
-        println("== Last info was: " + rrdDb.getInfo());
+        try (RrdDb rrdDb = new RrdDb(rrdPath, true)) {
+            println("File reopen in read-only mode");
+            println("== Last update time was: " + rrdDb.getLastUpdateTime());
+            println("== Last info was: " + rrdDb.getInfo());
 
-        // rrdtool fetch test.rrd AVERAGE --start 920804400 --end 920809200
-        // Fetch data at finest resolution (300 sec), which is the default.
-        println("== Fetch request for the interval at default resolution:");
-        FetchRequest request = rrdDb.createFetchRequest(AVERAGE, START, END);
-        println(request.dump());
-        println("== Fetching data at default resolution");
-        FetchData fetchData = request.fetchData();
-        println("== Data fetched, " + fetchData.getRowCount()
-                + " points obtained");
-        // This output is different from the tutorial output from rrdtool;
-        // it includes 920804400:nan but *not* 920809500:nan
-        println(fetchData.toString());
+            // rrdtool fetch test.rrd AVERAGE --start 920804400 --end 920809200
+            // Fetch data at finest resolution (300 sec), which is the default.
+            println("== Fetch request for the interval at default resolution:");
+            FetchRequest request = rrdDb.createFetchRequest(AVERAGE, START, END);
+            println(request.dump());
+            println("== Fetching data at default resolution");
+            FetchData fetchData = request.fetchData();
+            println("== Data fetched, " + fetchData.getRowCount()
+            + " points obtained");
+            // This output is different from the tutorial output from rrdtool;
+            // it includes 920804400:nan but *not* 920809500:nan
+            println(fetchData.toString());
 
-        long coarseRes = 1800;
-        println("== Fetch request for the interval at coarse resolution:");
-        // START is before the first data point; END is after the last data
-        // point; ensure start and end are even multiples of the resolution
-        FetchRequest request2 = rrdDb.createFetchRequest(AVERAGE, START
-                / coarseRes * coarseRes, END / coarseRes * coarseRes, 1800);
-        println(request2.dump());
-        println("== Fetching data at coarse resolution");
-        FetchData fetchData2 = request2.fetchData();
-        println("== Data fetched, " + fetchData2.getRowCount()
-                + " points obtained");
-        println(fetchData2.toString());
-
-        // Done with direct access
-        rrdDb.close();
+            long coarseRes = 1800;
+            println("== Fetch request for the interval at coarse resolution:");
+            // START is before the first data point; END is after the last data
+            // point; ensure start and end are even multiples of the resolution
+            FetchRequest request2 = rrdDb.createFetchRequest(AVERAGE, START
+                    / coarseRes * coarseRes, END / coarseRes * coarseRes, 1800);
+            println(request2.dump());
+            println("== Fetching data at coarse resolution");
+            FetchData fetchData2 = request2.fetchData();
+            println("== Data fetched, " + fetchData2.getRowCount()
+            + " points obtained");
+            println(fetchData2.toString());
+        }
 
         // Graph 1 has units in millis
         // rrdtool graph speed.png \
