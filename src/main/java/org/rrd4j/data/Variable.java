@@ -166,7 +166,7 @@ public abstract class Variable {
      * The biggest of the data points and it's time stamp (the first one) is stored.
      *
      */
-    public static  class MAX extends Variable {
+    public static class MAX extends Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             long timestamp = 0;
@@ -188,7 +188,7 @@ public abstract class Variable {
      * Calculate the sum of the data points.
      *
      */
-    public static  class TOTAL extends Variable {
+    public static class TOTAL extends Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             double value = Double.NaN;

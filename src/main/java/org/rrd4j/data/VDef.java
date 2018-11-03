@@ -22,7 +22,7 @@ class VDef extends Source implements NonRrdSource  {
         Source source = dataProcessor.getSource(defName);
         var.calculate(source, tStart, tEnd);
     }
-    
+
     public Variable.Value getValue() {
         return var.getValue();
     }
