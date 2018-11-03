@@ -8,8 +8,8 @@ cache:
   directories:
     - '$HOME/.m2/repository'
     - '$HOME/.sonar/cache'
-script:
-  - mvn clean package
+install:
+  - mvn clean validate
 notifications:
   webhooks:
     urls:
@@ -30,11 +30,19 @@ matrix:
       # See https://github.com/SonarSource/sonar-scanner-maven/pull/47
     - jdk: openjdk8
       script:
-        - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar deploy --settings deploy-settings.xml
+        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile bnd:bnd-process package sonar:sonar deploy --settings deploy-settings.xml
       on:
           branch: master
-      # Target openjdk7 needs to be build with opendjk11 because of bnd-maven-plugin
-    - name: "openjdk7"
+      # Don't run bnd:bnd-process when building on openjdk7
+    - name: "JDK: openjdk7"
+      jdk: openjdk7
+      script:
+        - mvn compile package
+      on:
+          branch: master
+    - name: "JDK: openjdk11"
       jdk: openjdk11
       script:
-        - mvn clean verify site -Dmaven.test.skip=true -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64 && JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 mvn test -Dmaven.main.skip -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64
+        - mvn compile bnd:bnd-process package
+      on:
+          branch: master

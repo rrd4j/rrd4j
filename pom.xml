@@ -22,10 +22,11 @@
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
         <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
         <junit.version>4.12</junit.version>
-        <buildSource>1.7</buildSource>
-        <buildTarget>1.7</buildTarget>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <jdk.home>${java.home}</jdk.home>
         <!-- current year. -->
-        <year>2017</year>
+        <year>2018</year>
     </properties>
     <licenses>
         <license>
@@ -88,8 +89,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>${buildSource}</source>
-                    <target>${buildTarget}</target>
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
@@ -102,13 +101,11 @@
                         <id>default-jar</id>
                         <configuration>
                             <excludes>
-                                <!-- Exclude the converter and inspector 
-                                    from the default build. -->
+                                <!-- Exclude the converter and inspector from the default build. -->
                                 <exclude>**/converter/</exclude>
                                 <exclude>**/inspector/</exclude>
                                 <exclude>**/demo/</exclude>
-                                <!-- Exclude images used in the inspector 
-                                    only. -->
+                                <!-- Exclude images used in the inspector only. -->
                                 <exclude>*.gif</exclude>
                                 <exclude>*.png</exclude>
                             </excludes>
@@ -186,19 +183,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <!-- Attach javadocs compressed to a jar file. -->
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.1</version>
                 <executions>
@@ -210,11 +194,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -241,11 +220,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.5.0.1254</version>
-            </plugin>
-            <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>
                 <version>4.1.0</version>
@@ -264,95 +238,78 @@ Export-Package: !org.rrd4j.inspector, \
     eu.bengreen.data.utility
                     ]]></bnd>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.5.0.1254</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.6.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.plugin.resources.version}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.plugin.surefire.version}</version>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>java.awt.headless</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.plugin.javadoc.version}</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <links>
+                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                        <link>http://api.mongodb.org/java/2.0/</link>
+                        <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
+                        <link>http://junit.sourceforge.net/javadoc/</link>
+                    </links>
+                    <bootclasspath>${sun.boot.class.path}</bootclasspath>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>attach-javadocs</id>
+                        <!-- Attach javadocs compressed to a jar file. -->
                         <goals>
-                            <goal>bnd-process</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <!-- Set all plugin versions here, make sure all used plugins 
-                have a version set. -->
-            <!-- Use "mvn versions:display-plugin-updates" to check for new 
-                plugin versions. -->
-            <!-- It will also tell you if a plugin doesn't have a version 
-                set. -->
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.6.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                    <configuration>
-                        <!-- This is the name of the signing key used to 
-                            sign the artifacts. -->
-                        <!-- The key has to be installed on a machine to 
-                            be able to perform a release. -->
-                        <keyname>RRD4J Build</keyname>
-                        <useAgent>true</useAgent>
-                        <mavenExecutorId>forked-path</mavenExecutorId>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>${maven.plugin.resources.version}</version>
-                    <configuration>
-                        <encoding>${project.build.sourceEncoding}</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven.plugin.surefire.version}</version>
-                    <configuration>
-                        <systemProperties>
-                            <property>
-                                <name>java.awt.headless</name>
-                                <value>true</value>
-                            </property>
-                        </systemProperties>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${maven.plugin.javadoc.version}</version>
-                    <configuration>
-                        <aggregate>true</aggregate>
-                        <links>
-                            <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                            <link>http://api.mongodb.org/java/2.0/</link>
-                            <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
-                            <link>http://junit.sourceforge.net/javadoc/</link>
-                        </links>
-                        <bootclasspath>${sun.boot.class.path}</bootclasspath>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
     <reporting>
         <plugins>
@@ -392,28 +349,6 @@ Export-Package: !org.rrd4j.inspector, \
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.1</version>
-                <configuration>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                    <xmlOutput>true</xmlOutput>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <!-- select non-aggregate reports -->
-                            <report>report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
             </plugin>
         </plugins>
     </reporting>
