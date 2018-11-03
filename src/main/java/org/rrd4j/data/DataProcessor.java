@@ -890,6 +890,7 @@ public class DataProcessor {
      * @param args Not used
      * @throws java.io.IOException if any.
      */
+    @SuppressWarnings("deprecation")
     public static void main(String[] args) throws IOException {
         // time span
         long t1 = Util.getTimestamp(2003, 4, 1);
@@ -941,5 +942,5 @@ public class DataProcessor {
         // lastArchiveUpdateTime
         System.out.println("\nLast archive update time was: " + dp.getLastRrdArchiveUpdateTime());
     }
-}
 
+}

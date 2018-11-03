@@ -10,7 +10,9 @@ import org.rrd4j.core.Util;
  * {@link org.rrd4j.core.FetchData#getAggregates(String) FetchData} and
  * {@link org.rrd4j.data.DataProcessor#getAggregates(String)} DataProcessor classes.
  *
+ * @deprecated This class is deprecated. Uses instance of {@link org.rrd4j.data.Variable}, used with {@link org.rrd4j.data.DataProcessor#addDatasource(String, String, Variable)}.
  */
+@Deprecated
 public class Aggregates {
     double min = Double.NaN, max = Double.NaN;
     double first = Double.NaN, last = Double.NaN;

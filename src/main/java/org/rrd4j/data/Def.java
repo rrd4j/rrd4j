@@ -83,12 +83,22 @@ class Def extends Source {
         return fetchData.getStep();
     }
 
+    /* (non-Javadoc)
+     * @see org.rrd4j.data.Source#getAggregates(long, long)
+     */
+    @Override
+    @Deprecated
     Aggregates getAggregates(long tStart, long tEnd) {
         long[] t = getRrdTimestamps();
         double[] v = getRrdValues();
         return new Aggregator(t, v).getAggregates(tStart, tEnd);
     }
 
+    /* (non-Javadoc)
+     * @see org.rrd4j.data.Source#getPercentile(long, long, double)
+     */
+    @Override
+    @Deprecated
     double getPercentile(long tStart, long tEnd, double percentile) {
         long[] t = getRrdTimestamps();
         double[] v = getRrdValues();

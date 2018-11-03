@@ -18,6 +18,7 @@ import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 import org.rrd4j.data.Aggregates;
 
+@SuppressWarnings("deprecation")
 public class RrdDbTest {
     static final long SEED = 1909752002L;
     static final Random RANDOM = new Random(SEED);
@@ -134,7 +135,6 @@ public class RrdDbTest {
 
         FetchData fd = db.createFetchRequest(ConsolFun.AVERAGE, 1277928000, 1278107700).fetchData();
 
-        @SuppressWarnings("deprecation")
         Aggregates speedAggr = fd.getAggregates("sun");
         Assert.assertEquals("Invalid average for sun", 1.1985168039e1, speedAggr.getAverage(), 1e-7);
         Assert.assertEquals("Invalid first for sun", 3.5834466667e3, speedAggr.getFirst(), 1e-7);
@@ -143,7 +143,6 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid max for sun", 3.9840533333e3, speedAggr.getMax(), 1e-7);
         Assert.assertEquals("Invalid total for sun", 2153734.6966666686, speedAggr.getTotal(), 1e-7);
 
-        @SuppressWarnings("deprecation")
         Aggregates weightAggr = fd.getAggregates("shade");
         System.out.println(weightAggr.dump());
         Assert.assertEquals("Invalid average for shade", 2.0128491560, weightAggr.getAverage(), 1e-7);
