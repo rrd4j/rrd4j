@@ -3,7 +3,7 @@ sudo: false
 services:
   - mongodb
 jdk:
-  - openjdk8
+  - openjdk7
   - openjdk11
 cache:
   directories:
