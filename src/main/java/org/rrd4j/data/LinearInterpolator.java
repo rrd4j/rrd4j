@@ -10,12 +10,13 @@ import java.util.Date;
  * points. This class is suitable for linear interpolation only.</p>
  *
  * <p>Interpolation algorithm returns different values based on the value passed to
- * {@link #setInterpolationMethod(int) setInterpolationMethod()}. If not set, interpolation
- * method defaults to standard linear interpolation ({@link #INTERPOLATE_LINEAR}).
+ * {@link #setInterpolationMethod(Method) setInterpolationMethod()}. If not set, interpolation
+ * method defaults to standard linear interpolation ({@link org.rrd4j.data.LinearInterpolator.Method#LINEAR}).
  * Interpolation method handles NaN datasource
  * values gracefully.</p>
  */
 public class LinearInterpolator extends Plottable {
+
     /**
      * constant used to specify LEFT interpolation.
      * See {@link #setInterpolationMethod(int) setInterpolationMethod()} for explanation.
@@ -37,8 +38,20 @@ public class LinearInterpolator extends Plottable {
      */
     public static final int INTERPOLATE_REGRESSION = 3;
 
+    /**
+     * A enumeration of interpolation methods
+     * @author Fabrice Bacchella
+     *
+     */
+    public enum Method {
+        LEFT,
+        RIGHT,
+        LINEAR,
+        REGRESSION;
+    }
+
     private int lastIndexUsed = 0;
-    private int interpolationMethod = INTERPOLATE_LINEAR;
+    private Method interpolationMethod = Method.LINEAR;
 
     private long[] timestamps;
     private double[] values;
@@ -126,6 +139,8 @@ public class LinearInterpolator extends Plottable {
      * necessarily pass through all data points. The slope of the best-fit line will be chosen so that the
      * total square distance of real data points from from the best-fit line is at minimum.</p>
      * 
+     * <p>This method is deprecated, one should use {@link #setInterpolationMethod(Method) setInterpolationMethod()} instead.</p>
+     * 
      * <p>The full explanation of this interpolation method can be found
      * <a href="http://www.JerryDallal.com/LHSP/slr.htm">here</a>.</p>
      *
@@ -134,18 +149,42 @@ public class LinearInterpolator extends Plottable {
      *                            <code>INTERPOLATE_REGRESSION</code>. Any other value will be interpreted as
      *                            INTERPOLATE_LINEAR (default).
      */
+    @Deprecated
     public void setInterpolationMethod(int interpolationMethod) {
-        switch (interpolationMethod) {
-            case INTERPOLATE_REGRESSION:
-                calculateBestFitLine();
-            case INTERPOLATE_LEFT:
-            case INTERPOLATE_RIGHT:
-            case INTERPOLATE_LINEAR:
-                this.interpolationMethod = interpolationMethod;
-                break;
-            default:
-                this.interpolationMethod = INTERPOLATE_LINEAR;
+        if (interpolationMethod >= Method.values().length || interpolationMethod < 0) {
+            setInterpolationMethod(Method.LINEAR);
+        } else {
+            setInterpolationMethod(Method.values()[interpolationMethod]);
         }
+    }
+
+    /**
+     * <p>Sets interpolation method to be used. Suppose that we have two timestamp/value pairs:<br>
+     * <code>(t, 100)</code> and <code>(t + 100, 300)</code>. Here are the results interpolator
+     * returns for t + 50 seconds, for various <code>interpolationMethods</code>:</p>
+     *
+     * <ul>
+     * <li><code>LEFT:   100</code>
+     * <li><code>RIGHT:  300</code>
+     * <li><code>LINEAR: 200</code>
+     * </ul>
+     * <p>If not set, interpolation method defaults to <code>INTERPOLATE_LINEAR</code>.</p>
+     * 
+     * <p>The fourth available interpolation method is REGRESSION. This method uses
+     * simple linear regression to interpolate supplied data with a simple straight line which does not
+     * necessarily pass through all data points. The slope of the best-fit line will be chosen so that the
+     * total square distance of real data points from from the best-fit line is at minimum.</p>
+     * 
+     * <p>The full explanation of this interpolation method can be found
+     * <a href="http://www.JerryDallal.com/LHSP/slr.htm">here</a>.</p>
+     *
+     * @param interpolationMethod a method from {@link org.rrd4j.data.LinearInterpolator.Method}.
+     */
+    public void setInterpolationMethod(Method interpolationMethod) {
+        if (interpolationMethod == Method.REGRESSION) {
+            calculateBestFitLine();
+        }
+        this.interpolationMethod = interpolationMethod;
     }
 
     private void calculateBestFitLine() {
@@ -185,7 +224,7 @@ public class LinearInterpolator extends Plottable {
      * this method only if you need interpolated values in your code.
      */
     public double getValue(long timestamp) {
-        if (interpolationMethod == INTERPOLATE_REGRESSION) {
+        if (interpolationMethod == Method.REGRESSION) {
             return b0 + b1 * timestamp;
         }
         int count = timestamps.length;
@@ -207,16 +246,16 @@ public class LinearInterpolator extends Plottable {
                 // matching segment found
                 lastIndexUsed = i;
                 switch (interpolationMethod) {
-                    case INTERPOLATE_LEFT:
-                        return values[i];
-                    case INTERPOLATE_RIGHT:
-                        return values[i + 1];
-                    case INTERPOLATE_LINEAR:
-                        double slope = (values[i + 1] - values[i]) /
-                                (timestamps[i + 1] - timestamps[i]);
-                        return values[i] + slope * (timestamp - timestamps[i]);
-                    default:
-                        return Double.NaN;
+                case LEFT:
+                    return values[i];
+                case RIGHT:
+                    return values[i + 1];
+                case LINEAR:
+                    double slope = (values[i + 1] - values[i]) /
+                    (timestamps[i + 1] - timestamps[i]);
+                    return values[i] + slope * (timestamp - timestamps[i]);
+                default:
+                    return Double.NaN;
                 }
             }
         }
