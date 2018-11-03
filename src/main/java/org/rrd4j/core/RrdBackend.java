@@ -185,7 +185,8 @@ public abstract class RrdBackend {
     final void writeDouble(long offset, double value, int count) throws IOException {
         byte[] b = getDoubleBytes(value);
         byte[] image = new byte[8 * count];
-        for (int i = 0, k = 0; i < count; i++) {
+        int k = 0;
+        for (int i = 0; i < count; i++) {
             image[k++] = b[0];
             image[k++] = b[1];
             image[k++] = b[2];
@@ -201,7 +202,8 @@ public abstract class RrdBackend {
     final void writeDouble(long offset, double[] values) throws IOException {
         int count = values.length;
         byte[] image = new byte[8 * count];
-        for (int i = 0, k = 0; i < count; i++) {
+        int k = 0;
+        for (int i = 0; i < count; i++) {
             byte[] b = getDoubleBytes(values[i]);
             image[k++] = b[0];
             image[k++] = b[1];
@@ -225,7 +227,7 @@ public abstract class RrdBackend {
         // This area span the range E000-F8FF, that' a 6400 char area, 
         if (value.length() > RrdPrimitive.STRING_LENGTH) {
             String bigString = value;
-            int byteStringLength = (int) Math.min(MAXUNSIGNEDSHORT, bigString.length());
+            int byteStringLength = Math.min(MAXUNSIGNEDSHORT, bigString.length());
             long bigStringOffset = nextBigStringOffset;
             nextBigStringOffset -= byteStringLength * 2 + (Short.SIZE / 8);
             writeShort(bigStringOffset, (short)byteStringLength);
@@ -262,7 +264,6 @@ public abstract class RrdBackend {
         byte[] b = new byte[2];
         read(offset, b);
         return (short) (((b[0] << 8) & 0x0000FF00) + ((b[1] << 0) & 0x000000FF));
-
     }
 
     final int readInt(long offset) throws IOException {
@@ -288,7 +289,8 @@ public abstract class RrdBackend {
         byte[] image = new byte[byteCount];
         read(offset, image);
         double[] values = new double[count];
-        for (int i = 0, k = -1; i < count; i++) {
+        int k = -1;
+        for (int i = 0; i < count; i++) {
             byte[] b = new byte[]{
                     image[++k], image[++k], image[++k], image[++k],
                     image[++k], image[++k], image[++k], image[++k]
@@ -355,10 +357,8 @@ public abstract class RrdBackend {
         return b;
     }
 
-
     private static byte[] getDoubleBytes(double value) {
-        byte[] bytes = getLongBytes(Double.doubleToLongBits(value));
-        return bytes;
+        return getLongBytes(Double.doubleToLongBits(value));
     }
 
     private static int getInt(byte[] b) {
