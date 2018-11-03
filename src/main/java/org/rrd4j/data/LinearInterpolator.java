@@ -57,7 +57,8 @@ public class LinearInterpolator extends Plottable {
     private double[] values;
 
     // used only if INTERPOLATE_BESTFIT is specified
-    double b0 = Double.NaN, b1 = Double.NaN;
+    double b0 = Double.NaN;
+    double b1 = Double.NaN;
 
     /**
      * Creates LinearInterpolator from arrays of timestamps and corresponding datasource values.
@@ -188,8 +189,11 @@ public class LinearInterpolator extends Plottable {
     }
 
     private void calculateBestFitLine() {
-        int count = timestamps.length, validCount = 0;
-        double ts = 0.0, vs = 0.0;
+        int count = timestamps.length;
+        int validCount = 0;
+        double ts = 0.0;
+        double vs = 0.0;
+
         for (int i = 0; i < count; i++) {
             if (!Double.isNaN(values[i])) {
                 ts += timestamps[i];
@@ -201,10 +205,12 @@ public class LinearInterpolator extends Plottable {
             // just one not-NaN point
             b0 = b1 = Double.NaN;
             return;
+        } else {
+            ts /= validCount;
+            vs /= validCount;
         }
-        ts /= validCount;
-        vs /= validCount;
-        double s1 = 0, s2 = 0;
+        double s1 = 0;
+        double s2 = 0;
         for (int i = 0; i < count; i++) {
             if (!Double.isNaN(values[i])) {
                 double dt = timestamps[i] - ts;
@@ -213,7 +219,7 @@ public class LinearInterpolator extends Plottable {
                 s2 += dt * dt;
             }
         }
-        b1 = s1 / s2;
+        b1 = s2 != 0 ? s1 / s2 : Double.NaN;
         b0 = vs - b1 * ts;
     }
 
@@ -223,6 +229,7 @@ public class LinearInterpolator extends Plottable {
      * Method overridden from the base class. This method will be called by the framework. Call
      * this method only if you need interpolated values in your code.
      */
+    @Override
     public double getValue(long timestamp) {
         if (interpolationMethod == Method.REGRESSION) {
             return b0 + b1 * timestamp;
