@@ -121,10 +121,10 @@ public class Archive {
         long rowIndexPointer;
 
         if (chunk.startOffset < 0) {
-            rowIndexPointer = currentRow + 1;
+            rowIndexPointer = currentRow + 1L;
         }
         else {
-            rowIndexPointer = currentRow + chunk.startOffset + 1;
+            rowIndexPointer = currentRow + chunk.startOffset + 1L;
         }
 
         if (rowIndexPointer < rowCount) {

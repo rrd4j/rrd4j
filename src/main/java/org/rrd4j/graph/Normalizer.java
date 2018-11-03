@@ -11,7 +11,7 @@ class Normalizer {
 
     Normalizer(long tStart, long tEnd, int count) {
         this.count = count;
-        this.step = (tEnd - tStart) / (count - 1);
+        this.step = ((double)(tEnd - tStart)) / (count - 1.0);
         this.timestamps = new double[count];
         for (int i = 0; i < count; i++) {
             this.timestamps[i] = tStart + ((double) i / (double) (count - 1)) * (tEnd - tStart);

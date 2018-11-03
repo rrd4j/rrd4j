@@ -320,7 +320,7 @@ public class RrdGraph implements RrdGraphConstants {
                     im.yorigin + 0,
                     im.yorigin + 3,
             };
-            worker.fillPolygon(Xarrow_x, im.yorigin + 3, Xarrow_y, arrowColor);
+            worker.fillPolygon(Xarrow_x, im.yorigin + 3.0, Xarrow_y, arrowColor);
 
             //Do y axis arrow
             double[] Yarrow_x = {
@@ -333,7 +333,7 @@ public class RrdGraph implements RrdGraphConstants {
                     im.yorigin - im.ysize - 9,
                     im.yorigin - im.ysize - 4,
             };
-            worker.fillPolygon(Yarrow_x, im.yorigin - im.ysize - 4, Yarrow_y, arrowColor);
+            worker.fillPolygon(Yarrow_x, im.yorigin - im.ysize - 4.0, Yarrow_y, arrowColor);
         }
     }
 
@@ -522,7 +522,7 @@ public class RrdGraph implements RrdGraphConstants {
             int symbcenter = 6;
             double digits;
             if (im.unitsexponent != Integer.MAX_VALUE) {
-                digits = Math.floor(im.unitsexponent / 3);
+                digits = Math.floor(im.unitsexponent / 3.0);
             }
             else {
                 digits = Math.floor(Math.log(Math.max(Math.abs(im.minval), Math.abs(im.maxval))) / Math.log(im.base));

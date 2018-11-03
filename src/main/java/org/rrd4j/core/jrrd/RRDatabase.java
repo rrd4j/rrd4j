@@ -313,7 +313,7 @@ public class RRDatabase implements Closeable {
         Archive archive = findBestArchive(startTime, endTime, stepSeconds, possibleArchives);
 
         // Tune the parameters
-        stepSeconds = header.pdpStep * archive.pdpCount;
+        stepSeconds = (long) header.pdpStep * archive.pdpCount;
         startTime -= startTime % stepSeconds;
 
         if (endTime % stepSeconds != 0) {
