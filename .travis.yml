@@ -3,6 +3,7 @@ sudo: false
 services:
   - mongodb
 jdk:
+  - openjdk8
   - openjdk11
 cache:
   directories:
@@ -10,6 +11,8 @@ cache:
     - '$HOME/.sonar/cache'
 install:
   - mvn clean validate
+script:
+  - mvn compile package
 notifications:
   webhooks:
     urls:
@@ -30,19 +33,6 @@ matrix:
       # See https://github.com/SonarSource/sonar-scanner-maven/pull/47
     - jdk: openjdk8
       script:
-        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile bnd:bnd-process package sonar:sonar deploy --settings deploy-settings.xml
-      on:
-          branch: master
-      # Don't run bnd:bnd-process when building on openjdk7
-    - name: "JDK: openjdk7"
-      jdk: openjdk7
-      script:
-        - mvn compile package
-      on:
-          branch: master
-    - name: "JDK: openjdk11"
-      jdk: openjdk11
-      script:
-        - mvn compile bnd:bnd-process package
+        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile package sonar:sonar deploy --settings deploy-settings.xml
       on:
           branch: master

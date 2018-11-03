@@ -220,26 +220,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>bnd-maven-plugin</artifactId>
-                <version>4.1.0</version>
-                <configuration>
-                    <bnd><![CDATA[
-Import-Package: com.mongodb.*;resolution:=optional, \
-    com.sleepycat.*;resolution:=optional, \
-    org.bson.*;resolution:=optional, \
-    sun.misc;resolution:=optional, \
-    *
-Export-Package: !org.rrd4j.inspector, \
-    !org.rrd4j.converter, \
-    !org.rrd4j.demo, \
-    org.rrd4j.*, \
-    com.tomgibara.crinch.hashing.*, \
-    eu.bengreen.data.utility
-                    ]]></bnd>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.5.0.1254</version>
@@ -352,6 +332,66 @@ Export-Package: !org.rrd4j.inspector, \
             </plugin>
         </plugins>
     </reporting>
+    <profiles>
+        <profile>
+            <id>withoutosgi</id>
+            <activation>
+                <jdk>[,1.8)</jdk>
+            </activation>
+            <properties>
+                <manifestPath>${project.build.outputDirectory}/META-INF/MANIFEST.M</manifestPath>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <targetPath>${project.build.outputDirectory}/META-INF/</targetPath>
+                        <directory>src/main/build/</directory>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>withosgi</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <manifestPath>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestPath>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>biz.aQute.bnd</groupId>
+                        <artifactId>bnd-maven-plugin</artifactId>
+                        <version>4.1.0</version>
+                        <configuration>
+                            <bnd><![CDATA[
+Import-Package: com.mongodb.*;resolution:=optional, \
+    com.sleepycat.*;resolution:=optional, \
+    org.bson.*;resolution:=optional, \
+    sun.misc;resolution:=optional, \
+    *
+Export-Package: !org.rrd4j.inspector, \
+    !org.rrd4j.converter, \
+    !org.rrd4j.demo, \
+    org.rrd4j.*, \
+    com.tomgibara.crinch.hashing.*, \
+    eu.bengreen.data.utility
+                    ]]></bnd>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>bnd-process</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <developers>
         <developer>
             <name>Sasa Markovic</name>
