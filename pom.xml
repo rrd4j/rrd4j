@@ -27,6 +27,7 @@
         <jdk.home>${java.home}</jdk.home>
         <!-- current year. -->
         <year>2018</year>
+        <pax-exam.version>4.11.0</pax-exam.version>
     </properties>
     <licenses>
         <license>
@@ -66,6 +67,37 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>3.6</version>
+            <scope>test</scope>
+        </dependency>
+        <!--  Test dependencies for OSGi setup --> 
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-container-native</artifactId>
+            <version>${pax-exam.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-junit4</artifactId>
+            <version>${pax-exam.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-link-mvn</artifactId>
+            <version>${pax-exam.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+            <version>6.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
