@@ -22,12 +22,13 @@
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
         <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
         <junit.version>4.12</junit.version>
+        <log4j>2.11.0</log4j>
+        <pax-exam.version>4.11.0</pax-exam.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <jdk.home>${java.home}</jdk.home>
         <!-- current year. -->
         <year>2018</year>
-        <pax-exam.version>4.11.0</pax-exam.version>
     </properties>
     <licenses>
         <license>
@@ -89,15 +90,27 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
             <version>6.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -293,6 +306,14 @@
                         <property>
                             <name>java.awt.headless</name>
                             <value>true</value>
+                        </property>
+                        <property>
+                            <name>log4j2.debug</name>
+                            <value>false</value>
+                        </property>
+                        <property>
+                            <name>maven.loglevel</name>
+                            <value>off</value>
                         </property>
                     </systemProperties>
                 </configuration>

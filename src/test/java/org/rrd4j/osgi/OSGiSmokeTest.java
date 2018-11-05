@@ -38,7 +38,7 @@ import org.rrd4j.core.Sample;
  */
 @RunWith(PaxExam.class)
 public class OSGiSmokeTest {
-    
+
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
@@ -49,7 +49,7 @@ public class OSGiSmokeTest {
 
     @Test
     public void basicUsage() throws IOException {
-        
+
         // OSGi metadata is only added for Java8+, so skip this test on Java 7
         String javaVersion = System.getProperty("java.version");
         assumeThat(javaVersion, not(startsWith((("1.7")))));
@@ -59,9 +59,9 @@ public class OSGiSmokeTest {
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700); // 6 steps, 700 rows
         rrdDef.addDatasource("inbytes", DsType.GAUGE, 600, Double.NaN, Double.NaN);
         rrdDef.addArchive(MAX, 0.5, 1, 600);
-        
+
         Random rnd = new Random();
-        
+
         // due to sun.misc usually not being exported, default to the FILE backend
         try (RrdDb rrdDb = new RrdDb(rrdDef, RrdBackendFactory.getFactory("FILE"))) {
             long time = System.currentTimeMillis() / 1000;
