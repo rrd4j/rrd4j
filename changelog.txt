@@ -1,3 +1,10 @@
+Changes in version 3.4 - Unreleased
+------------------------------------
+
+Add OSGi metadata to the main rrd4j jar.
+
+The LinearInterpolator can now uses an enum instead of a integer, the old method is now deprecated.
+
 Changes in version 3.3.1 - 5 Oct 2018
 ------------------------------------
 
