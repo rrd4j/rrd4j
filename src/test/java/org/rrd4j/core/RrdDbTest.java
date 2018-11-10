@@ -223,30 +223,25 @@ public class RrdDbTest {
         checkValues(rrd);
     }
 
-    @Test
+    @Test(expected=InvalidRrdException.class)
     public void testReadCorruptSignature() throws Exception {
         URL url = getClass().getResource("/corrupt.rrd"); 
         RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
-       
-        try {
-            new RrdDb(url.getFile(), backendFactory);
-            fail();
-        } catch (InvalidRrdException expected) {
+
+        try (RrdDb rdb = new RrdDb(url.getFile(), backendFactory)) {
         }
     }
-    
-    @Test
+
+    @Test(expected=InvalidRrdException.class)
     public void testReadEmpty() throws Exception {
         URL url = getClass().getResource("/empty.rrd"); 
         RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
-       
-        try {
-            new RrdDb(url.getFile(), backendFactory);
+
+        try (RrdDb rdb = new RrdDb(url.getFile(), backendFactory)){
             fail();
-        } catch (InvalidRrdException expected) {
         }
     }
-    
+
     @Test
     public void testXml1Import() throws IOException {
         URL url = getClass().getResource("/rrdtool/rrdtool1.xml"); 
@@ -267,32 +262,33 @@ public class RrdDbTest {
         rrdDef.setVersion(2);
         rrdDef.addDatasource("ds", GAUGE, 3600, -5, 30);
         rrdDef.addArchive(AVERAGE, 0.5, 60, 999);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+            Calendar testTime = Calendar.getInstance();
+            testTime.set(Calendar.MINUTE, 0);
+            testTime.set(Calendar.SECOND, 0);
+            testTime.set(Calendar.MILLISECOND, 0);
+            System.out.println(testTime);
+            //testTime.add(Calendar.HOUR, -1);
+            long start =  Util.getTimestamp(testTime);
+            long timeStamp = start;
 
-        Calendar testTime = Calendar.getInstance();
-        testTime.set(Calendar.MINUTE, 0);
-        testTime.set(Calendar.SECOND, 0);
-        testTime.set(Calendar.MILLISECOND, 0);
-        System.out.println(testTime);
-        //testTime.add(Calendar.HOUR, -1);
-        long start =  Util.getTimestamp(testTime);
-        long timeStamp = start;
-
-        for(int i = 0; i < 180; i++) {
-            long  sampleTime = timeStamp;
-            if(i == 117) {
-                sampleTime += -1;
+            for(int i = 0; i < 180; i++) {
+                long  sampleTime = timeStamp;
+                if(i == 117) {
+                    sampleTime += -1;
+                }
+                rrdDb.createSample(sampleTime).setValue("ds", 30).update();
+                timeStamp += 60;
             }
-            rrdDb.createSample(sampleTime).setValue("ds", 30).update();
-            timeStamp += 60;
+            long end = timeStamp;
+            FetchData f = rrdDb.createFetchRequest(AVERAGE, start, end).fetchData();
+            System.out.println(f.dump());
+            double[] values = f.getValues("ds");
+            Assert.assertEquals("Data before first entry", Double.NaN, values[0], 0.0);
+            Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);
+            Assert.assertEquals("Bad average in point 2", 30, values[2], 1e-3);
+            Assert.assertEquals("Data after last entry", Double.NaN, values[3], 0.0);
         }
-        long end = timeStamp;
-        FetchData f = rrdDb.createFetchRequest(AVERAGE, start, end).fetchData();
-        System.out.println(f.dump());
-        double[] values = f.getValues("ds");
-        Assert.assertEquals("Data before first entry", Double.NaN, values[0], 0.0);
-        Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);
-        Assert.assertEquals("Bad average in point 2", 30, values[2], 1e-3);
-        Assert.assertEquals("Data after last entry", Double.NaN, values[3], 0.0);
     }
+
 }
