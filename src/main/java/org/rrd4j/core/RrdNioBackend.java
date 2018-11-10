@@ -136,8 +136,13 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      *
      * Sets length of the underlying RRD file. This method is called only once, immediately
      * after a new RRD file gets created.
+     * @throws java.lang.IllegalArgumentException if the length is bigger that the possible mapping position (2GiB).
      */
     protected synchronized void setLength(long newLength) throws IOException {
+        if (newLength < 0 || newLength > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Illegal offset: " + newLength);
+        }
+
         unmapFile();
         super.setLength(newLength);
         mapFile();
@@ -149,8 +154,13 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      * @param offset Starting file offset
      * @param b      Bytes to be written.
      * @throws java.io.IOException if any.
+     * @throws java.lang.IllegalArgumentException if offset is bigger that the possible mapping position (2GiB).
      */
     protected synchronized void write(long offset, byte[] b) throws IOException {
+        if (offset < 0 || offset > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Illegal offset: " + offset);
+        }
+
         if (byteBuffer != null) {
             byteBuffer.position((int) offset);
             byteBuffer.put(b);
@@ -166,8 +176,13 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      * @param offset Starting file offset
      * @param b      Buffer which receives bytes read from the file.
      * @throws java.io.IOException Thrown in case of I/O error.
+     * @throws java.lang.IllegalArgumentException if offset is bigger that the possible mapping position (2GiB).
      */
     protected synchronized void read(long offset, byte[] b) throws IOException {
+        if (offset < 0 || offset > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Illegal offset: " + offset);
+        }
+
         if (byteBuffer != null) {
             byteBuffer.position((int) offset);
             byteBuffer.get(b);
