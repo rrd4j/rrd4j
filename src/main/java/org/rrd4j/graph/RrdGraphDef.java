@@ -584,7 +584,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param colorTag Color tag, as explained above.
      * @param color    Any color (paint) you like
-     * @deprecated Using {@link setColor(ColorNames, Paint )
+     * @deprecated Using {@link #setColor(ElementsNames, Paint)}
      */
     @Deprecated
     public void setColor(int colorTag, Paint color) {
@@ -611,7 +611,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param colorName One of the following strings: "BACK", "CANVAS", "SHADEA", "SHADEB",
      *                  "GRID", "MGRID", "FONT", "FRAME", "ARROW", "XAXIS", "YAXIS"
      * @param color     Any color (paint) you like
-     * @deprecated Using {@link setColor(ColorNames, Paint )
+     * @deprecated Using {@link #setColor(ElementsNames, Paint)}
      */
     @Deprecated
     public void setColor(String colorName, Paint color) {
