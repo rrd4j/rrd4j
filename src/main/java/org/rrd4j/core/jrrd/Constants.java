@@ -20,19 +20,7 @@ interface Constants {
     /** Constant <code>VERSION_WITH_LAST_UPDATE_SEC=3</code> */
     public static int VERSION_WITH_LAST_UPDATE_SEC = 3;
     /** Constant <code>FLOAT_COOKIE=8.642135E130</code> */
-    final double FLOAT_COOKIE = 8.642135E130;
-    /** Constant <code>FLOAT_COOKIE_BIG_ENDIAN={0x5B, 0x1F, 0x2B, 0x43,
-        (byte) 0xC7, (byte) 0xC0, 0x25,
-        0x2F}</code> */
-    static final byte[] FLOAT_COOKIE_BIG_ENDIAN = {0x5B, 0x1F, 0x2B, 0x43,
-        (byte) 0xC7, (byte) 0xC0, 0x25,
-        0x2F};
-    /** Constant <code>FLOAT_COOKIE_LITTLE_ENDIAN={0x2F, 0x25, (byte) 0xC0,
-        (byte) 0xC7, 0x43, 0x2B, 0x1F,
-        0x5B}</code> */
-    static final byte[] FLOAT_COOKIE_LITTLE_ENDIAN = {0x2F, 0x25, (byte) 0xC0,
-        (byte) 0xC7, 0x43, 0x2B, 0x1F,
-        0x5B};
-
+    static final double FLOAT_COOKIE = 8.642135E130;
+    /** Constant <code>SIZE_OF_DOUBLE=8</code> */
     public static final int SIZE_OF_DOUBLE = 8;
 }

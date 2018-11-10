@@ -21,6 +21,20 @@ import org.rrd4j.core.InvalidRrdException;
  * @version $Revision: 1.1 $
  */
 class RRDFile implements Constants {
+
+    /** Constant <code>FLOAT_COOKIE_BIG_ENDIAN={0x5B, 0x1F, 0x2B, 0x43,
+    (byte) 0xC7, (byte) 0xC0, 0x25,
+    0x2F}</code> */
+    private static final byte[] FLOAT_COOKIE_BIG_ENDIAN = {0x5B, 0x1F, 0x2B, 0x43,
+            (byte) 0xC7, (byte) 0xC0, 0x25,
+            0x2F};
+    /** Constant <code>FLOAT_COOKIE_LITTLE_ENDIAN={0x2F, 0x25, (byte) 0xC0,
+    (byte) 0xC7, 0x43, 0x2B, 0x1F,
+    0x5B}</code> */
+    private static final byte[] FLOAT_COOKIE_LITTLE_ENDIAN = {0x2F, 0x25, (byte) 0xC0,
+            (byte) 0xC7, 0x43, 0x2B, 0x1F,
+            0x5B};
+
     private int alignment;
     private int longSize = 4;
 

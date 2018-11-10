@@ -801,8 +801,8 @@ class RpnCalculator {
     }
 
     private final class State {
-        public int token_rpi;
-        int rpi;
+        private int token_rpi;
+        private int rpi;
         Token token;
         int slot;
         TimeZone getTimeZone() {
