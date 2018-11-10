@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.rrd4j.ConsolFun;
@@ -880,14 +881,14 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     private void resolveColors(Node parentNode) {
         // validateTagsOnly modifies the String[] that gets passed in
         // therefore we must pass in a copy of COLOR_NAMES
-        String[] copy = new String[COLOR_NAMES.length];
-        System.arraycopy(COLOR_NAMES, 0, copy, 0, COLOR_NAMES.length);
+        String[] copy = new String[ElementsNames.values().length];
+        System.arraycopy(ElementsNames.values(), 0, copy, 0, copy.length);
         validateTagsOnlyOnce(parentNode, copy);
 
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String colorName = childNode.getNodeName();
-            rrdGraphDef.setColor(colorName, getValueAsColor(childNode));
+            rrdGraphDef.setColor(ElementsNames.valueOf(colorName.toLowerCase(Locale.ENGLISH)), getValueAsColor(childNode));
         }
     }
 

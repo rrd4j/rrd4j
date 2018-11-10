@@ -187,14 +187,14 @@ public class RrdGraph implements RrdGraphConstants {
             if (gdef.title != null) {
                 int x = im.xgif / 2 - (int) (worker.getStringWidth(gdef.title, gdef.getFont(FONTTAG_TITLE)) / 2);
                 int y = PADDING_TOP + (int) worker.getFontAscent(gdef.getFont(FONTTAG_TITLE));
-                worker.drawString(gdef.title, x, y, gdef.getFont(FONTTAG_TITLE), gdef.colors[COLOR_FONT]);
+                worker.drawString(gdef.title, x, y, gdef.getFont(FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
             }
             if (gdef.verticalLabel != null) {
                 int x = PADDING_LEFT;
                 int y = im.yorigin - im.ysize / 2 + (int) worker.getStringWidth(gdef.verticalLabel, gdef.getFont(FONTTAG_UNIT)) / 2;
                 int ascent = (int) worker.getFontAscent(gdef.getFont(FONTTAG_UNIT));
                 worker.transform(x, y, -Math.PI / 2);
-                worker.drawString(gdef.verticalLabel, 0, ascent, gdef.getFont(FONTTAG_UNIT), gdef.colors[COLOR_FONT]);
+                worker.drawString(gdef.verticalLabel, 0, ascent, gdef.getFont(FONTTAG_UNIT), gdef.getColor(ElementsNames.font));
                 worker.reset();
             }
             worker.setTextAntiAliasing(false);
@@ -204,7 +204,8 @@ public class RrdGraph implements RrdGraphConstants {
     private void drawGrid() {
         if (!gdef.onlyGraph) {
             worker.setTextAntiAliasing(gdef.textAntiAliasing);
-            Paint shade1 = gdef.colors[COLOR_SHADEA], shade2 = gdef.colors[COLOR_SHADEB];
+            Paint shade1 = gdef.getColor(ElementsNames.shadea);
+            Paint shade2 = gdef.getColor(ElementsNames.shadeb);
             Stroke borderStroke = new BasicStroke(1);
             worker.drawLine(0, 0, im.xgif - 1, 0, shade1, borderStroke);
             worker.drawLine(1, 1, im.xgif - 2, 1, shade1, borderStroke);
@@ -233,7 +234,7 @@ public class RrdGraph implements RrdGraphConstants {
                     worker.drawString(msg,
                             im.xgif / 2 - (int) worker.getStringWidth(msg, gdef.getFont(FONTTAG_TITLE)) / 2,
                             (2 * im.yorigin - im.ysize) / 2,
-                            gdef.getFont(FONTTAG_TITLE), gdef.colors[COLOR_FONT]);
+                            gdef.getFont(FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
                 }
             }
             worker.setTextAntiAliasing(false);
@@ -296,10 +297,10 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void drawAxis() {
         if (!gdef.onlyGraph) {
-            Paint gridColor = gdef.colors[COLOR_GRID];
-            Paint xaxisColor = gdef.colors[COLOR_XAXIS];
-            Paint yaxisColor = gdef.colors[COLOR_YAXIS];
-            Paint arrowColor = gdef.colors[COLOR_ARROW];
+            Paint gridColor = gdef.getColor(ElementsNames.grid);
+            Paint xaxisColor = gdef.getColor(ElementsNames.xaxis);
+            Paint yaxisColor = gdef.getColor(ElementsNames.yaxis);
+            Paint arrowColor = gdef.getColor(ElementsNames.arrow);
             Stroke stroke = new BasicStroke(1);
             worker.drawLine(im.xorigin + im.xsize, im.yorigin, im.xorigin + im.xsize, im.yorigin - im.ysize,
                     gridColor, stroke);
@@ -338,11 +339,11 @@ public class RrdGraph implements RrdGraphConstants {
     }
 
     private void drawBackground() throws IOException {
-        worker.fillRect(0, 0, im.xgif, im.ygif, gdef.colors[COLOR_BACK]);
+        worker.fillRect(0, 0, im.xgif, im.ygif, gdef.getColor(ElementsNames.back));
         if (gdef.backgroundImage != null) {
             worker.loadImage(gdef.backgroundImage);
         }
-        worker.fillRect(im.xorigin, im.yorigin - im.ysize, im.xsize, im.ysize, gdef.colors[COLOR_CANVAS]);
+        worker.fillRect(im.xorigin, im.yorigin - im.ysize, im.xsize, im.ysize, gdef.getColor(ElementsNames.canvas));
     }
 
     private void createImageWorker() {
@@ -634,14 +635,14 @@ public class RrdGraph implements RrdGraphConstants {
                     int x = c.x, y = c.y + ascent;
                     if (c instanceof LegendText) {
                         // draw with BOX
-                        worker.fillRect(x, y - box, box, box, gdef.colors[COLOR_FRAME]);
-                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_CANVAS]);
-                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_BACK]);
+                        worker.fillRect(x, y - box, box, box, gdef.getColor(ElementsNames.frame));
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.getColor(ElementsNames.canvas));
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.getColor(ElementsNames.back));
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, ((LegendText) c).legendColor);
-                        worker.drawString(c.resolvedText, x + boxSpace, y, gdef.getFont(FONTTAG_LEGEND), gdef.colors[COLOR_FONT]);
+                        worker.drawString(c.resolvedText, x + boxSpace, y, gdef.getFont(FONTTAG_LEGEND), gdef.getColor(ElementsNames.font));
                     }
                     else {
-                        worker.drawString(c.resolvedText, x, y, gdef.getFont(FONTTAG_LEGEND), gdef.colors[COLOR_FONT]);
+                        worker.drawString(c.resolvedText, x, y, gdef.getFont(FONTTAG_LEGEND), gdef.getColor(ElementsNames.font));
                     }
                 }
             }

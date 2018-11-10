@@ -77,7 +77,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     boolean rigid = false; // ok
     double base = DEFAULT_BASE;  // ok
     boolean logarithmic = false; // ok
-    Paint[] colors = new Paint[]{
+    private final Paint[] colors = new Paint[]{
             // ok
             DEFAULT_CANVAS_COLOR,
             DEFAULT_BACK_COLOR,
@@ -584,7 +584,9 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param colorTag Color tag, as explained above.
      * @param color    Any color (paint) you like
+     * @deprecated Using {@link setColor(ColorNames, Paint )
      */
+    @Deprecated
     public void setColor(int colorTag, Paint color) {
         if (colorTag >= 0 && colorTag < colors.length) {
             colors[colorTag] = color;
@@ -594,24 +596,26 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * Overrides the colors for the standard elements of the graph.
+     * @param colorTag
+     * @param color
+     */
+    public void setColor(ElementsNames colorTag, Paint color) {
+        colors[colorTag.ordinal()] = color;
+    }
+
+    /**
      * Overrides the colors for the standard elements of the graph by element name.
      * See {@link #setColor(int, java.awt.Paint)} for full explanation.
      *
      * @param colorName One of the following strings: "BACK", "CANVAS", "SHADEA", "SHADEB",
      *                  "GRID", "MGRID", "FONT", "FRAME", "ARROW", "XAXIS", "YAXIS"
      * @param color     Any color (paint) you like
+     * @deprecated Using {@link setColor(ColorNames, Paint )
      */
+    @Deprecated
     public void setColor(String colorName, Paint color) {
-        setColor(getColorTagByName(colorName), color);
-    }
-
-    private static int getColorTagByName(String colorName) {
-        for (int i = 0; i < COLOR_NAMES.length; i++) {
-            if (COLOR_NAMES[i].equalsIgnoreCase(colorName)) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("Unknown color name specified: " + colorName);
+        setColor(ElementsNames.valueOf(colorName.toLowerCase(Locale.ENGLISH)).ordinal(), color);
     }
 
     /**
@@ -1636,6 +1640,10 @@ public class RrdGraphDef implements RrdGraphConstants {
             }
         }
         return false;
+    }
+
+    Paint getColor(ElementsNames element) {
+        return colors[element.ordinal()];
     }
 
 }

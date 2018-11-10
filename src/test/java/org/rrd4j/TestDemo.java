@@ -26,8 +26,8 @@ import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.Variable;
+import org.rrd4j.graph.ElementsNames;
 import org.rrd4j.graph.RrdGraph;
-import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraphInfo;
 import org.rrd4j.graph.TimeLabelFormat;
@@ -164,8 +164,8 @@ public class TestDemo {
         gDef.setEndTime(end);
         gDef.setTitle("Temperatures in May-June 2010");
         gDef.setVerticalLabel("temperature");
-        gDef.setColor(RrdGraphConstants.COLOR_XAXIS, Color.BLUE);
-        gDef.setColor(RrdGraphConstants.COLOR_YAXIS, new Color(0, 255, 0, 40));
+        gDef.setColor(ElementsNames.xaxis, Color.BLUE);
+        gDef.setColor(ElementsNames.yaxis, new Color(0, 255, 0, 40));
         gDef.setTimeLabelFormat(new CustomTimeLabelFormat());
         gDef.setDownsampler(new LargestTriangleThreeBuckets(IMG_WIDTH));
 

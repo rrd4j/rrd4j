@@ -5,6 +5,8 @@ Add OSGi metadata to the main rrd4j jar.
 
 The LinearInterpolator can now uses an enum instead of a integer, the old method is now deprecated.
 
+RrdGraphDef.setColor now uses an enum. 
+
 All exceptions thrown by RRD4J are now subclass of org.rrd4j.core.RrdException, for a more precise exception handling.
 
 Changes in version 3.3.1 - 5 Oct 2018
