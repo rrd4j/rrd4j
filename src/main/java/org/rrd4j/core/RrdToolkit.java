@@ -334,7 +334,7 @@ public class RrdToolkit {
             File backup = new File(backupPath);
             deleteFile(backup);
             if (!dest.renameTo(backup)) {
-                throw new IOException("Could not create backup file " + backupPath);
+                throw new RrdException("Could not create backup file " + backupPath);
             }
         }
         deleteFile(dest);
@@ -521,7 +521,7 @@ public class RrdToolkit {
 
     private static void deleteFile(File file) throws IOException {
         if (file.exists() && !file.delete()) {
-            throw new IOException("Could not delete file: " + file.getCanonicalPath());
+            throw new RrdException("Could not delete file: " + file.getCanonicalPath());
         }
     }
 
@@ -564,7 +564,7 @@ public class RrdToolkit {
             throws IOException {
         File baseDir = new File(directory);
         if (!baseDir.isDirectory()) {
-            throw new IOException("Not a directory: " + directory);
+            throw new RrdException("Not a directory: " + directory);
         }
         List<String> fileList = new LinkedList<String>();
         traverseDirectory(new File(directory), extension, resursive, fileList);

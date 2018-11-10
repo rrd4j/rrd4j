@@ -68,7 +68,7 @@ public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
                 rrdDatabase.put(null, theKey, theData);
             }
             catch (DatabaseException de) {
-                throw new IOException(de.getMessage());
+                throw new RrdBackendException("failed to close the backend", de);
             }
         }
     }

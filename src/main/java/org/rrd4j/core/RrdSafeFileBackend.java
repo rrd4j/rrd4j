@@ -62,7 +62,7 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
         }
         while (System.currentTimeMillis() - entryTime <= lockWaitTime);
         counters.registerError();
-        throw new IOException("Could not obtain exclusive lock on file: " + getPath() +
+        throw new RrdBackendException("Could not obtain exclusive lock on file: " + getPath() +
                 "] after " + lockWaitTime + " milliseconds");
     }
 

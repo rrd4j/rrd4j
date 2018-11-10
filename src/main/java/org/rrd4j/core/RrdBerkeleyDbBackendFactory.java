@@ -43,7 +43,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
                 rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT);
             }
             catch (DatabaseException de) {
-                throw new IOException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage());
+                throw new RrdBackendException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage(), de);
             }
 
             return new RrdBerkeleyDbBackend(theData.getData(), path, rrdDatabase);
@@ -94,7 +94,7 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
                 return pathExists;
             }
             catch (DatabaseException de) {
-                throw new IOException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage());
+                throw new RrdBackendException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage(), de);
             }
         }
     }

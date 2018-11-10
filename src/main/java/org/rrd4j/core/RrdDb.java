@@ -770,12 +770,16 @@ public class RrdDb implements RrdUpdater, Closeable {
         return buffer.toString();
     }
 
-    final void archive(Datasource datasource, double value, long numUpdates) throws IOException {
-        int dsIndex = getDsIndex(datasource.getName());
-        for (Archive archive : archives) {
-            archive.archive(dsIndex, value, numUpdates);
-        }
-    }
+    final void archive(Datasource datasource, double value, double lastValue, long numUpdates) throws IOException {
+       int dsIndex = getDsIndex(datasource.getName());
+       for (Archive archive : archives) {
+          if(ConsolFun.AVERAGE.equals(archive.getConsolFun())) { 
+             archive.archive(dsIndex, value, numUpdates);
+          } else {
+             archive.archive(dsIndex, lastValue, numUpdates);
+          }
+       }
+   }
 
     /**
      * Returns internal index number for the given datasource name.
@@ -1065,7 +1069,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             return ((RrdFileBackend) backend).getCanonicalPath();
         }
         else {
-            throw new IOException("The underlying backend has no canonical path");
+            throw new RrdBackendException("The underlying backend has no canonical path");
         }
     }
 

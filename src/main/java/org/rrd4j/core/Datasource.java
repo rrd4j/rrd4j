@@ -17,6 +17,7 @@ public class Datasource implements RrdUpdater {
     private static final double MAX_32_BIT = Math.pow(2, 32);
     private static final double MAX_64_BIT = Math.pow(2, 64);
     private static final String INVALID_MIN_MAX_VALUES = "Invalid min/max values: ";
+    private double accumLastValue;
 
     private final RrdDb parentDb;
 
@@ -41,6 +42,7 @@ public class Datasource implements RrdUpdater {
         lastValue = new RrdDouble(this);
         accumValue = new RrdDouble(this);
         nanSeconds = new RrdLong(this);
+        accumLastValue = Double.NaN;
         if (shouldInitialize) {
             dsName.set(dsDef.getDsName());
             dsType.set(dsDef.getDsType().name());
@@ -171,16 +173,18 @@ public class Datasource implements RrdUpdater {
             long boundaryTime = Util.normalize(newTime, step);
             accumulate(oldTime, boundaryTime, updateValue);
             double value = calculateTotal(startTime, boundaryTime);
+            double lastCalculateValue = calculateLastTotal(startTime, boundaryTime);
 
             // how many updates?
             long numSteps = (boundaryTime - endTime) / step + 1L;
 
             // ACTION!
-            parentDb.archive(this, value, numSteps);
+            parentDb.archive(this, value, lastCalculateValue, numSteps);
 
             // cleanup
             nanSeconds.set(0);
             accumValue.set(0.0);
+            accumLastValue = Double.NaN;
 
             accumulate(boundaryTime, newTime, updateValue);
         }
@@ -241,6 +245,7 @@ public class Datasource implements RrdUpdater {
         }
         else {
             accumValue.set(accumValue.get() + updateValue * (newTime - oldTime));
+            accumLastValue = updateValue;
         }
     }
 
@@ -258,7 +263,20 @@ public class Datasource implements RrdUpdater {
         }
         return totalValue;
     }
-
+    
+    private double calculateLastTotal(long startTime, long boundaryTime) throws IOException {
+       double totalValue = Double.NaN;
+       long validSeconds = boundaryTime - startTime - nanSeconds.get();
+       if (nanSeconds.get() <= heartbeat.get() && validSeconds > 0) {
+           totalValue = accumLastValue;
+       }
+       
+       if (Double.isNaN(totalValue) && dsName.get().endsWith(DsDef.FORCE_ZEROS_FOR_NANS_SUFFIX)) {
+           totalValue = 0D;
+       }
+       return totalValue;
+   }
+    
     void appendXml(XmlWriter writer) throws IOException {
         writer.startTag("ds");
         writer.writeTag("name", dsName.get());

@@ -52,7 +52,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
             System.arraycopy(buffer, (int) offset, bytes, 0, bytes.length);
         }
         else {
-            throw new IOException("Not enough bytes available in memory; RRD " + getPath());
+            throw new RrdBackendException("Not enough bytes available in RRD buffer; RRD " + getPath());
         }
     }
 

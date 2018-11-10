@@ -8,6 +8,8 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
+import org.rrd4j.core.InvalidRrdException;
+
 /**
  * This class is used read information from an RRD file. Writing
  * to RRD files is not currently supported. It uses NIO's RandomAccessFile to read the file
@@ -72,7 +74,7 @@ class RRDFile implements Constants {
                 order = ByteOrder.LITTLE_ENDIAN;
             }
             else {
-                throw new IOException("Invalid RRD file");
+                throw new InvalidRrdException("Invalid RRD file");
             }
             mappedByteBuffer.order(order);
             bbuffer.order(order);
