@@ -1076,7 +1076,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             return ((RrdFileBackend) backend).getCanonicalPath();
         }
         else {
-            throw new IOException("The underlying backend has no canonical path");
+            throw new RrdBackendException("The underlying backend has no canonical path");
         }
     }
 

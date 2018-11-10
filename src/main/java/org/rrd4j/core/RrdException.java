@@ -12,5 +12,9 @@ public class RrdException extends IOException {
    public RrdException(String message) {
       super(message);
    }
-   
+
+   public RrdException(String message, Throwable cause) {
+       super(message, cause);
+    }
+
 }

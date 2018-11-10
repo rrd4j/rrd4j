@@ -156,7 +156,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
             byteBuffer.put(b);
         }
         else {
-            throw new IOException("Write failed, file " + getPath() + " not mapped for I/O");
+            throw new RrdBackendException("Write failed, file " + getPath() + " not mapped for I/O");
         }
     }
 
@@ -173,7 +173,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
             byteBuffer.get(b);
         }
         else {
-            throw new IOException("Read failed, file " + getPath() + " not mapped for I/O");
+            throw new RrdBackendException("Read failed, file " + getPath() + " not mapped for I/O");
         }
     }
 
