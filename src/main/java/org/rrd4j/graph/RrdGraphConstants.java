@@ -196,42 +196,43 @@ public interface RrdGraphConstants {
     /**
      * Constant to represent left alignment marker
      */
-    String ALIGN_LEFT_MARKER = "\\l";
+    @Deprecated
+    String ALIGN_LEFT_MARKER = Markers.ALIGN_LEFT_MARKER.marker;
     /**
      * Constant to represent left alignment marker, without new line
      */
-    String ALIGN_LEFTNONL_MARKER = "\\L";
+    @Deprecated
+    String ALIGN_LEFTNONL_MARKER = Markers.ALIGN_LEFTNONL_MARKER.marker;
     /**
      * Constant to represent centered alignment marker
      */
-    String ALIGN_CENTER_MARKER = "\\c";
+    @Deprecated
+    String ALIGN_CENTER_MARKER = Markers.ALIGN_CENTER_MARKER.marker;
     /**
      * Constant to represent right alignment marker
      */
-    String ALIGN_RIGHT_MARKER = "\\r";
+    @Deprecated
+    String ALIGN_RIGHT_MARKER = Markers.ALIGN_RIGHT_MARKER.marker;
     /**
      * Constant to represent justified alignment marker
      */
-    String ALIGN_JUSTIFIED_MARKER = "\\j";
+    @Deprecated
+    String ALIGN_JUSTIFIED_MARKER = Markers.ALIGN_JUSTIFIED_MARKER.marker;
     /**
      * Constant to represent "glue" marker
      */
-    String GLUE_MARKER = "\\g";
+    @Deprecated
+    String GLUE_MARKER = Markers.GLUE_MARKER.marker;
     /**
      * Constant to represent vertical spacing marker
      */
-    String VERTICAL_SPACING_MARKER = "\\s";
+    @Deprecated
+    String VERTICAL_SPACING_MARKER = Markers.VERTICAL_SPACING_MARKER.marker;
     /**
      * Constant to represent no justification markers
      */
-    String NO_JUSTIFICATION_MARKER = "\\J";
-    /**
-     * Used internally
-     */
-    String[] MARKERS = {
-            ALIGN_LEFT_MARKER, ALIGN_LEFTNONL_MARKER, ALIGN_CENTER_MARKER, ALIGN_RIGHT_MARKER,
-            ALIGN_JUSTIFIED_MARKER, GLUE_MARKER, VERTICAL_SPACING_MARKER, NO_JUSTIFICATION_MARKER
-    };
+    @Deprecated
+    String NO_JUSTIFICATION_MARKER = Markers.NO_JUSTIFICATION_MARKER.marker;
 
     /**
      * Constant to represent in-memory image name
