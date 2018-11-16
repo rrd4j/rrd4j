@@ -215,7 +215,7 @@ public abstract class Variable {
                     value = Double.isNaN(value) ?  values[i] : values[i] + value;
                 }
             }
-            if(! Double.isNaN(value)) {
+            if (! Double.isNaN(value) && count > 0) {
                 value = value / count;
             }
             else {
@@ -392,7 +392,7 @@ public abstract class Variable {
             double SUMxx = 0.0;
             double lslslope;
 
-            for(int i = 0; i < values.length; i++) {
+            for (int i = 0; i < values.length; i++) {
                 double value = values[i];
 
                 if (!Double.isNaN(value)) {
@@ -406,13 +406,14 @@ public abstract class Variable {
                 }
                 lslstep++;
             }
-            if(cnt > 0) {
+            double divisor = (SUMx * SUMx - cnt * SUMxx);
+            if (divisor != 0) {
                 /* Bestfit line by linear least squares method */
-                lslslope = (SUMx * SUMy - cnt * SUMxy) / (SUMx * SUMx - cnt * SUMxx);
+                lslslope = (SUMx * SUMy - cnt * SUMxy) / divisor;
                 return new Value(0, lslslope);
-
+            } else {
+                return new Value(0, Double.NaN);
             }
-            return new Value(0, Double.NaN);
         }
 
     }
@@ -447,13 +448,15 @@ public abstract class Variable {
                 }
                 lslstep++;
             }
+            double divisor = (SUMx * SUMx - cnt * SUMxx);
             if(cnt > 0) {
                 /* Bestfit line by linear least squares method */
-                lslslope = (SUMx * SUMy - cnt * SUMxy) / (SUMx * SUMx - cnt * SUMxx);
+                lslslope = (SUMx * SUMy - cnt * SUMxy) / divisor;
                 lslint = (SUMy - lslslope * SUMx) / cnt;
                 return new Value(0, lslint);
+            } else {
+                return new Value(0, Double.NaN);
             }
-            return new Value(0, Double.NaN);
         }
 
     }

@@ -263,7 +263,7 @@ public abstract class RrdBackend {
     private short readShort(long offset) throws IOException {
         byte[] b = new byte[2];
         read(offset, b);
-        return (short) (((b[0] << 8) & 0x0000FF00) + ((b[1] << 0) & 0x000000FF));
+        return (short) (((b[0] << 8) & 0x0000FF00) + (b[1] & 0x000000FF));
     }
 
     final int readInt(long offset) throws IOException {
@@ -364,7 +364,7 @@ public abstract class RrdBackend {
     private static int getInt(byte[] b) {
         assert b.length == 4 : "Invalid number of bytes for integer conversion";
         return ((b[0] << 24) & 0xFF000000) + ((b[1] << 16) & 0x00FF0000) +
-                ((b[2] << 8) & 0x0000FF00) + ((b[3] << 0) & 0x000000FF);
+                ((b[2] << 8) & 0x0000FF00) + (b[3] & 0x000000FF);
     }
 
     private static long getLong(byte[] b) {

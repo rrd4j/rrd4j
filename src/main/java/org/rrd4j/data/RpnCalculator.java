@@ -396,7 +396,7 @@ class RpnCalculator {
             @Override
             void do_method(RpnCalculator c, State s) {
                 TimeZone tz = s.getTimeZone();
-                c.push((double)(c.timestamps[s.slot] + ((long) tz.getOffset(c.timestamps[s.slot]) / 1000L)));
+                c.push((double)(c.timestamps[s.slot] + ((long) tz.getOffset(c.timestamps[s.slot]) / 1000D)));
             }
         },
         TKN_YEAR("YEAR") {
@@ -620,7 +620,7 @@ class RpnCalculator {
                 } else {
                     if (count > 1) { /* the sigma case */
                         val = count * sum2 - sum * sum;
-                        if (val < 0) {
+                        if (val < 1) {
                             val = Double.NaN;
                         } else {
                             val = Math.sqrt(val / ((float) count * ((float) count - 1.0)));

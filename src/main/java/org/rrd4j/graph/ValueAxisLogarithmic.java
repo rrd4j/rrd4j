@@ -35,6 +35,9 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
         int fontHeight = (int) Math.ceil(rrdGraph.getFontHeight(FONTTAG_AXIS));
         int labelOffset = (int) (worker.getFontAscent(font) / 2);
 
+        if (im.maxval == im.minval) {
+            return false;
+        }
         double pixpex = (double) im.ysize / (log10(im.maxval) - log10(im.minval));
         if (Double.isNaN(pixpex)) {
             return false;
@@ -61,6 +64,9 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
         // Draw minor grid for positive values
         double positiveMin = (im.minval > 0.0) ? im.minval : 0.0;
         int x0 = im.xorigin, x1 = x0 + im.xsize;
+        if (yloglab[minoridx][0] == 0 || yloglab[majoridx][0] == 0) {
+            return false;
+        }
         for (double value = Math.pow(10, log10(positiveMin)
                 - log10(positiveMin) % log10(yloglab[minoridx][0]));
                 value <= im.maxval;
