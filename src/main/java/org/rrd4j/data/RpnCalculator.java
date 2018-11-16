@@ -620,10 +620,10 @@ class RpnCalculator {
                 } else {
                     if (count > 1) { /* the sigma case */
                         val = count * sum2 - sum * sum;
-                        if (val < 1) {
+                        if (val < 0) {
                             val = Double.NaN;
                         } else {
-                            val = Math.sqrt(val / ((float) count * ((float) count - 1.0)));
+                            val = Math.sqrt(val / (count * (count - 1.0)));
                         }
                     }
                 }

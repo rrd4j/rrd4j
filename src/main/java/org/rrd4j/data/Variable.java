@@ -449,7 +449,7 @@ public abstract class Variable {
                 lslstep++;
             }
             double divisor = (SUMx * SUMx - cnt * SUMxx);
-            if(cnt > 0) {
+            if(cnt > 0 && divisor != 0) {
                 /* Bestfit line by linear least squares method */
                 lslslope = (SUMx * SUMy - cnt * SUMxy) / divisor;
                 lslint = (SUMy - lslslope * SUMx) / cnt;
