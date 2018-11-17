@@ -1,9 +1,9 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 
 /**
- * Factory class which creates actual {@link org.rrd4j.core.RrdSafeFileBackend} objects.
+ * Factory class which creates actual {@link org.rrd4j.backends.RrdSafeFileBackend} objects.
  *
  */
 public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory {

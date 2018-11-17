@@ -11,6 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.rrd4j.backends.RrdBackendFactory;
+import org.rrd4j.backends.RrdFileBackendFactory;
+
 /**
  * This class should be used to synchronize access to RRD files
  * in a multithreaded environment. This class should be also used to prevent opening of
@@ -56,7 +59,7 @@ public class RrdDbPool {
      * or returns already existing one. Uses Initialization On Demand Holder idiom.
      *
      * @return Single instance of this class
-     * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.core.RrdFileBackendFactory}
+     * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.backends.RrdFileBackendFactory}
      */
     public static RrdDbPool getInstance() {
         return RrdDbPoolSingletonHolder.instance;

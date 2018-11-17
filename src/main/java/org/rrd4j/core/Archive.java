@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.backends.RrdBackend;
 
 import java.io.IOException;
 

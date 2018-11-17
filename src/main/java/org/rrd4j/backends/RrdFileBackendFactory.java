@@ -1,8 +1,10 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+
+import org.rrd4j.core.Util;
 
 /**
  * An abstract backend factory which is used to store RRD data to ordinary files on the disk.
@@ -31,7 +33,7 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean shouldValidateHeader(URI uri) throws IOException {
+    public boolean shouldValidateHeader(URI uri) throws IOException {
         return true;
     }
 

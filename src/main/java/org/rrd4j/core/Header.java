@@ -2,6 +2,8 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
+import org.rrd4j.backends.RrdBackend;
+
 /**
  * Class to represent RRD header. Header information is mainly static (once set, it
  * cannot be changed), with the exception of last update time (this value is changed whenever
@@ -234,4 +236,5 @@ public class Header implements RrdUpdater {
     public RrdAllocator getRrdAllocator() {
         return parentDb.getRrdAllocator();
     }
+
 }

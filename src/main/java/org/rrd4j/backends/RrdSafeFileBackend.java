@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -89,7 +89,7 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
      *
      * @return <code>false</code>
      */
-    protected boolean isCachingAllowed() {
+    public boolean isCachingAllowed() {
         return false;
     }
 

@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -11,6 +11,10 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.rrd4j.backends.RrdBackend;
+import org.rrd4j.backends.RrdBackendFactory;
+import org.rrd4j.backends.RrdNioBackendFactory;
+import org.rrd4j.backends.RrdSyncThreadPool;
 
 public class RrdNioBackendTest {
     @Rule

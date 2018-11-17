@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 
@@ -13,6 +13,7 @@ import com.sleepycat.je.DatabaseException;
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
 public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
+
     private final Database rrdDatabase;
     private volatile boolean dirty = false;
 
@@ -38,18 +39,6 @@ public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
         super(path);
         this.buffer = buffer;
         this.rrdDatabase = rrdDatabase;
-    }
-
-    /**
-     * <p>write.</p>
-     *
-     * @param offset a long.
-     * @param bytes an array of byte.
-     * @throws java.io.IOException if any.
-     */
-    protected synchronized void write(long offset, byte[] bytes) throws IOException {
-        super.write(offset, bytes);
-        dirty = true;
     }
 
     /**

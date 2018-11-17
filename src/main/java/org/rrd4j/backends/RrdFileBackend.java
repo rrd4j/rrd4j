@@ -1,7 +1,9 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.File;
 import java.io.IOException;
+
+import org.rrd4j.core.Util;
 
 /**
  * An abstract backend which is used to store RRD data to ordinary files on the disk.

@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -42,7 +42,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * @param b      Bytes to be written.
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    protected void write(long offset, byte[] b) throws IOException {
+    public void write(long offset, byte[] b) throws IOException {
         rafile.seek(offset);
         rafile.write(b);
     }
@@ -54,7 +54,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * @param b      Buffer which receives bytes read from the file.
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    protected void read(long offset, byte[] b) throws IOException {
+    public void read(long offset, byte[] b) throws IOException {
         rafile.seek(offset);
         if (rafile.read(b) != b.length) {
             throw new RrdBackendException("Not enough bytes available in file " + getPath());
@@ -67,7 +67,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * Sets length of the underlying RRD file. This method is called only once, immediately
      * after a new RRD file gets created.
      */
-    protected void setLength(long length) throws IOException {
+    public void setLength(long length) throws IOException {
         rafile.setLength(length);
     }
 }

@@ -1,11 +1,11 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Factory class which creates actual {@link org.rrd4j.core.RrdMemoryBackend} objects. Rrd4j's support
+ * Factory class which creates actual {@link org.rrd4j.backends.RrdMemoryBackend} objects. Rrd4j's support
  * for in-memory RRDs is still experimental. You should know that all active RrdMemoryBackend
  * objects are held in memory, each backend object stores RRD data in one big byte array. This
  * implementation is therefore quite basic and memory hungry but runs very fast.

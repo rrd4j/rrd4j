@@ -2,8 +2,10 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-abstract class RrdPrimitive {
-    static final int STRING_LENGTH = 20;
+import org.rrd4j.backends.RrdBackend;
+
+public abstract class RrdPrimitive {
+    public static final int STRING_LENGTH = 20;
     static final int RRD_INT = 0, RRD_LONG = 1, RRD_DOUBLE = 2, RRD_STRING = 3;
     static final int[] RRD_PRIM_SIZES = {4, 8, 8, 2 * STRING_LENGTH};
 

@@ -1,8 +1,8 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 
-import org.rrd4j.core.RrdMongoDBBackendFactory.MongoWrapper;
+import org.rrd4j.backends.RrdMongoDBBackendFactory.MongoWrapper;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -40,7 +40,7 @@ public class RrdMongoDBBackend extends RrdByteArrayBackend {
      * @param bytes an array of byte.
      * @throws java.io.IOException if any.
      */
-    protected synchronized void write(long offset, byte[] bytes) throws IOException {
+    public synchronized void write(long offset, byte[] bytes) throws IOException {
         super.write(offset, bytes);
         dirty = true;
     }

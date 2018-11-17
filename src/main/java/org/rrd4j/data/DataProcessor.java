@@ -1,9 +1,9 @@
 package org.rrd4j.data;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.backends.RrdBackendFactory;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
-import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDbPool;
 import org.rrd4j.core.Util;

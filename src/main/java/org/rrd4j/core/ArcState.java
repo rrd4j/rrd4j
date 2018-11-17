@@ -2,6 +2,8 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
+import org.rrd4j.backends.RrdBackend;
+
 /**
  * Class to represent internal RRD archive state for a single datasource. Objects of this
  * class are never manipulated directly, it's up to Rrd4j to manage internal archive states.

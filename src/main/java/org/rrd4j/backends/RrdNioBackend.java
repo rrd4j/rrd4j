@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -78,9 +78,9 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      *
      * @param path       Path to a file
      * @param readOnly   True, if file should be open in a read-only mode. False otherwise
-     * @param syncPeriod See {@link org.rrd4j.core.RrdNioBackendFactory#setSyncPeriod(int)} for explanation
+     * @param syncPeriod See {@link org.rrd4j.backends.RrdNioBackendFactory#setSyncPeriod(int)} for explanation
      * @throws java.io.IOException Thrown in case of I/O error
-     * @param threadPool a {@link org.rrd4j.core.RrdSyncThreadPool} object.
+     * @param threadPool a {@link org.rrd4j.backends.RrdSyncThreadPool} object.
      */
     protected RrdNioBackend(String path, boolean readOnly, RrdSyncThreadPool threadPool, int syncPeriod) throws IOException {
         super(path, readOnly);
@@ -138,7 +138,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      * after a new RRD file gets created.
      * @throws java.lang.IllegalArgumentException if the length is bigger that the possible mapping position (2GiB).
      */
-    protected synchronized void setLength(long newLength) throws IOException {
+    public synchronized void setLength(long newLength) throws IOException {
         if (newLength < 0 || newLength > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + newLength);
         }
@@ -156,7 +156,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      * @throws java.io.IOException if any.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible mapping position (2GiB).
      */
-    protected synchronized void write(long offset, byte[] b) throws IOException {
+    public synchronized void write(long offset, byte[] b) throws IOException {
         if (offset < 0 || offset > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + offset);
         }
@@ -178,7 +178,7 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      * @throws java.io.IOException Thrown in case of I/O error.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible mapping position (2GiB).
      */
-    protected synchronized void read(long offset, byte[] b) throws IOException {
+    public synchronized void read(long offset, byte[] b) throws IOException {
         if (offset < 0 || offset > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + offset);
         }

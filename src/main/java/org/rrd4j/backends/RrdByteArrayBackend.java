@@ -1,4 +1,4 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
      * @throws java.io.IOException if any.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible length.
      */
-    protected synchronized void write(long offset, byte[] bytes) throws IOException {
+    public synchronized void write(long offset, byte[] bytes) throws IOException {
         if (offset > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + offset);
         }
@@ -43,7 +43,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
      * @throws java.io.IOException if any.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible length.
      */
-    protected synchronized void read(long offset, byte[] bytes) throws IOException {
+    public synchronized void read(long offset, byte[] bytes) throws IOException {
         if (offset < 0 || offset > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + offset);
         }
@@ -72,7 +72,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
      * 
      * @throws java.lang.IllegalArgumentException if length is bigger that the possible length.
      */
-    protected void setLength(long length) throws IOException {
+    public void setLength(long length) throws IOException {
         if (length < 0 || length > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal length: " + length);
         }
@@ -96,7 +96,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
      * @return Always returns <code>false</code>. There is no need to cache anything in high-level classes
      *         since all RRD bytes are already in memory.
      */
-    protected boolean isCachingAllowed() {
+    public boolean isCachingAllowed() {
         return false;
     }
 }

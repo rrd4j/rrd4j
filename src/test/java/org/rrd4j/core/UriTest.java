@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.rrd4j.backends.RrdBackendFactory;
 
 
 public class UriTest {

@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
+import org.rrd4j.backends.RrdBackendFactory;
 
 /**
  * <p>Class to represent definition of new Round Robin Database (RRD).

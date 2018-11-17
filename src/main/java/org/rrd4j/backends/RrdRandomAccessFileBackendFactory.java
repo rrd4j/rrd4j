@@ -1,9 +1,9 @@
-package org.rrd4j.core;
+package org.rrd4j.backends;
 
 import java.io.IOException;
 
 /**
- * Factory class which creates actual {@link org.rrd4j.core.RrdRandomAccessFileBackend} objects. This was the default
+ * Factory class which creates actual {@link org.rrd4j.backends.RrdRandomAccessFileBackend} objects. This was the default
  * backend factory in Rrd4j before 1.4.0 release.
  *
  */
