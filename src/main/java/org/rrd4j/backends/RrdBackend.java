@@ -197,26 +197,26 @@ public abstract class RrdBackend {
         return b;
     }
 
-    private void writeShort(long offset, short value) throws IOException {
+    public void writeShort(long offset, short value) throws IOException {
         byte[] b = new byte[2];
         b[0] = (byte) ((value >>> 8) & 0xFF);
         b[1] = (byte) ((value >>> 0) & 0xFF);
         write(offset, b);
     }
 
-    public  void writeInt(long offset, int value) throws IOException {
+    public void writeInt(long offset, int value) throws IOException {
         write(offset, getIntBytes(value));
     }
 
-    public final void writeLong(long offset, long value) throws IOException {
+    public void writeLong(long offset, long value) throws IOException {
         write(offset, getLongBytes(value));
     }
 
-    public final void writeDouble(long offset, double value) throws IOException {
+    public void writeDouble(long offset, double value) throws IOException {
         write(offset, getDoubleBytes(value));
     }
 
-    public final void writeDouble(long offset, double value, int count) throws IOException {
+    public void writeDouble(long offset, double value, int count) throws IOException {
         byte[] b = getDoubleBytes(value);
         byte[] image = new byte[8 * count];
         int k = 0;
@@ -233,7 +233,7 @@ public abstract class RrdBackend {
         write(offset, image);
     }
 
-    public final void writeDouble(long offset, double[] values) throws IOException {
+    public void writeDouble(long offset, double[] values) throws IOException {
         int count = values.length;
         byte[] image = new byte[8 * count];
         int k = 0;
@@ -251,7 +251,7 @@ public abstract class RrdBackend {
         write(offset, image);
     }
 
-    public final void writeString(long offset, String value) throws IOException {
+    public void writeString(long offset, String value) throws IOException {
         if (nextBigStringOffset < 0) {
             nextBigStringOffset = getLength() - (Short.SIZE / 8);
         }
@@ -294,31 +294,31 @@ public abstract class RrdBackend {
         write(offset, bbuf.array());
     }
 
-    private short readShort(long offset) throws IOException {
+    public short readShort(long offset) throws IOException {
         byte[] b = new byte[2];
         read(offset, b);
         return (short) (((b[0] << 8) & 0x0000FF00) + (b[1] & 0x000000FF));
     }
 
-    public final int readInt(long offset) throws IOException {
+    public int readInt(long offset) throws IOException {
         byte[] b = new byte[4];
         read(offset, b);
         return getInt(b);
     }
 
-    public final long readLong(long offset) throws IOException {
+    public long readLong(long offset) throws IOException {
         byte[] b = new byte[8];
         read(offset, b);
         return getLong(b);
     }
 
-    public final double readDouble(long offset) throws IOException {
+    public double readDouble(long offset) throws IOException {
         byte[] b = new byte[8];
         read(offset, b);
         return getDouble(b);
     }
 
-    public final double[] readDouble(long offset, int count) throws IOException {
+    public double[] readDouble(long offset, int count) throws IOException {
         int byteCount = 8 * count;
         byte[] image = new byte[byteCount];
         read(offset, image);
