@@ -185,7 +185,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
     }
 
     @Override
-    public long getLength() throws IOException {
+    public synchronized long getLength() throws IOException {
         return file.size();
     }
 
