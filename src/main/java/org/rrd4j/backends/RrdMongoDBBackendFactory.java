@@ -115,7 +115,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             }
             @Override
             public boolean exists(BasicDBObject query) {
-                return rrdCollection.count(query) != 0;
+                return rrdCollection.countDocuments(query) != 0;
             }
             @Override
             public DBObject get(BasicDBObject query) {
