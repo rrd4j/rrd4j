@@ -283,22 +283,10 @@ public interface RrdGraphConstants {
             else
                 fontPath = "/DejaVuSansMono.ttf";
 
-            InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath);
-            try {
+            try (InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath)) {
                 return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type == Font.BOLD ? Font.BOLD : Font.PLAIN, size);
-            } catch (FontFormatException e) {
+            } catch (FontFormatException | IOException e) {
                 throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            finally {
-                try {
-                    if (fontstream != null) { 
-                        fontstream.close();
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
     }
