@@ -68,12 +68,6 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
     private final FileChannel file;
     private final boolean readOnly;
 
-    private final Runnable syncRunnable = new Runnable() {
-        public void run() {
-            sync();
-        }
-    };
-
     private ScheduledFuture<?> syncRunnableHandle = null;
 
     /**
@@ -83,7 +77,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
      * @param readOnly   True, if file should be open in a read-only mode. False otherwise
      * @param syncPeriod See {@link org.rrd4j.backends.RrdNioBackendFactory#setSyncPeriod(int)} for explanation
      * @throws java.io.IOException Thrown in case of I/O error
-     * @param threadPool a {@link org.rrd4j.backends.RrdSyncThreadPool} object.
+     * @param threadPool a {@link org.rrd4j.backends.RrdSyncThreadPool} object, it can be null.
      */
     protected RrdNioBackend(String path, boolean readOnly, RrdSyncThreadPool threadPool, int syncPeriod) throws IOException {
         super(path);
@@ -103,7 +97,12 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
             throw ex;
         }
         try {
-            if (!readOnly) {
+            if (!readOnly && threadPool != null) {
+                Runnable syncRunnable = new Runnable() {
+                    public void run() {
+                        sync();
+                    }
+                };
                 syncRunnableHandle = threadPool.scheduleWithFixedDelay(syncRunnable, syncPeriod, syncPeriod, TimeUnit.SECONDS);
             }
         } catch (RuntimeException rte) {
@@ -163,8 +162,9 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
     public synchronized void close() throws IOException {
         // cancel synchronization
         try {
-            if (!readOnly) {
+            if (!readOnly && syncRunnableHandle != null) {
                 syncRunnableHandle.cancel(false);
+                syncRunnableHandle = null;
                 sync();
             }
             unmapFile();
