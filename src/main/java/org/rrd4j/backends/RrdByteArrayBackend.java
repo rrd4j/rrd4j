@@ -1,12 +1,14 @@
 package org.rrd4j.backends;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Abstract byte array based backend.
  *
  */
-public abstract class RrdByteArrayBackend extends RrdBackend {
+public abstract class RrdByteArrayBackend extends ByteBufferBackend {
+
     protected byte[] buffer;
 
     /**
@@ -78,6 +80,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
         }
 
         buffer = new byte[(int) length];
+        setByteBuffer(ByteBuffer.wrap(buffer));
     }
 
     /**
@@ -87,7 +90,7 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
      * @throws java.io.IOException if any.
      */
     public void close() throws IOException {
-        // NOP
+        // Don't release ressources, as backend are cached by the factory and reused
     }
 
     /**

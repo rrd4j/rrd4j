@@ -53,7 +53,7 @@ import org.rrd4j.core.RrdPrimitive;
  */
 public abstract class RrdBackend {
 
-    private static final ByteOrder BYTEORDER = ByteOrder.BIG_ENDIAN;
+    protected static final ByteOrder BYTEORDER = ByteOrder.BIG_ENDIAN;
     private static final char STARTPRIVATEAREA = '\ue000';
     private static final char ENDPRIVATEAREA = '\uf8ff';
     private static final int STARTPRIVATEAREACODEPOINT = Character.codePointAt(new char[]{STARTPRIVATEAREA}, 0);
@@ -281,7 +281,7 @@ public abstract class RrdBackend {
         writeString(offset, value, RrdPrimitive.STRING_LENGTH);
     }
 
-    private void writeString(long offset, String value, int length) throws IOException {
+    protected void writeString(long offset, String value, int length) throws IOException {
         ByteBuffer bbuf = ByteBuffer.allocate(length * 2);
         bbuf.order(BYTEORDER);
         bbuf.position(0);
@@ -333,14 +333,19 @@ public abstract class RrdBackend {
         }
         return values;
     }
+    
+    /**
+     * Extract a CharBuffer from the backend, used by readString
+     * 
+     * @param offset
+     * @param size
+     * @return
+     * @throws IOException
+     */
+    protected abstract CharBuffer getCharBuffer(long offset, int size) throws IOException;
 
     public final String readString(long offset) throws IOException {
-        ByteBuffer bbuf = ByteBuffer.allocate(RrdPrimitive.STRING_LENGTH * 2);
-        bbuf.order(BYTEORDER);
-        read(offset, bbuf.array());
-        bbuf.position(0);
-        bbuf.limit(RrdPrimitive.STRING_LENGTH * 2);
-        CharBuffer cbuf = bbuf.asCharBuffer();
+        CharBuffer cbuf = getCharBuffer(offset, RrdPrimitive.STRING_LENGTH);
         long realStringOffset = 0;
         int i = -1;
         while (++i < RrdPrimitive.STRING_LENGTH) {
@@ -358,10 +363,7 @@ public abstract class RrdBackend {
             if (bigStringSize < 0) {
                 bigStringSize += MAXUNSIGNEDSHORT + 1;
             }
-            ByteBuffer realStringbuf = ByteBuffer.allocate(bigStringSize * 2);
-            bbuf.order(BYTEORDER);
-            read(realStringOffset - bigStringSize * 2, realStringbuf.array());
-            return realStringbuf.asCharBuffer().toString().trim();
+            return getCharBuffer(realStringOffset - bigStringSize * 2, bigStringSize).toString();
         } else {
             return cbuf.toString().trim();
         }

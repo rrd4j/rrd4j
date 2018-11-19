@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class RrdMemoryBackendFactory extends RrdBackendFactory {
+
     protected final Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
 
     /**

@@ -2,13 +2,18 @@ package org.rrd4j.backends;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.file.Paths;
+
+import org.rrd4j.core.RrdPrimitive;
 
 /**
  * Backend which is used to store RRD data to ordinary files on the disk. This was the
  * default factory before 1.4.0 version. This backend is based on the RandomAccessFile class (java.io.* package).
  *
  */
-public class RrdRandomAccessFileBackend extends  RrdFileBackend {
+public class RrdRandomAccessFileBackend extends RrdBackend implements RrdFileBackend {
     /**
      * Random access file handle.
      */
@@ -22,7 +27,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     protected RrdRandomAccessFileBackend(String path, boolean readOnly) throws IOException {
-        super(path, readOnly);
+        super(path);
         this.rafile = new RandomAccessFile(path, readOnly ? "r" : "rw");
     }
 
@@ -61,6 +66,20 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
         }
     }
 
+    @Override
+    public String getCanonicalPath() throws IOException {
+        return Paths.get(getPath()).toAbsolutePath().normalize().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public long getLength() throws IOException {
+        return rafile.length();
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -70,4 +89,15 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
     public void setLength(long length) throws IOException {
         rafile.setLength(length);
     }
+
+    @Override
+    protected CharBuffer getCharBuffer(long offset, int size) throws IOException {
+        ByteBuffer bbuf = ByteBuffer.allocate(RrdPrimitive.STRING_LENGTH * 2);
+        bbuf.order(BYTEORDER);
+        read(offset, bbuf.array());
+        bbuf.position(0);
+        bbuf.limit(RrdPrimitive.STRING_LENGTH * 2);
+        return bbuf.asCharBuffer();
+    }
+
 }
