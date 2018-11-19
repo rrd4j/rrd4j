@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.rrd4j.core.RrdException;
+
 /**
  * Instances of this class model
  * <a href="http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/">Round Robin Database</a>
@@ -311,6 +313,10 @@ public class RRDatabase implements Closeable {
         }
 
         Archive archive = findBestArchive(startTime, endTime, stepSeconds, possibleArchives);
+
+        if (archive == null) {
+            throw new RrdException("No matching archive found");
+        }
 
         // Tune the parameters
         stepSeconds = (long) header.pdpStep * archive.pdpCount;
