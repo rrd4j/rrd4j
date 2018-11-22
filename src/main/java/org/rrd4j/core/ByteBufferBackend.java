@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 public abstract class ByteBufferBackend extends RrdBackend {
 
+    private volatile boolean dirty = false;
+
     private ByteBuffer byteBuffer;
 
     protected ByteBufferBackend(String path) {
@@ -29,30 +31,35 @@ public abstract class ByteBufferBackend extends RrdBackend {
     protected synchronized void write(long offset, byte[] b) throws IOException {
         checkOffset(offset);
         byteBuffer.put(b, (int) offset, b.length);
+        dirty = true;
     }
 
     @Override
     protected void writeShort(long offset, short value) throws IOException {
         checkOffset(offset);
         byteBuffer.putShort((int)offset, value);
+        dirty = true;
     }
 
     @Override
     protected void writeInt(long offset, int value) throws IOException {
         checkOffset(offset);
         byteBuffer.putInt((int)offset, value);
+        dirty = true;
     }
 
     @Override
     protected void writeLong(long offset, long value) throws IOException {
         checkOffset(offset);
         byteBuffer.putLong((int)offset, value);
+        dirty = true;
     }
 
     @Override
     protected void writeDouble(long offset, double value) throws IOException {
         checkOffset(offset);
         byteBuffer.putDouble((int)offset, value);
+        dirty = true;
     }
 
     @Override
@@ -64,6 +71,7 @@ public abstract class ByteBufferBackend extends RrdBackend {
         // position must be set in the original ByteByffer, as DoubleBuffer is a "double" offset
         byteBuffer.position((int)offset);
         byteBuffer.asDoubleBuffer().put(values, 0, count);
+        dirty = true;
     }
 
     @Override
@@ -72,6 +80,7 @@ public abstract class ByteBufferBackend extends RrdBackend {
         // position must be set in the original ByteByffer, as DoubleBuffer is a "double" offset
         byteBuffer.position((int)offset);
         byteBuffer.asDoubleBuffer().put(values, 0, values.length);
+        dirty = true;
     }
 
     
@@ -85,6 +94,7 @@ public abstract class ByteBufferBackend extends RrdBackend {
         while (cbuff.position() < cbuff.limit()) {
             cbuff.put(' ');
         }
+        dirty = true;
     }
 
     /**
@@ -155,6 +165,16 @@ public abstract class ByteBufferBackend extends RrdBackend {
         if (offset < 0 || offset > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + offset);
         }
+    }
+
+    protected boolean isDirty() {
+        return dirty;
+    }
+
+    @Override
+    protected void closing() throws IOException {
+        super.closing();
+        dirty = false;
     }
 
 }

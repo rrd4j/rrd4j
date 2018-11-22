@@ -20,21 +20,13 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
         super(path);
     }
 
-    /**
-     * <p>write.</p>
-     *
-     * @param offset a long.
-     * @param bytes an array of byte.
-     * @throws java.io.IOException if any.
-     * @throws java.lang.IllegalArgumentException if offset is bigger that the possible length.
-     */
-    public synchronized void write(long offset, byte[] bytes) throws IOException {
-        if (offset > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Illegal offset: " + offset);
-        }
+    protected void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
+        setByteBuffer(ByteBuffer.wrap(buffer));
+    }
 
-        int pos = (int) offset;
-        System.arraycopy(bytes, 0, buffer, pos, bytes.length);
+    protected byte[] getBuffer() {
+        return buffer;
     }
 
     /**

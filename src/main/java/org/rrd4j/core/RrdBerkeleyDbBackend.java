@@ -15,7 +15,6 @@ import com.sleepycat.je.DatabaseException;
 public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
 
     private final Database rrdDatabase;
-    private volatile boolean dirty = false;
 
     /**
      * <p>Constructor for RrdBerkeleyDbBackend.</p>
@@ -37,7 +36,7 @@ public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
      */
     protected RrdBerkeleyDbBackend(byte[] buffer, String path, Database rrdDatabase) {
         super(path);
-        this.buffer = buffer;
+        setBuffer(buffer);
         this.rrdDatabase = rrdDatabase;
     }
 
@@ -46,10 +45,10 @@ public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
      *
      * @throws java.io.IOException if any.
      */
-        if (dirty) {
     protected void close() throws IOException {
+        if (isDirty()) {
             DatabaseEntry theKey = new DatabaseEntry(getPath().getBytes("UTF-8"));
-            DatabaseEntry theData = new DatabaseEntry(buffer);
+            DatabaseEntry theData = new DatabaseEntry(getBuffer());
 
             try {
                 // because the database was opened to support transactions, this write is performed
