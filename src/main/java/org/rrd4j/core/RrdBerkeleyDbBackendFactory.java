@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import com.sleepycat.je.*;
 
@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * {@link org.rrd4j.backends.RrdBackendFactory} that uses
+ * {@link org.rrd4j.core.RrdBackendFactory} that uses
  * <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html">Oracle Berkeley DB Java Edition</a>
  * to read data. Construct a BerkeleyDB {@link com.sleepycat.je.Database} object and pass it via the constructor.
  *

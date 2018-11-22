@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Thread pool used by {@link org.rrd4j.backends.RrdNioBackend} instances to periodically sync the mapped file to disk. Note that instances
+ * Thread pool used by {@link org.rrd4j.core.RrdNioBackend} instances to periodically sync the mapped file to disk. Note that instances
  * of RrdSyncThreadPool must be disposed of by calling {@link #shutdown()}.
  * <p>
  * For ease of use in standalone applications, clients may choose to register a shutdown hook by calling
@@ -27,12 +27,12 @@ public final class RrdSyncThreadPool
 
     /**
      * The {@link java.util.concurrent.ScheduledExecutorService} used to periodically sync the mapped file to disk with.
-     * Defaults to {@value org.rrd4j.backends.RrdNioBackendFactory#DEFAULT_SYNC_CORE_POOL_SIZE} threads.
+     * Defaults to {@value org.rrd4j.core.RrdNioBackendFactory#DEFAULT_SYNC_CORE_POOL_SIZE} threads.
      */
     private final ScheduledExecutorService syncExecutor;
 
     /**
-     * Creates a new RrdSyncThreadPool with a default pool size of {@value org.rrd4j.backends.RrdNioBackendFactory#DEFAULT_SYNC_CORE_POOL_SIZE}.
+     * Creates a new RrdSyncThreadPool with a default pool size of {@value org.rrd4j.core.RrdNioBackendFactory#DEFAULT_SYNC_CORE_POOL_SIZE}.
      */
     public RrdSyncThreadPool() {
         this(RrdNioBackendFactory.DEFAULT_SYNC_CORE_POOL_SIZE);

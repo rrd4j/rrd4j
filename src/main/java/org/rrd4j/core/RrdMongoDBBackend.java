@@ -1,8 +1,8 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 
-import org.rrd4j.backends.RrdMongoDBBackendFactory.MongoWrapper;
+import org.rrd4j.core.RrdMongoDBBackendFactory.MongoWrapper;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;

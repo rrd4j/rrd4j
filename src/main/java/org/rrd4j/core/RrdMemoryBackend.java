@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 /**
  * Backend to be used to store all RRD bytes in memory.

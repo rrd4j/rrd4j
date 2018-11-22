@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,37 +26,37 @@ public abstract class ByteBufferBackend extends RrdBackend {
      * @throws java.io.IOException if any.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible mapping position (2GiB).
      */
-    public synchronized void write(long offset, byte[] b) throws IOException {
+    protected synchronized void write(long offset, byte[] b) throws IOException {
         checkOffset(offset);
         byteBuffer.put(b, (int) offset, b.length);
     }
 
     @Override
-    public void writeShort(long offset, short value) throws IOException {
+    protected void writeShort(long offset, short value) throws IOException {
         checkOffset(offset);
         byteBuffer.putShort((int)offset, value);
     }
 
     @Override
-    public void writeInt(long offset, int value) throws IOException {
+    protected void writeInt(long offset, int value) throws IOException {
         checkOffset(offset);
         byteBuffer.putInt((int)offset, value);
     }
 
     @Override
-    public void writeLong(long offset, long value) throws IOException {
+    protected void writeLong(long offset, long value) throws IOException {
         checkOffset(offset);
         byteBuffer.putLong((int)offset, value);
     }
 
     @Override
-    public void writeDouble(long offset, double value) throws IOException {
+    protected void writeDouble(long offset, double value) throws IOException {
         checkOffset(offset);
         byteBuffer.putDouble((int)offset, value);
     }
 
     @Override
-    public void writeDouble(long offset, double value, int count)
+    protected void writeDouble(long offset, double value, int count)
             throws IOException {
         checkOffset(offset);
         double[] values = new double[count];
@@ -67,7 +67,7 @@ public abstract class ByteBufferBackend extends RrdBackend {
     }
 
     @Override
-    public void writeDouble(long offset, double[] values) throws IOException {
+    protected void writeDouble(long offset, double[] values) throws IOException {
         checkOffset(offset);
         // position must be set in the original ByteByffer, as DoubleBuffer is a "double" offset
         byteBuffer.position((int)offset);
@@ -95,25 +95,25 @@ public abstract class ByteBufferBackend extends RrdBackend {
      * @throws java.io.IOException Thrown in case of I/O error.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible mapping position (2GiB).
      */
-    public synchronized void read(long offset, byte[] b) throws IOException {
+    protected synchronized void read(long offset, byte[] b) throws IOException {
         checkOffset(offset);
         byteBuffer.get(b, (int) offset, b.length);
     }
 
     @Override
-    public short readShort(long offset) throws IOException {
+    protected short readShort(long offset) throws IOException {
         checkOffset(offset);
         return byteBuffer.getShort((int)offset);
     }
 
     @Override
-    public int readInt(long offset) throws IOException {
+    protected int readInt(long offset) throws IOException {
         checkOffset(offset);
         return byteBuffer.getInt((int)offset);
     }
 
     @Override
-    public long readLong(long offset) throws IOException {
+    protected long readLong(long offset) throws IOException {
         checkOffset(offset);
         return byteBuffer.getLong((int)offset);
     }
@@ -143,7 +143,7 @@ public abstract class ByteBufferBackend extends RrdBackend {
         return cbuffer;
     }
 
-    public void close() throws IOException {
+    protected void close() throws IOException {
         byteBuffer = null;
     }
 

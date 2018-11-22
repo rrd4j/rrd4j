@@ -2,8 +2,6 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-import org.rrd4j.backends.RrdBackend;
-
 /**
  * Class to represent archive values for a single datasource. Robin class is the heart of
  * the so-called "round robin database" concept. Basically, each Robin object is a
@@ -234,7 +232,7 @@ class RobinArray implements Robin {
     /**
      * <p>getRrdBackend.</p>
      *
-     * @return a {@link org.rrd4j.backends.RrdBackend} object.
+     * @return a {@link org.rrd4j.core.RrdBackend} object.
      */
     public RrdBackend getRrdBackend() {
         return parentArc.getRrdBackend();

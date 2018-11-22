@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
  */
 public abstract class RrdByteArrayBackend extends ByteBufferBackend {
 
-    protected byte[] buffer;
+    private byte[] buffer;
 
     /**
      * <p>Constructor for RrdByteArrayBackend.</p>
@@ -45,7 +45,7 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
      * @throws java.io.IOException if any.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible length.
      */
-    public synchronized void read(long offset, byte[] bytes) throws IOException {
+    protected synchronized void read(long offset, byte[] bytes) throws IOException {
         if (offset < 0 || offset > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + offset);
         }
@@ -74,7 +74,7 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
      * 
      * @throws java.lang.IllegalArgumentException if length is bigger that the possible length.
      */
-    public void setLength(long length) throws IOException {
+    protected void setLength(long length) throws IOException {
         if (length < 0 || length > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal length: " + length);
         }
@@ -89,7 +89,7 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
      *
      * @throws java.io.IOException if any.
      */
-    public void close() throws IOException {
+    protected void close() throws IOException {
         // Don't release ressources, as backend are cached by the factory and reused
     }
 
@@ -99,7 +99,7 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
      * @return Always returns <code>false</code>. There is no need to cache anything in high-level classes
      *         since all RRD bytes are already in memory.
      */
-    public boolean isCachingAllowed() {
+    protected boolean isCachingAllowed() {
         return false;
     }
 }

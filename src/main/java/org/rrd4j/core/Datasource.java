@@ -1,7 +1,6 @@
 package org.rrd4j.core;
 
 import org.rrd4j.DsType;
-import org.rrd4j.backends.RrdBackend;
 
 import java.io.IOException;
 

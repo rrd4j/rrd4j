@@ -14,11 +14,11 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Random;
 
-import org.rrd4j.backends.RrdSafeFileBackend;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdSafeFileBackend;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.Variable;

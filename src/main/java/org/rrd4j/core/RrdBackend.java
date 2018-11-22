@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 import java.net.URI;
@@ -6,8 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 
-import org.rrd4j.backends.RrdBackendFactory.ClosingReference;
-import org.rrd4j.core.RrdPrimitive;
+import org.rrd4j.core.RrdBackendFactory.ClosingReference;
 
 /**
  * <p>Base implementation class for all backend classes. Each Round Robin Database object
@@ -15,19 +14,19 @@ import org.rrd4j.core.RrdPrimitive;
  * actual I/O operations on the underlying storage. Rrd4j supports
  * multiple backends out of the box. E.g.:</p>
  * <ul>
- * <li>{@link org.rrd4j.backends.RrdRandomAccessFileBackend}: objects of this class are created from the
- * {@link org.rrd4j.backends.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
+ * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
  * Rrd4j releases prior to 1.4.0. It uses java.io.* package and
  * RandomAccessFile class to store RRD data in files on the disk.
  *
- * <li>{@link org.rrd4j.backends.RrdNioBackend}: objects of this class are created from the
- * {@link org.rrd4j.backends.RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
+ * <li>{@link org.rrd4j.core.RrdNioBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
  * classes (mapped ByteBuffer) to store RRD data in files on the disk. This backend is fast, very fast,
  * but consumes a lot of memory (borrowed not from the JVM but from the underlying operating system
  * directly). <b>This is the default backend used in Rrd4j since 1.4.0 release.</b>
  *
- * <li>{@link org.rrd4j.backends.RrdMemoryBackend}: objects of this class are created from the
- * {@link org.rrd4j.backends.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
+ * <li>{@link org.rrd4j.core.RrdMemoryBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
  * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
  * </ul>
  *
@@ -45,7 +44,7 @@ import org.rrd4j.core.RrdPrimitive;
  * create custom backend objects when necessary.
  *
  * <li>Create instance of your custom RrdBackendFactory and register it as a regular
- * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.backends.RrdBackendFactory} to
+ * factory available to Rrd4j framework. See javadoc for {@link org.rrd4j.core.RrdBackendFactory} to
  * find out how to do this.
  * </ul>
  *
@@ -121,7 +120,7 @@ public abstract class RrdBackend {
      * @param b      Array of bytes that should be copied to the underlying storage
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public abstract void write(long offset, byte[] b) throws IOException;
+    protected abstract void write(long offset, byte[] b) throws IOException;
 
     /**
      * Reads an array of bytes from the underlying storage starting from the given
@@ -131,7 +130,7 @@ public abstract class RrdBackend {
      * @param b      Array which receives bytes from the underlying storage
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public abstract void read(long offset, byte[] b) throws IOException;
+    protected abstract void read(long offset, byte[] b) throws IOException;
 
     /**
      * Returns the number of RRD bytes in the underlying storage.
@@ -148,7 +147,7 @@ public abstract class RrdBackend {
      * @param length Length of the underlying RRD storage in bytes.
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    public abstract void setLength(long length) throws IOException;
+    protected abstract void setLength(long length) throws IOException;
 
     /**
      * Closes the underlying backend.
@@ -162,7 +161,7 @@ public abstract class RrdBackend {
      *
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public void closing() throws IOException {
+    protected void closing() throws IOException {
         try {
             close();
         } finally {
@@ -181,7 +180,7 @@ public abstract class RrdBackend {
      * @return <code>true</code> if file caching is enabled, <code>false</code> otherwise. By default, the
      *         method returns <code>true</code> but it can be overridden in subclasses.
      */
-    public boolean isCachingAllowed() {
+    protected boolean isCachingAllowed() {
         return true;
     }
 
@@ -197,26 +196,26 @@ public abstract class RrdBackend {
         return b;
     }
 
-    public void writeShort(long offset, short value) throws IOException {
+    protected void writeShort(long offset, short value) throws IOException {
         byte[] b = new byte[2];
         b[0] = (byte) ((value >>> 8) & 0xFF);
         b[1] = (byte) ((value >>> 0) & 0xFF);
         write(offset, b);
     }
 
-    public void writeInt(long offset, int value) throws IOException {
+    protected void writeInt(long offset, int value) throws IOException {
         write(offset, getIntBytes(value));
     }
 
-    public void writeLong(long offset, long value) throws IOException {
+    protected void writeLong(long offset, long value) throws IOException {
         write(offset, getLongBytes(value));
     }
 
-    public void writeDouble(long offset, double value) throws IOException {
+    protected void writeDouble(long offset, double value) throws IOException {
         write(offset, getDoubleBytes(value));
     }
 
-    public void writeDouble(long offset, double value, int count) throws IOException {
+    protected void writeDouble(long offset, double value, int count) throws IOException {
         byte[] b = getDoubleBytes(value);
         byte[] image = new byte[8 * count];
         int k = 0;
@@ -233,7 +232,7 @@ public abstract class RrdBackend {
         write(offset, image);
     }
 
-    public void writeDouble(long offset, double[] values) throws IOException {
+    protected void writeDouble(long offset, double[] values) throws IOException {
         int count = values.length;
         byte[] image = new byte[8 * count];
         int k = 0;
@@ -251,7 +250,7 @@ public abstract class RrdBackend {
         write(offset, image);
     }
 
-    public void writeString(long offset, String value) throws IOException {
+    protected final void writeString(long offset, String value) throws IOException {
         if (nextBigStringOffset < 0) {
             nextBigStringOffset = getLength() - (Short.SIZE / 8);
         }
@@ -294,31 +293,31 @@ public abstract class RrdBackend {
         write(offset, bbuf.array());
     }
 
-    public short readShort(long offset) throws IOException {
+    protected short readShort(long offset) throws IOException {
         byte[] b = new byte[2];
         read(offset, b);
         return (short) (((b[0] << 8) & 0x0000FF00) + (b[1] & 0x000000FF));
     }
 
-    public int readInt(long offset) throws IOException {
+    protected int readInt(long offset) throws IOException {
         byte[] b = new byte[4];
         read(offset, b);
         return getInt(b);
     }
 
-    public long readLong(long offset) throws IOException {
+    protected long readLong(long offset) throws IOException {
         byte[] b = new byte[8];
         read(offset, b);
         return getLong(b);
     }
 
-    public double readDouble(long offset) throws IOException {
+    protected double readDouble(long offset) throws IOException {
         byte[] b = new byte[8];
         read(offset, b);
         return getDouble(b);
     }
 
-    public double[] readDouble(long offset, int count) throws IOException {
+    protected double[] readDouble(long offset, int count) throws IOException {
         int byteCount = 8 * count;
         byte[] image = new byte[byteCount];
         read(offset, image);
@@ -342,9 +341,16 @@ public abstract class RrdBackend {
      * @return
      * @throws IOException
      */
-    protected abstract CharBuffer getCharBuffer(long offset, int size) throws IOException;
+    protected CharBuffer getCharBuffer(long offset, int size) throws IOException {
+        ByteBuffer bbuf = ByteBuffer.allocate(RrdPrimitive.STRING_LENGTH * 2);
+        bbuf.order(BYTEORDER);
+        read(offset, bbuf.array());
+        bbuf.position(0);
+        bbuf.limit(RrdPrimitive.STRING_LENGTH * 2);
+        return bbuf.asCharBuffer();
+    }
 
-    public final String readString(long offset) throws IOException {
+    protected final String readString(long offset) throws IOException {
         CharBuffer cbuf = getCharBuffer(offset, RrdPrimitive.STRING_LENGTH);
         long realStringOffset = 0;
         int i = -1;

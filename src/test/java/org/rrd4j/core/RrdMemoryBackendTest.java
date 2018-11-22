@@ -1,9 +1,10 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.rrd4j.core.RrdMemoryBackend;
 import org.rrd4j.core.RrdPrimitive;
 
 public class RrdMemoryBackendTest {

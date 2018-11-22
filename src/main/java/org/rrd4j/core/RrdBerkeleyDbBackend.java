@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 
@@ -46,8 +46,8 @@ public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
      *
      * @throws java.io.IOException if any.
      */
-    public void close() throws IOException {
         if (dirty) {
+    protected void close() throws IOException {
             DatabaseEntry theKey = new DatabaseEntry(getPath().getBytes("UTF-8"));
             DatabaseEntry theData = new DatabaseEntry(buffer);
 

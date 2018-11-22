@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,7 +18,7 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 
 /**
- * {@link org.rrd4j.backends.RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
+ * {@link org.rrd4j.core.RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
  * MongoDB {@link com.mongodb.DBCollection} or {@link com.mongodb.client.MongoCollection} and pass it via the constructor.
  *
  * @author Mathias Bogaert
@@ -192,7 +192,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
 
     /** {@inheritDoc} */
     @Override
-    public boolean shouldValidateHeader(URI uri) throws IOException {
+    protected boolean shouldValidateHeader(URI uri) throws IOException {
         return false;
     }
 

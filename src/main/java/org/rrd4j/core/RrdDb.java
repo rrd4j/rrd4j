@@ -10,10 +10,6 @@ import java.net.URI;
 import java.util.Date;
 
 import org.rrd4j.ConsolFun;
-import org.rrd4j.backends.RrdBackend;
-import org.rrd4j.backends.RrdBackendException;
-import org.rrd4j.backends.RrdBackendFactory;
-import org.rrd4j.backends.RrdFileBackend;
 
 /**
  * <p>Main class used to create and manipulate round robin databases (RRDs). Use this class to perform
@@ -70,11 +66,11 @@ public class RrdDb implements RrdUpdater, Closeable {
 
     /**
      * <p>Constructor used to create new RRD object from the definition. If the rrdDef was constructed
-     * giving an {@link java.net.URI}, {@link org.rrd4j.backends.RrdBackendFactory#findFactory(URI)} will be used to resolve the needed factory. If not, or a relative
+     * giving an {@link java.net.URI}, {@link org.rrd4j.core.RrdBackendFactory#findFactory(URI)} will be used to resolve the needed factory. If not, or a relative
      * URI was given, this RRD object will be backed
      * with a storage (backend) of the default type. Initially, storage type defaults to "NIO"
      * (RRD bytes will be put in a file on the disk). Default storage type can be changed with a static
-     * {@link org.rrd4j.backends.RrdBackendFactory#setDefaultFactory(String)} method call.</p>
+     * {@link org.rrd4j.core.RrdBackendFactory#setDefaultFactory(String)} method call.</p>
      * <p>New RRD file structure is specified with an object of class
      * {@link RrdDef <b>RrdDef</b>}. The underlying RRD storage is created as soon
      * as the constructor returns.</p>
@@ -1105,7 +1101,7 @@ public class RrdDb implements RrdUpdater, Closeable {
 
     /**
      * Sets default backend factory to be used. This method is just an alias for
-     * {@link org.rrd4j.backends.RrdBackendFactory#setDefaultFactory(String)}.
+     * {@link org.rrd4j.core.RrdBackendFactory#setDefaultFactory(String)}.
      *
      * @param factoryName Name of the backend factory to be set as default.
      * @throws java.lang.IllegalArgumentException Thrown if invalid factory name is supplied, or not called

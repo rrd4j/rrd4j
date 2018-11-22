@@ -2,8 +2,6 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-import org.rrd4j.backends.RrdBackend;
-
 /**
  * Class to represent archive values for a single datasource. Robin class is the heart of
  * the so-called "round robin database" concept. Basically, each Robin object is a

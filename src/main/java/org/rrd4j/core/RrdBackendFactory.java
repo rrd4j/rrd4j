@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,46 +16,44 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.rrd4j.core.RrdDb;
-
 /**
  * Base (abstract) backend factory class which holds references to all concrete
  * backend factories and defines abstract methods which must be implemented in
  * all concrete factory implementations.
  * <p>
  *
- * Factory classes are used to create concrete {@link org.rrd4j.backends.RrdBackend} implementations.
+ * Factory classes are used to create concrete {@link org.rrd4j.core.RrdBackend} implementations.
  * Each factory creates unlimited number of specific backend objects.
  *
  * Rrd4j supports six different backend types (backend factories) out of the box:
  * <ul>
- * <li>{@link org.rrd4j.backends.RrdRandomAccessFileBackend}: objects of this class are created from the
- * {@link org.rrd4j.backends.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
+ * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdRandomAccessFileBackendFactory} class. This was the default backend used in all
  * Rrd4j releases before 1.4.0 release. It uses java.io.* package and RandomAccessFile class to store
  * RRD data in files on the disk.
  *
- * <li>{@link org.rrd4j.backends.RrdSafeFileBackend}: objects of this class are created from the
- * {@link org.rrd4j.backends.RrdSafeFileBackendFactory} class. It uses java.io.* package and RandomAccessFile class to store
+ * <li>{@link org.rrd4j.core.RrdSafeFileBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdSafeFileBackendFactory} class. It uses java.io.* package and RandomAccessFile class to store
  * RRD data in files on the disk. This backend is SAFE:
  * it locks the underlying RRD file during update/fetch operations, and caches only static
  * parts of a RRD file in memory. Therefore, this backend is safe to be used when RRD files should
  * be shared <b>between several JVMs</b> at the same time. However, this backend is *slow* since it does
  * not use fast java.nio.* package (it's still based on the RandomAccessFile class).
  *
- * <li>{@link org.rrd4j.backends.RrdNioBackend}: objects of this class are created from the
- * {@link org.rrd4j.backends.RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
+ * <li>{@link org.rrd4j.core.RrdNioBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdNioBackendFactory} class. The backend uses java.io.* and java.nio.*
  * classes (mapped ByteBuffer) to store RRD data in files on the disk. This is the default backend
  * since 1.4.0 release.
  *
- * <li>{@link org.rrd4j.backends.RrdMemoryBackend}: objects of this class are created from the
- * {@link org.rrd4j.backends.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
+ * <li>{@link org.rrd4j.core.RrdMemoryBackend}: objects of this class are created from the
+ * {@link org.rrd4j.core.RrdMemoryBackendFactory} class. This backend stores all data in memory. Once
  * JVM exits, all data gets lost. The backend is extremely fast and memory hungry.
  * 
- * <li>{@link org.rrd4j.backends.RrdBerkeleyDbBackend}: objects of this class are created from the 
- * {@link org.rrd4j.backends.RrdBerkeleyDbBackendFactory} class. It stores RRD data to ordinary disk files 
+ * <li>{@link org.rrd4j.core.RrdBerkeleyDbBackend}: objects of this class are created from the 
+ * {@link org.rrd4j.core.RrdBerkeleyDbBackendFactory} class. It stores RRD data to ordinary disk files 
  * using <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index-093405.html">Oracle Berkeley DB</a> Java Edition.
  * 
- * <li>{@link org.rrd4j.backends.RrdMongoDBBackend}: objects of this class are created from the {@link org.rrd4j.backends.RrdMongoDBBackendFactory} class.
+ * <li>{@link org.rrd4j.core.RrdMongoDBBackend}: objects of this class are created from the {@link org.rrd4j.core.RrdMongoDBBackendFactory} class.
  * It stores data in a {@link com.mongodb.DBCollection} from <a href="http://www.mongodb.org/">MongoDB</a>.
  * </ul>
  *
@@ -71,7 +69,7 @@ import org.rrd4j.core.RrdDb;
  * For default implementation, the path is separated in a root URI prefix and the path components. The root URI can be
  * used to identify different name spaces or just be ```/```.
  * <p>
- * See javadoc for {@link org.rrd4j.backends.RrdBackend} to find out how to create your custom backends.
+ * See javadoc for {@link org.rrd4j.core.RrdBackend} to find out how to create your custom backends.
  *
  */
 public abstract class RrdBackendFactory {
@@ -450,7 +448,7 @@ public abstract class RrdBackendFactory {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    public RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
+    protected RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
         RrdBackend backend = open(path, readOnly);
         backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
         return backend;
@@ -466,7 +464,7 @@ public abstract class RrdBackendFactory {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    public RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
+    protected RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
         RrdBackend backend =  open(getPath(uri), readOnly);
         backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
         return backend;
@@ -488,7 +486,7 @@ public abstract class RrdBackendFactory {
      * @throws java.io.IOException in case of I/O error.
      * @return a boolean.
      */
-    public boolean exists(URI uri) throws IOException {
+    protected boolean exists(URI uri) throws IOException {
         return exists(getPath(uri));
     }
 
@@ -508,7 +506,7 @@ public abstract class RrdBackendFactory {
      * @throws java.io.IOException if header validation fails
      * @return a boolean.
      */
-    public boolean shouldValidateHeader(URI uri) throws IOException {
+    protected boolean shouldValidateHeader(URI uri) throws IOException {
         return shouldValidateHeader(getPath(uri));
     }
 

@@ -1,12 +1,8 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.file.Paths;
-
-import org.rrd4j.core.RrdPrimitive;
 
 /**
  * Backend which is used to store RRD data to ordinary files on the disk. This was the
@@ -36,7 +32,7 @@ public class RrdRandomAccessFileBackend extends RrdBackend implements RrdFileBac
      *
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public void close() throws IOException {
+    protected void close() throws IOException {
         rafile.close();
     }
 
@@ -47,7 +43,7 @@ public class RrdRandomAccessFileBackend extends RrdBackend implements RrdFileBac
      * @param b      Bytes to be written.
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public void write(long offset, byte[] b) throws IOException {
+    protected void write(long offset, byte[] b) throws IOException {
         rafile.seek(offset);
         rafile.write(b);
     }
@@ -86,18 +82,9 @@ public class RrdRandomAccessFileBackend extends RrdBackend implements RrdFileBac
      * Sets length of the underlying RRD file. This method is called only once, immediately
      * after a new RRD file gets created.
      */
-    public void setLength(long length) throws IOException {
-        rafile.setLength(length);
-    }
-
     @Override
-    protected CharBuffer getCharBuffer(long offset, int size) throws IOException {
-        ByteBuffer bbuf = ByteBuffer.allocate(RrdPrimitive.STRING_LENGTH * 2);
-        bbuf.order(BYTEORDER);
-        read(offset, bbuf.array());
-        bbuf.position(0);
-        bbuf.limit(RrdPrimitive.STRING_LENGTH * 2);
-        return bbuf.asCharBuffer();
+    protected void setLength(long length) throws IOException {
+        rafile.setLength(length);
     }
 
 }

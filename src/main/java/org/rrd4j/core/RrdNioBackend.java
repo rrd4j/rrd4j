@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -75,9 +75,9 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
      *
      * @param path       Path to a file
      * @param readOnly   True, if file should be open in a read-only mode. False otherwise
-     * @param syncPeriod See {@link org.rrd4j.backends.RrdNioBackendFactory#setSyncPeriod(int)} for explanation
+     * @param syncPeriod See {@link org.rrd4j.core.RrdNioBackendFactory#setSyncPeriod(int)} for explanation
      * @throws java.io.IOException Thrown in case of I/O error
-     * @param threadPool a {@link org.rrd4j.backends.RrdSyncThreadPool} object, it can be null.
+     * @param threadPool a {@link org.rrd4j.core.RrdSyncThreadPool} object, it can be null.
      */
     protected RrdNioBackend(String path, boolean readOnly, RrdSyncThreadPool threadPool, int syncPeriod) throws IOException {
         super(path);
@@ -144,7 +144,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
      * after a new RRD file gets created.
      * @throws java.lang.IllegalArgumentException if the length is bigger that the possible mapping position (2GiB).
      */
-    public synchronized void setLength(long newLength) throws IOException {
+    protected synchronized void setLength(long newLength) throws IOException {
         if (newLength < 0 || newLength > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + newLength);
         }

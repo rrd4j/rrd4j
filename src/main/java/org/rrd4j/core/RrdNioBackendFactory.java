@@ -1,13 +1,13 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * Factory class which creates actual {@link org.rrd4j.backends.RrdNioBackend} objects. This is the default factory since
+ * Factory class which creates actual {@link org.rrd4j.core.RrdNioBackend} objects. This is the default factory since
  * 1.4.0 version.
  * <h3>Managing the thread pool</h3>
- * <p>Each RrdNioBackendFactory is optionally backed by a {@link org.rrd4j.backends.RrdSyncThreadPool}, which it uses to sync the memory-mapped files to
+ * <p>Each RrdNioBackendFactory is optionally backed by a {@link org.rrd4j.core.RrdSyncThreadPool}, which it uses to sync the memory-mapped files to
  * disk. In order to avoid having these threads live longer than they should, it is recommended that clients create and
  * destroy thread pools at the appropriate time in their application's life time. Failure to manage thread pools
  * appropriately may lead to the thread pool hanging around longer than necessary, which in turn may cause memory leaks.</p>
@@ -146,7 +146,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * to ensure that the thread pool is created lazily the first time that it is needed, and not before.
      * <p/>
      * In practice this thread pool will be used if clients rely on the factory returned by {@link
-     * org.rrd4j.backends.RrdBackendFactory#getDefaultFactory()}, but not if clients provide their own backend instance when
+     * org.rrd4j.core.RrdBackendFactory#getDefaultFactory()}, but not if clients provide their own backend instance when
      * creating {@code RrdDb} instances or syncing was not disabled.
      */
     private static class DefaultSyncThreadPool

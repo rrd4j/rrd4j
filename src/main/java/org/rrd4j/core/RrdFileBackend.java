@@ -1,4 +1,4 @@
-package org.rrd4j.backends;
+package org.rrd4j.core;
 
 import java.io.IOException;
 
@@ -17,6 +17,6 @@ public interface RrdFileBackend {
      * @return Canonical file path
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public String getCanonicalPath() throws IOException;
+    String getCanonicalPath() throws IOException;
 
 }
