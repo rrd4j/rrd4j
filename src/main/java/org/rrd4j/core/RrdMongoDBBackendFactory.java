@@ -23,6 +23,7 @@ import com.mongodb.client.MongoCollection;
  *
  * @author Mathias Bogaert
  */
+@RrdBackendAnnotation(name="MONGODB", shouldValidateHeader=false)
 public class RrdMongoDBBackendFactory extends RrdBackendFactory {
 
     interface MongoWrapper {
@@ -182,30 +183,6 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         BasicDBObject query = new BasicDBObject();
         query.put("path", path);
         return wrapper.exists(query);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean shouldValidateHeader(String path) throws IOException {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean shouldValidateHeader(URI uri) throws IOException {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getName() {
-        return "MONGODB";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getScheme() {
-        return "mongodb";
     }
 
     // Resolve for mongo needs a magic trick because of the way the hosts informations are transformed in mongo's library

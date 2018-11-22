@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -311,6 +312,31 @@ public abstract class RrdBackendFactory {
 
     private final ReferenceQueue<RrdDb> refQueue = new ReferenceQueue<>();
 
+    private final String name;
+    private final boolean cachingAllowed;
+    private final String scheme;
+    private boolean shouldValidateHeader;
+
+    protected RrdBackendFactory() {
+        RrdBackendAnnotation annotation = getClass().getAnnotation(RrdBackendAnnotation.class);
+        if (annotation != null) {
+            name = annotation.name();
+            cachingAllowed = annotation.cachingAllowed();
+            if (annotation.scheme() != null && ! annotation.scheme().isEmpty()) {
+                scheme = annotation.scheme();
+            } else {
+                scheme = name.toLowerCase(Locale.ENGLISH);
+            }
+            shouldValidateHeader = annotation.shouldValidateHeader();
+        } else {
+            name = getName();
+            // values will not be used, name == null prevents it's use
+            cachingAllowed = RrdBackendAnnotation.DEFAULT_CACHING_ALLOWED;
+            scheme = getName().toLowerCase(Locale.ENGLISH);
+            shouldValidateHeader = true;
+        }
+    }
+
     /**
      * Check that all phantom reference are indeed safely closed.
      */
@@ -332,7 +358,7 @@ public abstract class RrdBackendFactory {
      * @return the scheme name for URI, default to getName().toLowerCase()
      */
     public String getScheme() {
-        return getName().toLowerCase();
+        return scheme;
     }
 
     protected URI getRootUri() {
@@ -454,7 +480,7 @@ public abstract class RrdBackendFactory {
     protected RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
         checkClosing();
         RrdBackend backend = open(path, readOnly);
-        backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
+        backend.done(this, new ClosingReference(rrdDb, backend, refQueue), cachingAllowed);
         return backend;
     }
 
@@ -471,7 +497,7 @@ public abstract class RrdBackendFactory {
     protected RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
         checkClosing();
         RrdBackend backend =  open(getPath(uri), readOnly);
-        backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
+        backend.done(this, new ClosingReference(rrdDb, backend, refQueue), cachingAllowed);
         return backend;
    }
 
@@ -502,7 +528,9 @@ public abstract class RrdBackendFactory {
      * @throws java.io.IOException if header validation fails
      * @return a boolean.
      */
-    protected abstract boolean shouldValidateHeader(String path) throws IOException;
+    protected boolean shouldValidateHeader(String path) throws IOException {
+        return this.shouldValidateHeader;
+    }
 
     /**
      * Determines if the header should be validated.
@@ -520,6 +548,8 @@ public abstract class RrdBackendFactory {
      *
      * @return Name of the factory.
      */
-    public abstract String getName();
+    public String getName() {
+        return name;
+    }
 
 }

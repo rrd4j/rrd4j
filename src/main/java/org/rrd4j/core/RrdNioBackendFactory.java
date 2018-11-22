@@ -14,6 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * <p>if sync period is negative, no sync thread will be launched</p>
  *
  */
+@RrdBackendAnnotation(name="NIO", shouldValidateHeader=true)
 public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * Period in seconds between consecutive synchronizations when
@@ -130,15 +131,6 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
             throw new IllegalArgumentException("Both thread pool and negative sync period");
         }
         return new RrdNioBackend(path, readOnly, syncThreadPool, syncPeriod);
-    }
-
-    /**
-     * <p>getName.</p>
-     *
-     * @return The {@link java.lang.String} "NIO".
-     */
-    public String getName() {
-        return "NIO";
     }
 
     /**

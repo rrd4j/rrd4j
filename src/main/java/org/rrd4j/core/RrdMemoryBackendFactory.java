@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * memory, you'll have to call {@link #delete(java.lang.String) delete(path)} method of this class.
  *
  */
+@RrdBackendAnnotation(name="MEMORY", shouldValidateHeader=false)
 public class RrdMemoryBackendFactory extends RrdBackendFactory {
 
     protected final Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
@@ -45,11 +46,6 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
         return backends.containsKey(id);
     }
 
-    /** {@inheritDoc} */
-    protected boolean shouldValidateHeader(String path) throws IOException {
-        return false;
-    }
-
     /**
      * Removes the storage with the given ID from the memory.
      *
@@ -66,12 +62,4 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
         }
     }
 
-    /**
-     * Returns the name of this factory.
-     *
-     * @return Factory name (equals to "MEMORY").
-     */
-    public String getName() {
-        return "MEMORY";
-    }
 }

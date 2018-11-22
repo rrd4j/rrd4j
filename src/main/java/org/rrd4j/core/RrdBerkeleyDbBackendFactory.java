@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
+@RrdBackendAnnotation(name="BERKELEY", shouldValidateHeader=false)
 public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
     private static final String UTF_8 = "UTF-8";
     private final Database rrdDatabase;
@@ -99,17 +100,4 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         }
     }
 
-    /** {@inheritDoc} */
-    protected boolean shouldValidateHeader(String path) {
-        return false;
-    }
-
-    /**
-     * <p>getName.</p>
-     *
-     * @return The {@link java.lang.String} "BERKELEY".
-     */
-    public String getName() {
-        return "BERKELEY";
-    }
 }

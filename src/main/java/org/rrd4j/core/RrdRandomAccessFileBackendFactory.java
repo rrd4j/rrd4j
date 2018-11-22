@@ -7,6 +7,7 @@ import java.io.IOException;
  * backend factory in Rrd4j before 1.4.0 release.
  *
  */
+@RrdBackendAnnotation(name="FILE", shouldValidateHeader=true)
 public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
     /**
      * {@inheritDoc}
@@ -17,17 +18,4 @@ public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
         return new RrdRandomAccessFileBackend(path, readOnly);
     }
 
-    /** {@inheritDoc} */
-    protected boolean shouldValidateHeader(String path) throws IOException {
-        return true;
-    }
-
-    /**
-     * <p>getName.</p>
-     *
-     * @return The {@link java.lang.String} "FILE".
-     */
-    public String getName() {
-        return "FILE";
-    }
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
  * Factory class which creates actual {@link org.rrd4j.core.RrdSafeFileBackend} objects.
  *
  */
+@RrdBackendAnnotation(name="SAFE", shouldValidateHeader=true)
 public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory {
     /**
      * Default time (in milliseconds) this backend will wait for a file lock.
@@ -26,15 +27,6 @@ public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         return new RrdSafeFileBackend(path, lockWaitTime, lockRetryPeriod);
-    }
-
-    /**
-     * <p>getName.</p>
-     *
-     * @return The {@link java.lang.String} "SAFE".
-     */
-    public String getName() {
-        return "SAFE";
     }
 
     /**

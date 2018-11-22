@@ -65,6 +65,7 @@ public abstract class RrdBackend {
     private RrdBackendFactory factory;
     private long nextBigStringOffset = -1;
     private ClosingReference ref;
+    private boolean cachingAllowed;
 
     /**
      * Creates backend for a RRD storage with the given path.
@@ -82,9 +83,10 @@ public abstract class RrdBackend {
      *
      * @param factory the factory to set
      */
-    void done(RrdBackendFactory factory, ClosingReference ref) {
+    void done(RrdBackendFactory factory, ClosingReference ref, boolean cachingAllowed) {
         this.factory = factory;
         this.ref = ref;
+        this.cachingAllowed = cachingAllowed;
     }
 
     /**
@@ -182,7 +184,7 @@ public abstract class RrdBackend {
      *         method returns <code>true</code> but it can be overridden in subclasses.
      */
     protected boolean isCachingAllowed() {
-        return true;
+        return cachingAllowed;
     }
 
     /**
