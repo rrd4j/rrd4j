@@ -311,7 +311,10 @@ public abstract class RrdBackendFactory {
 
     private final ReferenceQueue<RrdDb> refQueue = new ReferenceQueue<>();
 
-    protected RrdBackendFactory() {
+    /**
+     * Check that all phantom reference are indeed safely closed.
+     */
+    public void checkClosing() {
         while(true) {
             ClosingReference ref = (ClosingReference) refQueue.poll();
             if (ref == null) {
@@ -449,6 +452,7 @@ public abstract class RrdBackendFactory {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     protected RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
+        checkClosing();
         RrdBackend backend = open(path, readOnly);
         backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
         return backend;
@@ -465,6 +469,7 @@ public abstract class RrdBackendFactory {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     protected RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
+        checkClosing();
         RrdBackend backend =  open(getPath(uri), readOnly);
         backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
         return backend;

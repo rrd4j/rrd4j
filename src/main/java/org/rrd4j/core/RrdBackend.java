@@ -167,6 +167,7 @@ public abstract class RrdBackend {
         } finally {
             if (ref != null) {
                 ref.backend = null;
+                ref.clear();
             }
         }
     }
