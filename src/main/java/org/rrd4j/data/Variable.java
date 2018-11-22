@@ -209,8 +209,8 @@ public abstract class Variable {
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             double value = 0;
             int count = 0;
-            for(int i = values.length - 1 ; i >= 0 ; i--) {
-                if( !Double.isNaN(values[i]) ) {
+            for (int i = values.length - 1 ; i >= 0 ; i--) {
+                if ( !Double.isNaN(values[i]) ) {
                     count++;
                     value = Double.isNaN(value) ?  values[i] : values[i] + value;
                 }

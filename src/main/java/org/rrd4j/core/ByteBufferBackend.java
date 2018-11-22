@@ -83,7 +83,6 @@ public abstract class ByteBufferBackend extends RrdBackend {
         dirty = true;
     }
 
-    
     @Override
     protected void writeString(long offset, String value, int length) throws IOException {
         checkOffset(offset);

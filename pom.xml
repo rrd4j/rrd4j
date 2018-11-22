@@ -70,7 +70,7 @@
             <version>3.6</version>
             <scope>test</scope>
         </dependency>
-        <!--  Test dependencies for OSGi setup --> 
+        <!-- Test dependencies for OSGi setup -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-native</artifactId>

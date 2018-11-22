@@ -346,7 +346,6 @@ public class RrdDbPool {
      * @return Reference to the newly created RRD file
      * @throws java.io.IOException Thrown in case of I/O error
      */
-
     public RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
         RrdEntry ref = null;
         try {

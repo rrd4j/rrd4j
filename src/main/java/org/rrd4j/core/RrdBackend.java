@@ -79,7 +79,7 @@ public abstract class RrdBackend {
     }
 
     /**
-     * 
+     *
      * @param factory the factory to set
      */
     void done(RrdBackendFactory factory, ClosingReference ref) {
@@ -333,7 +333,7 @@ public abstract class RrdBackend {
         }
         return values;
     }
-    
+
     /**
      * Extract a CharBuffer from the backend, used by readString
      * 

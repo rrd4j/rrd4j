@@ -39,7 +39,7 @@ import org.rrd4j.data.DataProcessor;
  */
 @SuppressWarnings("deprecation")
 public class FetchData {
-    // anything fuuny will do
+    // anything funny will do
     private static final String RPN_SOURCE_NAME = "WHERE THE SPEECHLES UNITE IN A SILENT ACCORD";
 
     private FetchRequest request;
