@@ -64,12 +64,11 @@ public abstract class RrdBackend {
     private static final int PRIVATEAREASIZE = ENDPRIVATEAREACODEPOINT - STARTPRIVATEAREACODEPOINT + 1;
     private static final int MAXUNSIGNEDSHORT = Short.MAX_VALUE - Short.MIN_VALUE;
 
-    private static boolean instanceCreated = false;
+    private volatile static boolean instanceCreated = false;
     private final String path;
     private RrdBackendFactory factory;
     private long nextBigStringOffset = -1;
     private ClosingReference ref;
-    private boolean cachingAllowed;
 
     /**
      * Creates backend for a RRD storage with the given path.
@@ -87,10 +86,9 @@ public abstract class RrdBackend {
      *
      * @param factory the factory to set
      */
-    void done(RrdBackendFactory factory, ClosingReference ref, boolean cachingAllowed) {
+    void done(RrdBackendFactory factory, ClosingReference ref) {
         this.factory = factory;
         this.ref = ref;
-        this.cachingAllowed = cachingAllowed;
     }
 
     /**
@@ -188,7 +186,7 @@ public abstract class RrdBackend {
      *         method returns <code>true</code> but it can be overridden in subclasses.
      */
     protected boolean isCachingAllowed() {
-        return cachingAllowed;
+        return factory.cachingAllowed;
     }
 
     /**

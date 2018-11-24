@@ -312,10 +312,10 @@ public abstract class RrdBackendFactory {
 
     private final ReferenceQueue<RrdDb> refQueue = new ReferenceQueue<>();
 
-    private final String name;
-    private final boolean cachingAllowed;
-    private final String scheme;
-    private boolean shouldValidateHeader;
+    protected final String name;
+    protected final boolean cachingAllowed;
+    protected final String scheme;
+    protected final boolean shouldValidateHeader;
 
     protected RrdBackendFactory() {
         RrdBackendAnnotation annotation = getClass().getAnnotation(RrdBackendAnnotation.class);
@@ -479,7 +479,7 @@ public abstract class RrdBackendFactory {
     protected RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
         checkClosing();
         RrdBackend backend = open(path, readOnly);
-        backend.done(this, new ClosingReference(rrdDb, backend, refQueue), cachingAllowed);
+        backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
         return backend;
     }
 
@@ -496,7 +496,7 @@ public abstract class RrdBackendFactory {
     protected RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
         checkClosing();
         RrdBackend backend =  open(getPath(uri), readOnly);
-        backend.done(this, new ClosingReference(rrdDb, backend, refQueue), cachingAllowed);
+        backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
         return backend;
     }
 
@@ -528,7 +528,7 @@ public abstract class RrdBackendFactory {
      * @return a boolean.
      */
     protected boolean shouldValidateHeader(String path) throws IOException {
-        return this.shouldValidateHeader;
+        return shouldValidateHeader;
     }
 
     /**

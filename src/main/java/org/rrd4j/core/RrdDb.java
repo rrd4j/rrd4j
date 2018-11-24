@@ -161,7 +161,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             }
         }
         catch (IOException e) {
-            backend.closing();
+            backend.rrdClose();
             throw e;
         }
     }
@@ -289,7 +289,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             }
         }
         catch (IOException e) {
-            backend.closing();
+            backend.rrdClose();
             throw e;
         }
     }
@@ -462,7 +462,7 @@ public class RrdDb implements RrdUpdater, Closeable {
                 archives[i] = new Archive(this, reader, i);
             }
         } catch (IOException e) {
-            backend.closing();
+            backend.rrdClose();
             throw e;
         } finally {
             reader.release();
@@ -495,7 +495,7 @@ public class RrdDb implements RrdUpdater, Closeable {
     public synchronized void close() throws IOException {
         if (!closed) {
             closed = true;
-            backend.closing();
+            backend.rrdClose();
         }
     }
 
