@@ -5,6 +5,13 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.Arrays;
 
+/**
+ * A backend that store and provides access to data using a {@link java.nio.ByteBuffer}, using java internal methods for
+ * long, integer and others types.
+ * 
+ * @author Fabrice Bacchella
+ *
+ */
 public abstract class ByteBufferBackend extends RrdBackend {
 
     private volatile boolean dirty = false;
@@ -68,7 +75,7 @@ public abstract class ByteBufferBackend extends RrdBackend {
         checkOffset(offset);
         double[] values = new double[count];
         Arrays.fill(values, value);
-        // position must be set in the original ByteByffer, as DoubleBuffer is a "double" offset
+        // position must be set in the original ByteByffer, as DoubleBuffer uses a "double" offset
         byteBuffer.position((int)offset);
         byteBuffer.asDoubleBuffer().put(values, 0, count);
         dirty = true;
@@ -77,7 +84,7 @@ public abstract class ByteBufferBackend extends RrdBackend {
     @Override
     protected void writeDouble(long offset, double[] values) throws IOException {
         checkOffset(offset);
-        // position must be set in the original ByteByffer, as DoubleBuffer is a "double" offset
+        // position must be set in the original ByteByffer, as DoubleBuffer uses a "double" offset
         byteBuffer.position((int)offset);
         byteBuffer.asDoubleBuffer().put(values, 0, values.length);
         dirty = true;
@@ -171,8 +178,8 @@ public abstract class ByteBufferBackend extends RrdBackend {
     }
 
     @Override
-    protected void closing() throws IOException {
-        super.closing();
+    protected void rrdClose() throws IOException {
+        super.rrdClose();
         dirty = false;
     }
 

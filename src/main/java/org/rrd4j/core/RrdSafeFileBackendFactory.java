@@ -62,6 +62,7 @@ public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory
      * @param lockRetryPeriod time (in milliseconds) between two consecutive file locking attempts.
      */
     public static void setLockRetryPeriod(long lockRetryPeriod) {
-		RrdSafeFileBackendFactory.lockRetryPeriod = lockRetryPeriod;
-	}
+        RrdSafeFileBackendFactory.lockRetryPeriod = lockRetryPeriod;
+    }
+
 }

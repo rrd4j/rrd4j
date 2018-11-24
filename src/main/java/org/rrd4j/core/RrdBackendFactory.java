@@ -330,7 +330,6 @@ public abstract class RrdBackendFactory {
             shouldValidateHeader = annotation.shouldValidateHeader();
         } else {
             name = getName();
-            // values will not be used, name == null prevents it's use
             cachingAllowed = RrdBackendAnnotation.DEFAULT_CACHING_ALLOWED;
             scheme = getName().toLowerCase(Locale.ENGLISH);
             shouldValidateHeader = true;
@@ -499,7 +498,7 @@ public abstract class RrdBackendFactory {
         RrdBackend backend =  open(getPath(uri), readOnly);
         backend.done(this, new ClosingReference(rrdDb, backend, refQueue), cachingAllowed);
         return backend;
-   }
+    }
 
     /**
      * Determines if a storage with the given path already exists.

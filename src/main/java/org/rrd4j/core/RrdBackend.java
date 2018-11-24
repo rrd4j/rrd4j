@@ -52,7 +52,11 @@ import org.rrd4j.core.RrdBackendFactory.ClosingReference;
  */
 public abstract class RrdBackend {
 
+    /**
+     * All {@link java.nio.ByteBuffer} usage should use this standard order.
+     */
     protected static final ByteOrder BYTEORDER = ByteOrder.BIG_ENDIAN;
+
     private static final char STARTPRIVATEAREA = '\ue000';
     private static final char ENDPRIVATEAREA = '\uf8ff';
     private static final int STARTPRIVATEAREACODEPOINT = Character.codePointAt(new char[]{STARTPRIVATEAREA}, 0);
@@ -152,18 +156,18 @@ public abstract class RrdBackend {
     protected abstract void setLength(long length) throws IOException;
 
     /**
-     * Closes the underlying backend.
+     * Closes the underlying backend. Used internally, should not be called from external code.
      *
      * @throws java.io.IOException Thrown in case of I/O error
      */
     protected abstract void close() throws IOException;
 
     /**
-     * Closes the underlying backend.
+     * Closes the underlying backend. Call by {@code RrdDb#close()} when it's closed. All subclass must keep calling it.
      *
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    protected void closing() throws IOException {
+    protected void rrdClose() throws IOException {
         try {
             close();
         } finally {

@@ -9,6 +9,7 @@ import java.io.IOException;
  */
 @RrdBackendAnnotation(name="FILE", shouldValidateHeader=true)
 public class RrdRandomAccessFileBackendFactory extends RrdFileBackendFactory {
+
     /**
      * {@inheritDoc}
      *
