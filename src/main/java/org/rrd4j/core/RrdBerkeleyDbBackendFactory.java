@@ -1,11 +1,15 @@
 package org.rrd4j.core;
 
-import com.sleepycat.je.*;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.LockMode;
+import com.sleepycat.je.OperationStatus;
 
 /**
  * {@link org.rrd4j.core.RrdBackendFactory} that uses
