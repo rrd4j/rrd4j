@@ -31,7 +31,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      */
     public static final int DEFAULT_SYNC_CORE_POOL_SIZE = 6;
 
-    private static int syncPoolSize = DEFAULT_SYNC_CORE_POOL_SIZE;
+    private static int defaultSyncPoolSize = DEFAULT_SYNC_CORE_POOL_SIZE;
 
     /**
      * Returns time between two consecutive background synchronizations. If not changed via
@@ -62,7 +62,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @return Number of synchronizing threads.
      */
     public static int getSyncPoolSize() {
-        return syncPoolSize;
+        return defaultSyncPoolSize;
     }
 
     /**
@@ -72,10 +72,11 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @param syncPoolSize Number of synchronizing threads.
      */
     public static void setSyncPoolSize(int syncPoolSize) {
-        RrdNioBackendFactory.syncPoolSize = syncPoolSize;
+        RrdNioBackendFactory.defaultSyncPoolSize = syncPoolSize;
     }
 
-    private int syncPeriod = RrdNioBackendFactory.defaultSyncPeriod;
+    private final int syncPeriod;
+
     /**
      * The thread pool to pass to newly-created RrdNioBackend instances.
      */
@@ -85,19 +86,50 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * Creates a new RrdNioBackendFactory with default settings.
      */
     public RrdNioBackendFactory() {
-        super();
+        this(RrdNioBackendFactory.defaultSyncPeriod, DefaultSyncThreadPool.INSTANCE);
     }
 
     /**
-     * The sync period. Set it negative to disable sync threads for this pool.
-     * @param syncPeriod
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod If syncPeriod is negative or 0, sync threads are disabled.
      */
-    public void setFactorySyncPeriod(int syncPeriod) {
-        this.syncPeriod = syncPeriod;
+    public RrdNioBackendFactory(int syncPeriod) {
+        this(syncPeriod, syncPeriod > 0 ? DefaultSyncThreadPool.INSTANCE : null);
     }
 
-    public int getFactorySyncPeriod() {
-        return syncPeriod;
+    /**
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod
+     * @param syncPoolSize The number of threads to use to sync the mapped file to disk, if inferior to 0, sync threads are disabled.
+     */
+    public RrdNioBackendFactory(int syncPeriod, int syncPoolSize) {
+        this(syncPeriod, syncPeriod > 0 ? new RrdSyncThreadPool(syncPoolSize) : null);
+    }
+
+    /**
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod
+     * @param syncThreadPool If null, disable background sync threads
+     */
+    public RrdNioBackendFactory(int syncPeriod, ScheduledExecutorService syncThreadPool) {
+        this(syncPeriod, syncThreadPool != null ? new RrdSyncThreadPool(syncThreadPool) :null);
+    }
+
+    /**
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod
+     * @param syncThreadPool If null, disable background sync threads
+     */
+    public RrdNioBackendFactory(int syncPeriod, RrdSyncThreadPool syncThreadPool) {
+        if (syncThreadPool != null && syncPeriod < 0) {
+            throw new IllegalArgumentException("Both thread pool defined and negative sync period");
+        }
+        this.syncPeriod = syncPeriod;
+        this.syncThreadPool = syncThreadPool;
     }
 
     /**
@@ -105,6 +137,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      *
      * @param syncThreadPool the RrdSyncThreadPool to use to sync the memory-mapped files.
      */
+    @Deprecated
     public void setSyncThreadPool(RrdSyncThreadPool syncThreadPool) {
         this.syncThreadPool = syncThreadPool;
     }
@@ -112,8 +145,9 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * <p>Setter for the field <code>syncThreadPool</code>.</p>
      *
-     * @param syncThreadPool the ScheduledExecutorService that will back the RrdSyncThreadPool  used to sync the memory-mapped files.
+     * @param syncThreadPool the ScheduledExecutorService that will back the RrdSyncThreadPool used to sync the memory-mapped files.
      */
+    @Deprecated
     public void setSyncThreadPool(ScheduledExecutorService syncThreadPool) {
         this.syncThreadPool = new RrdSyncThreadPool(syncThreadPool);
     }
@@ -124,12 +158,6 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * Creates RrdNioBackend object for the given file path.
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
-        // Instantiate a thread pool if none was provided and sync period is positive.
-        if (syncThreadPool == null && syncPeriod > 0) {
-            syncThreadPool = DefaultSyncThreadPool.INSTANCE;
-        } else if (syncThreadPool != null && syncPeriod < 0) {
-            throw new IllegalArgumentException("Both thread pool and negative sync period");
-        }
         return new RrdNioBackend(path, readOnly, syncThreadPool, syncPeriod);
     }
 
@@ -146,7 +174,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
         /**
          * The default thread pool used to periodically sync the mapped file to disk with.
          */
-        static RrdSyncThreadPool INSTANCE = new RrdSyncThreadPool(syncPoolSize);
+        static RrdSyncThreadPool INSTANCE = new RrdSyncThreadPool(defaultSyncPoolSize);
 
         private DefaultSyncThreadPool() {}
     }
