@@ -209,7 +209,7 @@ public class RrdDbTest {
     public void testRead1() throws IOException {
         URL url = getClass().getResource("/demo1.rrd"); 
         RrdDb rrd = new RrdDb(url.getFile(), RrdBackendFactory.getFactory("FILE"));
-        testRrdDb(rrd);     
+        testRrdDb(rrd);
         checkValues(rrd);
         Assert.assertEquals("not expected version", 1, rrd.getRrdDef().getVersion());
     }
