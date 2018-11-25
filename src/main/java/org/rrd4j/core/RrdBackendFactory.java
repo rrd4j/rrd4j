@@ -485,7 +485,7 @@ public abstract class RrdBackendFactory {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    protected RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
+    RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
         checkClosing();
         RrdBackend backend = open(path, readOnly);
         backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
@@ -502,7 +502,7 @@ public abstract class RrdBackendFactory {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    protected RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
+    RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
         checkClosing();
         RrdBackend backend =  open(getPath(uri), readOnly);
         backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
