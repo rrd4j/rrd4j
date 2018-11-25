@@ -561,14 +561,14 @@ public abstract class RrdBackendFactory implements Closeable {
     public String getName() {
         return name;
     }
-    
+
     /**
-     * A generic close handle, default do nothing.
+     * A generic close handle, default implementation does nothing.
      * @since 3.4
      * @throws IOException
      */
     public void close() throws IOException {
-        
+
     }
 
 }

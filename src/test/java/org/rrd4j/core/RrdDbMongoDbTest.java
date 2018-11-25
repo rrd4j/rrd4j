@@ -16,7 +16,7 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-public class MongoDbTest {
+public class RrdDbMongoDbTest {
 
     @AfterClass
     public static void restore() throws InterruptedException {
