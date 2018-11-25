@@ -53,8 +53,7 @@ public class RrdNioBackendTest extends BackendTester {
 
     @Test
     public void testBackendFactoryNoSyncing() throws IOException {
-        RrdNioBackendFactory factory = new RrdNioBackendFactory();
-        factory.setFactorySyncPeriod(-1);
+        RrdNioBackendFactory factory = new RrdNioBackendFactory(-1, 0);
 
         File rrdfile = testFolder.newFile("testfile");
         RrdBackend be = factory.open(rrdfile.getCanonicalPath(), false);

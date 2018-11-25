@@ -105,7 +105,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @param syncPoolSize The number of threads to use to sync the mapped file to disk, if inferior to 0, sync threads are disabled.
      */
     public RrdNioBackendFactory(int syncPeriod, int syncPoolSize) {
-        this(syncPeriod, syncPeriod > 0 ? new RrdSyncThreadPool(syncPoolSize) : null);
+        this(syncPeriod, syncPoolSize > 0 ? new RrdSyncThreadPool(syncPoolSize) : null);
     }
 
     /**
