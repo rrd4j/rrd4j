@@ -7,6 +7,13 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Description of a {@link RrdBackendFactory}
+ * 
+ * @author Fabrice Bacchella
+ * @since 3.4
+ *
+ */
 @Documented
 @Retention(RUNTIME)
 @Target(TYPE)

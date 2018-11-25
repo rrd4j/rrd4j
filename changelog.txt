@@ -1,21 +1,21 @@
 Changes in version 3.4 - Unreleased
 ------------------------------------
 
-This change is an import change, with many under the hood changes and code cleaning.
+This version is an import version, with many under the hood changes and code cleaning. The main changes are in the RrdBackendFactory. Much finer 
+control is provided, a generic close method is provided. 
 
-Both LinearInterpolator and elements colors (in RrdGraphDef.setColor) now uses enum instead of int.
+Both LinearInterpolator and elements colors (in RrdGraphDef.setColor) now uses an enum instead of int.
 
 All exceptions thrown by RRD4J are now subclass of org.rrd4j.core.RrdException, for a more precise exception handling.
 But RrdException is a subclass of IOException, so code don't needs to be changed.
 
 Add OSGi metadata to the main rrd4j jar.
 
-A finalize override was removed in RrdDb, as is considered as bad practice. It should reduce GC time, feebdback is welcome.
+A finalize override was removed in RrdDb, as it's considered a bad practice. It should reduce GC time, feedback is welcome.
 
-Backend now use more of NIO and ByteBuffer. They have been put in a dedicated package (org.rrd4j.backends) and class hierarchy 
-changed, so it might break custom back ends.
+Backend now use more of NIO and ByteBuffer.
 
-In NIO backend, the sync threads pool is now optional. It was never really usefull as the operation system take care of that anyway.
+In NIO backend, the sync threads pool is now optional. It was never really useful as the operation system take care of that anyway.
 
 Changes in version 3.3.1 - 5 Oct 2018
 ------------------------------------

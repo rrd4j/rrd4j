@@ -3,7 +3,9 @@ package org.rrd4j.core;
 import java.io.IOException;
 
 /**
- * A general purpose RRD4J exception. 
+ * A general purpose RRD4J exception.
+ * 
+ * @since 3.4 
  */
 public class RrdException extends IOException {
 

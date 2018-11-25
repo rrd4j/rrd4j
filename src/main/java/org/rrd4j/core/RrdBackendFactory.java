@@ -65,8 +65,9 @@ import java.util.regex.Pattern;
  * <p>
  * A more generic management was added in version 3.2 that allows multiple instance of a backend to be used. Each backend can
  * manage custom URL. They are tried in the declared order by the {@link #setActiveFactories(RrdBackendFactory...)} or
- * {@link #addFactories(RrdBackendFactory...)} and the method {@link #canStore(URI)} return true when  it can manage the given
- * URI.
+ * {@link #addFactories(RrdBackendFactory...)} and the method {@link #canStore(URI)} return true when it can manage the given
+ * URI. Using {@link #setActiveFactories(RrdBackendFactory...)} with new created instance is the preferred way to manage factories, as
+ * it provides a much precise control of creation and end of life of factories.
  * <p>
  * For default implementation, the path is separated in a root URI prefix and the path components. The root URI can be
  * used to identify different name spaces or just be ```/```.
@@ -563,6 +564,7 @@ public abstract class RrdBackendFactory implements Closeable {
     
     /**
      * A generic close handle, default do nothing.
+     * @since 3.4
      * @throws IOException
      */
     public void close() throws IOException {

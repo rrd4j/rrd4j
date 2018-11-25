@@ -10,6 +10,7 @@ import java.util.Arrays;
  * long, integer and others types.
  * 
  * @author Fabrice Bacchella
+ * @since 3.4
  *
  */
 public abstract class ByteBufferBackend extends RrdBackend {
