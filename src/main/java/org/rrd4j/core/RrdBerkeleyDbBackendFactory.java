@@ -98,4 +98,9 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        rrdDatabase.close();
+    }
+
 }

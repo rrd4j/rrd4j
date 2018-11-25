@@ -32,6 +32,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         DBObject get(BasicDBObject query);
         void save(BasicDBObject query, byte[] rrd);
         List<ServerAddress> servers();
+        void close() throws IOException;
     };
 
     private final URI rootUri;
@@ -90,6 +91,9 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             public List<ServerAddress> servers() {
                 return rrdCollection.getDB().getMongo().getServerAddressList();
             }
+            @Override
+            public void close() throws IOException {
+            }
         };
 
         DB db = rrdCollection.getDB();
@@ -139,6 +143,10 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             @Override
             public List<ServerAddress> servers() {
                 return client.getServerAddressList();
+            }
+            @Override
+            public void close() throws IOException {
+                client.close();
             }
         };
 
@@ -252,6 +260,11 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             }
         }
         return ! Collections.disjoint(tryHosts, wrapper.servers());
+    }
+
+    @Override
+    public void close() throws IOException {
+        wrapper.close();
     }
 
 }

@@ -1,5 +1,6 @@
 package org.rrd4j.core;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.PhantomReference;
@@ -73,7 +74,7 @@ import java.util.regex.Pattern;
  * See javadoc for {@link org.rrd4j.core.RrdBackend} to find out how to create your custom backends.
  *
  */
-public abstract class RrdBackendFactory {
+public abstract class RrdBackendFactory implements Closeable {
 
     /**
      * The default factory type. It will also put in the active factories list.
@@ -558,6 +559,14 @@ public abstract class RrdBackendFactory {
      */
     public String getName() {
         return name;
+    }
+    
+    /**
+     * A generic close handle, default do nothing.
+     * @throws IOException
+     */
+    public void close() throws IOException {
+        
     }
 
 }

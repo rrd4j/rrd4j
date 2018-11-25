@@ -19,24 +19,26 @@ public class RrdNioBackendTest extends BackendTester {
 
     @Test
     public void testBackendFactoryWithExecutor() throws IOException {
-        RrdNioBackendFactory factory = new RrdNioBackendFactory();
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        factory.setSyncThreadPool(new RrdSyncThreadPool());
-        File rrdfile = testFolder.newFile("testfile");
-        RrdBackend be = factory.open(rrdfile.getCanonicalPath(), false);
+        try (RrdNioBackendFactory factory = new RrdNioBackendFactory(RrdNioBackendFactory.DEFAULT_SYNC_PERIOD, executor)) {
+            File rrdfile = testFolder.newFile("testfile");
+            RrdBackend be = factory.open(rrdfile.getCanonicalPath(), false);
 
-        be.setLength(10);
-        be.writeDouble(0, 0);
-        be.close();
-        executor.shutdown();
-        DataInputStream is = new DataInputStream(new FileInputStream(rrdfile));
-        Double d = is.readDouble();
-        Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
-        is.close();
+            be.setLength(10);
+            be.writeDouble(0, 0);
+            be.close();
+            executor.shutdown();
+            try (DataInputStream is = new DataInputStream(new FileInputStream(rrdfile))) {
+                Double d = is.readDouble();
+                Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
+            }
+        }
     }
 
     @Test
-    public void testBackendFactory() throws IOException {
+    public void testBackendFactoryDefaults() throws IOException {
+        @SuppressWarnings("resource")
+        // Don't close a default NIO, it will close the background sync threads executor
         RrdNioBackendFactory factory = new RrdNioBackendFactory();
 
         File rrdfile = testFolder.newFile("testfile");
@@ -45,26 +47,27 @@ public class RrdNioBackendTest extends BackendTester {
         be.setLength(10);
         be.writeDouble(0, 0);
         be.close();
-        DataInputStream is = new DataInputStream(new FileInputStream(rrdfile));
-        Double d = is.readDouble();
-        Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
-        is.close();
+        try (DataInputStream is = new DataInputStream(new FileInputStream(rrdfile))) {
+            Double d = is.readDouble();
+            Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
+        }
     }
 
     @Test
     public void testBackendFactoryNoSyncing() throws IOException {
-        RrdNioBackendFactory factory = new RrdNioBackendFactory(-1, 0);
+        try (RrdNioBackendFactory factory = new RrdNioBackendFactory(-1, 0)) {
+            File rrdfile = testFolder.newFile("testfile");
+            RrdBackend be = factory.open(rrdfile.getCanonicalPath(), false);
 
-        File rrdfile = testFolder.newFile("testfile");
-        RrdBackend be = factory.open(rrdfile.getCanonicalPath(), false);
-
-        be.setLength(10);
-        be.writeDouble(0, 0);
-        be.close();
-        DataInputStream is = new DataInputStream(new FileInputStream(rrdfile));
-        Double d = is.readDouble();
-        Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
-        is.close();
+            be.setLength(10);
+            be.writeDouble(0, 0);
+            be.close();
+            try (DataInputStream is = new DataInputStream(new FileInputStream(rrdfile))) {
+                Double d = is.readDouble();
+                Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
+            };
+            Assert.assertNull(factory.getSyncThreadPool());
+        }
     }
 
     @Test

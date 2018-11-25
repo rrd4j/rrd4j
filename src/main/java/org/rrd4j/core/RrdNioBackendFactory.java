@@ -162,6 +162,20 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     }
 
     /**
+     * @return The {@link RrdSyncThreadPool} or null if syncing is disabled
+     */
+    public RrdSyncThreadPool getSyncThreadPool() {
+        return syncThreadPool;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (syncThreadPool != null) {
+            syncThreadPool.shutdown();
+        }
+    }
+
+    /**
      * This is a holder class as per the "initialisation on demand" Java idiom. The only purpose of this holder class is
      * to ensure that the thread pool is created lazily the first time that it is needed, and not before.
      * <p/>
@@ -178,4 +192,5 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
 
         private DefaultSyncThreadPool() {}
     }
+
 }
