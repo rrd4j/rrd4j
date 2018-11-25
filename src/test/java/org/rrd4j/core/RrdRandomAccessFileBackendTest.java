@@ -15,7 +15,8 @@ import org.rrd4j.core.RrdBackend;
 import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 
-public class RrdRandomAccessFileBackendTest {
+public class RrdRandomAccessFileBackendTest extends BackendTester {
+
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
@@ -51,4 +52,25 @@ public class RrdRandomAccessFileBackendTest {
         Assert.assertEquals("write to random access file failed", 0, d, 1e-10);
         is.close();
     }
+
+    @Test
+    public void testRead1() throws IOException {
+        super.testRead1(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @Test
+    public void testRead2() throws IOException {
+        super.testRead2(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @Test(expected=InvalidRrdException.class)
+    public void testReadCorruptSignature() throws Exception {
+        super.testReadCorruptSignature(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @Test(expected=InvalidRrdException.class)
+    public void testReadEmpty() throws Exception {
+        super.testReadEmpty(new RrdRandomAccessFileBackendFactory());
+    }
+
 }
