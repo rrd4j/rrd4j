@@ -301,12 +301,21 @@ public abstract class RrdBackendFactory {
         throw new IllegalArgumentException("Not an URI pattern");
     }
 
-    protected static class ClosingReference extends PhantomReference<RrdDb> {
-        RrdBackend backend;
+    private static class ClosingReference extends PhantomReference<RrdDb> {
+        private RrdBackend backend;
         public ClosingReference(RrdDb db, RrdBackend backend,
                 ReferenceQueue<? super RrdDb> q) {
             super(db, q);
             this.backend = backend;
+        }
+        @Override
+        public void clear() {
+            try {
+                backend.close();
+            } catch (IOException e) {
+            }
+            backend = null;
+            super.clear();
         }
     };
 

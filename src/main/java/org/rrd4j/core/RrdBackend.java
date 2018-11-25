@@ -1,12 +1,11 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.lang.ref.PhantomReference;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
-
-import org.rrd4j.core.RrdBackendFactory.ClosingReference;
 
 /**
  * <p>Base implementation class for all backend classes. Each Round Robin Database object
@@ -68,7 +67,7 @@ public abstract class RrdBackend {
     private final String path;
     private RrdBackendFactory factory;
     private long nextBigStringOffset = -1;
-    private ClosingReference ref;
+    private PhantomReference<RrdDb> ref;
 
     /**
      * Creates backend for a RRD storage with the given path.
@@ -86,7 +85,7 @@ public abstract class RrdBackend {
      *
      * @param factory the factory to set
      */
-    void done(RrdBackendFactory factory, ClosingReference ref) {
+    void done(RrdBackendFactory factory, PhantomReference<RrdDb> ref) {
         this.factory = factory;
         this.ref = ref;
     }
@@ -170,7 +169,6 @@ public abstract class RrdBackend {
             close();
         } finally {
             if (ref != null) {
-                ref.backend = null;
                 ref.clear();
             }
         }
