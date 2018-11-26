@@ -7,8 +7,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
-import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdMemoryBackendFactory;
 
 public class ConverterTest {
  
@@ -105,7 +105,7 @@ public class ConverterTest {
 
     private void testImport(String file) throws IOException {
         URL url = getClass().getResource(file); 
-        RrdDb rrd = new RrdDb("test", "rrdtool:/" + url.getFile(), RrdBackendFactory.getFactory("MEMORY"));
+        RrdDb rrd = new RrdDb("test", "rrdtool:/" + url.getFile(), new RrdMemoryBackendFactory());
         testRrdDbXml(rrd);
     }
 }

@@ -2,6 +2,8 @@ package org.rrd4j.core;
 
 import static org.junit.Assert.fail;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -12,6 +14,18 @@ import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Variable;
 
 public abstract class BackendTester {
+
+    public void testBackendFactory(RrdBackendFactory factory, String path) throws IOException {
+        RrdBackend be = factory.open(path, false);
+
+        be.setLength(10);
+        be.writeDouble(0, 0);
+        be.close();
+        try (DataInputStream is = new DataInputStream(new FileInputStream(path));) {
+            Double d = is.readDouble();
+            Assert.assertEquals("write to random access file failed", 0, d, 1e-10);
+        };
+    }
 
     public void testRrdDb(RrdDb db) throws IOException {
 

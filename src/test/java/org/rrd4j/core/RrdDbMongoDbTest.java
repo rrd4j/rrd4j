@@ -19,8 +19,8 @@ import com.mongodb.client.MongoDatabase;
 public class RrdDbMongoDbTest {
 
     @AfterClass
-    public static void restore() throws InterruptedException {
-        RrdBackendFactory.setActiveFactories(RrdBackendFactory.getFactory(RrdBackendFactory.DEFAULTFACTORY));
+    public static void resetFactories() {
+        RrdBackendFactory.setActiveFactories();
     }
 
     @Test

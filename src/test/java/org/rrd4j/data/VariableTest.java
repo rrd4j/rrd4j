@@ -26,6 +26,7 @@ public class VariableTest {
     private static long endTime;
     private static final boolean dorrdtool = false;
 
+    @SuppressWarnings("deprecation")
     @BeforeClass
     public static void createRrd() throws IOException {
         startTime = start - start % step; 

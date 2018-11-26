@@ -70,6 +70,7 @@ public class TestArchiveSelection {
         rrdDef.addArchive(ConsolFun.AVERAGE, 0, 5, 200);
 
         // create database
+        @SuppressWarnings("deprecation")
         RrdDb rrdDb = new RrdDb(rrdDef, RrdBackendFactory.getFactory("MEMORY") );
 
         // populate
