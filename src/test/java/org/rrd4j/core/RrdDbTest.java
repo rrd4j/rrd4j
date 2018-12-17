@@ -313,7 +313,7 @@ public class RrdDbTest {
             }
         }
         String[] dsNames2 = new String[2];
-        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true)) {
+        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true, new RrdNioBackendFactory())) {
             int dsCount = rrdDb.getHeader().getDsCount();
             for(int i = 0; i < dsCount; i++) {
                 Datasource srcDs = rrdDb.getDatasource(i);
@@ -322,7 +322,18 @@ public class RrdDbTest {
                 dsNames2[j] = dsName;
             }
         }
+        String[] dsNames3 = new String[2];
+        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true, new RrdRandomAccessFileBackendFactory())) {
+            int dsCount = rrdDb.getHeader().getDsCount();
+            for(int i = 0; i < dsCount; i++) {
+                Datasource srcDs = rrdDb.getDatasource(i);
+                String dsName = srcDs.getName();
+                int j = rrdDb.getDsIndex(dsName);
+                dsNames3[j] = dsName;
+            }
+        }
         Assert.assertArrayEquals(dsNames1, dsNames2);
+        Assert.assertArrayEquals(dsNames1, dsNames3);
         Assert.assertEquals("short", dsNames1[0]);
         Assert.assertEquals("veryverylongnamebiggerthatoldlimit", dsNames1[1]);
     }
