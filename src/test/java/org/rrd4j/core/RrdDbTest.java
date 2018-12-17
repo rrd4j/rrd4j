@@ -291,4 +291,40 @@ public class RrdDbTest {
         }
     }
 
+    @Test
+    public void testDefDump() throws IOException {
+        long start = START;
+
+        RrdDef rrdDef = new RrdDef(testFolder.newFile("testBuild.rrd").getCanonicalPath(), start - 1, 300);
+        rrdDef.setVersion(2);
+        rrdDef.addDatasource("short", GAUGE, 600, 0, Double.NaN);
+        rrdDef.addDatasource("veryverylongnamebiggerthatoldlimit", GAUGE, 600, 0, Double.NaN);
+        rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
+        rrdDef.addArchive(TOTAL, 0.5, 1, 600);
+        rrdDef.addArchive(MAX, 0.5, 1, 600);
+        String[] dsNames1 = new String[2];
+        try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+            int dsCount = rrdDb.getHeader().getDsCount();
+            for(int i = 0; i < dsCount; i++) {
+                Datasource srcDs = rrdDb.getDatasource(i);
+                String dsName = srcDs.getName();
+                int j = rrdDb.getDsIndex(dsName);
+                dsNames1[j] = dsName;
+            }
+        }
+        String[] dsNames2 = new String[2];
+        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true)) {
+            int dsCount = rrdDb.getHeader().getDsCount();
+            for(int i = 0; i < dsCount; i++) {
+                Datasource srcDs = rrdDb.getDatasource(i);
+                String dsName = srcDs.getName();
+                int j = rrdDb.getDsIndex(dsName);
+                dsNames2[j] = dsName;
+            }
+        }
+        Assert.assertArrayEquals(dsNames1, dsNames2);
+        Assert.assertEquals("short", dsNames1[0]);
+        Assert.assertEquals("veryverylongnamebiggerthatoldlimit", dsNames1[1]);
+    }
+
 }

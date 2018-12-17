@@ -345,11 +345,11 @@ public abstract class RrdBackend {
      * @throws IOException
      */
     protected CharBuffer getCharBuffer(long offset, int size) throws IOException {
-        ByteBuffer bbuf = ByteBuffer.allocate(RrdPrimitive.STRING_LENGTH * 2);
+        ByteBuffer bbuf = ByteBuffer.allocate(size * 2);
         bbuf.order(BYTEORDER);
         read(offset, bbuf.array());
         bbuf.position(0);
-        bbuf.limit(RrdPrimitive.STRING_LENGTH * 2);
+        bbuf.limit(size * 2);
         return bbuf.asCharBuffer();
     }
 
@@ -361,7 +361,7 @@ public abstract class RrdBackend {
             char c = cbuf.charAt(RrdPrimitive.STRING_LENGTH - i - 1);
             if (c >= STARTPRIVATEAREA && c <= ENDPRIVATEAREA) {
                 realStringOffset += ((long) c - STARTPRIVATEAREACODEPOINT) * Math.pow(PRIVATEAREASIZE, i);
-                cbuf.put(i, ' ');
+                cbuf.limit(RrdPrimitive.STRING_LENGTH - i - 1);
             } else {
                 break;
             }
@@ -374,7 +374,7 @@ public abstract class RrdBackend {
             }
             return getCharBuffer(realStringOffset - bigStringSize * 2, bigStringSize).toString();
         } else {
-            return cbuf.toString().trim();
+            return cbuf.slice().toString().trim();
         }
     }
 
