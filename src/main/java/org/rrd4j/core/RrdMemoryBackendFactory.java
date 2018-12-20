@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,6 +36,11 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
             backends.put(id, backend);
         }
         return backend;
+    }
+
+    @Override
+    public boolean canStore(URI uri) {
+        return uri.getScheme().equals(getScheme());
     }
 
     /**
