@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
@@ -11,7 +12,7 @@ import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdMemoryBackendFactory;
 
 public class ConverterTest {
- 
+
     public void testRrdDbXml(RrdDb db) throws IOException {
         double value;
 
@@ -62,7 +63,7 @@ public class ConverterTest {
         Assert.assertEquals("Invalid value for second ds in second archive: " + value, 6.0, value, 1e-5);
 
     }
-    
+
     @Test
     public void test_3_l_64_8() throws IOException {
         testImport("/rrdtool/0003l648.rrd");
@@ -88,9 +89,10 @@ public class ConverterTest {
         testImport("/rrdtool/0001b648.rrd");
     }
 
+    @Ignore
     @Test
     public void test_1_b_32_8() throws IOException {
-        //testImport("/rrdtool/0001b328.rrd");
+        testImport("/rrdtool/0001b328.rrd");
     }
 
     @Test
