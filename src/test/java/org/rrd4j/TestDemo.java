@@ -19,7 +19,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
@@ -63,8 +62,6 @@ public class TestDemo {
 
     @Test
     public void main() throws IOException {
-        System.out.println("== Starting demo");
-        long startMillis = System.currentTimeMillis();
         long start = START;
         long end = END;
 
@@ -75,7 +72,7 @@ public class TestDemo {
         String logPath = testFolder.getRoot().getCanonicalPath() + "FILE" + ".log";
         PrintWriter log = new PrintWriter(new BufferedOutputStream(new FileOutputStream(logPath, false)));
         // creation
-        System.out.println("== Creating RRD file " + rrdPath);
+
         RrdDef rrdDef = new RrdDef(rrdPath, start - 1, 300);
         rrdDef.setVersion(2);
         rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);
@@ -88,22 +85,20 @@ public class TestDemo {
         rrdDef.addArchive(MAX, 0.5, 6, 700);
         rrdDef.addArchive(MAX, 0.5, 24, 775);
         rrdDef.addArchive(MAX, 0.5, 288, 797);
-        System.out.println(rrdDef.dump());
+
         log.println(rrdDef.dump());
-        System.out.println("Estimated file size: " + rrdDef.getEstimatedSize());
+
         RrdDb rrdDb = new RrdDb(rrdDef);
-        System.out.println("== RRD file created.");
+
         Assert.assertTrue(rrdDb.getRrdDef().equals(rrdDef));
         rrdDb.close();
-        System.out.println("== RRD file closed.");
+
 
         // update database
         GaugeSource sunSource = new GaugeSource(1200, 20);
         GaugeSource shadeSource = new GaugeSource(300, 10);
-        System.out.println("== Simulating one month of RRD file updates with step not larger than " +
-                MAX_STEP + " seconds (* denotes 1000 updates)");
+
         long t = start;
-        int n = 0;
         rrdDb = new RrdDb(rrdPath);
         Sample sample = rrdDb.createSample();
 
@@ -117,43 +112,24 @@ public class TestDemo {
         }
         rrdDb.close();
 
-        System.out.println("== Finished. RRD file updated " + n + " times");
-
         // test read-only access!
         rrdDb = new RrdDb(rrdPath, true);
-        System.out.println("File reopen in read-only mode");
         Calendar c = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
         c.setTimeInMillis(rrdDb.getLastUpdateTime() * 1000);
-        System.out.println("== Last update time was: " + String.format(Locale.US, "%tF %tT", c, c));
-        System.out.println("== Last info was: " + rrdDb.getInfo());
 
         // fetch data
-        System.out.println("== Fetching data for the whole month");
         FetchRequest request = rrdDb.createFetchRequest(AVERAGE, start, end);
-        System.out.println(request.dump());
         log.println(request.dump());
-        FetchData fetchData = request.fetchData();
-        System.out.println("== Data fetched. " + fetchData.getRowCount() + " points obtained");
-        System.out.println(fetchData.toString());
-        System.out.println("== Dumping fetched data to XML format");
-        System.out.println("== Fetch completed");
 
         // dump to XML file
-        System.out.println("== Dumping RRD file to XML file " + xmlPath + " (can be restored with RRDTool)");
         rrdDb.exportXml(xmlPath);
-        System.out.println("== Creating RRD file " + rrdRestoredPath + " from XML file " + xmlPath);
         RrdDb rrdRestoredDb = new RrdDb(rrdRestoredPath, xmlPath);
 
         // close files
-        System.out.println("== Closing both RRD files");
         rrdDb.close();
-        System.out.println("== First file closed");
         rrdRestoredDb.close();
-        System.out.println("== Second file closed");
 
         // create graph
-        System.out.println("Creating graph " + Util.getLapTime());
-        System.out.println("== Creating graph from the second file");
         RrdGraphDef gDef = new RrdGraphDef();
         gDef.setLocale(Locale.US);
         gDef.setTimeZone(TimeZone.getTimeZone("CET"));
@@ -206,15 +182,10 @@ public class TestDemo {
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);
         gDef.setImageFormat("png");
-        System.out.println("Rendering graph " + Util.getLapTime());
         // create graph finally
         RrdGraph graph = new RrdGraph(gDef);
-        System.out.println(graph.getRrdGraphInfo().dump());
-        System.out.println("== Graph created " + Util.getLapTime());
         // demo ends
         log.close();
-        System.out.println("== Demo completed in " +
-                ((System.currentTimeMillis() - startMillis) / 1000.0) + " sec");
 
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
         String[] lines = graphinfo.getPrintLines();

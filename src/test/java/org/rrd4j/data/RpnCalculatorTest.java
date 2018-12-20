@@ -1,7 +1,6 @@
 package org.rrd4j.data;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +24,6 @@ public class RpnCalculatorTest {
         dp.processData();
         RpnCalculator calc = new RpnCalculator(rpn, "rpn name", dp);
         double[] rpnValues = calc.calculateValues();
-        System.out.println(Arrays.toString(rpnValues));
         for(int i=0; i < values.length; i++) {
             String message = String.format("for '%s', at %d", rpn, i);
             Assert.assertEquals(message, values[i], rpnValues[i], 1e-10);

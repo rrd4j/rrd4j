@@ -145,7 +145,6 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid total for sun", 2153734.6966666686, speedAggr.getTotal(), 1e-7);
 
         Aggregates weightAggr = fd.getAggregates("shade");
-        System.out.println(weightAggr.dump());
         Assert.assertEquals("Invalid average for shade", 2.0128491560, weightAggr.getAverage(), 1e-7);
         Assert.assertEquals("Invalid first for shade", 5.9251000000E02, weightAggr.getFirst(), 1e-7);
         Assert.assertEquals("Invalid last for shade", 5.0486666667E02, weightAggr.getLast(), 1e-7);
@@ -218,7 +217,7 @@ public class RrdDbTest {
     public void testRead2() throws IOException {
         URL url = getClass().getResource("/demo2.rrd"); 
         RrdDb rrd = new RrdDb(url.getFile(), RrdBackendFactory.getFactory("FILE"));
-        testRrdDb(rrd);       
+        testRrdDb(rrd);
         Assert.assertEquals("not expected version", 2, rrd.getRrdDef().getVersion());
         checkValues(rrd);
     }
@@ -267,7 +266,6 @@ public class RrdDbTest {
             testTime.set(Calendar.MINUTE, 0);
             testTime.set(Calendar.SECOND, 0);
             testTime.set(Calendar.MILLISECOND, 0);
-            System.out.println(testTime);
             //testTime.add(Calendar.HOUR, -1);
             long start =  Util.getTimestamp(testTime);
             long timeStamp = start;
@@ -282,7 +280,6 @@ public class RrdDbTest {
             }
             long end = timeStamp;
             FetchData f = rrdDb.createFetchRequest(AVERAGE, start, end).fetchData();
-            System.out.println(f.dump());
             double[] values = f.getValues("ds");
             Assert.assertEquals("Data before first entry", Double.NaN, values[0], 0.0);
             Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);

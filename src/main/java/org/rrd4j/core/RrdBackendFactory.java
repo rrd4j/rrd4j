@@ -81,7 +81,6 @@ public abstract class RrdBackendFactory implements Closeable {
     private static final class Registry {
         private static final Map<String, RrdBackendFactory> factories = new HashMap<String, RrdBackendFactory>();
         static {
-            System.out.println("run static");
             RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
             factories.put(fileFactory.name, fileFactory);
             RrdMemoryBackendFactory memoryFactory = new RrdMemoryBackendFactory();

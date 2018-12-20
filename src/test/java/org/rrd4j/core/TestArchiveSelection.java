@@ -106,7 +106,6 @@ public class TestArchiveSelection {
 
         FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, 920202800, 920203565);
         FetchData fetchData = fetchRequest.fetchData();
-        System.out.println("Without resolution \n"+fetchData.toString());
         Assert.assertArrayEquals("timestamps don't match with no resolution", timeStamp1, fetchData.getTimestamps());
 
         rrdDb.close();
@@ -119,7 +118,6 @@ public class TestArchiveSelection {
 
         FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, 920202800, 920203565, 150);
         FetchData fetchData = fetchRequest.fetchData();
-        System.out.println("With resolution 150s \n"+fetchData.toString());
         Assert.assertArrayEquals("timestamps don't match with resolution 150", timeStamp2, fetchData.getTimestamps());
 
         rrdDb.close();
