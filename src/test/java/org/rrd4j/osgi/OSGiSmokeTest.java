@@ -20,9 +20,9 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.rrd4j.DsType;
-import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdMemoryBackendFactory;
 import org.rrd4j.core.Sample;
 
 /**
@@ -38,7 +38,7 @@ import org.rrd4j.core.Sample;
  */
 @RunWith(PaxExam.class)
 public class OSGiSmokeTest {
-
+    
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
@@ -63,7 +63,7 @@ public class OSGiSmokeTest {
         Random rnd = new Random();
 
         // due to sun.misc usually not being exported, default to the FILE backend
-        try (RrdDb rrdDb = new RrdDb(rrdDef, RrdBackendFactory.getFactory("FILE"))) {
+        try (RrdDb rrdDb = new RrdDb(rrdDef, new RrdMemoryBackendFactory())) {
             long time = System.currentTimeMillis() / 1000;
             Sample sample = rrdDb.createSample();
             for ( int i = 0 ; i < 10; i++ ) {
