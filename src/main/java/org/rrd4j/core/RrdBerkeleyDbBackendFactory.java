@@ -31,7 +31,6 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
      */
     public RrdBerkeleyDbBackendFactory(Database rrdDatabase) {
         this.rrdDatabase = rrdDatabase;
-        RrdBackendFactory.registerAndSetAsDefaultFactory(this);
     }
 
     /**
