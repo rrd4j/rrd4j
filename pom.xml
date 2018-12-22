@@ -22,8 +22,8 @@
         <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
         <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
         <junit.version>4.12</junit.version>
-        <log4j>2.11.0</log4j>
-        <pax-exam.version>4.11.0</pax-exam.version>
+        <log4j>2.11.1</log4j>
+        <pax-exam.version>4.13.1</pax-exam.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <jdk.home>${java.home}</jdk.home>
@@ -48,13 +48,13 @@
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>18.3.1</version>
+            <version>18.3.12</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.8.2</version>
+            <version>3.9.1</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
@@ -132,7 +132,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.8.0</version>
                 <configuration>
                     <showWarnings>true</showWarnings>
                 </configuration>
@@ -140,7 +140,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>default-jar</id>
