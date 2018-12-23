@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
@@ -842,8 +843,26 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param dsName    Datasource name in the specified RRD file
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      * @param backend   Backend to be used while fetching data from a RRD file.
+     * 
+     * @deprecated Uses {@link #datasource(String, String, String, ConsolFun, RrdBackendFactory)} instead
      */
+    @Deprecated
     public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun, String backend) {
+        sources.add(new Def(name, rrdPath, dsName, consolFun, RrdBackendFactory.getFactory(backend)));
+    }
+
+    /**
+     * Defines virtual datasource. This datasource can then be used
+     * in other methods like {@link #datasource(String, String)} or
+     * {@link #gprint(String, ConsolFun, String)}.
+     *
+     * @param name      Source name
+     * @param rrdPath   Path to RRD file
+     * @param dsName    Datasource name in the specified RRD file
+     * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
+     * @param backend   Backend to be used while fetching data from a RRD file.
+     */
+    public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun, RrdBackendFactory backend) {
         sources.add(new Def(name, rrdPath, dsName, consolFun, backend));
     }
 

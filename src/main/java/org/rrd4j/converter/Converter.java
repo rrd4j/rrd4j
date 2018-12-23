@@ -19,6 +19,7 @@ public class Converter {
     private String[] files;
     private int totalCount, badCount, goodCount;
 
+    @SuppressWarnings("deprecation")
     private Converter(String[] files) {
         try {
             RrdDb.setDefaultFactory(FACTORY_NAME);

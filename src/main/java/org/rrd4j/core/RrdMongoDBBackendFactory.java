@@ -111,6 +111,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
      * @param rrdCollection the collection to use for storing RRD byte data
      * @param registerAsDefault if true, the backend will be registered as the default
      */
+    @SuppressWarnings("deprecation")
     public RrdMongoDBBackendFactory(final MongoClient client, final MongoCollection<DBObject> rrdCollection, boolean registerAsDefault) {
 
         wrapper = new MongoWrapper() {

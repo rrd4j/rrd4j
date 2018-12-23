@@ -58,6 +58,7 @@ public class Demo {
      * @param args the name of the backend factory to use (optional)
      * @throws java.io.IOException Thrown
      */
+    @SuppressWarnings("deprecation")
     public static void main(String[] args) throws IOException {
         System.setProperty("java.awt.headless","true");
 

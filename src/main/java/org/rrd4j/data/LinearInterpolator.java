@@ -149,6 +149,7 @@ public class LinearInterpolator extends Plottable {
      *                            <code>INTERPOLATE_RIGHT</code>, <code>INTERPOLATE_LINEAR</code> or
      *                            <code>INTERPOLATE_REGRESSION</code>. Any other value will be interpreted as
      *                            INTERPOLATE_LINEAR (default).
+     * @deprecated uses {@link #setInterpolationMethod(Method)} instead.
      */
     @Deprecated
     public void setInterpolationMethod(int interpolationMethod) {

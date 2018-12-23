@@ -564,8 +564,30 @@ public class DataProcessor {
      *                   file ("AVERAGE", "MIN", "MAX" or "LAST" - these string constants are conveniently defined
      *                   in the {@link org.rrd4j.ConsolFun ConsolFun} class).
      * @param backend    Name of the RrdBackendFactory that should be used for this RrdDb.
+     * @deprecated uses {@link #addDatasource(String, String, String, ConsolFun, RrdBackendFactory)} instead
      */
+    @Deprecated
     public void addDatasource(String name, String file, String dsName, ConsolFun consolFunc, String backend) {
+        Def def = new Def(name, file, dsName, consolFunc, RrdBackendFactory.getFactory(backend));
+        sources.put(name, def);
+    }
+
+    /**
+     * <p>Adds simple source (<b>DEF</b>). Source <code>name</code> can be used:</p>
+     * <ul>
+     * <li>To specify sources for line, area and stack plots.</li>
+     * <li>To define complex sources
+     * </ul>
+     *
+     * @param name       Source name.
+     * @param file       Path to RRD file.
+     * @param dsName     Data source name defined in the RRD file.
+     * @param consolFunc Consolidation function that will be used to extract data from the RRD
+     *                   file ("AVERAGE", "MIN", "MAX" or "LAST" - these string constants are conveniently defined
+     *                   in the {@link org.rrd4j.ConsolFun ConsolFun} class).
+     * @param backend    Name of the RrdBackendFactory that should be used for this RrdDb.
+     */
+    public void addDatasource(String name, String file, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
         Def def = new Def(name, file, dsName, consolFunc, backend);
         sources.put(name, def);
     }
@@ -854,12 +876,13 @@ public class DataProcessor {
     }
 
     private RrdDb getRrd(Def def) throws IOException {
-        String path = def.getPath(), backend = def.getBackend();
+        String path = def.getPath();
+        RrdBackendFactory backend = def.getBackend();
         if (poolUsed && backend == null) {
             return RrdDbPool.getInstance().requestRrdDb(path);
         }
         else if (backend != null) {
-            return new RrdDb(path, true, RrdBackendFactory.getFactory(backend));
+            return new RrdDb(path, true, backend);
         }
         else {
             return new RrdDb(path, true);
@@ -867,7 +890,7 @@ public class DataProcessor {
     }
 
     private void releaseRrd(RrdDb rrd, Def def) throws IOException {
-        String backend = def.getBackend();
+        RrdBackendFactory backend = def.getBackend();
         if (poolUsed && backend == null) {
             RrdDbPool.getInstance().release(rrd);
         }

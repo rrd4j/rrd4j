@@ -26,6 +26,7 @@ public class TemplateTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
+    @SuppressWarnings("deprecation")
     @Test
     @Ignore("Missing XML export of graph def")
     public void test1() throws IOException {

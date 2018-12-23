@@ -630,9 +630,10 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void resolveDef(Node parentNode) {
         validateTagsOnlyOnce(parentNode, new String[]{"name", "rrd", SOURCE, "cf", "backend"});
-        String name = null, rrd = null, source = null, backend = null;
+        String name = null, rrd = null, source = null, backendName = null;
         ConsolFun consolFun = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
@@ -650,11 +651,15 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 consolFun = ConsolFun.valueOf(getValue(childNode));
             }
             else if (nodeName.equals("backend")) {
-                backend = getValue(childNode);
+                backendName = getValue(childNode);
             }
         }
         if (name != null && rrd != null && source != null && consolFun != null) {
-            rrdGraphDef.datasource(name, rrd, source, consolFun, backend);
+            if (backendName != null) {
+                rrdGraphDef.datasource(name, rrd, source, consolFun, backendName);
+            } else {
+                rrdGraphDef.datasource(name, rrd, source, consolFun);
+            }
         }
         else {
             throw new IllegalArgumentException("Incomplete DEF settings");

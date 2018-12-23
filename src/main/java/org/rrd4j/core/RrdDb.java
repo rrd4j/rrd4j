@@ -765,15 +765,15 @@ public class RrdDb implements RrdUpdater, Closeable {
     }
 
     final void archive(Datasource datasource, double value, double lastValue, long numUpdates) throws IOException {
-       int dsIndex = getDsIndex(datasource.getName());
-       for (Archive archive : archives) {
-          if(ConsolFun.AVERAGE.equals(archive.getConsolFun())) { 
-             archive.archive(dsIndex, value, numUpdates);
-          } else {
-             archive.archive(dsIndex, lastValue, numUpdates);
-          }
-       }
-   }
+        int dsIndex = getDsIndex(datasource.getName());
+        for (Archive archive : archives) {
+            if(ConsolFun.AVERAGE.equals(archive.getConsolFun())) { 
+                archive.archive(dsIndex, value, numUpdates);
+            } else {
+                archive.archive(dsIndex, lastValue, numUpdates);
+            }
+        }
+    }
 
     /**
      * Returns internal index number for the given datasource name.
@@ -1106,7 +1106,9 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @param factoryName Name of the backend factory to be set as default.
      * @throws java.lang.IllegalArgumentException Thrown if invalid factory name is supplied, or not called
      *                                  before the first backend object (before the first RrdDb object) is created.
+     * @deprecated uses {@link RrdBackendFactory#setActiveFactories(RrdBackendFactory...)} instead.
      */
+    @Deprecated
     public static void setDefaultFactory(String factoryName) {
         RrdBackendFactory.setDefaultFactory(factoryName);
     }
