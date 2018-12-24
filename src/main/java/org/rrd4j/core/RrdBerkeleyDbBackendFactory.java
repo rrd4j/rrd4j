@@ -1,6 +1,8 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -56,6 +58,33 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         }
     }
 
+    @Override
+    public URI getUri(String path) {
+        try {
+            return new URI("berkeley", "", rrdDatabase.getEnvironment().getHome().getAbsolutePath(), rrdDatabase.getDatabaseName(), path);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("can't extract URI from '" + path + "': " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String getPath(URI uri) {
+        return uri.getFragment();
+    }
+
+    @Override
+    public boolean canStore(URI uri) {
+        if (! "berkeley".equals(uri.getScheme())) {
+            return false;
+        } else if ( !uri.getPath().isEmpty() && !uri.getPath().equals(rrdDatabase.getEnvironment().getHome().getAbsolutePath())) {
+            return false;
+        } else if ( !uri.getQuery().isEmpty() && !uri.getQuery().equals(rrdDatabase.getDatabaseName())) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
      * <p>delete.</p>
      *
@@ -67,7 +96,6 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         } catch (DatabaseException de) {
             throw new RuntimeException(de.getMessage(), de);
         }
-
         pathCache.remove(path);
     }
 
@@ -81,9 +109,9 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
             return true;
         } else {
             DatabaseEntry theKey = new DatabaseEntry(path.getBytes(StandardCharsets.UTF_8));
-            theKey.setPartial(0, 0, true); // avoid returning rrd data since we're only checking for existence
 
             DatabaseEntry theData = new DatabaseEntry();
+            theData.setPartial(0, 0, true); // avoid returning rrd data since we're only checking for existence
 
             try {
                 boolean pathExists = rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT) == OperationStatus.SUCCESS;
