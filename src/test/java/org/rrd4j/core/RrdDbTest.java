@@ -11,7 +11,9 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Random;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -21,6 +23,20 @@ import org.rrd4j.data.Aggregates;
 
 @SuppressWarnings("deprecation")
 public class RrdDbTest {
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
+
     static final long SEED = 1909752002L;
     static final Random RANDOM = new Random(SEED);
     static final long START = Util.getTimestamp(2010, 4, 1);
