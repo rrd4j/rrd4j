@@ -31,7 +31,7 @@ public class TimeParser {
 
     private void expectToken(int desired, String errorMessage) {
         token = scanner.nextToken();
-        if (token.id != desired) {
+        if (token.token_id != desired) {
             throw new IllegalArgumentException(errorMessage);
         }
     }
@@ -45,7 +45,7 @@ public class TimeParser {
         }
         int delta = Integer.parseInt(token.value);
         token = scanner.nextToken();
-        if (token.id == TimeToken.MONTHS_MINUTES) {
+        if (token.token_id == TimeToken.MONTHS_MINUTES) {
             /* hard job to guess what does that -5m means: -5mon or -5min? */
             switch (prev_multiplier) {
             case TimeToken.DAYS:
@@ -68,9 +68,9 @@ public class TimeParser {
                 }
             }
         }
-        prev_multiplier = token.id;
+        prev_multiplier = token.token_id;
         delta *= (op == TimeToken.PLUS) ? +1 : -1;
-        switch (token.id) {
+        switch (token.token_id) {
         case TimeToken.YEARS:
             spec.dyear += delta;
             return;
@@ -112,12 +112,12 @@ public class TimeParser {
         }
         hour = Integer.parseInt(token.value);
         token = scanner.nextToken();
-        if (token.id == TimeToken.SLASH) {
+        if (token.token_id == TimeToken.SLASH) {
             /* guess we are looking at a date */
             token = scanner.restoreState();
             return;
         }
-        if (token.id == TimeToken.COLON || token.id == TimeToken.DOT) {
+        if (token.token_id == TimeToken.COLON || token.token_id == TimeToken.DOT) {
             expectToken(TimeToken.NUMBER, "Parsing HH:MM or HH.MM syntax, expecting MM as number, got none");
             minute = Integer.parseInt(token.value);
             if (minute > 59) {
@@ -125,18 +125,18 @@ public class TimeParser {
                         minute + " (>59!)");
             }
             token = scanner.nextToken();
-            if(token.id == TimeToken.DOT) {
+            if(token.token_id == TimeToken.DOT) {
                 //Oh look, another dot; must have actually been a date in DD.MM.YYYY format.  Give up and return
                 token = scanner.restoreState();
                 return;
             }
         }
         /* check if an AM or PM specifier was given */
-        if (token.id == TimeToken.AM || token.id == TimeToken.PM) {
+        if (token.token_id == TimeToken.AM || token.token_id == TimeToken.PM) {
             if (hour > 12) {
                 throw new IllegalArgumentException("There cannot be more than 12 AM or PM hours");
             }
-            if (token.id == TimeToken.PM) {
+            if (token.token_id == TimeToken.PM) {
                 if (hour != 12) {
                     /* 12:xx PM is 12:xx, not 24:xx */
                     hour += 12;
@@ -187,7 +187,7 @@ public class TimeParser {
 
     private void day() {
         long mday = 0, wday, mon, year = spec.year;
-        switch (token.id) {
+        switch (token.token_id) {
         case TimeToken.YESTERDAY:
             spec.day--;
             /* FALLTRHU */
@@ -211,11 +211,11 @@ public class TimeParser {
         case TimeToken.NOV:
         case TimeToken.DEC:
             /* do month mday [year] */
-            mon = (token.id - TimeToken.JAN);
+            mon = (token.token_id - TimeToken.JAN);
             expectToken(TimeToken.NUMBER, "the day of the month should follow month name");
             mday = Long.parseLong(token.value);
             token = scanner.nextToken();
-            if (token.id == TimeToken.NUMBER) {
+            if (token.token_id == TimeToken.NUMBER) {
                 year = Long.parseLong(token.value);
                 token = scanner.nextToken();
             }
@@ -232,7 +232,7 @@ public class TimeParser {
         case TimeToken.FRI:
         case TimeToken.SAT:
             /* do a particular day of the week */
-            wday = (token.id - TimeToken.SUN);
+            wday = (token.token_id - TimeToken.SUN);
             spec.day += (wday - spec.wday);
             token = scanner.nextToken();
             break;
@@ -253,15 +253,15 @@ public class TimeParser {
             }
             else {
                 token = scanner.nextToken();
-                if (mon <= 31 && (token.id == TimeToken.SLASH || token.id == TimeToken.DOT)) {
-                    int sep = token.id;
+                if (mon <= 31 && (token.token_id == TimeToken.SLASH || token.token_id == TimeToken.DOT)) {
+                    int sep = token.token_id;
                     expectToken(TimeToken.NUMBER, "there should be " +
                             (sep == TimeToken.DOT ? "month" : "day") +
                             " number after " +
                             (sep == TimeToken.DOT ? '.' : '/'));
                     mday = Long.parseLong(token.value);
                     token = scanner.nextToken();
-                    if (token.id == sep) {
+                    if (token.token_id == sep) {
                         expectToken(TimeToken.NUMBER, "there should be year number after " +
                                 (sep == TimeToken.DOT ? '.' : '/'));
                         year = Long.parseLong(token.value);
@@ -299,7 +299,7 @@ public class TimeParser {
         /* establish the default time reference */
         spec.localtime(now);
         token = scanner.nextToken();
-        switch (token.id) {
+        switch (token.token_id) {
         case TimeToken.PLUS:
         case TimeToken.MINUS:
             break; /* jump to OFFSET-SPEC part */
@@ -313,15 +313,15 @@ public class TimeParser {
             spec.year = spec.month = spec.day = spec.hour = spec.min = spec.sec = 0;
             /* FALLTHRU */
         case TimeToken.NOW:
-            int time_reference = token.id;
+            int time_reference = token.token_id;
             token = scanner.nextToken();
-            if (token.id == TimeToken.PLUS || token.id == TimeToken.MINUS) {
+            if (token.token_id == TimeToken.PLUS || token.token_id == TimeToken.MINUS) {
                 break;
             }
             if (time_reference != TimeToken.NOW) {
                 throw new IllegalArgumentException("Words 'start' or 'end' MUST be followed by +|- offset");
             }
-            else if (token.id != TimeToken.EOF) {
+            else if (token.token_id != TimeToken.EOF) {
                 throw new IllegalArgumentException("If 'now' is followed by a token it must be +|- offset");
             }
             break;
@@ -345,7 +345,7 @@ public class TimeParser {
         case TimeToken.YESTERDAY:
         case TimeToken.TOMORROW:
             day();
-            if (token.id != TimeToken.NUMBER) {
+            if (token.token_id != TimeToken.NUMBER) {
                 break;
             }
             //Allows (but does not require) the time to be specified after the day.  This extends the rrdfetch specification
@@ -381,15 +381,15 @@ public class TimeParser {
          *
          * (NOTE, the sc_tokid was prefetched for us by the previous code)
          */
-        if (token.id == TimeToken.PLUS || token.id == TimeToken.MINUS) {
+        if (token.token_id == TimeToken.PLUS || token.token_id == TimeToken.MINUS) {
             scanner.setContext(false);
-            while (token.id == TimeToken.PLUS || token.id == TimeToken.MINUS ||
-                    token.id == TimeToken.NUMBER) {
-                if (token.id == TimeToken.NUMBER) {
+            while (token.token_id == TimeToken.PLUS || token.token_id == TimeToken.MINUS ||
+                    token.token_id == TimeToken.NUMBER) {
+                if (token.token_id == TimeToken.NUMBER) {
                     plusMinus(PREVIOUS_OP);
                 }
                 else {
-                    plusMinus(token.id);
+                    plusMinus(token.token_id);
                 }
                 token = scanner.nextToken();
                 /* We will get EOF eventually but that's OK, since
@@ -397,7 +397,7 @@ public class TimeParser {
             }
         }
         /* now we should be at EOF */
-        if (token.id != TimeToken.EOF) {
+        if (token.token_id != TimeToken.EOF) {
             throw new IllegalArgumentException("Unparsable trailing text: " + token.value);
         }
         return spec;

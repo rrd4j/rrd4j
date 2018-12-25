@@ -318,7 +318,7 @@ public abstract class RrdBackendFactory implements Closeable {
     protected final String name;
     protected final boolean cachingAllowed;
     protected final String scheme;
-    protected final boolean shouldValidateHeader;
+    protected final boolean validateHeader;
 
     protected RrdBackendFactory() {
         RrdBackendAnnotation annotation = getClass().getAnnotation(RrdBackendAnnotation.class);
@@ -330,12 +330,12 @@ public abstract class RrdBackendFactory implements Closeable {
             } else {
                 scheme = name.toLowerCase(Locale.ENGLISH);
             }
-            shouldValidateHeader = annotation.shouldValidateHeader();
+            validateHeader = annotation.shouldValidateHeader();
         } else {
             name = getName();
             cachingAllowed = RrdBackendAnnotation.DEFAULT_CACHING_ALLOWED;
             scheme = getName().toLowerCase(Locale.ENGLISH);
-            shouldValidateHeader = true;
+            validateHeader = true;
         }
     }
 
@@ -531,7 +531,7 @@ public abstract class RrdBackendFactory implements Closeable {
      * @return a boolean.
      */
     protected boolean shouldValidateHeader(String path) throws IOException {
-        return shouldValidateHeader;
+        return validateHeader;
     }
 
     /**

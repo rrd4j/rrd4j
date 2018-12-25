@@ -165,7 +165,7 @@ class TimeScanner {
     }
 
     TimeToken resolveMonthsMinutes(int newId) {
-        assert token.id == TimeToken.MONTHS_MINUTES;
+        assert token.token_id == TimeToken.MONTHS_MINUTES;
         assert newId == TimeToken.MONTHS || newId == TimeToken.MINUTES;
         return token = new TimeToken(token.value, newId);
     }
@@ -183,7 +183,7 @@ class TimeScanner {
     private int parseToken(String arg) {
         for (int i = 0; specials[i].value != null; i++) {
             if (specials[i].value.equalsIgnoreCase(arg)) {
-                return specials[i].id;
+                return specials[i].token_id;
             }
         }
         return TimeToken.ID;
