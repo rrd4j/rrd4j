@@ -153,6 +153,8 @@
                                 <!-- Exclude images used in the inspector only. -->
                                 <exclude>*.gif</exclude>
                                 <exclude>*.png</exclude>
+                                <!-- Exclude Epoch -->
+                               <exclude>org/rrd4j/core/timespec/Epoch.class</exclude>
                             </excludes>
                             <archive>
                                 <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -216,6 +218,27 @@
                             <archive>
                                 <manifest>
                                     <mainClass>org.rrd4j.demo.Demo</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <!-- Resolves to the default jar file. -->
+                                    <Class-Path>${project.build.finalName}.jar</Class-Path>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>epoch</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>epoch</classifier>
+                            <includes>
+                                <include>org/rrd4j/core/timespec/Epoch.class</include>
+                            </includes>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.rrd4j.core.timespec.Epoch</mainClass>
                                 </manifest>
                                 <manifestEntries>
                                     <!-- Resolves to the default jar file. -->
