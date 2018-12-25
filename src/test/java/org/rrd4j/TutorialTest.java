@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -13,8 +15,10 @@ import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 import org.rrd4j.graph.RrdGraph;
@@ -39,6 +43,19 @@ public class TutorialTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
     }
 
     @Test

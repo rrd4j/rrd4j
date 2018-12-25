@@ -31,14 +31,18 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 
@@ -61,6 +65,19 @@ public class ValueAxisTest extends DummyGraph {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
 
     private ValueAxis valueAxis;
     private String jrbFileName;

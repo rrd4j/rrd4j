@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
@@ -18,9 +19,16 @@ import com.mongodb.client.MongoDatabase;
 
 public class RrdDbMongoDbTest {
 
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+    }
+
     @AfterClass
-    public static void resetFactories() {
-        RrdBackendFactory.setActiveFactories();
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
     }
 
     @Test

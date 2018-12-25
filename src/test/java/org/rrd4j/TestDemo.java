@@ -15,13 +15,17 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.TimeZone;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.Variable;
@@ -34,8 +38,11 @@ import org.rrd4j.graph.TimeLabelFormat;
 import eu.bengreen.data.utility.LargestTriangleThreeBuckets;
 
 public class TestDemo {
+
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
+
+    static private RrdBackendFactory previousBackend;
 
     static final long SEED = 1909752002L;
     static final Random RANDOM = new Random(SEED);
@@ -59,6 +66,17 @@ public class TestDemo {
 
     static final int IMG_WIDTH = 500;
     static final int IMG_HEIGHT = 300;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
 
     @Test
     public void main() throws IOException {
