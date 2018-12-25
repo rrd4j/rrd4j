@@ -29,11 +29,10 @@ public class RrdNioBackendTest extends BackendTester {
 
     @Test
     public void testBackendFactoryDefaults() throws IOException {
-        // Don't close a default NIO, it will close the background sync threads executor
-        @SuppressWarnings("resource")
-        RrdNioBackendFactory factory = new RrdNioBackendFactory();
-        File rrdfile = testFolder.newFile("testfile");
-        super.testBackendFactory(factory,rrdfile.getCanonicalPath());
+        try (RrdNioBackendFactory factory = new RrdNioBackendFactory(0)) {
+            File rrdfile = testFolder.newFile("testfile");
+            super.testBackendFactory(factory,rrdfile.getCanonicalPath());
+        }
     }
 
     @Test
