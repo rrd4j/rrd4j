@@ -252,7 +252,6 @@ public abstract class RrdBackendFactory implements Closeable {
                     return tryfactory;
                 }
             }
-            System.out.println("***************** uri scheme: " + uri.isAbsolute());
             throw new IllegalArgumentException(
                     "no matching backend factory for " + uri);
         }
