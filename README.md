@@ -19,7 +19,7 @@ RRD4J 3.3.1 (released 2018-10-05) - [Download](https://github.com/rrd4j/rrd4j/re
 
 ### Building (optional)
 
-RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/site). Automated builds are uploaded
+RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/). Automated builds are uploaded
 to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
 ### Using with Maven
