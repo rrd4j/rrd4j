@@ -4,9 +4,9 @@ import org.rrd4j.graph.ImageParameters;
 import org.rrd4j.graph.RrdGraphDef;
 
 class Mapper {
-    private RrdGraphDef gdef;
-    private ImageParameters im;
-    private double pixieX, pixieY;
+    private final RrdGraphDef gdef;
+    private final ImageParameters im;
+    private final double pixieX, pixieY;
 
     Mapper(RrdGraph rrdGraph) {
         this.gdef = rrdGraph.gdef;

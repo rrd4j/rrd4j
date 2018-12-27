@@ -5,7 +5,7 @@ import java.awt.Paint;
 
 import org.rrd4j.core.Util;
 
-class ValueAxis implements RrdGraphConstants {
+class ValueAxis extends Axis {
     private static final YLabel[] ylabels = {
         new YLabel(0.1, 1, 2, 5, 10),
         new YLabel(0.2, 1, 5, 10, 20),

@@ -5,7 +5,7 @@ import java.awt.Paint;
 import java.util.Calendar;
 import java.util.Date;
 
-class TimeAxis implements RrdGraphConstants {
+class TimeAxis extends Axis {
     private static final TimeAxisSetting[] tickSettings = {
             new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, HH_MM),
             new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, HH_MM),
@@ -60,14 +60,18 @@ class TimeAxis implements RrdGraphConstants {
         this.calendar.setFirstDayOfWeek(gdef.firstDayOfWeek);
     }
 
-    void draw() {
+    boolean draw() {
         chooseTickSettings();
         // early return, avoid exceptions
-        if (tickSetting == null) return;
+        if (tickSetting == null) {
+            return false;
+        }
 
         drawMinor();
         drawMajor();
         drawLabels();
+        
+        return true;
     }
 
     private void drawMinor() {

@@ -4,16 +4,23 @@ import org.rrd4j.core.Util;
 
 import java.awt.*;
 
-class ValueAxisMrtg implements RrdGraphConstants {
-    private ImageParameters im;
-    private ImageWorker worker;
-    private RrdGraphDef gdef;
+class ValueAxisMrtg extends Axis {
+    
+    private final ImageParameters im;
+    private final ImageWorker worker;
+    private final RrdGraphDef gdef;
 
     ValueAxisMrtg(RrdGraph rrdGraph) {
         this.im = rrdGraph.im;
         this.gdef = rrdGraph.gdef;
         this.worker = rrdGraph.worker;
         im.unit = gdef.unit;
+    }
+
+    ValueAxisMrtg(ImageParameters im, ImageWorker worker, RrdGraphDef gdef) {
+        this.im = im;
+        this.gdef = gdef;
+        this.worker = worker;
     }
 
     boolean draw() {
