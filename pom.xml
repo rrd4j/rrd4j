@@ -27,7 +27,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <jdk.home>${java.home}</jdk.home>
-        <github.global.server>github</github.global.server>
+        <github.global.password>${env.GITHUB_TOKEN}</github.global.password>
         <!-- current year. -->
         <year>2018</year>
     </properties>
