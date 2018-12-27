@@ -9,9 +9,9 @@ cache:
     - '$HOME/.m2/repository'
 install: true
 script:
-  - mvn clean verify site -Dmaven.test.skip=true -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64 && JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 mvn test -Dmaven.main.skip -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64
+  - mvn clean verify site -Dmaven.test.skip=true -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64 && JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 mvn test -Dmaven.main.skip -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64 --settings deploy-settings.xml
 before_deploy:
-  - mvn deploy -Dmaven.test.skip=true -Dmaven.main.skip -Dmaven.install.skip=true -DaltDeploymentRepository=travis::default::file:target/deploy --settings deploy-settings.xml
+  - mvn deploy -Dmaven.test.skip=true -Dmaven.main.skip -Dmaven.install.skip=true -DaltDeploymentRepository=travis::default::file:target/deploy
 deploy:
   provider: bintray
   file: target/descriptor.json
