@@ -27,6 +27,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <jdk.home>${java.home}</jdk.home>
+        <github.global.server>github</github.global.server>
         <!-- current year. -->
         <year>2018</year>
     </properties>
@@ -130,7 +131,7 @@
         </resources>
         <plugins>
             <plugin>
-                <!--  use to build the descriptor.json used by travis -->
+                <!-- use to build the descriptor.json used by travis -->
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.0.2</version>
                 <executions>
@@ -158,9 +159,9 @@
                 <version>3.8.0</version>
                 <configuration>
                     <compilerArgs>
-                        <!-- check the path for the rt.jar, allows to compile with JDK > 9 but still generate JDK <9 compatible code-->
-                        <!-- Will break when base version will be >=9 !-->
-                     <arg>-Xbootclasspath:${jdk.home}/jre/lib/rt.jar</arg>
+                        <!-- check the path for the rt.jar, allows to compile with JDK > 9 but still generate JDK <9 compatible code -->
+                        <!-- Will break when base version will be >=9 ! -->
+                        <arg>-Xbootclasspath:${jdk.home}/jre/lib/rt.jar</arg>
                     </compilerArgs>
                     <showWarnings>false</showWarnings>
                 </configuration>
@@ -182,7 +183,7 @@
                                 <exclude>*.gif</exclude>
                                 <exclude>*.png</exclude>
                                 <!-- Exclude Epoch -->
-                               <exclude>org/rrd4j/core/timespec/Epoch.class</exclude>
+                                <exclude>org/rrd4j/core/timespec/Epoch.class</exclude>
                             </excludes>
                             <archive>
                                 <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -390,6 +391,22 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <configuration>
+                    <message>Creating site for ${project.version}</message>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site</phase>
                     </execution>
                 </executions>
             </plugin>
