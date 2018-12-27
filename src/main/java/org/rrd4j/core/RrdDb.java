@@ -261,7 +261,6 @@ public class RrdDb implements RrdUpdater, Closeable {
 
         rrdUri = buildUri(rrdPath, rrdUri, factory);
         factory = checkFactory(rrdUri, factory);
-
         // opens existing RRD file - throw exception if the file does not exist...
         if (!factory.exists(rrdUri)) {
             throw new FileNotFoundException("Could not open " + rrdUri + " [non existent]");
