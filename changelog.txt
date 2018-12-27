@@ -1,19 +1,22 @@
 Changes in version 3.4 - Unreleased
 ------------------------------------
 
-This version is an import version, with many under the hood changes and code cleaning. The main changes are in the RrdBackendFactory. Much finer 
-control is provided, a generic close method is provided. 
+This version is an important version, with many internal rewrite and code cleaning. 
+
+Lots of changes in the RrdBackendFactory. Much finer control is provided, a generic close method is provided and backend factories now implement Closeable. Accessing factories
+using the name is deprecated, and active backend should be used instead.
+Many final was also removed. People using their own backend should have a look at the new code.
+Backends now use more of Java's NIO and ByteBuffer API.
+RrdBerkleyDbBackendFactory was the only backend factory whose creator auto-register as default. That's not the case any more.
 
 Both LinearInterpolator and elements colors (in RrdGraphDef.setColor) now uses an enum instead of int.
 
-All exceptions thrown by RRD4J are now subclass of org.rrd4j.core.RrdException, for a more precise exception handling.
-But RrdException is a subclass of IOException, so code don't needs to be changed.
+All exceptions thrown by RRD4J are now subclass of org.rrd4j.core.RrdException, for finer exception handling.
+But RrdException is a subclass of IOException anyway, so this release will not brake existing code. It fixes https://github.com/rrd4j/rrd4j/issues/102.
 
-Add OSGi metadata to the main rrd4j jar.
+Added OSGi metadata to the main rrd4j jar. This is not supported on jdk 1.7. Added in https://github.com/rrd4j/rrd4j/pull/120.
 
-A finalize override was removed in RrdDb, as it's considered a bad practice. It should reduce GC time, feedback is welcome.
-
-Backend now use more of NIO and ByteBuffer.
+A finalize override was removed in RrdDb, as it's considered a bad practice and now uses PhantomReference instead. It should reduce GC time, feedback is welcome.
 
 In NIO backend, the sync threads pool is now optional. It was never really useful as the operation system take care of that anyway.
 
