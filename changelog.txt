@@ -1,4 +1,4 @@
-Changes in version 3.4 - Unreleased
+Changes in version 3.4 - 27 Dec 2018.
 ------------------------------------
 
 This version is an important version, with many internal rewrite and code cleaning. 
