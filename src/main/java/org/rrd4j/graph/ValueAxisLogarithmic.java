@@ -184,12 +184,12 @@ class ValueAxisLogarithmic extends Axis {
      * Compute logarithm for the purposes of y-axis. 
      */
     static double log10(double v) {
-        if (v > 0.0) {
-            return Math.log10(v);
-        } else if (v < 0.0) {
-            return -1.0 * Math.log10(-1.0 * v);
-        } else {
+        double lv = Math.log10(Math.abs(v));
+        if (lv < 0) {
+            // Don't cross the sign line, round to 0 if that's the case
             return 0.0;
+        } else {
+            return Math.copySign(lv, v);
         }
     }
 }
