@@ -161,7 +161,7 @@
                     <compilerArgs>
                         <!-- check the path for the rt.jar, allows to compile with JDK > 9 but still generate JDK <9 compatible code -->
                         <!-- Will break when base version will be >=9 ! -->
-                        <arg>-Xbootclasspath:${jdk.home}/lib/rt.jar</arg>
+                        <arg>-Xbootclasspath:${jdk.home}/jre/lib/rt.jar</arg>
                     </compilerArgs>
                     <showWarnings>false</showWarnings>
                 </configuration>
