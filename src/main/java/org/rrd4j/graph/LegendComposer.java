@@ -42,7 +42,7 @@ class LegendComposer implements RrdGraphConstants {
     }
 
     class Line {
-        private String lastMarker;
+        private Markers lastMarker;
         private double width;
         private int spaceCount;
         private boolean noJustification;
@@ -53,7 +53,7 @@ class LegendComposer implements RrdGraphConstants {
         }
 
         void clear() {
-            lastMarker = "";
+            lastMarker = null;
             width = 0;
             spaceCount = 0;
             noJustification = false;
@@ -66,14 +66,14 @@ class LegendComposer implements RrdGraphConstants {
                 return true;
             }
             // cannot accommodate if the last marker was \j, \l, \r, \c, \s
-            if (lastMarker.equals(ALIGN_LEFT_MARKER) || lastMarker.equals(ALIGN_LEFTNONL_MARKER) || lastMarker.equals(ALIGN_CENTER_MARKER) ||
-                    lastMarker.equals(ALIGN_RIGHT_MARKER) || lastMarker.equals(ALIGN_JUSTIFIED_MARKER) ||
-                    lastMarker.equals(VERTICAL_SPACING_MARKER)) {
+            if (lastMarker == Markers.ALIGN_LEFT_MARKER || lastMarker == Markers.ALIGN_LEFTNONL_MARKER || lastMarker == Markers.ALIGN_CENTER_MARKER ||
+                    lastMarker == Markers.ALIGN_RIGHT_MARKER || lastMarker == Markers.ALIGN_JUSTIFIED_MARKER ||
+                    lastMarker == Markers.VERTICAL_SPACING_MARKER) {
                 return false;
             }
             // cannot accommodate if line would be too long
             double commentWidth = getCommentWidth(comment);
-            if (!lastMarker.equals(GLUE_MARKER)) {
+            if (lastMarker != Markers.GLUE_MARKER) {
                 commentWidth += interLegendSpace;
             }
             return width + commentWidth <= legWidth;
@@ -81,28 +81,28 @@ class LegendComposer implements RrdGraphConstants {
 
         void add(CommentText comment) {
             double commentWidth = getCommentWidth(comment);
-            if (comments.size() > 0 && !lastMarker.equals(GLUE_MARKER)) {
+            if (comments.size() > 0 && lastMarker != Markers.GLUE_MARKER) {
                 commentWidth += interLegendSpace;
                 spaceCount++;
             }
             width += commentWidth;
             lastMarker = comment.marker;
-            noJustification |= lastMarker.equals(NO_JUSTIFICATION_MARKER) || lastMarker.isEmpty();
+            noJustification |= lastMarker == Markers.NO_JUSTIFICATION_MARKER || lastMarker == null;
             comments.add(comment);
         }
 
         void layoutAndAdvance(boolean isLastLine) {
             if (comments.size() > 0) {
-                if (lastMarker.equals(ALIGN_LEFT_MARKER) || lastMarker.equals(ALIGN_LEFTNONL_MARKER)) {
+                if (lastMarker == Markers.ALIGN_LEFT_MARKER || lastMarker == Markers.ALIGN_LEFTNONL_MARKER) {
                     placeComments(legX, interLegendSpace);
                 }
-                else if (lastMarker.equals(ALIGN_RIGHT_MARKER)) {
+                else if (lastMarker == Markers.ALIGN_RIGHT_MARKER) {
                     placeComments(legX + legWidth - width, interLegendSpace);
                 }
-                else if (lastMarker.equals(ALIGN_CENTER_MARKER)) {
+                else if (lastMarker == Markers.ALIGN_CENTER_MARKER) {
                     placeComments(legX + (legWidth - width) / 2.0, interLegendSpace);
                 }
-                else if (lastMarker.equals(ALIGN_JUSTIFIED_MARKER)) {
+                else if (lastMarker == Markers.ALIGN_JUSTIFIED_MARKER) {
                     // anything to justify?
                     if (spaceCount > 0) {
                         placeComments(legX, (legWidth - width) / spaceCount + interLegendSpace);
@@ -111,7 +111,7 @@ class LegendComposer implements RrdGraphConstants {
                         placeComments(legX, interLegendSpace);
                     }
                 }
-                else if (lastMarker.equals(VERTICAL_SPACING_MARKER)) {
+                else if (lastMarker == Markers.VERTICAL_SPACING_MARKER) {
                     placeComments(legX, interLegendSpace);
                 }
                 else {
@@ -123,8 +123,8 @@ class LegendComposer implements RrdGraphConstants {
                         placeComments(legX, interLegendSpace);
                     }
                 }
-                if (!lastMarker.equals(ALIGN_LEFTNONL_MARKER)) {
-                    if (lastMarker.equals(VERTICAL_SPACING_MARKER)) {
+                if (!(lastMarker == Markers.ALIGN_LEFTNONL_MARKER)) {
+                    if (lastMarker == Markers.VERTICAL_SPACING_MARKER) {
                         legY += smallLeading;
                     }
                     else {
@@ -148,7 +148,7 @@ class LegendComposer implements RrdGraphConstants {
                 comment.x = (int) x;
                 comment.y = legY;
                 x += getCommentWidth(comment);
-                if (!comment.marker.equals(GLUE_MARKER)) {
+                if (comment.marker != Markers.GLUE_MARKER) {
                     x += space;
                 }
             }

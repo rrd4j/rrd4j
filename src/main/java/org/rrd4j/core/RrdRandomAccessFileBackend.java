@@ -2,13 +2,14 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Paths;
 
 /**
  * Backend which is used to store RRD data to ordinary files on the disk. This was the
  * default factory before 1.4.0 version. This backend is based on the RandomAccessFile class (java.io.* package).
  *
  */
-public class RrdRandomAccessFileBackend extends  RrdFileBackend {
+public class RrdRandomAccessFileBackend extends RrdBackend implements RrdFileBackend {
     /**
      * Random access file handle.
      */
@@ -22,7 +23,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     protected RrdRandomAccessFileBackend(String path, boolean readOnly) throws IOException {
-        super(path, readOnly);
+        super(path);
         this.rafile = new RandomAccessFile(path, readOnly ? "r" : "rw");
     }
 
@@ -31,7 +32,7 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      *
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public void close() throws IOException {
+    protected void close() throws IOException {
         rafile.close();
     }
 
@@ -54,11 +55,25 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * @param b      Buffer which receives bytes read from the file.
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    protected void read(long offset, byte[] b) throws IOException {
+    public void read(long offset, byte[] b) throws IOException {
         rafile.seek(offset);
         if (rafile.read(b) != b.length) {
-            throw new IOException("Not enough bytes available in file " + getPath());
+            throw new RrdBackendException("Not enough bytes available in file " + getPath());
         }
+    }
+
+    @Override
+    public String getCanonicalPath() throws IOException {
+        return Paths.get(getPath()).toAbsolutePath().normalize().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public long getLength() throws IOException {
+        return rafile.length();
     }
 
     /**
@@ -67,7 +82,9 @@ public class RrdRandomAccessFileBackend extends  RrdFileBackend {
      * Sets length of the underlying RRD file. This method is called only once, immediately
      * after a new RRD file gets created.
      */
+    @Override
     protected void setLength(long length) throws IOException {
         rafile.setLength(length);
     }
+
 }

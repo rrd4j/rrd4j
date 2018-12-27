@@ -25,18 +25,6 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean shouldValidateHeader(String path) throws IOException {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean shouldValidateHeader(URI uri) throws IOException {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public boolean canStore(URI uri) {
         if ((uri.isOpaque() || uri.isAbsolute()) && ! "file".equals(uri.getScheme())) {
             return false;

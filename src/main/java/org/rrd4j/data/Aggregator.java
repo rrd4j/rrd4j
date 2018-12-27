@@ -16,6 +16,7 @@ class Aggregator {
         this.step = timestamps[1] - timestamps[0];
     }
 
+    @Deprecated
     Aggregates getAggregates(long tStart, long tEnd) {
         Aggregates agg = new Aggregates();
         long totalSeconds = 0;

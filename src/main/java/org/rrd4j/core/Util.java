@@ -336,11 +336,11 @@ public class Util {
      *         <code>false</code> in all other cases.
      */
     public static boolean parseBoolean(String valueStr) {
-        return valueStr.equalsIgnoreCase("true") ||
+        return valueStr !=null && (valueStr.equalsIgnoreCase("true") ||
                 valueStr.equalsIgnoreCase("on") ||
                 valueStr.equalsIgnoreCase("yes") ||
                 valueStr.equalsIgnoreCase("y") ||
-                valueStr.equalsIgnoreCase("1");
+                valueStr.equalsIgnoreCase("1"));
     }
 
     /**

@@ -5,7 +5,7 @@ import java.awt.Paint;
 
 import org.rrd4j.core.Util;
 
-class ValueAxis implements RrdGraphConstants {
+class ValueAxis extends Axis {
     private static final YLabel[] ylabels = {
         new YLabel(0.1, 1, 2, 5, 10),
         new YLabel(0.2, 1, 5, 10, 20),
@@ -29,27 +29,27 @@ class ValueAxis implements RrdGraphConstants {
         new YLabel(0.0, 0, 0, 0, 0)
     };
 
-    private ImageParameters im;
-    private ImageWorker worker;
-    private RrdGraphDef gdef;
-    private Mapper mapper;
+    private final ImageParameters im;
+    private final ImageWorker worker;
+    private final RrdGraphDef gdef;
+    private final Mapper mapper;
 
     ValueAxis(RrdGraph rrdGraph) {
-        this(rrdGraph.im, rrdGraph.worker, rrdGraph.gdef, rrdGraph.mapper);
+        this(rrdGraph, rrdGraph.worker);
     }
 
-    ValueAxis(ImageParameters im, ImageWorker worker, RrdGraphDef gdef, Mapper mapper) {
-        this.im = im;
-        this.gdef = gdef;
+    ValueAxis(RrdGraph rrdGraph, ImageWorker worker) {
+        this.im = rrdGraph.im;
+        this.gdef = rrdGraph.gdef;
         this.worker = worker;
-        this.mapper = mapper;
+        this.mapper = rrdGraph.mapper;
     }
 
     boolean draw() {
         Font font = gdef.getFont(FONTTAG_AXIS);
-        Paint gridColor = gdef.colors[COLOR_GRID];
-        Paint mGridColor = gdef.colors[COLOR_MGRID];
-        Paint fontColor = gdef.colors[COLOR_FONT];
+        Paint gridColor = gdef.getColor(ElementsNames.grid);
+        Paint mGridColor = gdef.getColor(ElementsNames.mgrid);
+        Paint fontColor = gdef.getColor(ElementsNames.font);
         int labelOffset = (int) (worker.getFontAscent(font) / 2);
         int labfact;
         double range = im.maxval - im.minval;

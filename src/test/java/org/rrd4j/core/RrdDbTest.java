@@ -1,5 +1,6 @@
 package org.rrd4j.core;
 
+import static org.junit.Assert.*;
 import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.ConsolFun.MAX;
 import static org.rrd4j.ConsolFun.TOTAL;
@@ -10,7 +11,9 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Random;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -18,7 +21,22 @@ import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 import org.rrd4j.data.Aggregates;
 
+@SuppressWarnings("deprecation")
 public class RrdDbTest {
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
+
     static final long SEED = 1909752002L;
     static final Random RANDOM = new Random(SEED);
     static final long START = Util.getTimestamp(2010, 4, 1);
@@ -134,7 +152,6 @@ public class RrdDbTest {
 
         FetchData fd = db.createFetchRequest(ConsolFun.AVERAGE, 1277928000, 1278107700).fetchData();
 
-        @SuppressWarnings("deprecation")
         Aggregates speedAggr = fd.getAggregates("sun");
         Assert.assertEquals("Invalid average for sun", 1.1985168039e1, speedAggr.getAverage(), 1e-7);
         Assert.assertEquals("Invalid first for sun", 3.5834466667e3, speedAggr.getFirst(), 1e-7);
@@ -143,9 +160,7 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid max for sun", 3.9840533333e3, speedAggr.getMax(), 1e-7);
         Assert.assertEquals("Invalid total for sun", 2153734.6966666686, speedAggr.getTotal(), 1e-7);
 
-        @SuppressWarnings("deprecation")
         Aggregates weightAggr = fd.getAggregates("shade");
-        System.out.println(weightAggr.dump());
         Assert.assertEquals("Invalid average for shade", 2.0128491560, weightAggr.getAverage(), 1e-7);
         Assert.assertEquals("Invalid first for shade", 5.9251000000E02, weightAggr.getFirst(), 1e-7);
         Assert.assertEquals("Invalid last for shade", 5.0486666667E02, weightAggr.getLast(), 1e-7);
@@ -209,7 +224,7 @@ public class RrdDbTest {
     public void testRead1() throws IOException {
         URL url = getClass().getResource("/demo1.rrd"); 
         RrdDb rrd = new RrdDb(url.getFile(), RrdBackendFactory.getFactory("FILE"));
-        testRrdDb(rrd);     
+        testRrdDb(rrd);
         checkValues(rrd);
         Assert.assertEquals("not expected version", 1, rrd.getRrdDef().getVersion());
     }
@@ -218,9 +233,28 @@ public class RrdDbTest {
     public void testRead2() throws IOException {
         URL url = getClass().getResource("/demo2.rrd"); 
         RrdDb rrd = new RrdDb(url.getFile(), RrdBackendFactory.getFactory("FILE"));
-        testRrdDb(rrd);       
+        testRrdDb(rrd);
         Assert.assertEquals("not expected version", 2, rrd.getRrdDef().getVersion());
         checkValues(rrd);
+    }
+
+    @Test(expected=InvalidRrdException.class)
+    public void testReadCorruptSignature() throws Exception {
+        URL url = getClass().getResource("/corrupt.rrd"); 
+        RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
+
+        try (RrdDb rdb = new RrdDb(url.getFile(), backendFactory)) {
+        }
+    }
+
+    @Test(expected=InvalidRrdException.class)
+    public void testReadEmpty() throws Exception {
+        URL url = getClass().getResource("/empty.rrd"); 
+        RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
+
+        try (RrdDb rdb = new RrdDb(url.getFile(), backendFactory)){
+            fail();
+        }
     }
 
     @Test
@@ -243,32 +277,78 @@ public class RrdDbTest {
         rrdDef.setVersion(2);
         rrdDef.addDatasource("ds", GAUGE, 3600, -5, 30);
         rrdDef.addArchive(AVERAGE, 0.5, 60, 999);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+            Calendar testTime = Calendar.getInstance();
+            testTime.set(Calendar.MINUTE, 0);
+            testTime.set(Calendar.SECOND, 0);
+            testTime.set(Calendar.MILLISECOND, 0);
+            //testTime.add(Calendar.HOUR, -1);
+            long start =  Util.getTimestamp(testTime);
+            long timeStamp = start;
 
-        Calendar testTime = Calendar.getInstance();
-        testTime.set(Calendar.MINUTE, 0);
-        testTime.set(Calendar.SECOND, 0);
-        testTime.set(Calendar.MILLISECOND, 0);
-        System.out.println(testTime);
-        //testTime.add(Calendar.HOUR, -1);
-        long start =  Util.getTimestamp(testTime);
-        long timeStamp = start;
-
-        for(int i = 0; i < 180; i++) {
-            long  sampleTime = timeStamp;
-            if(i == 117) {
-                sampleTime += -1;
+            for(int i = 0; i < 180; i++) {
+                long  sampleTime = timeStamp;
+                if(i == 117) {
+                    sampleTime += -1;
+                }
+                rrdDb.createSample(sampleTime).setValue("ds", 30).update();
+                timeStamp += 60;
             }
-            rrdDb.createSample(sampleTime).setValue("ds", 30).update();
-            timeStamp += 60;
+            long end = timeStamp;
+            FetchData f = rrdDb.createFetchRequest(AVERAGE, start, end).fetchData();
+            double[] values = f.getValues("ds");
+            Assert.assertEquals("Data before first entry", Double.NaN, values[0], 0.0);
+            Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);
+            Assert.assertEquals("Bad average in point 2", 30, values[2], 1e-3);
+            Assert.assertEquals("Data after last entry", Double.NaN, values[3], 0.0);
         }
-        long end = timeStamp;
-        FetchData f = rrdDb.createFetchRequest(AVERAGE, start, end).fetchData();
-        System.out.println(f.dump());
-        double[] values = f.getValues("ds");
-        Assert.assertEquals("Data before first entry", Double.NaN, values[0], 0.0);
-        Assert.assertEquals("Bad average in point 1", 30, values[1], 1e-3);
-        Assert.assertEquals("Bad average in point 2", 30, values[2], 1e-3);
-        Assert.assertEquals("Data after last entry", Double.NaN, values[3], 0.0);
     }
+
+    @Test
+    public void testDefDump() throws IOException {
+        long start = START;
+
+        RrdDef rrdDef = new RrdDef(testFolder.newFile("testBuild.rrd").getCanonicalPath(), start - 1, 300);
+        rrdDef.setVersion(2);
+        rrdDef.addDatasource("short", GAUGE, 600, 0, Double.NaN);
+        rrdDef.addDatasource("veryverylongnamebiggerthatoldlimit", GAUGE, 600, 0, Double.NaN);
+        rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
+        rrdDef.addArchive(TOTAL, 0.5, 1, 600);
+        rrdDef.addArchive(MAX, 0.5, 1, 600);
+        String[] dsNames1 = new String[2];
+        try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+            int dsCount = rrdDb.getHeader().getDsCount();
+            for(int i = 0; i < dsCount; i++) {
+                Datasource srcDs = rrdDb.getDatasource(i);
+                String dsName = srcDs.getName();
+                int j = rrdDb.getDsIndex(dsName);
+                dsNames1[j] = dsName;
+            }
+        }
+        String[] dsNames2 = new String[2];
+        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true, new RrdNioBackendFactory())) {
+            int dsCount = rrdDb.getHeader().getDsCount();
+            for(int i = 0; i < dsCount; i++) {
+                Datasource srcDs = rrdDb.getDatasource(i);
+                String dsName = srcDs.getName();
+                int j = rrdDb.getDsIndex(dsName);
+                dsNames2[j] = dsName;
+            }
+        }
+        String[] dsNames3 = new String[2];
+        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true, new RrdRandomAccessFileBackendFactory())) {
+            int dsCount = rrdDb.getHeader().getDsCount();
+            for(int i = 0; i < dsCount; i++) {
+                Datasource srcDs = rrdDb.getDatasource(i);
+                String dsName = srcDs.getName();
+                int j = rrdDb.getDsIndex(dsName);
+                dsNames3[j] = dsName;
+            }
+        }
+        Assert.assertArrayEquals(dsNames1, dsNames2);
+        Assert.assertArrayEquals(dsNames1, dsNames3);
+        Assert.assertEquals("short", dsNames1[0]);
+        Assert.assertEquals("veryverylongnamebiggerthatoldlimit", dsNames1[1]);
+    }
+
 }

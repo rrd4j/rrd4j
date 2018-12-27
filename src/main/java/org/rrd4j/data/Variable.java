@@ -166,7 +166,7 @@ public abstract class Variable {
      * The biggest of the data points and it's time stamp (the first one) is stored.
      *
      */
-    public static  class MAX extends Variable {
+    public static class MAX extends Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             long timestamp = 0;
@@ -188,7 +188,7 @@ public abstract class Variable {
      * Calculate the sum of the data points.
      *
      */
-    public static  class TOTAL extends Variable {
+    public static class TOTAL extends Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             double value = Double.NaN;
@@ -209,13 +209,13 @@ public abstract class Variable {
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             double value = 0;
             int count = 0;
-            for(int i = values.length - 1 ; i >= 0 ; i--) {
-                if( !Double.isNaN(values[i]) ) {
+            for (int i = values.length - 1 ; i >= 0 ; i--) {
+                if ( !Double.isNaN(values[i]) ) {
                     count++;
                     value = Double.isNaN(value) ?  values[i] : values[i] + value;
                 }
             }
-            if(! Double.isNaN(value)) {
+            if (! Double.isNaN(value) && count > 0) {
                 value = value / count;
             }
             else {
@@ -392,7 +392,7 @@ public abstract class Variable {
             double SUMxx = 0.0;
             double lslslope;
 
-            for(int i = 0; i < values.length; i++) {
+            for (int i = 0; i < values.length; i++) {
                 double value = values[i];
 
                 if (!Double.isNaN(value)) {
@@ -406,13 +406,14 @@ public abstract class Variable {
                 }
                 lslstep++;
             }
-            if(cnt > 0) {
+            double divisor = (SUMx * SUMx - cnt * SUMxx);
+            if (divisor != 0) {
                 /* Bestfit line by linear least squares method */
-                lslslope = (SUMx * SUMy - cnt * SUMxy) / (SUMx * SUMx - cnt * SUMxx);
+                lslslope = (SUMx * SUMy - cnt * SUMxy) / divisor;
                 return new Value(0, lslslope);
-
+            } else {
+                return new Value(0, Double.NaN);
             }
-            return new Value(0, Double.NaN);
         }
 
     }
@@ -447,13 +448,15 @@ public abstract class Variable {
                 }
                 lslstep++;
             }
-            if(cnt > 0) {
+            double divisor = (SUMx * SUMx - cnt * SUMxx);
+            if(cnt > 0 && divisor != 0) {
                 /* Bestfit line by linear least squares method */
-                lslslope = (SUMx * SUMy - cnt * SUMxy) / (SUMx * SUMx - cnt * SUMxx);
+                lslslope = (SUMx * SUMy - cnt * SUMxy) / divisor;
                 lslint = (SUMy - lslslope * SUMx) / cnt;
                 return new Value(0, lslint);
+            } else {
+                return new Value(0, Double.NaN);
             }
-            return new Value(0, Double.NaN);
         }
 
     }

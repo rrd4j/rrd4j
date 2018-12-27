@@ -8,6 +8,8 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
+import org.rrd4j.core.InvalidRrdException;
+
 /**
  * This class is used read information from an RRD file. Writing
  * to RRD files is not currently supported. It uses NIO's RandomAccessFile to read the file
@@ -19,6 +21,20 @@ import java.nio.channels.FileChannel;
  * @version $Revision: 1.1 $
  */
 class RRDFile implements Constants {
+
+    /** Constant <code>FLOAT_COOKIE_BIG_ENDIAN={0x5B, 0x1F, 0x2B, 0x43,
+    (byte) 0xC7, (byte) 0xC0, 0x25,
+    0x2F}</code> */
+    private static final byte[] FLOAT_COOKIE_BIG_ENDIAN = {0x5B, 0x1F, 0x2B, 0x43,
+            (byte) 0xC7, (byte) 0xC0, 0x25,
+            0x2F};
+    /** Constant <code>FLOAT_COOKIE_LITTLE_ENDIAN={0x2F, 0x25, (byte) 0xC0,
+    (byte) 0xC7, 0x43, 0x2B, 0x1F,
+    0x5B}</code> */
+    private static final byte[] FLOAT_COOKIE_LITTLE_ENDIAN = {0x2F, 0x25, (byte) 0xC0,
+            (byte) 0xC7, 0x43, 0x2B, 0x1F,
+            0x5B};
+
     private int alignment;
     private int longSize = 4;
 
@@ -72,7 +88,7 @@ class RRDFile implements Constants {
                 order = ByteOrder.LITTLE_ENDIAN;
             }
             else {
-                throw new IOException("Invalid RRD file");
+                throw new InvalidRrdException("Invalid RRD file");
             }
             mappedByteBuffer.order(order);
             bbuffer.order(order);

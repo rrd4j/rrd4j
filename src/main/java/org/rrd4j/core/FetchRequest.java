@@ -170,5 +170,6 @@ public class FetchRequest {
      */
     public RrdDb getParentDb() {
         return parentDb;
-	}
+    }
+
 }

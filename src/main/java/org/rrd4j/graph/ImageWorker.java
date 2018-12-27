@@ -213,22 +213,15 @@ class ImageWorker {
             throw new RuntimeException("Invalid image type");
         }
 
-        ImageOutputStream imageStream = ImageIO.createImageOutputStream(stream);
-        writer.setOutput(imageStream);
-
-        try {
+        try (ImageOutputStream imageStream = ImageIO.createImageOutputStream(stream)) {
+            writer.setOutput(imageStream);
             writer.write(null, new IIOImage(outputImage, null, null), iwp);
             imageStream.flush();
         } catch (IOException e) {
             writer.abort();
             throw e;
-        } finally {
-            try {
-                imageStream.close();
-            } catch (Exception inner) {
-            }
-            writer.dispose();
         }
+        writer.dispose();
     }
 
     byte[] saveImage(String path, String type, float quality, boolean interlaced) throws IOException {
@@ -240,13 +233,9 @@ class ImageWorker {
     }
 
     byte[] getImageBytes(String type, float quality, boolean interlaced) throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY);
-        try {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY)){
             saveImage(stream, type, quality, interlaced);
             return stream.toByteArray();
-        }
-        finally {
-            stream.close();
         }
     }
 

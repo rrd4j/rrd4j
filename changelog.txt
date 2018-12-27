@@ -1,3 +1,25 @@
+Changes in version 3.4 - Unreleased
+------------------------------------
+
+This version is an important version, with many internal rewrite and code cleaning. 
+
+Lots of changes in the RrdBackendFactory. Much finer control is provided, a generic close method is provided and backend factories now implement Closeable. Accessing factories
+using the name is deprecated, and active backend should be used instead.
+Many final was also removed. People using their own backend should have a look at the new code.
+Backends now use more of Java's NIO and ByteBuffer API.
+RrdBerkleyDbBackendFactory was the only backend factory whose creator auto-register as default. That's not the case any more.
+
+Both LinearInterpolator and elements colors (in RrdGraphDef.setColor) now uses an enum instead of int.
+
+All exceptions thrown by RRD4J are now subclass of org.rrd4j.core.RrdException, for finer exception handling.
+But RrdException is a subclass of IOException anyway, so this release will not brake existing code. It fixes https://github.com/rrd4j/rrd4j/issues/102.
+
+Added OSGi metadata to the main rrd4j jar. This is not supported on jdk 1.7. Added in https://github.com/rrd4j/rrd4j/pull/120.
+
+A finalize override was removed in RrdDb, as it's considered a bad practice and now uses PhantomReference instead. It should reduce GC time, feedback is welcome.
+
+In NIO backend, the sync threads pool is now optional. It was never really useful as the operation system take care of that anyway.
+
 Changes in version 3.3.1 - 5 Oct 2018
 ------------------------------------
 
@@ -79,7 +101,7 @@ Added a lot of missing RPN operator.
 * Fixed Issue 59: ArcDef - please override hashcode
 * Fixed Issue 56: ImageWriterTest.testGif fails
 * Fixed Issue 52: Normalizer is broken when input data are sparse
-* Fixed Issue 49:	Graph: clipping region is off in x dimension by 1, so data point at t0 does not show on graph
+* Fixed Issue 49:   Graph: clipping region is off in x dimension by 1, so data point at t0 does not show on graph
 * Fixed Issue 48: Graph: out of range values forced to min & max give the illusion of data at those values when there is none
 * Fixed Issue 45: ADDNAN patch for rrd4j
 and many more bugs.

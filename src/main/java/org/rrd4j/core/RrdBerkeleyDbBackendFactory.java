@@ -1,10 +1,17 @@
 package org.rrd4j.core;
 
-import com.sleepycat.je.*;
-
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.LockMode;
+import com.sleepycat.je.OperationStatus;
 
 /**
  * {@link org.rrd4j.core.RrdBackendFactory} that uses
@@ -13,10 +20,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
  *
  * @author <a href="mailto:m.bogaert@memenco.com">Mathias Bogaert</a>
  */
+@RrdBackendAnnotation(name="BERKELEY", shouldValidateHeader=false)
 public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
-    private static final String UTF_8 = "UTF-8";
-    private final Database rrdDatabase;
 
+    private final Database rrdDatabase;
     private final Set<String> pathCache = new CopyOnWriteArraySet<String>();
 
     /**
@@ -26,7 +33,6 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
      */
     public RrdBerkeleyDbBackendFactory(Database rrdDatabase) {
         this.rrdDatabase = rrdDatabase;
-        RrdBackendFactory.registerAndSetAsDefaultFactory(this);
     }
 
     /**
@@ -36,20 +42,46 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
         if (pathCache.contains(path)) {
-            DatabaseEntry theKey = new DatabaseEntry(path.getBytes(UTF_8));
+            DatabaseEntry theKey = new DatabaseEntry(path.getBytes(StandardCharsets.UTF_8));
             DatabaseEntry theData = new DatabaseEntry();
 
             try {
                 rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT);
-            }
-            catch (DatabaseException de) {
-                throw new IOException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage());
+            } catch (DatabaseException de) {
+                throw new RrdBackendException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage(), de);
             }
 
             return new RrdBerkeleyDbBackend(theData.getData(), path, rrdDatabase);
         }
         else {
             return new RrdBerkeleyDbBackend(path, rrdDatabase);
+        }
+    }
+
+    @Override
+    public URI getUri(String path) {
+        try {
+            return new URI("berkeley", "", rrdDatabase.getEnvironment().getHome().getAbsolutePath(), rrdDatabase.getDatabaseName(), path);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("can't extract URI from '" + path + "': " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String getPath(URI uri) {
+        return uri.getFragment();
+    }
+
+    @Override
+    public boolean canStore(URI uri) {
+        if (! "berkeley".equals(uri.getScheme())) {
+            return false;
+        } else if ( !uri.getPath().isEmpty() && !uri.getPath().equals(rrdDatabase.getEnvironment().getHome().getAbsolutePath())) {
+            return false;
+        } else if ( !uri.getQuery().isEmpty() && !uri.getQuery().equals(rrdDatabase.getDatabaseName())) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -60,15 +92,10 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
      */
     public void delete(String path) {
         try {
-            rrdDatabase.delete(null, new DatabaseEntry(path.getBytes(UTF_8)));
-        }
-        catch (DatabaseException de) {
+            rrdDatabase.delete(null, new DatabaseEntry(path.getBytes(StandardCharsets.UTF_8)));
+        } catch (DatabaseException de) {
             throw new RuntimeException(de.getMessage(), de);
         }
-        catch (IOException ie) {
-            throw new IllegalArgumentException(path + ": " + ie.getMessage(), ie);
-        }
-
         pathCache.remove(path);
     }
 
@@ -81,10 +108,10 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
         if (pathCache.contains(path)) {
             return true;
         } else {
-            DatabaseEntry theKey = new DatabaseEntry(path.getBytes(UTF_8));
-            theKey.setPartial(0, 0, true); // avoid returning rrd data since we're only checking for existence
+            DatabaseEntry theKey = new DatabaseEntry(path.getBytes(StandardCharsets.UTF_8));
 
             DatabaseEntry theData = new DatabaseEntry();
+            theData.setPartial(0, 0, true); // avoid returning rrd data since we're only checking for existence
 
             try {
                 boolean pathExists = rrdDatabase.get(null, theKey, theData, LockMode.DEFAULT) == OperationStatus.SUCCESS;
@@ -92,24 +119,15 @@ public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
                     pathCache.add(path);
                 }
                 return pathExists;
-            }
-            catch (DatabaseException de) {
-                throw new IOException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage());
+            } catch (DatabaseException de) {
+                throw new RrdBackendException("BerkeleyDB DatabaseException on " + path + "; " + de.getMessage(), de);
             }
         }
     }
 
-    /** {@inheritDoc} */
-    protected boolean shouldValidateHeader(String path) {
-        return false;
+    @Override
+    public void close() throws IOException {
+        rrdDatabase.close();
     }
 
-    /**
-     * <p>getName.</p>
-     *
-     * @return The {@link java.lang.String} "BERKELEY".
-     */
-    public String getName() {
-        return "BERKELEY";
-    }
 }

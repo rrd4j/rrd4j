@@ -7,35 +7,36 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import sun.misc.Unsafe;
 
 /**
  * Backend which is used to store RRD data to ordinary disk files
  * using java.nio.* package. This is the default backend engine.
  *
  */
-@SuppressWarnings("restriction")
-public class RrdNioBackend extends RrdRandomAccessFileBackend {
+public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
 
     // The java 8- methods
     private static final Method cleanerMethod;
     private static final Method cleanMethod;
     // The java 9+ methods
     private static final Method invokeCleaner;
-    private static final Unsafe unsafe;
+    private static final Object unsafe;
     static {
         // Temporary variable, because destinations variables are final
         // And it interfere with exceptions
         Method cleanerMethodTemp;
         Method cleanMethodTemp;
         Method invokeCleanerTemp;
-        Unsafe unsafeTemp;
+        Object unsafeTemp;
         try {
             // The java 8- way, using sun.nio.ch.DirectBuffer.cleaner().clean()
-            Class<?> directBufferClass = RrdNioBackend.class.getClassLoader().loadClass("sun.nio.ch.DirectBuffer");
+            Class<?> directBufferClass = RrdRandomAccessFileBackend.class.getClassLoader().loadClass("sun.nio.ch.DirectBuffer");
             Class<?> cleanerClass = RrdNioBackend.class.getClassLoader().loadClass("sun.misc.Cleaner");
             cleanerMethodTemp = directBufferClass.getMethod("cleaner");
             cleanerMethodTemp.setAccessible(true);
@@ -47,13 +48,13 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
         }
         try {
             // The java 9+ way, using unsafe.invokeCleaner(buffer)
-            Field singleoneInstanceField = Unsafe.class.getDeclaredField("theUnsafe");
+            Field singleoneInstanceField = RrdRandomAccessFileBackend.class.getClassLoader().loadClass("sun.misc.Unsafe").getDeclaredField("theUnsafe");
             singleoneInstanceField.setAccessible(true);
-            unsafeTemp = (Unsafe) singleoneInstanceField.get(null);
+            unsafeTemp = singleoneInstanceField.get(null);
             invokeCleanerTemp = unsafeTemp.getClass().getMethod("invokeCleaner", ByteBuffer.class);
         } catch (NoSuchFieldException | SecurityException
                 | IllegalArgumentException | IllegalAccessException
-                | NoSuchMethodException e) {
+                | NoSuchMethodException | ClassNotFoundException e) {
             invokeCleanerTemp = null;
             unsafeTemp = null;
         }
@@ -64,12 +65,8 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
     }
 
     private MappedByteBuffer byteBuffer;
-
-    private final Runnable syncRunnable = new Runnable() {
-        public void run() {
-            sync();
-        }
-    };
+    private final FileChannel file;
+    private final boolean readOnly;
 
     private ScheduledFuture<?> syncRunnableHandle = null;
 
@@ -80,23 +77,32 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      * @param readOnly   True, if file should be open in a read-only mode. False otherwise
      * @param syncPeriod See {@link org.rrd4j.core.RrdNioBackendFactory#setSyncPeriod(int)} for explanation
      * @throws java.io.IOException Thrown in case of I/O error
-     * @param threadPool a {@link org.rrd4j.core.RrdSyncThreadPool} object.
+     * @param threadPool a {@link org.rrd4j.core.RrdSyncThreadPool} object, it can be null.
      */
     protected RrdNioBackend(String path, boolean readOnly, RrdSyncThreadPool threadPool, int syncPeriod) throws IOException {
-        super(path, readOnly);
+        super(path);
+        Set<StandardOpenOption> options = new HashSet<>(3);
+        options.add(StandardOpenOption.READ);
+        options.add(StandardOpenOption.CREATE);
+        if (! readOnly) {
+            options.add(StandardOpenOption.WRITE);
+        }
+
+        file = FileChannel.open(Paths.get(path), options);
+        this.readOnly = readOnly;
         try {
-            mapFile();
-        }
-        catch (IOException ioe) {
+            mapFile(file.size());
+        } catch (IOException | RuntimeException ex) {
             super.close();
-            throw ioe;
-        }
-        catch (RuntimeException rte) {
-            super.close();
-            throw rte;
+            throw ex;
         }
         try {
-            if (!readOnly) {
+            if (!readOnly && threadPool != null) {
+                Runnable syncRunnable = new Runnable() {
+                    public void run() {
+                        sync();
+                    }
+                };
                 syncRunnableHandle = threadPool.scheduleWithFixedDelay(syncRunnable, syncPeriod, syncPeriod, TimeUnit.SECONDS);
             }
         } catch (RuntimeException rte) {
@@ -106,12 +112,12 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
         }
     }
 
-    private void mapFile() throws IOException {
-        long length = getLength();
+    private void mapFile(long length) throws IOException {
         if (length > 0) {
             FileChannel.MapMode mapMode =
                     readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE;
-            byteBuffer = rafile.getChannel().map(mapMode, 0, length);
+            byteBuffer = file.map(mapMode, 0, length);
+            setByteBuffer(byteBuffer);
         }
     }
 
@@ -136,45 +142,16 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
      *
      * Sets length of the underlying RRD file. This method is called only once, immediately
      * after a new RRD file gets created.
+     * @throws java.lang.IllegalArgumentException if the length is bigger that the possible mapping position (2GiB).
      */
     protected synchronized void setLength(long newLength) throws IOException {
+        if (newLength < 0 || newLength > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Illegal offset: " + newLength);
+        }
+
         unmapFile();
-        super.setLength(newLength);
-        mapFile();
-    }
-
-    /**
-     * Writes bytes to the underlying RRD file on the disk
-     *
-     * @param offset Starting file offset
-     * @param b      Bytes to be written.
-     * @throws java.io.IOException if any.
-     */
-    protected synchronized void write(long offset, byte[] b) throws IOException {
-        if (byteBuffer != null) {
-            byteBuffer.position((int) offset);
-            byteBuffer.put(b);
-        }
-        else {
-            throw new IOException("Write failed, file " + getPath() + " not mapped for I/O");
-        }
-    }
-
-    /**
-     * Reads a number of bytes from the RRD file on the disk
-     *
-     * @param offset Starting file offset
-     * @param b      Buffer which receives bytes read from the file.
-     * @throws java.io.IOException Thrown in case of I/O error.
-     */
-    protected synchronized void read(long offset, byte[] b) throws IOException {
-        if (byteBuffer != null) {
-            byteBuffer.position((int) offset);
-            byteBuffer.get(b);
-        }
-        else {
-            throw new IOException("Read failed, file " + getPath() + " not mapped for I/O");
-        }
+        file.truncate(newLength);
+        mapFile(newLength);
     }
 
     /**
@@ -185,8 +162,9 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
     public synchronized void close() throws IOException {
         // cancel synchronization
         try {
-            if (!readOnly) {
+            if (!readOnly && syncRunnableHandle != null) {
                 syncRunnableHandle.cancel(false);
+                syncRunnableHandle = null;
                 sync();
             }
             unmapFile();
@@ -205,4 +183,15 @@ public class RrdNioBackend extends RrdRandomAccessFileBackend {
             byteBuffer.force();
         }
     }
+
+    @Override
+    public synchronized long getLength() throws IOException {
+        return file.size();
+    }
+
+    @Override
+    public String getCanonicalPath() throws IOException {
+        return Paths.get(getPath()).toAbsolutePath().normalize().toString();
+    }
+
 }

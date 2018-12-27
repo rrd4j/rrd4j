@@ -2,6 +2,8 @@ package org.rrd4j.core.jrrd;
 
 import java.io.IOException;
 
+import org.rrd4j.core.InvalidRrdException;
+
 /**
  * Instances of this class model the header section of an RRD file.
  *
@@ -24,7 +26,7 @@ public class Header implements Constants {
     Header(RRDFile file) throws IOException {
 
         if (!file.readString(4).equals(COOKIE)) {
-            throw new IOException("Invalid COOKIE");
+            throw new InvalidRrdException("Invalid COOKIE");
         }
         version = file.readString(5);
         try {

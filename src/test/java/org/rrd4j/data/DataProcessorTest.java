@@ -19,6 +19,7 @@ public class DataProcessorTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testMemoryDataprocess() throws IOException {
         RrdDef rrdDef = new RrdDef(testFolder.newFile("testBuild.rrd").getCanonicalPath());

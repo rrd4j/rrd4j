@@ -396,7 +396,7 @@ class RpnCalculator {
             @Override
             void do_method(RpnCalculator c, State s) {
                 TimeZone tz = s.getTimeZone();
-                c.push(c.timestamps[s.slot] + (long) (tz.getOffset(c.timestamps[s.slot]) / 1000L));
+                c.push((double)(c.timestamps[s.slot] + ((long) tz.getOffset(c.timestamps[s.slot]) / 1000D)));
             }
         },
         TKN_YEAR("YEAR") {
@@ -501,7 +501,7 @@ class RpnCalculator {
         TKN_COUNT("COUNT") {
             @Override
             void do_method(RpnCalculator c, State s) {
-                c.push(s.slot+1);
+                c.push(s.slot + 1.0);
             }
         },
         TKN_TREND("TREND") {
@@ -623,7 +623,7 @@ class RpnCalculator {
                         if (val < 0) {
                             val = Double.NaN;
                         } else {
-                            val = Math.sqrt(val / ((float) count * ((float) count - 1.0)));
+                            val = Math.sqrt(val / (count * (count - 1.0)));
                         }
                     }
                 }
@@ -683,8 +683,8 @@ class RpnCalculator {
         this.sourceName = sourceName;
         this.dataProcessor = dataProcessor;
         this.timestamps = dataProcessor.getTimestamps();
-        this.timeStep = this.timestamps[1] - this.timestamps[0];
-        this.calculatedValues = new double[this.timestamps.length];
+        this.timeStep = (double)(timestamps[1] - timestamps[0]);
+        this.calculatedValues = new double[timestamps.length];
         this.sourcesNames = Arrays.asList(dataProcessor.getSourceNames());
         String[] tokensString = rpnExpression.split(" *, *");
         tokens = new Token[tokensString.length];
@@ -801,8 +801,8 @@ class RpnCalculator {
     }
 
     private final class State {
-        public int token_rpi;
-        int rpi;
+        private int token_rpi;
+        private int rpi;
         Token token;
         int slot;
         TimeZone getTimeZone() {

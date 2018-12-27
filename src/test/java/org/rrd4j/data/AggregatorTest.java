@@ -4,11 +4,14 @@ package org.rrd4j.data;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -23,6 +26,19 @@ public class AggregatorTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
 
     @SuppressWarnings("deprecation")
     private double testCf(ConsolFun cf) throws IOException {

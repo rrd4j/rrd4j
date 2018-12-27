@@ -14,7 +14,6 @@ import com.mongodb.DBObject;
  */
 public class RrdMongoDBBackend extends RrdByteArrayBackend {
     private final MongoWrapper wrapper;
-    private volatile boolean dirty = false;
 
     /**
      * <p>Constructor for RrdMongoDBBackend.</p>
@@ -29,28 +28,17 @@ public class RrdMongoDBBackend extends RrdByteArrayBackend {
         BasicDBObject query = new BasicDBObject("path", path);
         DBObject rrdObject = wrapper.get(query);
         if (rrdObject != null) {
-            buffer = (byte[]) rrdObject.get("rrd");
+            byte[] buffer = (byte[]) rrdObject.get("rrd");
+            setBuffer(buffer);
         }
-    }
-
-    /**
-     * <p>write.</p>
-     *
-     * @param offset a long.
-     * @param bytes an array of byte.
-     * @throws java.io.IOException if any.
-     */
-    protected synchronized void write(long offset, byte[] bytes) throws IOException {
-        super.write(offset, bytes);
-        dirty = true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws IOException {
-        if (dirty) {
+    protected void close() throws IOException {
+        if (isDirty()) {
             BasicDBObject query = new BasicDBObject("path", getPath());
-            wrapper.save(query, buffer);
+            wrapper.save(query, getBuffer());
         }
     }
 

@@ -1,16 +1,18 @@
 package org.rrd4j.core;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,23 +56,43 @@ import java.util.regex.Pattern;
  * <li>{@link org.rrd4j.core.RrdMongoDBBackend}: objects of this class are created from the {@link org.rrd4j.core.RrdMongoDBBackendFactory} class.
  * It stores data in a {@link com.mongodb.DBCollection} from <a href="http://www.mongodb.org/">MongoDB</a>.
  * </ul>
- *
+ * <p>
  * Each backend factory used to be identified by its {@link #getName() name}. Constructors
  * are provided in the {@link org.rrd4j.core.RrdDb} class to create RrdDb objects (RRD databases)
  * backed with a specific backend.
  * <p>
- * A more generic management was added in version 3.2 that allows multiple instance of a backend to be used. Each backend can
+ * A more generic management was added in version 3.2 that allows multiple instances of a backend to be used. Each backend can
  * manage custom URL. They are tried in the declared order by the {@link #setActiveFactories(RrdBackendFactory...)} or
- * {@link #addFactories(RrdBackendFactory...)} and the method {@link #canStore(URI)} return true when  it can manage the given
- * URI.
+ * {@link #addFactories(RrdBackendFactory...)} and the method {@link #canStore(URI)} return true when it can manage the given
+ * URI. Using {@link #setActiveFactories(RrdBackendFactory...)} with new created instance is the preferred way to manage factories, as
+ * it provides a much precise control of creation and end of life of factories.
+ * <p>
+ * Since 3.4, using only {@link #setActiveFactories(RrdBackendFactory...)} and {@link #addActiveFactories(RrdBackendFactory...)} will not register any
+ * named backend at all. {@link #getDefaultFactory()} will return the first active factory. All methods using named backend and the registry of factory were deprecated.
  * <p>
  * For default implementation, the path is separated in a root URI prefix and the path components. The root URI can be
- * used to identify different name spaces or just be ```/```.
+ * used to identify different name spaces or just be `/`.
  * <p>
  * See javadoc for {@link org.rrd4j.core.RrdBackend} to find out how to create your custom backends.
  *
  */
-public abstract class RrdBackendFactory {
+public abstract class RrdBackendFactory implements Closeable {
+
+    private static final class Registry {
+        private static final Map<String, RrdBackendFactory> factories = new HashMap<String, RrdBackendFactory>();
+        static {
+            RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
+            factories.put(fileFactory.name, fileFactory);
+            RrdMemoryBackendFactory memoryFactory = new RrdMemoryBackendFactory();
+            factories.put(memoryFactory.name, memoryFactory);
+            RrdNioBackendFactory nioFactory = new RrdNioBackendFactory();
+            factories.put(nioFactory.name, nioFactory);
+            RrdSafeFileBackendFactory safeFactory = new RrdSafeFileBackendFactory();
+            factories.put(safeFactory.name, safeFactory);
+            defaultFactory = factories.get(DEFAULTFACTORY);
+        }
+        private static RrdBackendFactory defaultFactory;
+    }
 
     /**
      * The default factory type. It will also put in the active factories list.
@@ -78,21 +100,7 @@ public abstract class RrdBackendFactory {
      */
     public static final String DEFAULTFACTORY = "NIO";
 
-    private static final Map<String, RrdBackendFactory> factories = new ConcurrentHashMap<String, RrdBackendFactory>();
     private static final List<RrdBackendFactory> activeFactories = new ArrayList<>();
-    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
-
-    static {
-        RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
-        registerFactory(fileFactory);
-        RrdMemoryBackendFactory memoryFactory = new RrdMemoryBackendFactory();
-        registerFactory(memoryFactory);
-        RrdNioBackendFactory nioFactory = new RrdNioBackendFactory();
-        registerFactory(nioFactory);
-        RrdSafeFileBackendFactory safeFactory = new RrdSafeFileBackendFactory();
-        registerFactory(safeFactory);
-        setActiveFactories(RrdBackendFactory.getFactory(DEFAULTFACTORY));
-    }
 
     /**
      * Returns backend factory for the given backend factory name.
@@ -109,46 +117,41 @@ public abstract class RrdBackendFactory {
      *             java.nio.* package. RRD data is stored in files on the disk
      *             <li><b>MEMORY</b>: Factory which creates memory-oriented backends.
      *             RRD data is stored in memory, it gets lost as soon as JVM exits.
-     *             <li><b>BERKELEY</b>: a memory-oriented backend that ensure persistens
+     *             <li><b>BERKELEY</b>: a memory-oriented backend that ensure persistent
      *             in a <a href="http://www.oracle.com/technetwork/database/berkeleydb/overview/index-093405.html">Berkeley Db</a> storage.
-     *             <li><b>MONGODB</b>: a memory-oriented backend that ensure persistens
+     *             <li><b>MONGODB</b>: a memory-oriented backend that ensure persistent
      *             in a <a href="http://www.mongodb.org/">MongoDB</a> storage.
      *             </ul>
+     *
+     * @deprecated Uses active factory instead
      * @return Backend factory for the given factory name
      */
-    public static RrdBackendFactory getFactory(String name) {
-        lock.readLock().lock();
-        try {
-            RrdBackendFactory factory = factories.get(name);
-            if (factory != null) {
-                return factory;
-            } else {
-                throw new IllegalArgumentException(
-                        "No backend factory found with the name specified ["
-                                + name + "]");
-            } 
-        } finally {
-            lock.readLock().unlock();
-        }
+    @Deprecated
+    public static synchronized RrdBackendFactory getFactory(String name) {
+        RrdBackendFactory factory = Registry.factories.get(name);
+        if (factory != null) {
+            return factory;
+        } else {
+            throw new IllegalArgumentException(
+                    "No backend factory found with the name specified ["
+                            + name + "]");
+        } 
     }
 
     /**
      * Registers new (custom) backend factory within the Rrd4j framework.
      *
+     * @deprecated Uses active factory instead
      * @param factory Factory to be registered
      */
-    public static void registerFactory(RrdBackendFactory factory) {
-        lock.writeLock().lock();
-        try {
-            String name = factory.getName();
-            if (!factories.containsKey(name)) {
-                factories.put(name, factory);
-            }
-            else {
-                throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
-            }
-        } finally {
-            lock.writeLock().unlock();
+    @Deprecated
+    public static synchronized void registerFactory(RrdBackendFactory factory) {
+        String name = factory.getName();
+        if (!Registry.factories.containsKey(name)) {
+            Registry.factories.put(name, factory);
+        }
+        else {
+            throw new IllegalArgumentException("Backend factory '" + name + "' cannot be registered twice");
         }
     }
 
@@ -156,16 +159,13 @@ public abstract class RrdBackendFactory {
      * Registers new (custom) backend factory within the Rrd4j framework and sets this
      * factory as the default.
      *
+     * @deprecated Uses {@link #setActiveFactories(RrdBackendFactory...)} instead.
      * @param factory Factory to be registered and set as default
      */
-    public static void registerAndSetAsDefaultFactory(RrdBackendFactory factory) {
-        lock.writeLock().lock();
-        try {
-            registerFactory(factory);
-            setDefaultFactory(factory.getName());
-        } finally {
-            lock.writeLock().unlock();
-        }
+    @Deprecated
+    public static synchronized void registerAndSetAsDefaultFactory(RrdBackendFactory factory) {
+        registerFactory(factory);
+        setDefaultFactory(factory.getName());
     }
 
     /**
@@ -174,12 +174,11 @@ public abstract class RrdBackendFactory {
      *
      * @return Default backend factory.
      */
-    public static RrdBackendFactory getDefaultFactory() {
-        lock.readLock().lock();
-        try {
+    public static synchronized RrdBackendFactory getDefaultFactory() {
+        if (activeFactories.size() > 0) {
             return activeFactories.get(0);
-        } finally {
-            lock.readLock().unlock();
+        } else {
+            return Registry.defaultFactory;
         }
     }
 
@@ -190,23 +189,20 @@ public abstract class RrdBackendFactory {
      * It also clear the list of actives factories and set it to the default factory.
      * <p>
      *
+     * @deprecated Uses active factory instead
      * @param factoryName Name of the default factory..
      */
-    public static void setDefaultFactory(String factoryName) {
-        lock.writeLock().lock();
-        try {
-            // We will allow this only if no RRDs are created
-            if (!RrdBackend.isInstanceCreated()) {
-                activeFactories.clear();
-                activeFactories.add(getFactory(factoryName));
-            } else {
-                throw new IllegalStateException(
-                        "Could not change the default backend factory. "
-                                + "This method must be called before the first RRD gets created");
-            } 
-        } finally {
-            lock.writeLock().unlock();
-        }
+    @Deprecated
+    public static synchronized void setDefaultFactory(String factoryName) {
+        // We will allow this only if no RRDs are created
+        if (!RrdBackend.isInstanceCreated()) {
+            activeFactories.clear();
+            activeFactories.add(getFactory(factoryName));
+        } else {
+            throw new IllegalStateException(
+                    "Could not change the default backend factory. "
+                            + "This method must be called before the first RRD gets created");
+        } 
     }
 
     /**
@@ -214,14 +210,20 @@ public abstract class RrdBackendFactory {
      * 
      * @param newFactories the new active factories.
      */
-    public static void setActiveFactories(RrdBackendFactory... newFactories) {
-        lock.writeLock().lock();
-        try {
-            activeFactories.clear();
-            activeFactories.addAll(Arrays.asList(newFactories));
-        } finally {
-            lock.writeLock().unlock();
-        }
+    public static synchronized void setActiveFactories(RrdBackendFactory... newFactories) {
+        activeFactories.clear();
+        activeFactories.addAll(Arrays.asList(newFactories));
+    }
+
+    /**
+     * Add factories to the list of active factories, i.e. the factory used to resolve URI.
+     * 
+     * @deprecated Uses {@link #addActiveFactories(RrdBackendFactory...)} instead.
+     * @param newFactories active factories to add.
+     */
+    @Deprecated
+    public static synchronized void addFactories(RrdBackendFactory... newFactories) {
+        addActiveFactories(newFactories);
     }
 
     /**
@@ -229,34 +231,29 @@ public abstract class RrdBackendFactory {
      * 
      * @param newFactories active factories to add.
      */
-    public static void addFactories(RrdBackendFactory... newFactories) {
-        lock.writeLock().lock();
-        try {
-            activeFactories.addAll(Arrays.asList(newFactories));
-        } finally {
-            lock.writeLock().unlock();
-        }
+    public static synchronized void addActiveFactories(RrdBackendFactory... newFactories) {
+        activeFactories.addAll(Arrays.asList(newFactories));
     }
 
     /**
-     * For a given URI, try to find a factory that can manage it.
+     * For a given URI, try to find a factory that can manage it in the list of active factories.
      * 
      * @param uri URI to try.
      * @return a {@link RrdBackendFactory} that can manage that URI.
      * @throws IllegalArgumentException when no matching factory is found.
      */
-    public static RrdBackendFactory findFactory(URI uri) {
-        lock.readLock().lock();
-        try {
-            for (RrdBackendFactory tryfactory : activeFactories) {
+    public static synchronized RrdBackendFactory findFactory(URI uri) {
+        // If no active factory defined, will try the default factory
+        if (activeFactories.size() == 0 && Registry.defaultFactory.canStore(uri)) {
+            return Registry.defaultFactory;
+        } else {
+            for (RrdBackendFactory tryfactory: activeFactories) {
                 if (tryfactory.canStore(uri)) {
                     return tryfactory;
                 }
             }
             throw new IllegalArgumentException(
                     "no matching backend factory for " + uri);
-        } finally {
-            lock.readLock().unlock();
         }
     }
 
@@ -298,11 +295,72 @@ public abstract class RrdBackendFactory {
         throw new IllegalArgumentException("Not an URI pattern");
     }
 
+    private static class ClosingReference extends PhantomReference<RrdDb> {
+        private RrdBackend backend;
+        public ClosingReference(RrdDb db, RrdBackend backend,
+                ReferenceQueue<? super RrdDb> q) {
+            super(db, q);
+            this.backend = backend;
+        }
+        @Override
+        public void clear() {
+            try {
+                backend.close();
+            } catch (IOException e) {
+            }
+            backend = null;
+            super.clear();
+        }
+    };
+
+    private final ReferenceQueue<RrdDb> refQueue = new ReferenceQueue<>();
+
+    protected final String name;
+    protected final boolean cachingAllowed;
+    protected final String scheme;
+    protected final boolean validateHeader;
+
+    protected RrdBackendFactory() {
+        RrdBackendAnnotation annotation = getClass().getAnnotation(RrdBackendAnnotation.class);
+        if (annotation != null) {
+            name = annotation.name();
+            cachingAllowed = annotation.cachingAllowed();
+            if (annotation.scheme() != null && ! annotation.scheme().isEmpty()) {
+                scheme = annotation.scheme();
+            } else {
+                scheme = name.toLowerCase(Locale.ENGLISH);
+            }
+            validateHeader = annotation.shouldValidateHeader();
+        } else {
+            name = getName();
+            cachingAllowed = RrdBackendAnnotation.DEFAULT_CACHING_ALLOWED;
+            scheme = getName().toLowerCase(Locale.ENGLISH);
+            validateHeader = true;
+        }
+    }
+
+    /**
+     * Check that all phantom reference are indeed safely closed.
+     */
+    public void checkClosing() {
+        while(true) {
+            ClosingReference ref = (ClosingReference) refQueue.poll();
+            if (ref == null) {
+                break;
+            } else if (ref.backend != null) {
+                try {
+                    ref.backend.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
     /**
      * @return the scheme name for URI, default to getName().toLowerCase()
      */
     public String getScheme() {
-        return getName().toLowerCase();
+        return scheme;
     }
 
     protected URI getRootUri() {
@@ -410,6 +468,8 @@ public abstract class RrdBackendFactory {
         return "/" + uri.getPath();
     }
 
+    protected abstract RrdBackend open(String path, boolean readOnly) throws IOException;
+
     /**
      * Creates RrdBackend object for the given storage path.
      *
@@ -419,10 +479,16 @@ public abstract class RrdBackendFactory {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    protected abstract RrdBackend open(String path, boolean readOnly) throws IOException;
+    RrdBackend getBackend(RrdDb rrdDb, String path, boolean readOnly) throws IOException {
+        checkClosing();
+        RrdBackend backend = open(path, readOnly);
+        backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
+        return backend;
+    }
 
     /**
      * Creates RrdBackend object for the given storage path.
+     * @param rrdDb 
      *
      * @param uri     Storage uri
      * @param readOnly True, if the storage should be accessed in read/only mode.
@@ -430,8 +496,11 @@ public abstract class RrdBackendFactory {
      * @return Backend object which handles all I/O operations for the given storage path
      * @throws java.io.IOException Thrown in case of I/O error.
      */
-    protected RrdBackend open(URI uri, boolean readOnly) throws IOException {
-        return open(getPath(uri), readOnly);
+    RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
+        checkClosing();
+        RrdBackend backend =  open(getPath(uri), readOnly);
+        backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
+        return backend;
     }
 
     /**
@@ -461,7 +530,9 @@ public abstract class RrdBackendFactory {
      * @throws java.io.IOException if header validation fails
      * @return a boolean.
      */
-    protected abstract boolean shouldValidateHeader(String path) throws IOException;
+    protected boolean shouldValidateHeader(String path) throws IOException {
+        return validateHeader;
+    }
 
     /**
      * Determines if the header should be validated.
@@ -479,6 +550,17 @@ public abstract class RrdBackendFactory {
      *
      * @return Name of the factory.
      */
-    public abstract String getName();
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * A generic close handle, default implementation does nothing.
+     * @since 3.4
+     * @throws IOException
+     */
+    public void close() throws IOException {
+
+    }
 
 }

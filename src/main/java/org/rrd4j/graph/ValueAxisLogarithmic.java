@@ -4,7 +4,7 @@ import org.rrd4j.core.Util;
 
 import java.awt.*;
 
-class ValueAxisLogarithmic implements RrdGraphConstants {
+class ValueAxisLogarithmic extends Axis {
     private static final double[][] yloglab = {
         {1e9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {1e3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -15,26 +15,34 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     };
 
-    private RrdGraph rrdGraph;
-    private ImageParameters im;
-    private ImageWorker worker;
-    private RrdGraphDef gdef;
+    private final ImageParameters im;
+    private final ImageWorker worker;
+    private final RrdGraphDef gdef;
+    private final int fontHeight;
+    private final Mapper mapper;
 
     ValueAxisLogarithmic(RrdGraph rrdGraph) {
-        this.rrdGraph = rrdGraph;
+        this(rrdGraph, rrdGraph.worker);
+    }
+
+    ValueAxisLogarithmic(RrdGraph rrdGraph, ImageWorker worker) {
         this.im = rrdGraph.im;
         this.gdef = rrdGraph.gdef;
-        this.worker = rrdGraph.worker;
+        this.worker = worker;
+        this.fontHeight = (int) Math.ceil(worker.getFontHeight(gdef.getFont(FONTTAG_AXIS)));
+        this.mapper = rrdGraph.mapper;
     }
 
     boolean draw() {
         Font font = gdef.getFont(FONTTAG_AXIS);
-        Paint gridColor = gdef.colors[COLOR_GRID];
-        Paint mGridColor = gdef.colors[COLOR_MGRID];
-        Paint fontColor = gdef.colors[COLOR_FONT];
-        int fontHeight = (int) Math.ceil(rrdGraph.getFontHeight(FONTTAG_AXIS));
+        Paint gridColor = gdef.getColor(ElementsNames.grid);
+        Paint mGridColor = gdef.getColor(ElementsNames.mgrid);
+        Paint fontColor = gdef.getColor(ElementsNames.font);
         int labelOffset = (int) (worker.getFontAscent(font) / 2);
 
+        if (im.maxval == im.minval) {
+            return false;
+        }
         double pixpex = (double) im.ysize / (log10(im.maxval) - log10(im.minval));
         if (Double.isNaN(pixpex)) {
             return false;
@@ -61,6 +69,9 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
         // Draw minor grid for positive values
         double positiveMin = (im.minval > 0.0) ? im.minval : 0.0;
         int x0 = im.xorigin, x1 = x0 + im.xsize;
+        if (yloglab[minoridx][0] == 0 || yloglab[majoridx][0] == 0) {
+            return false;
+        }
         for (double value = Math.pow(10, log10(positiveMin)
                 - log10(positiveMin) % log10(yloglab[minoridx][0]));
                 value <= im.maxval;
@@ -68,7 +79,7 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
             if (value < positiveMin) continue;
             int i = 0;
             while (yloglab[minoridx][++i] > 0) {
-                int y = rrdGraph.mapper.ytr(value * yloglab[minoridx][i]);
+                int y = mapper.ytr(value * yloglab[minoridx][i]);
                 if (y <= im.yorigin - im.ysize) {
                     break;
                 }
@@ -87,7 +98,7 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
             if (value < negativeMin) continue;
             int i = 0;
             while (yloglab[minoridx][++i] > 0) {
-                int y = rrdGraph.mapper.ytr(-1.0 * value * yloglab[minoridx][i]);
+                int y = mapper.ytr(-1.0 * value * yloglab[minoridx][i]);
                 if (y <= im.yorigin - im.ysize) {
                     break;
                 }
@@ -101,14 +112,13 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
         boolean skipFirst = false;
         if (im.minval < 0.0 && im.maxval > 0.0) {
             skipFirst = true;
-            int y = rrdGraph.mapper.ytr(0.0);
+            int y = mapper.ytr(0.0);
             worker.drawLine(x0 - 2, y, x0 + 2, y, mGridColor, gdef.tickStroke);
             worker.drawLine(x1 - 2, y, x1 + 2, y, mGridColor, gdef.tickStroke);
             worker.drawLine(x0, y, x1, y, mGridColor, gdef.gridStroke);
             String graph_label = Util.sprintf(gdef.locale, "%3.0e", 0.0);
             int length = (int) (worker.getStringWidth(graph_label, font));
             worker.drawString(graph_label, x0 - length - PADDING_VLABEL, y + labelOffset, font, fontColor);
-
         }
 
         // Draw major grid for positive values
@@ -126,7 +136,7 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
             }
             int i = 0;
             while (yloglab[majoridx][++i] > 0) {
-                int y = rrdGraph.mapper.ytr(value * yloglab[majoridx][i]);
+                int y = mapper.ytr(value * yloglab[majoridx][i]);
                 if (y <= im.yorigin - im.ysize) {
                     break;
                 }
@@ -154,7 +164,7 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
             }
             int i = 0;
             while (yloglab[majoridx][++i] > 0) {
-                int y = rrdGraph.mapper.ytr(-1.0 * value * yloglab[majoridx][i]);
+                int y = mapper.ytr(-1.0 * value * yloglab[majoridx][i]);
                 if (y <= im.yorigin - im.ysize) {
                     break;
                 }
@@ -174,12 +184,12 @@ class ValueAxisLogarithmic implements RrdGraphConstants {
      * Compute logarithm for the purposes of y-axis. 
      */
     static double log10(double v) {
-        if (v > 0.0) {
-            return Math.log10(v);
-        } else if (v < 0.0) {
-            return -1.0 * Math.log10(-1.0 * v);
-        } else {
+        double lv = Math.log10(Math.abs(v));
+        if (lv < 0) {
+            // Don't cross the sign line, round to 0 if that's the case
             return 0.0;
+        } else {
+            return Math.copySign(lv, v);
         }
     }
 }

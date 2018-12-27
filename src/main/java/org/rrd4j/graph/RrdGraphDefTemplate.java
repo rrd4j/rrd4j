@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.rrd4j.ConsolFun;
@@ -629,9 +630,10 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void resolveDef(Node parentNode) {
         validateTagsOnlyOnce(parentNode, new String[]{"name", "rrd", SOURCE, "cf", "backend"});
-        String name = null, rrd = null, source = null, backend = null;
+        String name = null, rrd = null, source = null, backendName = null;
         ConsolFun consolFun = null;
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
@@ -649,11 +651,15 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
                 consolFun = ConsolFun.valueOf(getValue(childNode));
             }
             else if (nodeName.equals("backend")) {
-                backend = getValue(childNode);
+                backendName = getValue(childNode);
             }
         }
         if (name != null && rrd != null && source != null && consolFun != null) {
-            rrdGraphDef.datasource(name, rrd, source, consolFun, backend);
+            if (backendName != null) {
+                rrdGraphDef.datasource(name, rrd, source, consolFun, backendName);
+            } else {
+                rrdGraphDef.datasource(name, rrd, source, consolFun);
+            }
         }
         else {
             throw new IllegalArgumentException("Incomplete DEF settings");
@@ -880,14 +886,18 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     private void resolveColors(Node parentNode) {
         // validateTagsOnly modifies the String[] that gets passed in
         // therefore we must pass in a copy of COLOR_NAMES
-        String[] copy = new String[COLOR_NAMES.length];
-        System.arraycopy(COLOR_NAMES, 0, copy, 0, COLOR_NAMES.length);
+        ElementsNames[] elements = ElementsNames.values();
+        String[] copy = new String[ElementsNames.values().length];
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = elements[i].name();
+        }
+
         validateTagsOnlyOnce(parentNode, copy);
 
         Node[] childNodes = getChildNodes(parentNode);
         for (Node childNode : childNodes) {
             String colorName = childNode.getNodeName();
-            rrdGraphDef.setColor(colorName, getValueAsColor(childNode));
+            rrdGraphDef.setColor(ElementsNames.valueOf(colorName.toLowerCase(Locale.ENGLISH)), getValueAsColor(childNode));
         }
     }
 

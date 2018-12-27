@@ -7,12 +7,14 @@ import java.util.concurrent.ScheduledExecutorService;
  * Factory class which creates actual {@link org.rrd4j.core.RrdNioBackend} objects. This is the default factory since
  * 1.4.0 version.
  * <h3>Managing the thread pool</h3>
- * Each RrdNioBackendFactory is backed by a {@link org.rrd4j.core.RrdSyncThreadPool}, which it uses to sync the memory-mapped files to
+ * <p>Each RrdNioBackendFactory is optionally backed by a {@link org.rrd4j.core.RrdSyncThreadPool}, which it uses to sync the memory-mapped files to
  * disk. In order to avoid having these threads live longer than they should, it is recommended that clients create and
  * destroy thread pools at the appropriate time in their application's life time. Failure to manage thread pools
- * appropriately may lead to the thread pool hanging around longer than necessary, which in turn may cause memory leaks.
+ * appropriately may lead to the thread pool hanging around longer than necessary, which in turn may cause memory leaks.</p>
+ * <p>if sync period is negative, no sync thread will be launched</p>
  *
  */
+@RrdBackendAnnotation(name="NIO", shouldValidateHeader=true)
 public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * Period in seconds between consecutive synchronizations when
@@ -22,19 +24,14 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      */
     public static final int DEFAULT_SYNC_PERIOD = 300; // seconds
 
-    private static int syncPeriod = DEFAULT_SYNC_PERIOD;
+    private static int defaultSyncPeriod = DEFAULT_SYNC_PERIOD;
 
     /**
      * The core pool size for the sync executor. Defaults to 6.
      */
     public static final int DEFAULT_SYNC_CORE_POOL_SIZE = 6;
 
-    private static int syncPoolSize = DEFAULT_SYNC_CORE_POOL_SIZE;
-
-    /**
-     * The thread pool to pass to newly-created RrdNioBackend instances.
-     */
-    private RrdSyncThreadPool syncThreadPool;
+    private static int defaultSyncPoolSize = DEFAULT_SYNC_CORE_POOL_SIZE;
 
     /**
      * Returns time between two consecutive background synchronizations. If not changed via
@@ -44,16 +41,17 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @return Time in seconds between consecutive background synchronizations.
      */
     public static int getSyncPeriod() {
-        return syncPeriod;
+        return defaultSyncPeriod;
     }
 
     /**
-     * Sets time between consecutive background synchronizations.
+     * Sets time between consecutive background synchronizations. If negative, it will disabling syncing for
+     * all NIO backend factory.
      *
      * @param syncPeriod Time in seconds between consecutive background synchronizations.
      */
     public static void setSyncPeriod(int syncPeriod) {
-        RrdNioBackendFactory.syncPeriod = syncPeriod;
+        RrdNioBackendFactory.defaultSyncPeriod = syncPeriod;
     }
 
     /**
@@ -64,7 +62,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @return Number of synchronizing threads.
      */
     public static int getSyncPoolSize() {
-        return syncPoolSize;
+        return defaultSyncPoolSize;
     }
 
     /**
@@ -74,18 +72,64 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @param syncPoolSize Number of synchronizing threads.
      */
     public static void setSyncPoolSize(int syncPoolSize) {
-        RrdNioBackendFactory.syncPoolSize = syncPoolSize;
+        RrdNioBackendFactory.defaultSyncPoolSize = syncPoolSize;
+    }
+
+    private final int syncPeriod;
+
+    /**
+     * The thread pool to pass to newly-created RrdNioBackend instances.
+     */
+    private RrdSyncThreadPool syncThreadPool;
+
+    /**
+     * Creates a new RrdNioBackendFactory with default settings.
+     */
+    public RrdNioBackendFactory() {
+        this(RrdNioBackendFactory.defaultSyncPeriod, DefaultSyncThreadPool.INSTANCE);
     }
 
     /**
-     * Creates a new RrdNioBackendFactory. One should call {@link #setSyncThreadPool(RrdSyncThreadPool syncThreadPool)}
-     * or {@link #setSyncThreadPool(RrdSyncThreadPool syncThreadPool)} before the first call to
-     * {@link #open(String path, boolean readOnly)}.
-     * Failure to do so will lead to memory leaks in anything but the simplest applications because the underlying thread pool will not
-     * be shut down cleanly. Read the Javadoc for this class to understand why using this constructor is discouraged.
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod If syncPeriod is negative or 0, sync threads are disabled.
      */
-    public RrdNioBackendFactory() {
-        super();
+    public RrdNioBackendFactory(int syncPeriod) {
+        this(syncPeriod, syncPeriod > 0 ? DefaultSyncThreadPool.INSTANCE : null);
+    }
+
+    /**
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod
+     * @param syncPoolSize The number of threads to use to sync the mapped file to disk, if inferior to 0, sync threads are disabled.
+     */
+    public RrdNioBackendFactory(int syncPeriod, int syncPoolSize) {
+        this(syncPeriod, syncPoolSize > 0 ? new RrdSyncThreadPool(syncPoolSize) : null);
+    }
+
+    /**
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod
+     * @param syncThreadPool If null, disable background sync threads
+     */
+    public RrdNioBackendFactory(int syncPeriod, ScheduledExecutorService syncThreadPool) {
+        this(syncPeriod, syncThreadPool != null ? new RrdSyncThreadPool(syncThreadPool) :null);
+    }
+
+    /**
+     * Creates a new RrdNioBackendFactory.
+     *
+     * @param syncPeriod
+     * @param syncThreadPool If null, disable background sync threads
+     */
+    public RrdNioBackendFactory(int syncPeriod, RrdSyncThreadPool syncThreadPool) {
+        if (syncThreadPool != null && syncPeriod < 0) {
+            throw new IllegalArgumentException("Both thread pool defined and negative sync period");
+        }
+        this.syncPeriod = syncPeriod;
+        this.syncThreadPool = syncThreadPool;
     }
 
     /**
@@ -93,6 +137,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      *
      * @param syncThreadPool the RrdSyncThreadPool to use to sync the memory-mapped files.
      */
+    @Deprecated
     public void setSyncThreadPool(RrdSyncThreadPool syncThreadPool) {
         this.syncThreadPool = syncThreadPool;
     }
@@ -100,8 +145,9 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * <p>Setter for the field <code>syncThreadPool</code>.</p>
      *
-     * @param syncThreadPool the ScheduledExecutorService that will back the RrdSyncThreadPool  used to sync the memory-mapped files.
+     * @param syncThreadPool the ScheduledExecutorService that will back the RrdSyncThreadPool used to sync the memory-mapped files.
      */
+    @Deprecated
     public void setSyncThreadPool(ScheduledExecutorService syncThreadPool) {
         this.syncThreadPool = new RrdSyncThreadPool(syncThreadPool);
     }
@@ -112,20 +158,21 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * Creates RrdNioBackend object for the given file path.
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
-        // Instantiate a thread pool if none was provided
-        if(syncThreadPool == null) {
-            syncThreadPool = DefaultSyncThreadPool.INSTANCE;
-        }
         return new RrdNioBackend(path, readOnly, syncThreadPool, syncPeriod);
     }
 
     /**
-     * <p>getName.</p>
-     *
-     * @return The {@link java.lang.String} "NIO".
+     * @return The {@link RrdSyncThreadPool} or null if syncing is disabled
      */
-    public String getName() {
-        return "NIO";
+    public RrdSyncThreadPool getSyncThreadPool() {
+        return syncThreadPool;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (syncThreadPool != null) {
+            syncThreadPool.shutdown();
+        }
     }
 
     /**
@@ -134,15 +181,16 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * <p/>
      * In practice this thread pool will be used if clients rely on the factory returned by {@link
      * org.rrd4j.core.RrdBackendFactory#getDefaultFactory()}, but not if clients provide their own backend instance when
-     * creating {@code RrdDb} instances.
+     * creating {@code RrdDb} instances or syncing was not disabled.
      */
     private static class DefaultSyncThreadPool
     {
         /**
          * The default thread pool used to periodically sync the mapped file to disk with.
          */
-        static RrdSyncThreadPool INSTANCE = new RrdSyncThreadPool(syncPoolSize);
+        static RrdSyncThreadPool INSTANCE = new RrdSyncThreadPool(defaultSyncPoolSize);
 
         private DefaultSyncThreadPool() {}
     }
+
 }

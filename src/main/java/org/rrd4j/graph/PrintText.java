@@ -48,7 +48,7 @@ class PrintText extends CommentText {
                 }                
             }
             else {
-                resolvedText = "-";                
+                resolvedText = "-";
             }
         }
         else {

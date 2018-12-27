@@ -2,7 +2,7 @@ rrd4j
 =====
 
 [![Gitter chat](https://badges.gitter.im/rrd4j/Lobby.png)](https://gitter.im/rrd4j/Lobby)
-[![Jenkins status](http://jrds.fr/jenkins/job/rrd4j/badge/icon?file=.png)](http://jrds.fr/jenkins/job/rrd4j/)
+[![Build Status](https://travis-ci.org/rrd4j/rrd4j.svg?branch=master)](https://travis-ci.org/rrd4j/rrd4j)
 [![Javadocs](https://www.javadoc.io/badge/org.rrd4j/rrd4j.svg)](https://www.javadoc.io/doc/org.rrd4j/rrd4j)
 
 RRD4J is a high performance data logging and graphing system for time series data, implementing [RRDTool's](http://oss.oetiker.ch/rrdtool/)
@@ -19,7 +19,7 @@ RRD4J 3.3.1 (released 2018-10-05) - [Download](https://github.com/rrd4j/rrd4j/re
 
 ### Building (optional)
 
-RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/site). Automated builds are uploaded
+RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/). Automated builds are uploaded
 to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
 ### Using with Maven
@@ -28,9 +28,9 @@ Add this dependency to your project's POM file:
 
 ```xml
 <dependency>
-	<groupId>org.rrd4j</groupId>
-	<artifactId>rrd4j</artifactId>
-	<version>3.3</version>
+    <groupId>org.rrd4j</groupId>
+    <artifactId>rrd4j</artifactId>
+    <version>3.4-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -46,8 +46,10 @@ Add this dependency to your project's POM file:
 ### Usage Example
 
 ```java
+import java.awt.Color;
+
 import org.rrd4j.core.*;
-import static org.rrd4j.DsType.*;
+import org.rrd4j.graph.*;
 import static org.rrd4j.ConsolFun.*;
 
 String rrdPath = "my.rrd";
@@ -59,16 +61,16 @@ rrdDef.addArchive(AVERAGE, 0.5, 6, 700); // 6 steps, 700 rows
 rrdDef.addArchive(MAX, 0.5, 1, 600);
 
 // then, create a RrdDb from the definition and start adding data
-RrdDb rrdDb = new RrdDb(rrdDef);
-Sample sample = rrdDb.createSample();
-while (...) {
-    double inbytes = ...
-    double outbytes = ...
-    sample.setValue("inbytes", inbytes);
-    sample.setValue("outbytes", outbytes);
-    sample.update();
+try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+    Sample sample = rrdDb.createSample();
+    while (...) {
+        double inbytes = ...
+        double outbytes = ...
+        sample.setValue("inbytes", inbytes);
+        sample.setValue("outbytes", outbytes);
+        sample.update();
+    }
 }
-rrdDb.close();
 
 // then create a graph definition
 RrdGraphDef gDef = new RrdGraphDef();
@@ -78,7 +80,7 @@ gDef.setFilename("inbytes.png");
 gDef.setTitle("My Title");
 gDef.setVerticalLabel("bytes");
 gDef.datasource("inbytes-average", rrdPath, "inbytes", AVERAGE);
-gDef.line("inbytes-average", Color.BLUE, "Bytes In")
+gDef.line("inbytes-average", Color.BLUE, "Bytes In");
 gDef.hrule(2568, Color.GREEN, "hrule");
 gDef.setImageFormat("png");
 

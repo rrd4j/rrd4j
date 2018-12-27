@@ -18,29 +18,18 @@
 package org.rrd4j.graph;
 
 import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.createMockBuilder;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.gt;
 import static org.easymock.EasyMock.lt;
-import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.same;
-import static org.easymock.EasyMock.verify;
 
 import java.awt.FontFormatException;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.rrd4j.ConsolFun;
-import org.rrd4j.DsType;
 import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.Sample;
-import org.rrd4j.core.Util;
 
 
 /**
@@ -57,52 +46,15 @@ import org.rrd4j.core.Util;
  *
  */
 
-public class ValueAxisTest extends DummyGraph {
+public class ValueAxisTest extends AxisTester<ValueAxis> {
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-
-    private ValueAxis valueAxis;
-    private String jrbFileName;
-    private final long startTime = 1;
-
-    @Before 
-    public void setup() throws IOException {
-        jrbFileName = testFolder.newFile("test-value-axis.rrd").getCanonicalPath();
+    @Override
+    void setupGraphDef() {
     }
 
-    private void createGaugeRrd(int rowCount) throws IOException {
-        RrdDef def = new RrdDef(jrbFileName);
-        def.setStartTime(startTime);
-        def.setStep(60);
-        def.addDatasource("testvalue", DsType.GAUGE, 120, Double.NaN, Double.NaN);
-        def.addArchive("RRA:AVERAGE:0.5:1:"+rowCount);
-
-        //Create the empty rrd.  Other code may open and append data
-        RrdDb rrd = new RrdDb(def);
-        rrd.close();
-    }
-
-    //Cannot be called until the RRD has been populated; wait
-    private void prepareGraph() throws IOException {
-
-        graphDef = new RrdGraphDef();
-        graphDef.datasource("testvalue", jrbFileName, "testvalue", ConsolFun.AVERAGE);
-        graphDef.area("testvalue", Util.parseColor("#FF0000"), "TestValue");
-        graphDef.setStartTime(startTime);
-        graphDef.setEndTime(startTime + (60*60*24));
-        graphDef.setLocale(Locale.US);
-
-        //There's only a couple of methods of ImageWorker that we actually care about in this test.
-        // More to the point, we want the rest to work as normal (like getFontHeight, getFontAscent etc)
-        imageWorker = createMockBuilder(ImageWorker.class)
-                .addMockedMethod("drawLine")
-                .addMockedMethod("drawString")
-                .createStrictMock(); //Order is important!
-
-        buildGraph();
-
-        valueAxis = new ValueAxis(imageParameters, imageWorker, graphDef, graphMapper);
+    @Override
+    ValueAxis makeAxis(RrdGraph rrdGraph) {
+        return new ValueAxis(rrdGraph, imageWorker);
     }
 
     public void checkForBasicGraph() {
@@ -116,12 +68,7 @@ public class ValueAxisTest extends DummyGraph {
 
         expectMajorGridLine(" 1.0");
 
-        replay(imageWorker);
-
-        valueAxis.draw();
-
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
     }
 
     private void expectMajorGridLine(String label) {
@@ -138,7 +85,7 @@ public class ValueAxisTest extends DummyGraph {
         int midX = imageParameters.xgif/2;
         int threeQuartersX = quarterX*3;
 
-        imageWorker.drawString(eq(label), lt(quarterX), anyInt(), eq(graphDef.getFont(RrdGraphDef.FONTTAG_LEGEND)), eq(RrdGraphDef.DEFAULT_FONT_COLOR));
+        imageWorker.drawString(eq(label), lt(quarterX), anyInt(), eq(graphDef.getFont(RrdGraphDef.FONTTAG_AXIS)), eq(RrdGraphDef.DEFAULT_FONT_COLOR));
         //Horizontal tick on the left
         imageWorker.drawLine(lt(quarterX), anyInt(), lt(midX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.TICK_STROKE));
         //Horizontal tick on the right
@@ -158,8 +105,8 @@ public class ValueAxisTest extends DummyGraph {
 
         for(int i=0; i<count; i++) {
             imageWorker.drawLine(lt(quarterX), anyInt(), lt(quarterX), anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.TICK_STROKE));
-            imageWorker.drawLine(gt(threeQuartersX),  anyInt(), gt(threeQuartersX),  anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.TICK_STROKE));
-            imageWorker.drawLine(lt(quarterX),  anyInt(), gt(midX),  anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.GRID_STROKE));
+            imageWorker.drawLine(gt(threeQuartersX), anyInt(), gt(threeQuartersX), anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.TICK_STROKE));
+            imageWorker.drawLine(lt(quarterX), anyInt(), gt(midX), anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.GRID_STROKE));
         }
     }
 
@@ -169,7 +116,6 @@ public class ValueAxisTest extends DummyGraph {
         prepareGraph();
         checkForBasicGraph();
     }
-
 
     @Test
     public void testOneEntryInRrd() throws IOException, FontFormatException {
@@ -206,11 +152,7 @@ public class ValueAxisTest extends DummyGraph {
         expectMajorGridLine(" 120");
         expectMinorGridLines(1);
 
-        replay(imageWorker);
-
-        valueAxis.draw();
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
 
     }
 
@@ -231,11 +173,7 @@ public class ValueAxisTest extends DummyGraph {
         expectMinorGridLines(4);
         expectMajorGridLine(" 100");
 
-        replay(imageWorker);
-
-        valueAxis.draw();
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
 
     }
 
@@ -259,11 +197,7 @@ public class ValueAxisTest extends DummyGraph {
         expectMinorGridLines(4);
         expectMajorGridLine(" 100");
 
-        replay(imageWorker);
-
-        valueAxis.draw();
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
 
     }
 
@@ -293,11 +227,7 @@ public class ValueAxisTest extends DummyGraph {
         expectMajorGridLine("  50");
         expectMajorGridLine(" 100");
 
-        replay(imageWorker);
-
-        valueAxis.draw();
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
 
     }
 
@@ -319,11 +249,7 @@ public class ValueAxisTest extends DummyGraph {
         expectMajorGridLine(" -20");
         expectMinorGridLines(3);
 
-        replay(imageWorker);
-
-        valueAxis.draw();
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
 
     }
 
@@ -358,11 +284,7 @@ public class ValueAxisTest extends DummyGraph {
         expectMajorGridLine("   0");
         expectMajorGridLine("  50");
 
-        replay(imageWorker);
-
-        valueAxis.draw();
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
 
     }
 
@@ -395,12 +317,7 @@ public class ValueAxisTest extends DummyGraph {
         expectMajorGridLine("  50");
         expectMinorGridLines(3);
 
-
-        replay(imageWorker);
-
-        valueAxis.draw();
-        //Validate the calls to the imageWorker
-        verify(imageWorker);
+        run();
 
     }
 

@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
@@ -77,7 +78,7 @@ public class RrdGraphDef implements RrdGraphConstants {
     boolean rigid = false; // ok
     double base = DEFAULT_BASE;  // ok
     boolean logarithmic = false; // ok
-    Paint[] colors = new Paint[]{
+    private final Paint[] colors = new Paint[]{
             // ok
             DEFAULT_CANVAS_COLOR,
             DEFAULT_BACK_COLOR,
@@ -584,7 +585,9 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param colorTag Color tag, as explained above.
      * @param color    Any color (paint) you like
+     * @deprecated Using {@link #setColor(ElementsNames, Paint)}
      */
+    @Deprecated
     public void setColor(int colorTag, Paint color) {
         if (colorTag >= 0 && colorTag < colors.length) {
             colors[colorTag] = color;
@@ -594,24 +597,26 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * Overrides the colors for the standard elements of the graph.
+     * @param colorTag
+     * @param color
+     */
+    public void setColor(ElementsNames colorTag, Paint color) {
+        colors[colorTag.ordinal()] = color;
+    }
+
+    /**
      * Overrides the colors for the standard elements of the graph by element name.
      * See {@link #setColor(int, java.awt.Paint)} for full explanation.
      *
      * @param colorName One of the following strings: "BACK", "CANVAS", "SHADEA", "SHADEB",
      *                  "GRID", "MGRID", "FONT", "FRAME", "ARROW", "XAXIS", "YAXIS"
      * @param color     Any color (paint) you like
+     * @deprecated Using {@link #setColor(ElementsNames, Paint)}
      */
+    @Deprecated
     public void setColor(String colorName, Paint color) {
-        setColor(getColorTagByName(colorName), color);
-    }
-
-    private static int getColorTagByName(String colorName) {
-        for (int i = 0; i < COLOR_NAMES.length; i++) {
-            if (COLOR_NAMES[i].equalsIgnoreCase(colorName)) {
-                return i;
-            }
-        }
-        throw new IllegalArgumentException("Unknown color name specified: " + colorName);
+        setColor(ElementsNames.valueOf(colorName.toLowerCase(Locale.ENGLISH)).ordinal(), color);
     }
 
     /**
@@ -838,8 +843,26 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param dsName    Datasource name in the specified RRD file
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      * @param backend   Backend to be used while fetching data from a RRD file.
+     * 
+     * @deprecated Uses {@link #datasource(String, String, String, ConsolFun, RrdBackendFactory)} instead
      */
+    @Deprecated
     public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun, String backend) {
+        sources.add(new Def(name, rrdPath, dsName, consolFun, RrdBackendFactory.getFactory(backend)));
+    }
+
+    /**
+     * Defines virtual datasource. This datasource can then be used
+     * in other methods like {@link #datasource(String, String)} or
+     * {@link #gprint(String, ConsolFun, String)}.
+     *
+     * @param name      Source name
+     * @param rrdPath   Path to RRD file
+     * @param dsName    Datasource name in the specified RRD file
+     * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
+     * @param backend   Backend to be used while fetching data from a RRD file.
+     */
+    public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun, RrdBackendFactory backend) {
         sources.add(new Def(name, rrdPath, dsName, consolFun, backend));
     }
 
@@ -1636,6 +1659,10 @@ public class RrdGraphDef implements RrdGraphConstants {
             }
         }
         return false;
+    }
+
+    Paint getColor(ElementsNames element) {
+        return colors[element.ordinal()];
     }
 
 }

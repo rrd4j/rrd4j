@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.lang.ref.PhantomReference;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -50,7 +51,11 @@ import java.nio.CharBuffer;
  */
 public abstract class RrdBackend {
 
-    private static final ByteOrder BYTEORDER = ByteOrder.BIG_ENDIAN;
+    /**
+     * All {@link java.nio.ByteBuffer} usage should use this standard order.
+     */
+    protected static final ByteOrder BYTEORDER = ByteOrder.BIG_ENDIAN;
+
     private static final char STARTPRIVATEAREA = '\ue000';
     private static final char ENDPRIVATEAREA = '\uf8ff';
     private static final int STARTPRIVATEAREACODEPOINT = Character.codePointAt(new char[]{STARTPRIVATEAREA}, 0);
@@ -58,10 +63,11 @@ public abstract class RrdBackend {
     private static final int PRIVATEAREASIZE = ENDPRIVATEAREACODEPOINT - STARTPRIVATEAREACODEPOINT + 1;
     private static final int MAXUNSIGNEDSHORT = Short.MAX_VALUE - Short.MIN_VALUE;
 
-    private static boolean instanceCreated = false;
+    private volatile static boolean instanceCreated = false;
     private final String path;
     private RrdBackendFactory factory;
     private long nextBigStringOffset = -1;
+    private PhantomReference<RrdDb> ref;
 
     /**
      * Creates backend for a RRD storage with the given path.
@@ -73,6 +79,22 @@ public abstract class RrdBackend {
     protected RrdBackend(String path) {
         this.path = path;
         instanceCreated = true;
+    }
+
+    /**
+     *
+     * @param factory the factory to set
+     */
+    void done(RrdBackendFactory factory, PhantomReference<RrdDb> ref) {
+        this.factory = factory;
+        this.ref = ref;
+    }
+
+    /**
+     * @return the factory
+     */
+    public RrdBackendFactory getFactory() {
+        return factory;
     }
 
     /**
@@ -131,11 +153,25 @@ public abstract class RrdBackend {
     protected abstract void setLength(long length) throws IOException;
 
     /**
-     * Closes the underlying backend.
+     * Closes the underlying backend. Used internally, should not be called from external code.
      *
      * @throws java.io.IOException Thrown in case of I/O error
      */
-    public void close() throws IOException {
+    protected abstract void close() throws IOException;
+
+    /**
+     * Closes the underlying backend. Call by {@code RrdDb#close()} when it's closed. All subclass must keep calling it.
+     *
+     * @throws java.io.IOException Thrown in case of I/O error
+     */
+    protected void rrdClose() throws IOException {
+        try {
+            close();
+        } finally {
+            if (ref != null) {
+                ref.clear();
+            }
+        }
     }
 
     /**
@@ -148,7 +184,7 @@ public abstract class RrdBackend {
      *         method returns <code>true</code> but it can be overridden in subclasses.
      */
     protected boolean isCachingAllowed() {
-        return true;
+        return factory.cachingAllowed;
     }
 
     /**
@@ -163,29 +199,30 @@ public abstract class RrdBackend {
         return b;
     }
 
-    private void writeShort(long offset, short value) throws IOException {
+    protected void writeShort(long offset, short value) throws IOException {
         byte[] b = new byte[2];
         b[0] = (byte) ((value >>> 8) & 0xFF);
         b[1] = (byte) ((value >>> 0) & 0xFF);
         write(offset, b);
     }
 
-    final void writeInt(long offset, int value) throws IOException {
+    protected void writeInt(long offset, int value) throws IOException {
         write(offset, getIntBytes(value));
     }
 
-    final void writeLong(long offset, long value) throws IOException {
+    protected void writeLong(long offset, long value) throws IOException {
         write(offset, getLongBytes(value));
     }
 
-    final void writeDouble(long offset, double value) throws IOException {
+    protected void writeDouble(long offset, double value) throws IOException {
         write(offset, getDoubleBytes(value));
     }
 
-    final void writeDouble(long offset, double value, int count) throws IOException {
+    protected void writeDouble(long offset, double value, int count) throws IOException {
         byte[] b = getDoubleBytes(value);
         byte[] image = new byte[8 * count];
-        for (int i = 0, k = 0; i < count; i++) {
+        int k = 0;
+        for (int i = 0; i < count; i++) {
             image[k++] = b[0];
             image[k++] = b[1];
             image[k++] = b[2];
@@ -198,10 +235,11 @@ public abstract class RrdBackend {
         write(offset, image);
     }
 
-    final void writeDouble(long offset, double[] values) throws IOException {
+    protected void writeDouble(long offset, double[] values) throws IOException {
         int count = values.length;
         byte[] image = new byte[8 * count];
-        for (int i = 0, k = 0; i < count; i++) {
+        int k = 0;
+        for (int i = 0; i < count; i++) {
             byte[] b = getDoubleBytes(values[i]);
             image[k++] = b[0];
             image[k++] = b[1];
@@ -215,7 +253,7 @@ public abstract class RrdBackend {
         write(offset, image);
     }
 
-    final void writeString(long offset, String value) throws IOException {
+    protected final void writeString(long offset, String value) throws IOException {
         if (nextBigStringOffset < 0) {
             nextBigStringOffset = getLength() - (Short.SIZE / 8);
         }
@@ -225,7 +263,7 @@ public abstract class RrdBackend {
         // This area span the range E000-F8FF, that' a 6400 char area, 
         if (value.length() > RrdPrimitive.STRING_LENGTH) {
             String bigString = value;
-            int byteStringLength = (int) Math.min(MAXUNSIGNEDSHORT, bigString.length());
+            int byteStringLength = Math.min(MAXUNSIGNEDSHORT, bigString.length());
             long bigStringOffset = nextBigStringOffset;
             nextBigStringOffset -= byteStringLength * 2 + (Short.SIZE / 8);
             writeShort(bigStringOffset, (short)byteStringLength);
@@ -245,7 +283,7 @@ public abstract class RrdBackend {
         writeString(offset, value, RrdPrimitive.STRING_LENGTH);
     }
 
-    private void writeString(long offset, String value, int length) throws IOException {
+    protected void writeString(long offset, String value, int length) throws IOException {
         ByteBuffer bbuf = ByteBuffer.allocate(length * 2);
         bbuf.order(BYTEORDER);
         bbuf.position(0);
@@ -258,37 +296,37 @@ public abstract class RrdBackend {
         write(offset, bbuf.array());
     }
 
-    private short readShort(long offset) throws IOException {
+    protected short readShort(long offset) throws IOException {
         byte[] b = new byte[2];
         read(offset, b);
-        return (short) (((b[0] << 8) & 0x0000FF00) + ((b[1] << 0) & 0x000000FF));
-
+        return (short) (((b[0] << 8) & 0x0000FF00) + (b[1] & 0x000000FF));
     }
 
-    final int readInt(long offset) throws IOException {
+    protected int readInt(long offset) throws IOException {
         byte[] b = new byte[4];
         read(offset, b);
         return getInt(b);
     }
 
-    final long readLong(long offset) throws IOException {
+    protected long readLong(long offset) throws IOException {
         byte[] b = new byte[8];
         read(offset, b);
         return getLong(b);
     }
 
-    final double readDouble(long offset) throws IOException {
+    protected double readDouble(long offset) throws IOException {
         byte[] b = new byte[8];
         read(offset, b);
         return getDouble(b);
     }
 
-    final double[] readDouble(long offset, int count) throws IOException {
+    protected double[] readDouble(long offset, int count) throws IOException {
         int byteCount = 8 * count;
         byte[] image = new byte[byteCount];
         read(offset, image);
         double[] values = new double[count];
-        for (int i = 0, k = -1; i < count; i++) {
+        int k = -1;
+        for (int i = 0; i < count; i++) {
             byte[] b = new byte[]{
                     image[++k], image[++k], image[++k], image[++k],
                     image[++k], image[++k], image[++k], image[++k]
@@ -298,20 +336,32 @@ public abstract class RrdBackend {
         return values;
     }
 
-    final String readString(long offset) throws IOException {
-        ByteBuffer bbuf = ByteBuffer.allocate(RrdPrimitive.STRING_LENGTH * 2);
+    /**
+     * Extract a CharBuffer from the backend, used by readString
+     * 
+     * @param offset
+     * @param size
+     * @return
+     * @throws IOException
+     */
+    protected CharBuffer getCharBuffer(long offset, int size) throws IOException {
+        ByteBuffer bbuf = ByteBuffer.allocate(size * 2);
         bbuf.order(BYTEORDER);
         read(offset, bbuf.array());
         bbuf.position(0);
-        bbuf.limit(RrdPrimitive.STRING_LENGTH * 2);
-        CharBuffer cbuf = bbuf.asCharBuffer();
+        bbuf.limit(size * 2);
+        return bbuf.asCharBuffer();
+    }
+
+    protected final String readString(long offset) throws IOException {
+        CharBuffer cbuf = getCharBuffer(offset, RrdPrimitive.STRING_LENGTH);
         long realStringOffset = 0;
         int i = -1;
         while (++i < RrdPrimitive.STRING_LENGTH) {
             char c = cbuf.charAt(RrdPrimitive.STRING_LENGTH - i - 1);
             if (c >= STARTPRIVATEAREA && c <= ENDPRIVATEAREA) {
                 realStringOffset += ((long) c - STARTPRIVATEAREACODEPOINT) * Math.pow(PRIVATEAREASIZE, i);
-                cbuf.put(i, ' ');
+                cbuf.limit(RrdPrimitive.STRING_LENGTH - i - 1);
             } else {
                 break;
             }
@@ -322,12 +372,9 @@ public abstract class RrdBackend {
             if (bigStringSize < 0) {
                 bigStringSize += MAXUNSIGNEDSHORT + 1;
             }
-            ByteBuffer realStringbuf = ByteBuffer.allocate(bigStringSize * 2);
-            bbuf.order(BYTEORDER);
-            read(realStringOffset - bigStringSize * 2, realStringbuf.array());
-            return realStringbuf.asCharBuffer().toString().trim();
+            return getCharBuffer(realStringOffset - bigStringSize * 2, bigStringSize).toString();
         } else {
-            return cbuf.toString().trim();
+            return cbuf.slice().toString().trim();
         }
     }
 
@@ -355,16 +402,14 @@ public abstract class RrdBackend {
         return b;
     }
 
-
     private static byte[] getDoubleBytes(double value) {
-        byte[] bytes = getLongBytes(Double.doubleToLongBits(value));
-        return bytes;
+        return getLongBytes(Double.doubleToLongBits(value));
     }
 
     private static int getInt(byte[] b) {
         assert b.length == 4 : "Invalid number of bytes for integer conversion";
         return ((b[0] << 24) & 0xFF000000) + ((b[1] << 16) & 0x00FF0000) +
-                ((b[2] << 8) & 0x0000FF00) + ((b[3] << 0) & 0x000000FF);
+                ((b[2] << 8) & 0x0000FF00) + (b[3] & 0x000000FF);
     }
 
     private static long getLong(byte[] b) {
@@ -381,22 +426,6 @@ public abstract class RrdBackend {
 
     static boolean isInstanceCreated() {
         return instanceCreated;
-    }
-
-    /**
-     * @return the factory
-     */
-    public RrdBackendFactory getFactory() {
-        return factory;
-    }
-
-    /**
-     * Privately called method.
-     * 
-     * @param factory the factory to set
-     */
-    void setFactory(RrdBackendFactory factory) {
-        this.factory = factory;
     }
 
 }

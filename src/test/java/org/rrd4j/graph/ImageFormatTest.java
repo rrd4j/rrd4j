@@ -3,12 +3,28 @@ package org.rrd4j.graph;
 import java.awt.Color;
 import java.io.IOException;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.RrdBackendFactory;
+import org.rrd4j.core.RrdNioBackendFactory;
 
 public class ImageFormatTest {
     private final static String rrdpath = ImageFormatTest.class.getResource("/demo1.rrd").getFile(); 
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdNioBackendFactory(0));
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
 
     private RrdGraphDef doGraph() throws IOException {
         RrdGraphDef gDef = new RrdGraphDef();

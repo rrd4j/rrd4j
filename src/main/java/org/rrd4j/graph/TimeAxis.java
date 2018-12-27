@@ -5,7 +5,7 @@ import java.awt.Paint;
 import java.util.Calendar;
 import java.util.Date;
 
-class TimeAxis implements RrdGraphConstants {
+class TimeAxis extends Axis {
     private static final TimeAxisSetting[] tickSettings = {
             new TimeAxisSetting(0, SECOND, 30, MINUTE, 5, MINUTE, 5, 0, HH_MM),
             new TimeAxisSetting(2, MINUTE, 1, MINUTE, 5, MINUTE, 5, 0, HH_MM),
@@ -34,8 +34,15 @@ class TimeAxis implements RrdGraphConstants {
     private final Calendar calendar;
 
     TimeAxis(RrdGraph rrdGraph) {
+        this(rrdGraph, rrdGraph.worker);
+    }
+
+    /**
+     * Used for test
+     */
+    TimeAxis(RrdGraph rrdGraph, ImageWorker worker) {
         this.im = rrdGraph.im;
-        this.worker = rrdGraph.worker;
+        this.worker = worker;
         this.gdef = rrdGraph.gdef;
         this.mapper = rrdGraph.mapper;
         this.secPerPix = (im.end - im.start) / (double) im.xsize;
@@ -43,37 +50,24 @@ class TimeAxis implements RrdGraphConstants {
         this.calendar.setFirstDayOfWeek(gdef.firstDayOfWeek);
     }
 
-    /**
-     * Used for test
-     * @param im
-     * @param worker
-     * @param gdef
-     * @param mapper
-     */
-    TimeAxis(ImageParameters im, ImageWorker worker, RrdGraphDef gdef, Mapper mapper) {
-        this.im = im;
-        this.worker = worker;
-        this.gdef = gdef;
-        this.mapper = mapper;
-        this.secPerPix = (im.end - im.start) / (double) im.xsize;
-        this.calendar = Calendar.getInstance(gdef.tz, gdef.locale);
-        this.calendar.setFirstDayOfWeek(gdef.firstDayOfWeek);
-    }
-
-    void draw() {
+    boolean draw() {
         chooseTickSettings();
         // early return, avoid exceptions
-        if (tickSetting == null) return;
+        if (tickSetting == null) {
+            return false;
+        }
 
         drawMinor();
         drawMajor();
         drawLabels();
+
+        return true;
     }
 
     private void drawMinor() {
         if (!gdef.noMinorGrid) {
             adjustStartingTime(tickSetting.minorUnit, tickSetting.minorUnitCount);
-            Paint color = gdef.colors[COLOR_GRID];
+            Paint color = gdef.getColor(ElementsNames.grid);
             int y0 = im.yorigin, y1 = y0 - im.ysize;
             for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
                 if (status == 0) {
@@ -89,7 +83,7 @@ class TimeAxis implements RrdGraphConstants {
 
     private void drawMajor() {
         adjustStartingTime(tickSetting.majorUnit, tickSetting.majorUnitCount);
-        Paint color = gdef.colors[COLOR_MGRID];
+        Paint color = gdef.getColor(ElementsNames.mgrid);
         int y0 = im.yorigin, y1 = y0 - im.ysize;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {
             if (status == 0) {
@@ -104,7 +98,7 @@ class TimeAxis implements RrdGraphConstants {
 
     private void drawLabels() {
         Font font = gdef.getFont(FONTTAG_AXIS);
-        Paint color = gdef.colors[COLOR_FONT];
+        Paint color = gdef.getColor(ElementsNames.font);
         adjustStartingTime(tickSetting.labelUnit, tickSetting.labelUnitCount);
         int y = im.yorigin + (int) worker.getFontHeight(font) + 2;
         for (int status = getTimeShift(); status <= 0; status = getTimeShift()) {

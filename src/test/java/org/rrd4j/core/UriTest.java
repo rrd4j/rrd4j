@@ -5,7 +5,6 @@ import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class UriTest {
 
     private void test(String Uri, String scheme, String ssp, String authority, String path) {

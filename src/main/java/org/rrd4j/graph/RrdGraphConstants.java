@@ -85,54 +85,58 @@ public interface RrdGraphConstants {
     /**
      * Index of the canvas color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_CANVAS = 0;
     /**
      * Index of the background color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_BACK = 1;
     /**
      * Index of the top-left graph shade color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_SHADEA = 2;
     /**
      * Index of the bottom-right graph shade color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_SHADEB = 3;
     /**
      * Index of the minor grid color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_GRID = 4;
     /**
      * Index of the major grid color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_MGRID = 5;
     /**
      * Index of the font color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_FONT = 6;
     /**
      * Index of the frame color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_FRAME = 7;
     /**
      * Index of the arrow color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_ARROW = 8;
     /**
      * Index of the x-axis color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_XAXIS = 9;
     /**
      * Index of the yaxis color. Used in {@link RrdGraphDef#setColor(int, java.awt.Paint)}
      */
+    @Deprecated
     int COLOR_YAXIS = 10;
-
-    /**
-     * Allowed color names which can be used in {@link RrdGraphDef#setColor(String, java.awt.Paint)} method
-     */
-    String[] COLOR_NAMES = {
-            "canvas", "back", "shadea", "shadeb", "grid", "mgrid", "font", "frame", "arrow", "xaxis", "yaxis"
-    };
 
     /**
      * Default first day of the week (obtained from the default locale)
@@ -192,42 +196,43 @@ public interface RrdGraphConstants {
     /**
      * Constant to represent left alignment marker
      */
-    String ALIGN_LEFT_MARKER = "\\l";
+    @Deprecated
+    String ALIGN_LEFT_MARKER = Markers.ALIGN_LEFT_MARKER.marker;
     /**
      * Constant to represent left alignment marker, without new line
      */
-    String ALIGN_LEFTNONL_MARKER = "\\L";
+    @Deprecated
+    String ALIGN_LEFTNONL_MARKER = Markers.ALIGN_LEFTNONL_MARKER.marker;
     /**
      * Constant to represent centered alignment marker
      */
-    String ALIGN_CENTER_MARKER = "\\c";
+    @Deprecated
+    String ALIGN_CENTER_MARKER = Markers.ALIGN_CENTER_MARKER.marker;
     /**
      * Constant to represent right alignment marker
      */
-    String ALIGN_RIGHT_MARKER = "\\r";
+    @Deprecated
+    String ALIGN_RIGHT_MARKER = Markers.ALIGN_RIGHT_MARKER.marker;
     /**
      * Constant to represent justified alignment marker
      */
-    String ALIGN_JUSTIFIED_MARKER = "\\j";
+    @Deprecated
+    String ALIGN_JUSTIFIED_MARKER = Markers.ALIGN_JUSTIFIED_MARKER.marker;
     /**
      * Constant to represent "glue" marker
      */
-    String GLUE_MARKER = "\\g";
+    @Deprecated
+    String GLUE_MARKER = Markers.GLUE_MARKER.marker;
     /**
      * Constant to represent vertical spacing marker
      */
-    String VERTICAL_SPACING_MARKER = "\\s";
+    @Deprecated
+    String VERTICAL_SPACING_MARKER = Markers.VERTICAL_SPACING_MARKER.marker;
     /**
      * Constant to represent no justification markers
      */
-    String NO_JUSTIFICATION_MARKER = "\\J";
-    /**
-     * Used internally
-     */
-    String[] MARKERS = {
-            ALIGN_LEFT_MARKER, ALIGN_LEFTNONL_MARKER, ALIGN_CENTER_MARKER, ALIGN_RIGHT_MARKER,
-            ALIGN_JUSTIFIED_MARKER, GLUE_MARKER, VERTICAL_SPACING_MARKER, NO_JUSTIFICATION_MARKER
-    };
+    @Deprecated
+    String NO_JUSTIFICATION_MARKER = Markers.NO_JUSTIFICATION_MARKER.marker;
 
     /**
      * Constant to represent in-memory image name
@@ -278,22 +283,10 @@ public interface RrdGraphConstants {
             else
                 fontPath = "/DejaVuSansMono.ttf";
 
-            InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath);
-            try {
+            try (InputStream fontstream = RrdGraphConstants.class.getResourceAsStream(fontPath)) {
                 return Font.createFont(Font.TRUETYPE_FONT, fontstream).deriveFont(type == Font.BOLD ? Font.BOLD : Font.PLAIN, size);
-            } catch (FontFormatException e) {
+            } catch (FontFormatException | IOException e) {
                 throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            finally {
-                try {
-                    if (fontstream != null) { 
-                        fontstream.close();
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
     }

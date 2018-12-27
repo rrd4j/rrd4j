@@ -1,0 +1,3 @@
+[submodule "src/site/markdown"]
+	path = src/site/markdown
+	url = https://github.com/rrd4j/rrd4j.wiki.git

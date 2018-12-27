@@ -142,8 +142,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             throw new IllegalArgumentException("No RRD archive specified. At least one is needed.");
         }
 
-        backend = factory.open(rrdDef.getUri(), false);
-        backend.setFactory(factory);
+        backend = factory.getBackend(this, rrdDef.getUri(), false);
         try {
             backend.setLength(rrdDef.getEstimatedSize());
             // create header
@@ -162,7 +161,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             }
         }
         catch (IOException e) {
-            backend.close();
+            backend.rrdClose();
             throw e;
         }
     }
@@ -262,13 +261,11 @@ public class RrdDb implements RrdUpdater, Closeable {
 
         rrdUri = buildUri(rrdPath, rrdUri, factory);
         factory = checkFactory(rrdUri, factory);
-
         // opens existing RRD file - throw exception if the file does not exist...
         if (!factory.exists(rrdUri)) {
             throw new FileNotFoundException("Could not open " + rrdUri + " [non existent]");
         }
-        backend = factory.open(rrdUri, readOnly);
-        backend.setFactory(factory);
+        backend = factory.getBackend(this, rrdUri, readOnly);
         try {
             // restore header
             header = new Header(this, (RrdDef) null);
@@ -291,7 +288,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             }
         }
         catch (IOException e) {
-            backend.close();
+            backend.rrdClose();
             throw e;
         }
     }
@@ -448,8 +445,7 @@ public class RrdDb implements RrdUpdater, Closeable {
         else {
             reader = new XmlReader(externalPath);
         }
-        backend = factory.open(rrdUri, false);
-        backend.setFactory(factory);
+        backend = factory.getBackend(this, rrdUri, false);
         try {
             backend.setLength(reader.getEstimatedSize());
             // create header
@@ -464,14 +460,11 @@ public class RrdDb implements RrdUpdater, Closeable {
             for (int i = 0; i < archives.length; i++) {
                 archives[i] = new Archive(this, reader, i);
             }
-            reader.release();
-
-            // XMLReader is a rather huge DOM tree, release memory ASAP
-            reader = null;
-        }
-        catch (IOException e) {
-            backend.close();
+        } catch (IOException e) {
+            backend.rrdClose();
             throw e;
+        } finally {
+            reader.release();
         }
     }
 
@@ -501,7 +494,7 @@ public class RrdDb implements RrdUpdater, Closeable {
     public synchronized void close() throws IOException {
         if (!closed) {
             closed = true;
-            backend.close();
+            backend.rrdClose();
         }
     }
 
@@ -770,10 +763,14 @@ public class RrdDb implements RrdUpdater, Closeable {
         return buffer.toString();
     }
 
-    final void archive(Datasource datasource, double value, long numUpdates) throws IOException {
+    final void archive(Datasource datasource, double value, double lastValue, long numUpdates) throws IOException {
         int dsIndex = getDsIndex(datasource.getName());
         for (Archive archive : archives) {
-            archive.archive(dsIndex, value, numUpdates);
+            if(ConsolFun.AVERAGE.equals(archive.getConsolFun())) { 
+                archive.archive(dsIndex, value, numUpdates);
+            } else {
+                archive.archive(dsIndex, lastValue, numUpdates);
+            }
         }
     }
 
@@ -960,20 +957,6 @@ public class RrdDb implements RrdUpdater, Closeable {
     }
 
     /**
-     * finalize.
-     *
-     * @throws java.lang.Throwable if any.
-     */
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        }
-        finally {
-            super.finalize();
-        }
-    }
-
-    /**
      * {@inheritDoc}
      *
      * Copies object's internal state to another RrdDb object.
@@ -1065,7 +1048,7 @@ public class RrdDb implements RrdUpdater, Closeable {
             return ((RrdFileBackend) backend).getCanonicalPath();
         }
         else {
-            throw new IOException("The underlying backend has no canonical path");
+            throw new RrdBackendException("The underlying backend has no canonical path");
         }
     }
 
@@ -1122,7 +1105,9 @@ public class RrdDb implements RrdUpdater, Closeable {
      * @param factoryName Name of the backend factory to be set as default.
      * @throws java.lang.IllegalArgumentException Thrown if invalid factory name is supplied, or not called
      *                                  before the first backend object (before the first RrdDb object) is created.
+     * @deprecated uses {@link RrdBackendFactory#setActiveFactories(RrdBackendFactory...)} instead.
      */
+    @Deprecated
     public static void setDefaultFactory(String factoryName) {
         RrdBackendFactory.setDefaultFactory(factoryName);
     }

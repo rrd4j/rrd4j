@@ -23,6 +23,7 @@ import com.mongodb.client.MongoCollection;
  *
  * @author Mathias Bogaert
  */
+@RrdBackendAnnotation(name="MONGODB", shouldValidateHeader=false)
 public class RrdMongoDBBackendFactory extends RrdBackendFactory {
 
     interface MongoWrapper {
@@ -31,6 +32,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         DBObject get(BasicDBObject query);
         void save(BasicDBObject query, byte[] rrd);
         List<ServerAddress> servers();
+        void close() throws IOException;
     };
 
     private final URI rootUri;
@@ -89,6 +91,9 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             public List<ServerAddress> servers() {
                 return rrdCollection.getDB().getMongo().getServerAddressList();
             }
+            @Override
+            public void close() throws IOException {
+            }
         };
 
         DB db = rrdCollection.getDB();
@@ -106,6 +111,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
      * @param rrdCollection the collection to use for storing RRD byte data
      * @param registerAsDefault if true, the backend will be registered as the default
      */
+    @SuppressWarnings("deprecation")
     public RrdMongoDBBackendFactory(final MongoClient client, final MongoCollection<DBObject> rrdCollection, boolean registerAsDefault) {
 
         wrapper = new MongoWrapper() {
@@ -115,7 +121,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             }
             @Override
             public boolean exists(BasicDBObject query) {
-                return rrdCollection.count(query) != 0;
+                return rrdCollection.countDocuments(query) != 0;
             }
             @Override
             public DBObject get(BasicDBObject query) {
@@ -138,6 +144,10 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             @Override
             public List<ServerAddress> servers() {
                 return client.getServerAddressList();
+            }
+            @Override
+            public void close() throws IOException {
+                client.close();
             }
         };
 
@@ -182,30 +192,6 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         BasicDBObject query = new BasicDBObject();
         query.put("path", path);
         return wrapper.exists(query);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean shouldValidateHeader(String path) throws IOException {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean shouldValidateHeader(URI uri) throws IOException {
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getName() {
-        return "MONGODB";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getScheme() {
-        return "mongodb";
     }
 
     // Resolve for mongo needs a magic trick because of the way the hosts informations are transformed in mongo's library
@@ -275,6 +261,11 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             }
         }
         return ! Collections.disjoint(tryHosts, wrapper.servers());
+    }
+
+    @Override
+    public void close() throws IOException {
+        wrapper.close();
     }
 
 }

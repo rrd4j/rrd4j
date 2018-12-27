@@ -1,6 +1,5 @@
 package org.rrd4j.core;
 
-
 import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.DsType.GAUGE;
 
@@ -8,38 +7,31 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-
 public class BigStringsTest {
-    
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
+
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    @Test
-    public void testBackend() throws IOException {
-        RrdMemoryBackend backend = new RrdMemoryBackend("");
-        char c = '\ue001';
-        Assert.assertTrue(c >=  '\ue000' && c <= '\uf8ff');
-        StringBuffer builder = new StringBuffer();
-        backend.setLength(6400 * 6400 + 10);
-        int pos = 0;
-        String previous = null;
-        for (int i = 0 ; i < 80 ; i++) {
-            previous = builder.toString();
-            builder.append(i % 10);
-            backend.writeString(pos, builder.toString());
-            Assert.assertEquals("Not read String", builder.toString(), backend.readString(pos));
-            if (!previous.isEmpty()) {
-                Assert.assertEquals("Not read String", previous, backend.readString(pos - RrdPrimitive.STRING_LENGTH * 2));
-            }
-            pos += RrdPrimitive.STRING_LENGTH * 2;
-        }
-    }
-    
     @Test
     public void testBigRrd() throws IOException {
         String[] dsNames = new String[]{"012345678901234567890123456789", "01234567890123456789", "0123456789012345678901234567890123456789"};

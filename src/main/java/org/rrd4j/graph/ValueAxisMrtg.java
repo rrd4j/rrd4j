@@ -4,22 +4,27 @@ import org.rrd4j.core.Util;
 
 import java.awt.*;
 
-class ValueAxisMrtg implements RrdGraphConstants {
-    private ImageParameters im;
-    private ImageWorker worker;
-    private RrdGraphDef gdef;
+class ValueAxisMrtg extends Axis {
+    
+    private final ImageParameters im;
+    private final ImageWorker worker;
+    private final RrdGraphDef gdef;
 
     ValueAxisMrtg(RrdGraph rrdGraph) {
+        this(rrdGraph, rrdGraph.worker);
+    }
+
+    ValueAxisMrtg(RrdGraph rrdGraph, ImageWorker worker) {
         this.im = rrdGraph.im;
         this.gdef = rrdGraph.gdef;
-        this.worker = rrdGraph.worker;
+        this.worker = worker;
         im.unit = gdef.unit;
     }
 
     boolean draw() {
         Font font = gdef.getFont(FONTTAG_AXIS);
-        Paint mGridColor = gdef.colors[COLOR_MGRID];
-        Paint fontColor = gdef.colors[COLOR_FONT];
+        Paint mGridColor = gdef.getColor(ElementsNames.mgrid);
+        Paint fontColor = gdef.getColor(ElementsNames.font);
         int labelOffset = (int) (worker.getFontAscent(font) / 2);
 
         if (Double.isNaN((im.maxval - im.minval) / im.magfact)) {

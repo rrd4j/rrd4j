@@ -74,7 +74,7 @@ class GraphFrame extends JFrame {
             rrdGraphDef.setTitle(rrdDef.getDsDefs()[dsIndex].dump() + " " +
                     rrdDef.getArcDefs()[arcIndex].dump());
             LinearInterpolator linearInterpolator = new LinearInterpolator(timestamps, values);
-            linearInterpolator.setInterpolationMethod(LinearInterpolator.INTERPOLATE_RIGHT);
+            linearInterpolator.setInterpolationMethod(LinearInterpolator.Method.RIGHT);
             rrdGraphDef.datasource(dsName, linearInterpolator);
             rrdGraphDef.area(dsName, color, dsName + "\\r");
             rrdGraphDef.comment("START: " + new Date(t1 * 1000L) + "\\r");

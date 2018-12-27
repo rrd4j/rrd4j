@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @since 2.2
  */
-public final class RrdSyncThreadPool
+public class RrdSyncThreadPool
 {
     /**
      * The reference to the shutdown hook, or null.

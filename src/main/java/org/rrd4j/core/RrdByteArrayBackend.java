@@ -1,13 +1,15 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Abstract byte array based backend.
  *
  */
-public abstract class RrdByteArrayBackend extends RrdBackend {
-    protected byte[] buffer;
+public abstract class RrdByteArrayBackend extends ByteBufferBackend {
+
+    private byte[] buffer;
 
     /**
      * <p>Constructor for RrdByteArrayBackend.</p>
@@ -18,16 +20,13 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
         super(path);
     }
 
-    /**
-     * <p>write.</p>
-     *
-     * @param offset a long.
-     * @param bytes an array of byte.
-     * @throws java.io.IOException if any.
-     */
-    protected synchronized void write(long offset, byte[] bytes) throws IOException {
-        int pos = (int) offset;
-        System.arraycopy(bytes, 0, buffer, pos, bytes.length);
+    protected void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
+        setByteBuffer(ByteBuffer.wrap(buffer));
+    }
+
+    protected byte[] getBuffer() {
+        return buffer;
     }
 
     /**
@@ -36,21 +35,25 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
      * @param offset a long.
      * @param bytes an array of byte.
      * @throws java.io.IOException if any.
+     * @throws java.lang.IllegalArgumentException if offset is bigger that the possible length.
      */
     protected synchronized void read(long offset, byte[] bytes) throws IOException {
-        int pos = (int) offset;
-        if (pos + bytes.length <= buffer.length) {
-            System.arraycopy(buffer, pos, bytes, 0, bytes.length);
+        if (offset < 0 || offset > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Illegal offset: " + offset);
+        }
+
+        if (offset + bytes.length <= buffer.length) {
+            System.arraycopy(buffer, (int) offset, bytes, 0, bytes.length);
         }
         else {
-            throw new IOException("Not enough bytes available in memory; RRD " + getPath());
+            throw new RrdBackendException("Not enough bytes available in RRD buffer; RRD " + getPath());
         }
     }
 
     /**
-     * Returns the number of RRD bytes held in memory.
+     * {@inheritDoc}
      *
-     * @return Number of all RRD bytes.
+     * @return Number of RRD bytes held in memory.
      */
     public long getLength() {
         return buffer.length;
@@ -59,14 +62,17 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
     /**
      * {@inheritDoc}
      *
-     * Reserves a memory section as a RRD storage.
+     * <p>It will reserves a memory section as a RRD storage.</p>
+     * 
+     * @throws java.lang.IllegalArgumentException if length is bigger that the possible length.
      */
     protected void setLength(long length) throws IOException {
-        if (length > Integer.MAX_VALUE) {
-            throw new IOException("Illegal length: " + length);
+        if (length < 0 || length > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Illegal length: " + length);
         }
 
         buffer = new byte[(int) length];
+        setByteBuffer(ByteBuffer.wrap(buffer));
     }
 
     /**
@@ -75,8 +81,8 @@ public abstract class RrdByteArrayBackend extends RrdBackend {
      *
      * @throws java.io.IOException if any.
      */
-    public void close() throws IOException {
-        // NOP
+    protected void close() throws IOException {
+        // Don't release ressources, as backend are cached by the factory and reused
     }
 
     /**

@@ -20,4 +20,26 @@ public abstract class DownSampleImpl implements DownSampler {
         sampled.values[rank] = value;
     }
 
+    @Override
+    public DataSet downsize(long[] timestamps, double[] values) {
+        if (timestamps == null || values == null) {
+            throw new NullPointerException("Cannot cope with a null data input array.");
+        }
+        if (threshold <= 2) {
+            throw new IllegalArgumentException("What am I supposed to do with that?");
+        }
+        if (timestamps.length != values.length) {
+            throw new IllegalArgumentException("Unmatched size with input arrays");
+        }
+        int inputLength = timestamps.length;
+        if (inputLength <= threshold) {
+            return new DownSampler.DataSet(timestamps, values);
+        } else {
+            DownSampler.DataSet sampled = new DownSampler.DataSet(new long[threshold], new double[threshold]);
+            return downsizeImpl(sampled, timestamps, values);
+        }
+    }
+
+    protected abstract DataSet downsizeImpl(DataSet sampled, long[] timestamps, double[] values);
+
 }

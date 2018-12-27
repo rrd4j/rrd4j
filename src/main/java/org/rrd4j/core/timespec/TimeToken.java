@@ -97,17 +97,17 @@ class TimeToken {
     public static final int EOF = -1;
 
     final String value; /* token name */
-    final int id;   /* token id */
+    final int token_id;   /* token id */
 
     /**
      * <p>Constructor for TimeToken.</p>
      *
      * @param value a {@link java.lang.String} object.
-     * @param id a int.
+     * @param token_id a int.
      */
-    public TimeToken(String value, int id) {
+    public TimeToken(String value, int token_id) {
         this.value = value;
-        this.id = id;
+        this.token_id = token_id;
     }
 
     /**
@@ -116,6 +116,6 @@ class TimeToken {
      * @return a {@link java.lang.String} object.
      */
     public String toString() {
-        return value + " [" + id + "]";
+        return value + " [" + token_id + "]";
     }
 }

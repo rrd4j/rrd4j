@@ -66,7 +66,7 @@ public class RrdDef {
      * <p>Creates new RRD definition object with the given path.
      * When this object is passed to
      * <code>RrdDb</code> constructor, new RRD will be created using the
-     * specified path.<p>
+     * specified path.</p>
      * <p>The will be transformed internally to an URI using the default backend factory.</p>
      *
      * @param rrdpath Path to new RRD.

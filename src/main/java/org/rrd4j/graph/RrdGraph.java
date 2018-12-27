@@ -19,20 +19,20 @@ import org.rrd4j.graph.DownSampler.DataSet;
  */
 public class RrdGraph implements RrdGraphConstants {
     private static final double[] SENSIBLE_VALUES = {
-        1000.0, 900.0, 800.0, 750.0, 700.0, 600.0, 500.0, 400.0, 300.0, 250.0, 200.0, 125.0, 100.0,
-        90.0, 80.0, 75.0, 70.0, 60.0, 50.0, 40.0, 30.0, 25.0, 20.0, 10.0,
-        9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.5, 3.0, 2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
-        0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
+            1000.0, 900.0, 800.0, 750.0, 700.0, 600.0, 500.0, 400.0, 300.0, 250.0, 200.0, 125.0, 100.0,
+            90.0, 80.0, 75.0, 70.0, 60.0, 50.0, 40.0, 30.0, 25.0, 20.0, 10.0,
+            9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.5, 3.0, 2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
+            0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
     };
 
     private static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'µ', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
 
     final RrdGraphDef gdef;
-    ImageParameters im = new ImageParameters();
-    DataProcessor dproc;
+    final ImageParameters im;
+    private DataProcessor dproc;
     ImageWorker worker;
     Mapper mapper;
-    RrdGraphInfo info = new RrdGraphInfo();
+    private final RrdGraphInfo info = new RrdGraphInfo();
     private final String signature;
 
     /**
@@ -44,7 +44,22 @@ public class RrdGraph implements RrdGraphConstants {
     public RrdGraph(RrdGraphDef gdef) throws IOException {
         this.gdef = gdef;
         signature = gdef.getSignature();
+        im = new ImageParameters();
         worker = new ImageWorker(1, 1); // Dummy worker, just to start with something
+        try {
+            createGraph();
+        }
+        finally {
+            worker.dispose();
+            worker = null;
+            dproc = null;
+        }
+    }
+
+    RrdGraph(RrdGraphDef gdef, ImageWorker worker, ImageParameters im) throws IOException {
+        this.gdef = gdef;
+        signature = gdef.getSignature();
+        this.im = im;
         try {
             createGraph();
         }
@@ -113,7 +128,7 @@ public class RrdGraph implements RrdGraphConstants {
     }
 
     private void saveImage() throws IOException {
-        if (!gdef.filename.equals("-")) {
+        if (! RrdGraphConstants.IN_MEMORY_IMAGE.equals(gdef.filename)) {
             info.bytes = worker.saveImage(gdef.filename, gdef.imageFormat, gdef.imageQuality, gdef.interlaced);
         }
         else {
@@ -187,14 +202,14 @@ public class RrdGraph implements RrdGraphConstants {
             if (gdef.title != null) {
                 int x = im.xgif / 2 - (int) (worker.getStringWidth(gdef.title, gdef.getFont(FONTTAG_TITLE)) / 2);
                 int y = PADDING_TOP + (int) worker.getFontAscent(gdef.getFont(FONTTAG_TITLE));
-                worker.drawString(gdef.title, x, y, gdef.getFont(FONTTAG_TITLE), gdef.colors[COLOR_FONT]);
+                worker.drawString(gdef.title, x, y, gdef.getFont(FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
             }
             if (gdef.verticalLabel != null) {
                 int x = PADDING_LEFT;
                 int y = im.yorigin - im.ysize / 2 + (int) worker.getStringWidth(gdef.verticalLabel, gdef.getFont(FONTTAG_UNIT)) / 2;
                 int ascent = (int) worker.getFontAscent(gdef.getFont(FONTTAG_UNIT));
                 worker.transform(x, y, -Math.PI / 2);
-                worker.drawString(gdef.verticalLabel, 0, ascent, gdef.getFont(FONTTAG_UNIT), gdef.colors[COLOR_FONT]);
+                worker.drawString(gdef.verticalLabel, 0, ascent, gdef.getFont(FONTTAG_UNIT), gdef.getColor(ElementsNames.font));
                 worker.reset();
             }
             worker.setTextAntiAliasing(false);
@@ -204,7 +219,8 @@ public class RrdGraph implements RrdGraphConstants {
     private void drawGrid() {
         if (!gdef.onlyGraph) {
             worker.setTextAntiAliasing(gdef.textAntiAliasing);
-            Paint shade1 = gdef.colors[COLOR_SHADEA], shade2 = gdef.colors[COLOR_SHADEB];
+            Paint shade1 = gdef.getColor(ElementsNames.shadea);
+            Paint shade2 = gdef.getColor(ElementsNames.shadeb);
             Stroke borderStroke = new BasicStroke(1);
             worker.drawLine(0, 0, im.xgif - 1, 0, shade1, borderStroke);
             worker.drawLine(1, 1, im.xgif - 2, 1, shade1, borderStroke);
@@ -233,7 +249,7 @@ public class RrdGraph implements RrdGraphConstants {
                     worker.drawString(msg,
                             im.xgif / 2 - (int) worker.getStringWidth(msg, gdef.getFont(FONTTAG_TITLE)) / 2,
                             (2 * im.yorigin - im.ysize) / 2,
-                            gdef.getFont(FONTTAG_TITLE), gdef.colors[COLOR_FONT]);
+                            gdef.getFont(FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
                 }
             }
             worker.setTextAntiAliasing(false);
@@ -296,10 +312,10 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void drawAxis() {
         if (!gdef.onlyGraph) {
-            Paint gridColor = gdef.colors[COLOR_GRID];
-            Paint xaxisColor = gdef.colors[COLOR_XAXIS];
-            Paint yaxisColor = gdef.colors[COLOR_YAXIS];
-            Paint arrowColor = gdef.colors[COLOR_ARROW];
+            Paint gridColor = gdef.getColor(ElementsNames.grid);
+            Paint xaxisColor = gdef.getColor(ElementsNames.xaxis);
+            Paint yaxisColor = gdef.getColor(ElementsNames.yaxis);
+            Paint arrowColor = gdef.getColor(ElementsNames.arrow);
             Stroke stroke = new BasicStroke(1);
             worker.drawLine(im.xorigin + im.xsize, im.yorigin, im.xorigin + im.xsize, im.yorigin - im.ysize,
                     gridColor, stroke);
@@ -320,7 +336,7 @@ public class RrdGraph implements RrdGraphConstants {
                     im.yorigin + 0,
                     im.yorigin + 3,
             };
-            worker.fillPolygon(Xarrow_x, im.yorigin + 3, Xarrow_y, arrowColor);
+            worker.fillPolygon(Xarrow_x, im.yorigin + 3.0, Xarrow_y, arrowColor);
 
             //Do y axis arrow
             double[] Yarrow_x = {
@@ -333,16 +349,16 @@ public class RrdGraph implements RrdGraphConstants {
                     im.yorigin - im.ysize - 9,
                     im.yorigin - im.ysize - 4,
             };
-            worker.fillPolygon(Yarrow_x, im.yorigin - im.ysize - 4, Yarrow_y, arrowColor);
+            worker.fillPolygon(Yarrow_x, im.yorigin - im.ysize - 4.0, Yarrow_y, arrowColor);
         }
     }
 
     private void drawBackground() throws IOException {
-        worker.fillRect(0, 0, im.xgif, im.ygif, gdef.colors[COLOR_BACK]);
+        worker.fillRect(0, 0, im.xgif, im.ygif, gdef.getColor(ElementsNames.back));
         if (gdef.backgroundImage != null) {
             worker.loadImage(gdef.backgroundImage);
         }
-        worker.fillRect(im.xorigin, im.yorigin - im.ysize, im.xsize, im.ysize, gdef.colors[COLOR_CANVAS]);
+        worker.fillRect(im.xorigin, im.yorigin - im.ysize, im.xsize, im.ysize, gdef.getColor(ElementsNames.canvas));
     }
 
     private void createImageWorker() {
@@ -522,7 +538,7 @@ public class RrdGraph implements RrdGraphConstants {
             int symbcenter = 6;
             double digits;
             if (im.unitsexponent != Integer.MAX_VALUE) {
-                digits = Math.floor(im.unitsexponent / 3);
+                digits = Math.floor(im.unitsexponent / 3.0);
             }
             else {
                 digits = Math.floor(Math.log(Math.max(Math.abs(im.minval), Math.abs(im.maxval))) / Math.log(im.base));
@@ -634,14 +650,14 @@ public class RrdGraph implements RrdGraphConstants {
                     int x = c.x, y = c.y + ascent;
                     if (c instanceof LegendText) {
                         // draw with BOX
-                        worker.fillRect(x, y - box, box, box, gdef.colors[COLOR_FRAME]);
-                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_CANVAS]);
-                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.colors[COLOR_BACK]);
+                        worker.fillRect(x, y - box, box, box, gdef.getColor(ElementsNames.frame));
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.getColor(ElementsNames.canvas));
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.getColor(ElementsNames.back));
                         worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, ((LegendText) c).legendColor);
-                        worker.drawString(c.resolvedText, x + boxSpace, y, gdef.getFont(FONTTAG_LEGEND), gdef.colors[COLOR_FONT]);
+                        worker.drawString(c.resolvedText, x + boxSpace, y, gdef.getFont(FONTTAG_LEGEND), gdef.getColor(ElementsNames.font));
                     }
                     else {
-                        worker.drawString(c.resolvedText, x, y, gdef.getFont(FONTTAG_LEGEND), gdef.colors[COLOR_FONT]);
+                        worker.drawString(c.resolvedText, x, y, gdef.getFont(FONTTAG_LEGEND), gdef.getColor(ElementsNames.font));
                     }
                 }
             }

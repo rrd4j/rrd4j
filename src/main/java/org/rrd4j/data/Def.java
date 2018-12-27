@@ -2,12 +2,15 @@ package org.rrd4j.data;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.Util;
 
 import java.io.IOException;
 
 class Def extends Source {
-    private final String path, dsName, backend;
+    private final String path;
+    private final String dsName;
+    private final RrdBackendFactory backend;
     private final ConsolFun consolFun;
     private FetchData fetchData;
 
@@ -19,7 +22,7 @@ class Def extends Source {
         this(name,
                 fetchData.getRequest().getParentDb().getPath(),
                 dsName, fetchData.getRequest().getConsolFun(),
-                fetchData.getRequest().getParentDb().getRrdBackend().getFactory().getName()
+                fetchData.getRequest().getParentDb().getRrdBackend().getFactory()
                 );
         this.fetchData = fetchData;
     }
@@ -28,7 +31,7 @@ class Def extends Source {
         this(name, path, dsName, consolFunc, null);
     }
 
-    Def(String name, String path, String dsName, ConsolFun consolFunc, String backend) {
+    Def(String name, String path, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
         super(name);
         this.path = path;
         this.dsName = dsName;
@@ -52,7 +55,7 @@ class Def extends Source {
         return consolFun;
     }
 
-    String getBackend() {
+    RrdBackendFactory getBackend() {
         return backend;
     }
 
@@ -83,12 +86,22 @@ class Def extends Source {
         return fetchData.getStep();
     }
 
+    /* (non-Javadoc)
+     * @see org.rrd4j.data.Source#getAggregates(long, long)
+     */
+    @Override
+    @Deprecated
     Aggregates getAggregates(long tStart, long tEnd) {
         long[] t = getRrdTimestamps();
         double[] v = getRrdValues();
         return new Aggregator(t, v).getAggregates(tStart, tEnd);
     }
 
+    /* (non-Javadoc)
+     * @see org.rrd4j.data.Source#getPercentile(long, long, double)
+     */
+    @Override
+    @Deprecated
     double getPercentile(long tStart, long tEnd, double percentile) {
         long[] t = getRrdTimestamps();
         double[] v = getRrdValues();
