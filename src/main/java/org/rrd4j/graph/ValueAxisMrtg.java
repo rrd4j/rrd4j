@@ -11,16 +11,14 @@ class ValueAxisMrtg extends Axis {
     private final RrdGraphDef gdef;
 
     ValueAxisMrtg(RrdGraph rrdGraph) {
-        this.im = rrdGraph.im;
-        this.gdef = rrdGraph.gdef;
-        this.worker = rrdGraph.worker;
-        im.unit = gdef.unit;
+        this(rrdGraph, rrdGraph.worker);
     }
 
-    ValueAxisMrtg(ImageParameters im, ImageWorker worker, RrdGraphDef gdef) {
-        this.im = im;
-        this.gdef = gdef;
+    ValueAxisMrtg(RrdGraph rrdGraph, ImageWorker worker) {
+        this.im = rrdGraph.im;
+        this.gdef = rrdGraph.gdef;
         this.worker = worker;
+        im.unit = gdef.unit;
     }
 
     boolean draw() {

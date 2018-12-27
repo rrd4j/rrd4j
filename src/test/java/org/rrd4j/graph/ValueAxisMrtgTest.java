@@ -17,17 +17,13 @@
  *******************************************************************************/
 package org.rrd4j.graph;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.gt;
 import static org.easymock.EasyMock.lt;
 import static org.easymock.EasyMock.same;
 
-import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.Paint;
-import java.awt.Stroke;
 import java.io.IOException;
 import java.util.Date;
 
@@ -50,20 +46,25 @@ import org.rrd4j.core.Sample;
  *
  */
 
-public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
+public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
 
     @Override
     void setupGraphDef() {
-        graphDef.setLogarithmic(true);
+        graphDef.setAltYMrtg(true);
     }
 
     @Override
-    ValueAxisLogarithmic makeAxis() {
-        return new ValueAxisLogarithmic(imageParameters, imageWorker, graphDef, graphMapper, graphDef.getFont(RrdGraphConstants.FONTTAG_AXIS));
+    ValueAxisMrtg makeAxis(RrdGraph graph) {
+        return new ValueAxisMrtg(graph, imageWorker);
     }
 
+    private void checkForBasicGraph() {
+        expectMajorGridLine(" 0.00");
+        expectMajorGridLine(" 0.25");
+        expectMajorGridLine(" 0.50");
+        expectMajorGridLine(" 0.75");
+        expectMajorGridLine(" 1.00");
 
-    public void checkForBasicGraph() {
         run();
     }
 
@@ -81,32 +82,14 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         int midX = imageParameters.xgif/2;
         int threeQuartersX = quarterX*3;
 
+        imageWorker.drawString(eq(label), anyInt(), anyInt(), eq(graphDef.getFont(RrdGraphDef.FONTTAG_AXIS)), same(RrdGraphDef.DEFAULT_FONT_COLOR));
         //Horizontal tick on the left
-        imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(),
-                anyObject(Paint.class), anyObject(Stroke.class));
+        imageWorker.drawLine(lt(quarterX), anyInt(), lt(midX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.TICK_STROKE));
         //Horizontal tick on the right
-        imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(),
-                anyObject(Paint.class), anyObject(Stroke.class));
+        imageWorker.drawLine(gt(threeQuartersX), anyInt(), gt(threeQuartersX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.TICK_STROKE));
         //Line in between the ticks (but overlapping a bit)
-        imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(),
-                anyObject(Paint.class), anyObject(Stroke.class));
-        imageWorker.drawString(eq(label), anyInt(), anyInt(), anyObject(Font.class), anyObject(Paint.class));
+        imageWorker.drawLine(lt(quarterX), anyInt(), gt(midX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.GRID_STROKE));
 
-    }
-
-    private void expectMinorGridLines(int count) {
-        //Note the use of "same" for the strokes; in RrdGraphConstants, these are both BasicStroke(1)
-        // so we want to be sure exactly the same object was used
-
-        int quarterX = imageParameters.xgif/4;
-        int midX = quarterX*2;
-        int threeQuartersX = quarterX*3;
-
-        for(int i=0; i<count; i++) {
-            imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(), anyObject(Paint.class), anyObject(Stroke.class));
-            imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(), anyObject(Paint.class), anyObject(Stroke.class));
-            imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(), anyObject(Paint.class), anyObject(Stroke.class));
-        }
     }
 
     @Test
@@ -115,7 +98,6 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         prepareGraph();
         checkForBasicGraph();
     }
-
 
     @Test
     public void testOneEntryInRrd() throws IOException, FontFormatException {
@@ -143,8 +125,11 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         rrd.close();
         prepareGraph();
 
-        expectMinorGridLines(1);
-        expectMajorGridLine("1e+02");
+        expectMajorGridLine("   0");
+        expectMajorGridLine("  30");
+        expectMajorGridLine("  60");
+        expectMajorGridLine("  90");
+        expectMajorGridLine(" 120");
 
         run();
 
@@ -162,10 +147,11 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         }
         rrd.close();
         prepareGraph();
-        expectMinorGridLines(11);
-        expectMajorGridLine("1e+00");
-        expectMajorGridLine("1e+01");
-        expectMajorGridLine("1e+02");
+        expectMajorGridLine("   0");
+        expectMajorGridLine("  25");
+        expectMajorGridLine("  50");
+        expectMajorGridLine("  75");
+        expectMajorGridLine(" 100");
 
         run();
 
@@ -183,10 +169,11 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         }
         rrd.close();
         prepareGraph();
-        expectMinorGridLines(4);
-        expectMajorGridLine("0e+00");
-        expectMajorGridLine("1e+01");
-        expectMajorGridLine("-1e+01");
+        expectMajorGridLine("-100");
+        expectMajorGridLine(" -50");
+        expectMajorGridLine("   0");
+        expectMajorGridLine("  50");
+        expectMajorGridLine(" 100");
 
         run();
 
@@ -204,12 +191,11 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         }
         rrd.close();
         prepareGraph();
-
-        //        expectMinorGridLines(0);
-        expectMajorGridLine("0e+00");
-        expectMajorGridLine("-1e+01");
-        expectMajorGridLine("1e+01");
-        expectMajorGridLine("1e+02");
+        expectMajorGridLine("-120");
+        expectMajorGridLine(" -60");
+        expectMajorGridLine("   0");
+        expectMajorGridLine("  60");
+        expectMajorGridLine(" 120");
 
         run();
 
@@ -227,8 +213,11 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         }
         rrd.close();
         prepareGraph();
-        //        expectMinorGridLines(5);
-        //        expectMajorGridLine("-1e+01");
+        expectMajorGridLine(" -52");
+        expectMajorGridLine(" -39");
+        expectMajorGridLine(" -26");
+        expectMajorGridLine(" -13");
+        expectMajorGridLine("   0");
 
         run();
 
@@ -254,9 +243,11 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         }
         rrd.close();
         prepareGraph();
-
-        expectMinorGridLines(4);
-        expectMajorGridLine("0e+00");
+        expectMajorGridLine(" -90");
+        expectMajorGridLine(" -45");
+        expectMajorGridLine("   0");
+        expectMajorGridLine("  45");
+        expectMajorGridLine("  90");
 
         run();
 
@@ -282,10 +273,12 @@ public class LogarithmicTest extends XAxis<ValueAxisLogarithmic> {
         rrd.close();
         prepareGraph();
 
-        //expectMinorGridLines(1);
-        expectMajorGridLine("0e+00");
-        expectMajorGridLine("1e+01");
-        expectMajorGridLine("-1e+01");
+        // Original
+        expectMajorGridLine(" -80");
+        expectMajorGridLine(" -40");
+        expectMajorGridLine("   0");
+        expectMajorGridLine("  40");
+        expectMajorGridLine("  80");
 
         run();
 

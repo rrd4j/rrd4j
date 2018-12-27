@@ -28,11 +28,11 @@ public class RrdGraph implements RrdGraphConstants {
     private static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'µ', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
 
     final RrdGraphDef gdef;
-    ImageParameters im = new ImageParameters();
-    DataProcessor dproc;
+    final ImageParameters im;
+    private DataProcessor dproc;
     ImageWorker worker;
     Mapper mapper;
-    RrdGraphInfo info = new RrdGraphInfo();
+    private final RrdGraphInfo info = new RrdGraphInfo();
     private final String signature;
 
     /**
@@ -44,7 +44,22 @@ public class RrdGraph implements RrdGraphConstants {
     public RrdGraph(RrdGraphDef gdef) throws IOException {
         this.gdef = gdef;
         signature = gdef.getSignature();
+        im = new ImageParameters();
         worker = new ImageWorker(1, 1); // Dummy worker, just to start with something
+        try {
+            createGraph();
+        }
+        finally {
+            worker.dispose();
+            worker = null;
+            dproc = null;
+        }
+    }
+
+    RrdGraph(RrdGraphDef gdef, ImageWorker worker, ImageParameters im) throws IOException {
+        this.gdef = gdef;
+        signature = gdef.getSignature();
+        this.im = im;
         try {
             createGraph();
         }

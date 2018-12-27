@@ -46,29 +46,16 @@ import org.rrd4j.core.Sample;
  *
  */
 
-public class ValueAxisTest extends AxisTester<ValueAxis> {
+public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
 
     @Override
     void setupGraphDef() {
+        graphDef.setLogarithmic(true);
     }
 
     @Override
-    ValueAxis makeAxis(RrdGraph rrdGraph) {
-        return new ValueAxis(rrdGraph, imageWorker);
-    }
-
-    public void checkForBasicGraph() {
-        expectMajorGridLine(" 0.0");
-
-        expectMinorGridLines(4);
-
-        expectMajorGridLine(" 0.5");
-
-        expectMinorGridLines(4);
-
-        expectMajorGridLine(" 1.0");
-
-        run();
+    ValueAxisLogarithmic makeAxis(RrdGraph graph) {
+        return new ValueAxisLogarithmic(graph, imageWorker);
     }
 
     private void expectMajorGridLine(String label) {
@@ -85,13 +72,13 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         int midX = imageParameters.xgif/2;
         int threeQuartersX = quarterX*3;
 
-        imageWorker.drawString(eq(label), lt(quarterX), anyInt(), eq(graphDef.getFont(RrdGraphDef.FONTTAG_AXIS)), eq(RrdGraphDef.DEFAULT_FONT_COLOR));
         //Horizontal tick on the left
         imageWorker.drawLine(lt(quarterX), anyInt(), lt(midX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.TICK_STROKE));
         //Horizontal tick on the right
         imageWorker.drawLine(gt(threeQuartersX), anyInt(), gt(threeQuartersX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.TICK_STROKE));
         //Line in between the ticks (but overlapping a bit)
         imageWorker.drawLine(lt(quarterX), anyInt(), gt(midX),anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.GRID_STROKE));
+        imageWorker.drawString(eq(label), anyInt(), anyInt(), eq(graphDef.getFont(RrdGraphDef.FONTTAG_AXIS)), same(RrdGraphDef.DEFAULT_FONT_COLOR));
 
     }
 
@@ -103,10 +90,10 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         int midX = quarterX*2;
         int threeQuartersX = quarterX*3;
 
-        for(int i=0; i<count; i++) {
+        for(int i=0; i < count; i++) {
             imageWorker.drawLine(lt(quarterX), anyInt(), lt(quarterX), anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.TICK_STROKE));
-            imageWorker.drawLine(gt(threeQuartersX), anyInt(), gt(threeQuartersX), anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.TICK_STROKE));
-            imageWorker.drawLine(lt(quarterX), anyInt(), gt(midX), anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.GRID_STROKE));
+            imageWorker.drawLine(gt(threeQuartersX),  anyInt(), gt(threeQuartersX),  anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.TICK_STROKE));
+            imageWorker.drawLine(lt(quarterX),  anyInt(), gt(midX),  anyInt(), eq(RrdGraphDef.DEFAULT_GRID_COLOR), same(RrdGraphDef.GRID_STROKE));
         }
     }
 
@@ -114,7 +101,11 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
     public void testBasicEmptyRrd() throws IOException, FontFormatException {
         createGaugeRrd(100);
         prepareGraph();
-        checkForBasicGraph();
+
+        expectMinorGridLines(1);
+        expectMajorGridLine("1e+00");
+
+        run();
     }
 
     @Test
@@ -127,7 +118,11 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         sample.setAndUpdate(fiveMinutesAgo+":10");
         rrd.close();
         prepareGraph();
-        checkForBasicGraph();
+
+        expectMinorGridLines(1);
+        expectMajorGridLine("1e+00");
+
+        run();
     }
 
     @Test
@@ -143,14 +138,8 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         rrd.close();
         prepareGraph();
 
-        expectMajorGridLine("  90");
         expectMinorGridLines(1);
-        expectMajorGridLine(" 100");
-        expectMinorGridLines(1);
-        expectMajorGridLine(" 110");
-        expectMinorGridLines(1);
-        expectMajorGridLine(" 120");
-        expectMinorGridLines(1);
+        expectMajorGridLine("1e+02");
 
         run();
 
@@ -168,10 +157,10 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         }
         rrd.close();
         prepareGraph();
-        expectMinorGridLines(4);
-        expectMajorGridLine("  50");
-        expectMinorGridLines(4);
-        expectMajorGridLine(" 100");
+        expectMinorGridLines(11);
+        expectMajorGridLine("1e+00");
+        expectMajorGridLine("1e+01");
+        expectMajorGridLine("1e+02");
 
         run();
 
@@ -189,43 +178,11 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         }
         rrd.close();
         prepareGraph();
-        expectMajorGridLine(" -50");
-        expectMinorGridLines(4);
-        expectMajorGridLine("   0");
-        expectMinorGridLines(4);
-        expectMajorGridLine("  50");
-        expectMinorGridLines(4);
-        expectMajorGridLine(" 100");
-
-        run();
-
-    }
-
-    @Test
-    public void testEntriesNeg55To105InRrd() throws IOException, FontFormatException {
-        createGaugeRrd(165);
-        RrdDb rrd = new RrdDb(jrbFileName);
-
-        for(int i=0; i<160; i++) {
-            long timestamp = startTime + 1 + (i * 60);
-            Sample sample = rrd.createSample();
-            sample.setAndUpdate(timestamp + ":" + (i -55));
-        }
-        rrd.close();
-        prepareGraph();
-        /**
-         * Prior to JRB-12 fix, this was the behaviour.  Note the lack of a decent negative label
-                expectMinorGridLines(3);
-                expectMajorGridLine("   0");
-                expectMinorGridLines(4);
-                expectMajorGridLine(" 100");
-                expectMinorGridLines(1);
-         */
-        //New behaviour is better; no minor grid lines, which is interesting, but much better representation
-        expectMajorGridLine(" -50");
-        expectMajorGridLine("   0");
-        expectMajorGridLine("  50");
-        expectMajorGridLine(" 100");
+        expectMinorGridLines(5);
+        expectMajorGridLine("0e+00");
+        expectMajorGridLine("1e+01");
+        expectMajorGridLine("1e+02");
+        expectMajorGridLine("-1e+01");
 
         run();
 
@@ -243,58 +200,14 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         }
         rrd.close();
         prepareGraph();
-        expectMinorGridLines(2);
-        expectMajorGridLine(" -40");
-        expectMinorGridLines(3);
-        expectMajorGridLine(" -20");
-        expectMinorGridLines(3);
+
+        expectMinorGridLines(5);
+        expectMajorGridLine("-1e+01");
 
         run();
 
     }
 
-    /**
-     * Test specifically for JRB-12 (http://issues.opennms.org/browse/JRB-12) 
-     * In the original, when the values go from -80 to 90 on a default height graph 
-     * (i.e. limited pixels available for X-axis labelling),ValueAxis gets all confused 
-     * and decides it can only display "0" on the X-axis  (there's not enough pixels
-     * for more labels, and none of the Y-label factorings available work well enough
-     * @throws FontFormatException 
-     */
-    @Test
-    public void testEntriesNeg80To90InRrd() throws IOException, FontFormatException {
-        createGaugeRrd(180);
-        RrdDb rrd = new RrdDb(jrbFileName);
-
-        for(int i=0; i<170; i++) {
-            long timestamp = startTime + 1 + (i * 60);
-            Sample sample = rrd.createSample();
-            sample.setAndUpdate(timestamp + ":" + (i -80));
-        }
-        rrd.close();
-        prepareGraph();
-        /**
-         * Original behaviour; a single major X-axis label (0) only.
-                expectMinorGridLines(4);
-                expectMajorGridLine("   0");
-                expectMinorGridLines(4);
-         */
-        //New behaviour post JRB-12 fix:
-        expectMajorGridLine(" -50");
-        expectMajorGridLine("   0");
-        expectMajorGridLine("  50");
-
-        run();
-
-    }
-
-    /**
-     * Test specifically for JRB-12 (http://issues.opennms.org/browse/JRB-12)
-     * Related to testEntriesNeg80To90InRrd, except in the original code
-     * this produced sensible labelling.  Implemented to check that the 
-     * changes don't break the sanity.
-     * @throws FontFormatException 
-     */
     @Test
     public void testEntriesNeg80To80InRrd() throws IOException, FontFormatException {
         createGaugeRrd(180);
@@ -308,14 +221,10 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         rrd.close();
         prepareGraph();
 
-        // Original
-        expectMinorGridLines(3);
-        expectMajorGridLine(" -50");
         expectMinorGridLines(4);
-        expectMajorGridLine("   0");
-        expectMinorGridLines(4);
-        expectMajorGridLine("  50");
-        expectMinorGridLines(3);
+        expectMajorGridLine("0e+00");
+        expectMajorGridLine("1e+01");
+        expectMajorGridLine("-1e+01");
 
         run();
 

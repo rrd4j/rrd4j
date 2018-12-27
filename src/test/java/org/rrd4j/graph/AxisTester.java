@@ -22,9 +22,13 @@ import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.Util;
 
-public abstract class XAxis<T extends Axis> extends DummyGraph {
+public abstract class AxisTester<T extends Axis> {
 
     static private RrdBackendFactory previousBackend;
+
+    protected ImageWorker imageWorker;
+    protected ImageParameters imageParameters;
+    protected RrdGraphDef graphDef;
 
     @BeforeClass
     public static void setBackendBefore() {
@@ -75,25 +79,26 @@ public abstract class XAxis<T extends Axis> extends DummyGraph {
         graphDef.setStartTime(startTime);
         graphDef.setEndTime(startTime + (60*60*24));
         graphDef.setLocale(Locale.US);
-//        graphDef.setFilename("/tmp/" + name.getMethodName() + ".png");
-//        graphDef.setImageFormat("png");
+        graphDef.setFilename("/tmp/" + name.getMethodName() + ".png");
+        graphDef.setImageFormat("png");
 //        graphDef.setColor(ElementsNames.grid, Color.GREEN);
 //        graphDef.setTickStroke(new BasicStroke(5.0f));
 
         setupGraphDef();
 
+        RrdGraph graph = new RrdGraph(graphDef);
+
+        imageParameters = graph.im;
         //There's only a couple of methods of ImageWorker that we actually care about in this test.
         // More to the point, we want the rest to work as normal (like getFontHeight, getFontAscent etc)
         imageWorker = createMockBuilder(ImageWorker.class)
                 .addMockedMethod("drawLine")
                 .addMockedMethod("drawString")
+                .withConstructor(Integer.TYPE, Integer.TYPE)
+                .withArgs(imageParameters.xgif, imageParameters.ygif)
                 .createMock(); //Order is important!
 
-        buildGraph();
-
-        valueAxis = makeAxis();
-        
-        //RrdGraph graph = new RrdGraph(graphDef);
+        valueAxis = makeAxis(graph);
 
     }
 
@@ -106,8 +111,10 @@ public abstract class XAxis<T extends Axis> extends DummyGraph {
         verify(imageWorker);
     }
 
-    abstract void setupGraphDef();
+    void setupGraphDef() {
+        
+    }
 
-    abstract T makeAxis();
+    abstract T makeAxis(RrdGraph graph);
 
 }

@@ -22,19 +22,15 @@ class ValueAxisLogarithmic extends Axis {
     private final Mapper mapper;
 
     ValueAxisLogarithmic(RrdGraph rrdGraph) {
-        this.im = rrdGraph.im;
-        this.gdef = rrdGraph.gdef;
-        this.worker = rrdGraph.worker;
-        this.fontHeight = (int) Math.ceil(rrdGraph.getFontHeight(FONTTAG_AXIS));
-        this.mapper = rrdGraph.mapper;
+        this(rrdGraph, rrdGraph.worker);
     }
 
-    ValueAxisLogarithmic(ImageParameters im, ImageWorker worker, RrdGraphDef gdef, Mapper mapper, Font fontAxis) {
-        this.im = im;
-        this.gdef = gdef;
+    ValueAxisLogarithmic(RrdGraph rrdGraph, ImageWorker worker) {
+        this.im = rrdGraph.im;
+        this.gdef = rrdGraph.gdef;
         this.worker = worker;
-        this.mapper = mapper;
-        this.fontHeight = (int) Math.ceil(worker.getFontHeight(fontAxis));
+        this.fontHeight = (int) Math.ceil(worker.getFontHeight(gdef.getFont(FONTTAG_AXIS)));
+        this.mapper = rrdGraph.mapper;
     }
 
     boolean draw() {
@@ -169,7 +165,6 @@ class ValueAxisLogarithmic extends Axis {
             int i = 0;
             while (yloglab[majoridx][++i] > 0) {
                 int y = mapper.ytr(-1.0 * value * yloglab[majoridx][i]);
-                System.out.format("%d %d %f %f %d %d %d\n", majoridx, i, value, yloglab[majoridx][i], y, im.yorigin, im.ysize);
                 if (y <= im.yorigin - im.ysize) {
                     break;
                 }

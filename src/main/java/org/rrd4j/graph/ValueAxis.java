@@ -29,20 +29,20 @@ class ValueAxis extends Axis {
         new YLabel(0.0, 0, 0, 0, 0)
     };
 
-    private ImageParameters im;
-    private ImageWorker worker;
-    private RrdGraphDef gdef;
-    private Mapper mapper;
+    private final ImageParameters im;
+    private final ImageWorker worker;
+    private final RrdGraphDef gdef;
+    private final Mapper mapper;
 
     ValueAxis(RrdGraph rrdGraph) {
-        this(rrdGraph.im, rrdGraph.worker, rrdGraph.gdef, rrdGraph.mapper);
+        this(rrdGraph, rrdGraph.worker);
     }
 
-    ValueAxis(ImageParameters im, ImageWorker worker, RrdGraphDef gdef, Mapper mapper) {
-        this.im = im;
-        this.gdef = gdef;
+    ValueAxis(RrdGraph rrdGraph, ImageWorker worker) {
+        this.im = rrdGraph.im;
+        this.gdef = rrdGraph.gdef;
         this.worker = worker;
-        this.mapper = mapper;
+        this.mapper = rrdGraph.mapper;
     }
 
     boolean draw() {
