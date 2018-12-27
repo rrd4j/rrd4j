@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestName;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 import org.rrd4j.core.RrdBackendFactory;
@@ -43,10 +42,6 @@ public abstract class AxisTester<T extends Axis> {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    
-    @Rule
-    public TestName name = new TestName();
-
 
     String jrbFileName;
     final long startTime = 1;
@@ -79,10 +74,6 @@ public abstract class AxisTester<T extends Axis> {
         graphDef.setStartTime(startTime);
         graphDef.setEndTime(startTime + (60*60*24));
         graphDef.setLocale(Locale.US);
-        graphDef.setFilename("/tmp/" + name.getMethodName() + ".png");
-        graphDef.setImageFormat("png");
-//        graphDef.setColor(ElementsNames.grid, Color.GREEN);
-//        graphDef.setTickStroke(new BasicStroke(5.0f));
 
         setupGraphDef();
 
@@ -96,7 +87,7 @@ public abstract class AxisTester<T extends Axis> {
                 .addMockedMethod("drawString")
                 .withConstructor(Integer.TYPE, Integer.TYPE)
                 .withArgs(imageParameters.xgif, imageParameters.ygif)
-                .createMock(); //Order is important!
+                .createStrictMock(); //Order is important!
 
         valueAxis = makeAxis(graph);
 
@@ -112,7 +103,7 @@ public abstract class AxisTester<T extends Axis> {
     }
 
     void setupGraphDef() {
-        
+
     }
 
     abstract T makeAxis(RrdGraph graph);
