@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>3.4</version>
+    <version>3.5-SNAPSHOT</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <!-- Use the Sonatype parent to be able to sync to central. -->
@@ -162,8 +162,9 @@
                         <!-- check the path for the rt.jar, allows to compile with JDK > 9 but still generate JDK <9 compatible code -->
                         <!-- Will break when base version will be >=9 ! -->
                         <arg>-Xbootclasspath:${jdk.home}/jre/lib/rt.jar</arg>
+                        <arg>-Xlint</arg>
                     </compilerArgs>
-                    <showWarnings>false</showWarnings>
+                    <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
             <plugin>

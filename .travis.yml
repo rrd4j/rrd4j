@@ -3,23 +3,36 @@ sudo: false
 services:
   - mongodb
 jdk:
+  - openjdk7
   - openjdk11
 cache:
   directories:
     - '$HOME/.m2/repository'
-install: true
+    - '$HOME/.sonar/cache'
+install:
+  - mvn clean validate
 script:
-  - mvn clean verify site -Dmaven.test.skip=true -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64 && JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 mvn test -Dmaven.main.skip -Djdk.home=/usr/lib/jvm/java-7-openjdk-amd64
-before_deploy:
-  - mvn deploy -Dmaven.test.skip=true -Dmaven.main.skip -Dmaven.install.skip=true -DaltDeploymentRepository=travis::default::file:target/deploy
-deploy:
-  provider: bintray
-  file: target/descriptor.json
-  user: fbacchella
-  skip_cleanup: true
-  on: release
-  key:
-    secure: T4HuK6dpvbq1IjRykbztA/m5PzGQs6o/Mg2fNujG+38TSWzd3858VwoHziP0P6TUMdmzhPsQrwWL0VKJrRv7bxm8XA5nM3tp40kc3O9x34nJVlWu5eIYsMZMz2G8WxuNd/5WpFqrGn+xUTpKmHlFFY+vyDwRn3ISYCplirwMORw=
+  - mvn compile package
 notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/e2b5f5d5c337a7af9276
+    on_success: change
+    on_failure: always
+    on_start: never
   irc:
-  - irc.freenode.org#jrds
+    - irc.freenode.org#jrds
+addons:
+  sonarcloud:
+    organization: rrd4j
+    token:
+      secure: "jQYJJtZwMLL584h/D3DMyF/N2GUHVucEAsH6EbvlPPhEkArZh97/HFOMLJhqxi/RRndpd0fVIUqwToIBfYepnkgZlsbLEVFztZoFqIWygCOu1rbTXVpU0mTX/dsxxzPyyJI3YhmvWQpwuKQrSk8DL9RUOr6niSbr9wgloPIPgtQ="
+matrix:
+  include:
+      # Sonarcloud don't work on jdk11 yet
+      # See https://github.com/SonarSource/sonar-scanner-maven/pull/47
+    - jdk: openjdk8
+      script:
+        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile package sonar:sonar deploy --settings deploy-settings.xml
+      on:
+          branch: master
