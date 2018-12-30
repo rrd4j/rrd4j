@@ -8,16 +8,16 @@ import java.io.IOException;
  *
  * @author Sasa Markovic
  */
-public class ArcState implements RrdUpdater {
+public class ArcState implements RrdUpdater<ArcState> {
     private Archive parentArc;
 
-    private RrdDouble accumValue;
-    private RrdLong nanSteps;
+    private RrdDouble<ArcState> accumValue;
+    private RrdLong<ArcState> nanSteps;
 
     ArcState(Archive parentArc, boolean shouldInitialize) throws IOException {
         this.parentArc = parentArc;
-        accumValue = new RrdDouble(this);
-        nanSteps = new RrdLong(this);
+        accumValue = new RrdDouble<>(this);
+        nanSteps = new RrdLong<>(this);
         if (shouldInitialize) {
             Header header = parentArc.getParentDb().getHeader();
             long step = header.getStep();
@@ -83,11 +83,7 @@ public class ArcState implements RrdUpdater {
      *
      * Copies object's internal state to another ArcState object.
      */
-    public void copyStateTo(RrdUpdater other) throws IOException {
-        if (!(other instanceof ArcState)) {
-            throw new IllegalArgumentException("Cannot copy ArcState object to " + other.getClass().getName());
-        }
-        ArcState arcState = (ArcState) other;
+    public void copyStateTo(ArcState arcState) throws IOException {
         arcState.accumValue.set(accumValue.get());
         arcState.nanSteps.set(nanSteps.get());
     }

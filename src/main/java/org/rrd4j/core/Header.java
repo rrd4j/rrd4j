@@ -14,7 +14,7 @@ import java.io.IOException;
  *
  * @author Sasa Markovic*
  */
-public class Header implements RrdUpdater {
+public class Header implements RrdUpdater<Header> {
     static final int SIGNATURE_LENGTH = 5;
     static final String SIGNATURE = "RRD4J";
 
@@ -26,10 +26,10 @@ public class Header implements RrdUpdater {
     private RrdDb parentDb;
     private int version = -1;
 
-    private RrdString signature;
-    private RrdLong step;
-    private RrdInt dsCount, arcCount;
-    private RrdLong lastUpdateTime;
+    private RrdString<Header> signature;
+    private RrdLong<Header> step;
+    private RrdInt<Header> dsCount, arcCount;
+    private RrdLong<Header> lastUpdateTime;
 
     Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
         this.parentDb = parentDb;
@@ -43,11 +43,11 @@ public class Header implements RrdUpdater {
             initSignature = DEFAULT_SIGNATURE;
         }
 
-        signature = new RrdString(this);             // NOT constant, may be cached
-        step = new RrdLong(this, true);             // constant, may be cached
-        dsCount = new RrdInt(this, true);             // constant, may be cached
-        arcCount = new RrdInt(this, true);             // constant, may be cached
-        lastUpdateTime = new RrdLong(this);
+        signature = new RrdString<>(this);     // NOT constant, may be cached
+        step = new RrdLong<>(this, true);      // constant, may be cached
+        dsCount = new RrdInt<>(this, true);    // constant, may be cached
+        arcCount = new RrdInt<>(this, true);   // constant, may be cached
+        lastUpdateTime = new RrdLong<>(this);
 
         if (rrdDef != null) {
             signature.set(initSignature);
@@ -174,13 +174,7 @@ public class Header implements RrdUpdater {
      *
      * Copies object's internal state to another Header object.
      */
-    public void copyStateTo(RrdUpdater other) throws IOException {
-        if (!(other instanceof Header)) {
-            throw new IllegalArgumentException(
-                    "Cannot copy Header object to " + other.getClass().getName());
-        }
-        Header header = (Header) other;
-        //header.signature.set(signature.get());
+    public void copyStateTo(Header header) throws IOException {
         header.lastUpdateTime.set(lastUpdateTime.get());
     }
 

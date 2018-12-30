@@ -16,12 +16,12 @@ import java.io.IOException;
  */
 class RobinMatrix implements Robin {
     private final Archive parentArc;
-    private final RrdInt pointer;
-    private final RrdDoubleMatrix values;
+    private final RrdInt<Archive> pointer;
+    private final RrdDoubleMatrix<Archive> values;
     private int rows;
     private int column;
 
-    RobinMatrix(Archive parentArc, RrdDoubleMatrix values, RrdInt pointer, int column) throws IOException {
+    RobinMatrix(Archive parentArc, RrdDoubleMatrix<Archive> values, RrdInt<Archive> pointer, int column) throws IOException {
         this.parentArc = parentArc;
         this.pointer = pointer; 
         this.values = values;
@@ -191,12 +191,7 @@ class RobinMatrix implements Robin {
      *
      * Copies object's internal state to another Robin object.
      */
-    public void copyStateTo(RrdUpdater other) throws IOException {
-        if (!(other instanceof Robin)) {
-            throw new IllegalArgumentException(
-                    "Cannot copy Robin object to " + other.getClass().getName());
-        }
-        Robin robin = (Robin) other;
+    public void copyStateTo(Robin robin) throws IOException {
         int rowsDiff = rows - robin.getSize();
         for (int i = 0; i < robin.getSize(); i++) {
             int j = i + rowsDiff;

@@ -15,14 +15,14 @@ import java.io.IOException;
  *
  * @author Sasa Markovic
  */
-public class Archive implements RrdUpdater {
+public class Archive implements RrdUpdater<Archive> {
     private final RrdDb parentDb;
 
     // definition
-    protected final RrdString consolFun;
-    protected final RrdDouble xff;
-    protected final RrdInt steps;
-    protected final RrdInt rows;
+    protected final RrdString<Archive> consolFun;
+    protected final RrdDouble<Archive> xff;
+    protected final RrdInt<Archive> steps;
+    protected final RrdInt<Archive> rows;
 
     // state
     private final Robin[] robins;
@@ -30,10 +30,10 @@ public class Archive implements RrdUpdater {
 
     Archive(RrdDb parentDb, ArcDef arcDef) throws IOException {
         this.parentDb = parentDb;
-        consolFun = new RrdString(this, true);     // constant, may be cached
-        xff = new RrdDouble(this);
-        steps = new RrdInt(this, true);            // constant, may be cached
-        rows = new RrdInt(this, true);             // constant, may be cached
+        consolFun = new RrdString<>(this, true);     // constant, may be cached
+        xff = new RrdDouble<>(this);
+        steps = new RrdInt<>(this, true);            // constant, may be cached
+        rows = new RrdInt<>(this, true);             // constant, may be cached
         boolean shouldInitialize = arcDef != null;
         if (shouldInitialize) {
             consolFun.set(arcDef.getConsolFun().name());
@@ -52,17 +52,18 @@ public class Archive implements RrdUpdater {
                 robins[i] = new RobinArray(this, numRows, shouldInitialize);
             }
         } else {
-            RrdInt[] pointers = new RrdInt[n];
+            @SuppressWarnings("unchecked")
+            RrdInt<Archive>[] pointers = new RrdInt[n];
             robins = new RobinMatrix[n];
             for (int i = 0; i < n; i++) {
-                pointers[i] = new RrdInt(this);
+                pointers[i] = new RrdInt<Archive>(this);
                 //Purge old pointers content, avoid problems with file reuse
                 if(shouldInitialize) {
                     pointers[i].set(0);
                 }
                 states[i] = new ArcState(this, shouldInitialize);
             }
-            RrdDoubleMatrix values = new RrdDoubleMatrix(this, numRows, n, shouldInitialize);
+            RrdDoubleMatrix<Archive> values = new RrdDoubleMatrix<>(this, numRows, n, shouldInitialize);
             for (int i = 0; i < n; i++) {
                 robins[i] = new RobinMatrix(this, values, pointers[i], i);
             }
@@ -368,12 +369,7 @@ public class Archive implements RrdUpdater {
      *
      * Copies object's internal state to another Archive object.
      */
-    public void copyStateTo(RrdUpdater other) throws IOException {
-        if (!(other instanceof Archive)) {
-            throw new IllegalArgumentException(
-                    "Cannot copy Archive object to " + other.getClass().getName());
-        }
-        Archive arc = (Archive) other;
+    public void copyStateTo(Archive arc) throws IOException {
         if (!arc.consolFun.get().equals(consolFun.get())) {
             throw new IllegalArgumentException("Incompatible consolidation functions");
         }

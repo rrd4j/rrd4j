@@ -2,7 +2,7 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-abstract class RrdPrimitive {
+abstract class RrdPrimitive<U extends RrdUpdater<U>> {
     static final int STRING_LENGTH = 20;
     static final int RRD_INT = 0, RRD_LONG = 1, RRD_DOUBLE = 2, RRD_STRING = 3;
     static final int[] RRD_PRIM_SIZES = {4, 8, 8, 2 * STRING_LENGTH};
@@ -12,11 +12,11 @@ abstract class RrdPrimitive {
     private final long pointer;
     private final boolean cachingAllowed;
 
-    RrdPrimitive(RrdUpdater updater, int type, boolean isConstant) throws IOException {
+    RrdPrimitive(RrdUpdater<U> updater, int type, boolean isConstant) throws IOException {
         this(updater, type, 1, isConstant);
     }
 
-    RrdPrimitive(RrdUpdater updater, int type, int count, boolean isConstant) throws IOException {
+    RrdPrimitive(RrdUpdater<U> updater, int type, int count, boolean isConstant) throws IOException {
         this.backend = updater.getRrdBackend();
         this.byteCount = RRD_PRIM_SIZES[type] * count;
         this.pointer = updater.getRrdAllocator().allocate(byteCount);

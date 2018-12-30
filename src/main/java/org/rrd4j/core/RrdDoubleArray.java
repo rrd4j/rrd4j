@@ -2,10 +2,10 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-class RrdDoubleArray extends RrdPrimitive {
+class RrdDoubleArray<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
     private int length;
 
-    RrdDoubleArray(RrdUpdater updater, int length) throws IOException {
+    RrdDoubleArray(RrdUpdater<U> updater, int length) throws IOException {
         super(updater, RrdPrimitive.RRD_DOUBLE, length, false);
         this.length = length;
     }

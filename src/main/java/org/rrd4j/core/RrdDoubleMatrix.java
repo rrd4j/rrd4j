@@ -2,12 +2,12 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-class RrdDoubleMatrix extends RrdPrimitive {
+class RrdDoubleMatrix<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
     private static final String LENGTH = ", length=";
     private final int rows;
     private final int columns;
 
-    RrdDoubleMatrix(RrdUpdater updater, int row, int column, boolean shouldInitialize) throws IOException {
+    RrdDoubleMatrix(RrdUpdater<U> updater, int row, int column, boolean shouldInitialize) throws IOException {
         super(updater, RrdPrimitive.RRD_DOUBLE, row * column, false);
         this.rows = row;
         this.columns = column;

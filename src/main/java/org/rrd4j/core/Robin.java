@@ -14,7 +14,7 @@ import java.io.IOException;
  *
  * @author Sasa Markovic
  */
-public interface Robin extends RrdUpdater {
+public interface Robin extends RrdUpdater<Robin> {
 
     /**
      * Fetches all archived values.
@@ -79,7 +79,7 @@ public interface Robin extends RrdUpdater {
      *
      * Copies object's internal state to another Robin object.
      */
-    void copyStateTo(RrdUpdater other) throws IOException;
+    void copyStateTo(Robin other) throws IOException;
 
     /**
      * Filters values stored in this archive based on the given boundary.

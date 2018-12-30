@@ -13,7 +13,7 @@ import java.io.IOException;
  *
  * @author Sasa Markovic
  */
-public class Datasource implements RrdUpdater {
+public class Datasource implements RrdUpdater<Datasource> {
     private static final double MAX_32_BIT = Math.pow(2, 32);
     private static final double MAX_64_BIT = Math.pow(2, 64);
     private static final String INVALID_MIN_MAX_VALUES = "Invalid min/max values: ";
@@ -22,26 +22,26 @@ public class Datasource implements RrdUpdater {
     private final RrdDb parentDb;
 
     // definition
-    private final RrdString dsName, dsType;
-    private final RrdLong heartbeat;
-    private final RrdDouble minValue, maxValue;
+    private final RrdString<Datasource> dsName, dsType;
+    private final RrdLong<Datasource> heartbeat;
+    private final RrdDouble<Datasource> minValue, maxValue;
 
     // state variables
-    private RrdDouble lastValue;
-    private RrdLong nanSeconds;
-    private RrdDouble accumValue;
+    private RrdDouble<Datasource> lastValue;
+    private RrdLong<Datasource> nanSeconds;
+    private RrdDouble<Datasource> accumValue;
 
     Datasource(RrdDb parentDb, DsDef dsDef) throws IOException {
         boolean shouldInitialize = dsDef != null;
         this.parentDb = parentDb;
-        dsName = new RrdString(this);
-        dsType = new RrdString(this);
-        heartbeat = new RrdLong(this);
-        minValue = new RrdDouble(this);
-        maxValue = new RrdDouble(this);
-        lastValue = new RrdDouble(this);
-        accumValue = new RrdDouble(this);
-        nanSeconds = new RrdLong(this);
+        dsName = new RrdString<>(this);
+        dsType = new RrdString<>(this);
+        heartbeat = new RrdLong<>(this);
+        minValue = new RrdDouble<>(this);
+        maxValue = new RrdDouble<>(this);
+        lastValue = new RrdDouble<>(this);
+        accumValue = new RrdDouble<>(this);
+        nanSeconds = new RrdLong<>(this);
         accumLastValue = Double.NaN;
         if (shouldInitialize) {
             dsName.set(dsDef.getDsName());
@@ -296,12 +296,7 @@ public class Datasource implements RrdUpdater {
      *
      * Copies object's internal state to another Datasource object.
      */
-    public void copyStateTo(RrdUpdater other) throws IOException {
-        if (!(other instanceof Datasource)) {
-            throw new IllegalArgumentException(
-                    "Cannot copy Datasource object to " + other.getClass().getName());
-        }
-        Datasource datasource = (Datasource) other;
+    public void copyStateTo(Datasource datasource) throws IOException {
         if (!datasource.dsName.get().equals(dsName.get())) {
             throw new IllegalArgumentException("Incompatible datasource names");
         }

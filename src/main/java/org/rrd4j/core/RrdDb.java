@@ -41,7 +41,7 @@ import org.rrd4j.ConsolFun;
  * @see RrdBackend
  * @see RrdBackendFactory
  */
-public class RrdDb implements RrdUpdater, Closeable {
+public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     /**
      * Prefix to identify external XML file source used in various RrdDb constructors.
      */
@@ -961,11 +961,7 @@ public class RrdDb implements RrdUpdater, Closeable {
      *
      * Copies object's internal state to another RrdDb object.
      */
-    public synchronized void copyStateTo(RrdUpdater other) throws IOException {
-        if (!(other instanceof RrdDb)) {
-            throw new IllegalArgumentException("Cannot copy RrdDb object to " + other.getClass().getName());
-        }
-        RrdDb otherRrd = (RrdDb) other;
+    public synchronized void copyStateTo(RrdDb otherRrd) throws IOException {
         header.copyStateTo(otherRrd.header);
         for (int i = 0; i < datasources.length; i++) {
             int j = Util.getMatchingDatasourceIndex(this, i, otherRrd);

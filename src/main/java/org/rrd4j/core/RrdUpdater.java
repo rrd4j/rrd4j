@@ -2,7 +2,7 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-interface RrdUpdater {
+interface RrdUpdater<T extends RrdUpdater<T>> {
     /**
      * <p>getRrdBackend.</p>
      *
@@ -16,7 +16,7 @@ interface RrdUpdater {
      * @param updater a {@link org.rrd4j.core.RrdUpdater} object.
      * @throws java.io.IOException if any.
      */
-    void copyStateTo(RrdUpdater updater) throws IOException;
+    void copyStateTo(T updater) throws IOException;
 
     /**
      * <p>getRrdAllocator.</p>

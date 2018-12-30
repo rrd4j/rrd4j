@@ -2,14 +2,14 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 
-class RrdString extends RrdPrimitive {
+class RrdString<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
     private String cache;
 
-    RrdString(RrdUpdater updater, boolean isConstant) throws IOException {
+    RrdString(RrdUpdater<U> updater, boolean isConstant) throws IOException {
         super(updater, RrdPrimitive.RRD_STRING, isConstant);
     }
 
-    RrdString(RrdUpdater updater) throws IOException {
+    RrdString(RrdUpdater<U> updater) throws IOException {
         this(updater, false);
     }
 
