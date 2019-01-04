@@ -33,6 +33,6 @@ matrix:
       # See https://github.com/SonarSource/sonar-scanner-maven/pull/47
     - jdk: openjdk8
       script:
-        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile package sonar:sonar deploy --settings deploy-settings.xml
+        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile package sonar:sonar deploy
       on:
           branch: master
