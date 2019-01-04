@@ -68,7 +68,7 @@ class RrdToolReader extends DataImporter {
     }
 
     ConsolFun getConsolFun(int arcIndex) {
-        return ConsolFun.valueOf(rrd.getArchive(arcIndex).getType().toString());
+        return rrd.getArchive(arcIndex).getType().getConsolFun();
     }
 
     double getXff(int arcIndex) {
