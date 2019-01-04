@@ -433,20 +433,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         rrdUri = buildUri(rrdPath, rrdUri, factory);
         factory = checkFactory(rrdUri, factory);
 
-        DataImporter reader;
-        if (externalPath.startsWith(PREFIX_RRDTool)) {
-            String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
-            reader = new RrdToolReader(rrdToolPath);
-        }
-        else if (externalPath.startsWith(PREFIX_XML)) {
-            externalPath = externalPath.substring(PREFIX_XML.length());
-            reader = new XmlReader(externalPath);
-        }
-        else {
-            reader = new XmlReader(externalPath);
-        }
         backend = factory.getBackend(this, rrdUri, false);
-        try {
+        try (DataImporter reader = getImporter(externalPath)){
             backend.setLength(reader.getEstimatedSize());
             // create header
             header = new Header(this, reader);
@@ -463,8 +451,20 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         } catch (IOException e) {
             backend.rrdClose();
             throw e;
-        } finally {
-            reader.release();
+        }
+    }
+    
+    private DataImporter getImporter(String externalPath) throws IOException {
+        if (externalPath.startsWith(PREFIX_RRDTool)) {
+            String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
+            return new RrdToolReader(rrdToolPath);
+        }
+        else if (externalPath.startsWith(PREFIX_XML)) {
+            externalPath = externalPath.substring(PREFIX_XML.length());
+            return new XmlReader(externalPath);
+        }
+        else {
+            return new XmlReader(externalPath);
         }
     }
 

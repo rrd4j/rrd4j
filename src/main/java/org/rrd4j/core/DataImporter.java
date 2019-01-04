@@ -1,11 +1,12 @@
 package org.rrd4j.core;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 
-abstract class DataImporter {
+abstract class DataImporter implements Closeable {
 
     // header
     abstract String getVersion() throws IOException;
@@ -68,6 +69,11 @@ abstract class DataImporter {
 
     void release() throws IOException {
         // NOP
+    }
+
+    @Override
+    public void close() throws IOException {
+        release();
     }
 
 }
