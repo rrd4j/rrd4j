@@ -1,8 +1,9 @@
 package org.rrd4j.core;
 
-import org.rrd4j.DsType;
-
 import java.io.IOException;
+import java.util.Locale;
+
+import org.rrd4j.DsType;
 
 /**
  * <p>Class to represent single datasource within RRD. Each datasource object holds the
@@ -22,7 +23,9 @@ public class Datasource implements RrdUpdater<Datasource> {
     private final RrdDb parentDb;
 
     // definition
-    private final RrdString<Datasource> dsName, dsType;
+    private final RrdString<Datasource> dsName;
+    private final RrdString<Datasource> dsTypeName;
+    private DsType dsType;
     private final RrdLong<Datasource> heartbeat;
     private final RrdDouble<Datasource> minValue, maxValue;
 
@@ -35,7 +38,7 @@ public class Datasource implements RrdUpdater<Datasource> {
         boolean shouldInitialize = dsDef != null;
         this.parentDb = parentDb;
         dsName = new RrdString<>(this);
-        dsType = new RrdString<>(this);
+        dsTypeName = new RrdString<>(this);
         heartbeat = new RrdLong<>(this);
         minValue = new RrdDouble<>(this);
         maxValue = new RrdDouble<>(this);
@@ -45,7 +48,8 @@ public class Datasource implements RrdUpdater<Datasource> {
         accumLastValue = Double.NaN;
         if (shouldInitialize) {
             dsName.set(dsDef.getDsName());
-            dsType.set(dsDef.getDsType().name());
+            dsType = dsDef.getDsType();
+            dsTypeName.set(dsType.name());
             heartbeat.set(dsDef.getHeartbeat());
             minValue.set(dsDef.getMinValue());
             maxValue.set(dsDef.getMaxValue());
@@ -53,13 +57,20 @@ public class Datasource implements RrdUpdater<Datasource> {
             accumValue.set(0.0);
             Header header = parentDb.getHeader();
             nanSeconds.set(header.getLastUpdateTime() % header.getStep());
+        } else {
+            if ( ! dsTypeName.get().isEmpty()) {
+                dsType = DsType.valueOf(dsTypeName.get().toUpperCase(Locale.ENGLISH));
+            } else {
+                dsType = null;
+            }
         }
     }
 
     Datasource(RrdDb parentDb, DataImporter reader, int dsIndex) throws IOException {
         this(parentDb, null);
         dsName.set(reader.getDsName(dsIndex));
-        dsType.set(reader.getDsType(dsIndex));
+        dsType = reader.getDsType(dsIndex);
+        dsTypeName.set(dsType.name());
         heartbeat.set(reader.getHeartbeat(dsIndex));
         minValue.set(reader.getMinValue(dsIndex));
         maxValue.set(reader.getMaxValue(dsIndex));
@@ -70,7 +81,7 @@ public class Datasource implements RrdUpdater<Datasource> {
 
     String dump() throws IOException {
         return "== DATASOURCE ==\n" +
-                "DS:" + dsName.get() + ":" + dsType.get() + ":" +
+                "DS:" + dsName.get() + ":" + dsType.name() + ":" +
                 heartbeat.get() + ":" + minValue.get() + ":" +
                 maxValue.get() + "\nlastValue:" + lastValue.get() +
                 " nanSeconds:" + nanSeconds.get() +
@@ -94,7 +105,7 @@ public class Datasource implements RrdUpdater<Datasource> {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public DsType getType() throws IOException {
-        return DsType.valueOf(dsType.get());
+        return dsType;
     }
 
     /**
@@ -191,15 +202,14 @@ public class Datasource implements RrdUpdater<Datasource> {
     }
 
     private double calculateUpdateValue(long oldTime, double oldValue,
-                                        long newTime, double newValue) throws IOException {
+            long newTime, double newValue) throws IOException {
         double updateValue = Double.NaN;
         if (newTime - oldTime <= heartbeat.get()) {
-            DsType type = DsType.valueOf(dsType.get());
-
-            if (type == DsType.GAUGE) {
+            switch (dsType) {
+            case GAUGE:
                 updateValue = newValue;
-            }
-            else if (type == DsType.COUNTER) {
+                break;
+            case COUNTER:
                 if (!Double.isNaN(newValue) && !Double.isNaN(oldValue)) {
                     double diff = newValue - oldValue;
                     if (diff < 0) {
@@ -212,16 +222,17 @@ public class Datasource implements RrdUpdater<Datasource> {
                         updateValue = diff / (newTime - oldTime);
                     }
                 }
-            }
-            else if (type == DsType.ABSOLUTE) {
+                break;
+            case ABSOLUTE:
                 if (!Double.isNaN(newValue)) {
                     updateValue = newValue / (newTime - oldTime);
                 }
-            }
-            else if (type == DsType.DERIVE) {
+                break;
+            case DERIVE:
                 if (!Double.isNaN(newValue) && !Double.isNaN(oldValue)) {
                     updateValue = (newValue - oldValue) / (newTime - oldTime);
                 }
+                break;
             }
 
             if (!Double.isNaN(updateValue)) {
@@ -263,24 +274,24 @@ public class Datasource implements RrdUpdater<Datasource> {
         }
         return totalValue;
     }
-    
+
     private double calculateLastTotal(long startTime, long boundaryTime) throws IOException {
-       double totalValue = Double.NaN;
-       long validSeconds = boundaryTime - startTime - nanSeconds.get();
-       if (nanSeconds.get() <= heartbeat.get() && validSeconds > 0) {
-           totalValue = accumLastValue;
-       }
-       
-       if (Double.isNaN(totalValue) && dsName.get().endsWith(DsDef.FORCE_ZEROS_FOR_NANS_SUFFIX)) {
-           totalValue = 0D;
-       }
-       return totalValue;
-   }
-    
+        double totalValue = Double.NaN;
+        long validSeconds = boundaryTime - startTime - nanSeconds.get();
+        if (nanSeconds.get() <= heartbeat.get() && validSeconds > 0) {
+            totalValue = accumLastValue;
+        }
+
+        if (Double.isNaN(totalValue) && dsName.get().endsWith(DsDef.FORCE_ZEROS_FOR_NANS_SUFFIX)) {
+            totalValue = 0D;
+        }
+        return totalValue;
+    }
+
     void appendXml(XmlWriter writer) throws IOException {
         writer.startTag("ds");
         writer.writeTag("name", dsName.get());
-        writer.writeTag("type", dsType.get());
+        writer.writeTag("type", dsType.name());
         writer.writeTag("minimal_heartbeat", heartbeat.get());
         writer.writeTag("min", minValue.get());
         writer.writeTag("max", maxValue.get());
@@ -300,7 +311,7 @@ public class Datasource implements RrdUpdater<Datasource> {
         if (!datasource.dsName.get().equals(dsName.get())) {
             throw new IllegalArgumentException("Incompatible datasource names");
         }
-        if (!datasource.dsType.get().equals(dsType.get())) {
+        if (datasource.dsType != dsType) {
             throw new IllegalArgumentException("Incompatible datasource types");
         }
         datasource.lastValue.set(lastValue.get());
@@ -359,7 +370,8 @@ public class Datasource implements RrdUpdater<Datasource> {
      */
     public void setDsType(DsType newDsType) throws IOException {
         // set datasource type
-        this.dsType.set(newDsType.name());
+        dsTypeName.set(newDsType.name());
+        dsType = newDsType;
         // reset datasource status
         lastValue.set(Double.NaN);
         accumValue.set(0.0);

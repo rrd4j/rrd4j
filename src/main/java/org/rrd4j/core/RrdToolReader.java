@@ -1,9 +1,10 @@
 package org.rrd4j.core;
 
-import org.rrd4j.core.jrrd.RRDatabase;
-import org.rrd4j.ConsolFun;
-
 import java.io.IOException;
+
+import org.rrd4j.ConsolFun;
+import org.rrd4j.DsType;
+import org.rrd4j.core.jrrd.RRDatabase;
 
 class RrdToolReader extends DataImporter {
     private RRDatabase rrd;
@@ -36,8 +37,9 @@ class RrdToolReader extends DataImporter {
         return rrd.getDataSource(dsIndex).getName();
     }
 
-    String getDsType(int dsIndex) {
-        return rrd.getDataSource(dsIndex).getType().toString();
+    @Override
+    DsType getDsType(int dsIndex) throws IOException {
+        return rrd.getDataSource(dsIndex).getType().getDsType();
     }
 
     long getHeartbeat(int dsIndex) {

@@ -1,8 +1,9 @@
 package org.rrd4j.core;
 
-import org.rrd4j.ConsolFun;
-
 import java.io.IOException;
+
+import org.rrd4j.ConsolFun;
+import org.rrd4j.DsType;
 
 abstract class DataImporter {
 
@@ -20,7 +21,7 @@ abstract class DataImporter {
     // datasource
     abstract String getDsName(int dsIndex) throws IOException;
 
-    abstract String getDsType(int dsIndex) throws IOException;
+    abstract DsType getDsType(int dsIndex) throws IOException;
 
     abstract long getHeartbeat(int dsIndex) throws IOException;
 
