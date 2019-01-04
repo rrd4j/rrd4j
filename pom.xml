@@ -26,7 +26,6 @@
         <pax-exam.version>4.13.1</pax-exam.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <jre.home>${java.home}</jre.home>
         <!-- current year. -->
         <year>2018</year>
     </properties>
@@ -158,9 +157,6 @@
                 <version>3.8.0</version>
                 <configuration>
                     <compilerArgs>
-                        <!-- check the path for the rt.jar, allows to compile with JDK > 9 but still generate JDK <9 compatible code -->
-                        <!-- Will break when base version will be >=9 ! -->
-                        <arg>-Xbootclasspath:${jre.home}/lib/rt.jar</arg>
                         <arg>-Xlint</arg>
                     </compilerArgs>
                     <showWarnings>true</showWarnings>
