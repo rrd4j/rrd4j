@@ -19,7 +19,8 @@ public class Archive implements RrdUpdater<Archive> {
     private final RrdDb parentDb;
 
     // definition
-    protected final RrdString<Archive> consolFun;
+    protected final RrdString<Archive> consolFunName;
+    private   final ConsolFun consolFun;
     protected final RrdDouble<Archive> xff;
     protected final RrdInt<Archive> steps;
     protected final RrdInt<Archive> rows;
@@ -30,17 +31,18 @@ public class Archive implements RrdUpdater<Archive> {
 
     Archive(RrdDb parentDb, ArcDef arcDef) throws IOException {
         this.parentDb = parentDb;
-        consolFun = new RrdString<>(this, true);     // constant, may be cached
+        consolFunName = new RrdString<>(this, false); // Don't cache, as the enum type should be used instead
         xff = new RrdDouble<>(this);
-        steps = new RrdInt<>(this, true);            // constant, may be cached
-        rows = new RrdInt<>(this, true);             // constant, may be cached
+        steps = new RrdInt<>(this, true);             // constant, may be cached
+        rows = new RrdInt<>(this, true);              // constant, may be cached
         boolean shouldInitialize = arcDef != null;
         if (shouldInitialize) {
-            consolFun.set(arcDef.getConsolFun().name());
+            consolFunName.set(arcDef.getConsolFun().name());
             xff.set(arcDef.getXff());
             steps.set(arcDef.getSteps());
             rows.set(arcDef.getRows());
         }
+        consolFun = ConsolFun.valueOf(consolFunName.get());
         int n = parentDb.getHeader().getDsCount();
         int numRows = rows.get();
         states = new ArcState[n];
@@ -100,7 +102,7 @@ public class Archive implements RrdUpdater<Archive> {
     String dump() throws IOException {
         StringBuilder sb = new StringBuilder("== ARCHIVE ==\n");
         sb.append("RRA:")
-          .append(consolFun.get())
+          .append(consolFun.name())
           .append(":")
           .append(xff.get())
           .append(":")
@@ -156,7 +158,7 @@ public class Archive implements RrdUpdater<Archive> {
         if (Double.isNaN(value)) {
             state.setNanSteps(state.getNanSteps() + 1);
         } else {
-            switch (ConsolFun.valueOf(consolFun.get())) {
+            switch (consolFun) {
                 case MIN:
                     state.setAccumValue(Util.min(state.getAccumValue(), value));
                     break;
@@ -187,7 +189,7 @@ public class Archive implements RrdUpdater<Archive> {
         //double nanPct = (double) nanSteps / (double) arcSteps;
         double accumValue = state.getAccumValue();
         if (nanSteps <= arcXff * arcSteps && !Double.isNaN(accumValue)) {
-            if (getConsolFun() == ConsolFun.AVERAGE) {
+            if (consolFun == ConsolFun.AVERAGE) {
                 accumValue /= (arcSteps - nanSteps);
             }
             robin.store(accumValue);
@@ -205,7 +207,7 @@ public class Archive implements RrdUpdater<Archive> {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public ConsolFun getConsolFun() throws IOException {
-        return ConsolFun.valueOf(consolFun.get());
+        return consolFun;
     }
 
     /**
@@ -338,7 +340,7 @@ public class Archive implements RrdUpdater<Archive> {
 
     void appendXml(XmlWriter writer) throws IOException {
         writer.startTag("rra");
-        writer.writeTag("cf", consolFun.get());
+        writer.writeTag("cf", consolFun.name());
         writer.writeComment(getArcStep() + " seconds");
         writer.writeTag("pdp_per_row", steps.get());
         writer.startTag("params");
@@ -370,7 +372,7 @@ public class Archive implements RrdUpdater<Archive> {
      * Copies object's internal state to another Archive object.
      */
     public void copyStateTo(Archive arc) throws IOException {
-        if (!arc.consolFun.get().equals(consolFun.get())) {
+        if (arc.consolFun != consolFun) {
             throw new IllegalArgumentException("Incompatible consolidation functions");
         }
         if (arc.steps.get() != steps.get()) {
