@@ -371,6 +371,7 @@
                         <link>http://junit.sourceforge.net/javadoc/</link>
                     </links>
                     <bootclasspath>${sun.boot.class.path}</bootclasspath>
+                    <source>${maven.compiler.source}</source>
                 </configuration>
                 <executions>
                     <execution>
@@ -408,6 +409,7 @@
                         <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
                         <link>http://junit.sourceforge.net/javadoc/</link>
                     </links>
+                    <source>${maven.compiler.source}</source>
                 </configuration>
                 <reportSets>
                     <reportSet>
