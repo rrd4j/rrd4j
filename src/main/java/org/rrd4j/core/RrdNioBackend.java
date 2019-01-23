@@ -93,6 +93,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
         try {
             mapFile(file.size());
         } catch (IOException | RuntimeException ex) {
+            file.close();
             super.close();
             throw ex;
         }
@@ -107,6 +108,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
             }
         } catch (RuntimeException rte) {
             unmapFile();
+            file.close();
             super.close();
             throw rte;
         }
@@ -168,8 +170,8 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
                 sync();
             }
             unmapFile();
-        }
-        finally {
+        } finally {
+            file.close();
             super.close();
         }
     }
