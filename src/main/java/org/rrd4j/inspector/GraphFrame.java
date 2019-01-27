@@ -42,14 +42,12 @@ class GraphFrame extends JFrame {
 
     private void createRrdGraph() {
         System.out.println("Creating graph...");
-        try {
-            RrdDb rrdDb = new RrdDb(sourcePath, true);
+        try (RrdDb rrdDb = new RrdDb(sourcePath, true)) {
             RrdDef rrdDef;
             long[] timestamps;
             double[] values;
             String dsName;
             long t1, t2;
-            try {
                 Datasource ds = rrdDb.getDatasource(dsIndex);
                 Archive arc = rrdDb.getArchive(arcIndex);
                 Robin robin = arc.getRobin(dsIndex);
@@ -64,10 +62,6 @@ class GraphFrame extends JFrame {
                 }
                 values = robin.getValues();
                 rrdDef = rrdDb.getRrdDef();
-            }
-            finally {
-                rrdDb.close();
-            }
             RrdGraphDef rrdGraphDef = new RrdGraphDef();
             rrdGraphDef.setTimeSpan(t1, t2);
             rrdGraphDef.setImageFormat("png");
@@ -98,9 +92,7 @@ class GraphFrame extends JFrame {
     }
 
     private void fillGraphCombo() {
-        try {
-            RrdDb rrdDb = new RrdDb(sourcePath, true);
-            try {
+        try (RrdDb rrdDb = new RrdDb(sourcePath, true)) {
                 RrdDef rrdDef = rrdDb.getRrdDef();
                 final DsDef[] dsDefs = rrdDef.getDsDefs();
                 final ArcDef[] arcDefs = rrdDef.getArcDefs();
@@ -117,12 +109,7 @@ class GraphFrame extends JFrame {
                 }
                 graphCombo.setModel(new DefaultComboBoxModel<GraphComboItem>(items));
                 graphCombo.setSelectedIndex(selectedItem);
-            }
-            finally {
-                rrdDb.close();
-            }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Util.error(this, e);
         }
     }
