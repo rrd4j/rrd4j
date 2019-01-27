@@ -1,6 +1,17 @@
 Changes in version 3.5 - Not yet released.
 ------------------------------------
 
+This version include minor tunings, that should slightly reduce memory usage.
+
+RrdGraph can now take a custom ImageWriter and ImageWriteParam for better control of generated image.
+
+The class DataImporter is now public, it allows to define custom importer.
+
+RrdDb are now made using a Builder, because of the explosion of parameters.
+
+* Fixed Issue 123: Char arrays duplicates with ConsoleFun values in memory.
+* Fixed Issue 124: RRD4j 3.4 increasing number of open files.
+
 Changes in version 3.4 - 27 Dec 2018.
 ------------------------------------
 

@@ -61,7 +61,7 @@ rrdDef.addArchive(AVERAGE, 0.5, 6, 700); // 6 steps, 700 rows
 rrdDef.addArchive(MAX, 0.5, 1, 600);
 
 // then, create a RrdDb from the definition and start adding data
-try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
     Sample sample = rrdDb.createSample();
     while (...) {
         double inbytes = ...

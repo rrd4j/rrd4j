@@ -33,9 +33,9 @@ public class TutorialTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    
+
     private String root;
-    
+
     @Before
     public void set() {
         try {
@@ -65,41 +65,42 @@ public class TutorialTest {
         rrdDef.addDatasource("speed", DsType.COUNTER, 600, Double.NaN, Double.NaN);
         rrdDef.addArchive(ConsolFun.AVERAGE, 0.5, 1, 24);
         rrdDef.addArchive(ConsolFun.AVERAGE, 0.5, 6, 10);
-        RrdDb rrdDb = new RrdDb(rrdDef);
-        rrdDb.close();
+        try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
+
+        };
     }
 
     @Test
     public void testCode2() throws IOException {
         testCode1();
-        RrdDb rrdDb = new RrdDb(root + "/test.rrd");
-        Sample sample = rrdDb.createSample();
-        sample.setAndUpdate("920804700:12345");
-        sample.setAndUpdate("920805000:12357");
-        sample.setAndUpdate("920805300:12363");
-        sample.setAndUpdate("920805600:12363");
-        sample.setAndUpdate("920805900:12363");
-        sample.setAndUpdate("920806200:12373");
-        sample.setAndUpdate("920806500:12383");
-        sample.setAndUpdate("920806800:12393");
-        sample.setAndUpdate("920807100:12399");
-        sample.setAndUpdate("920807400:12405");
-        sample.setAndUpdate("920807700:12411");
-        sample.setAndUpdate("920808000:12415");
-        sample.setAndUpdate("920808300:12420");
-        sample.setAndUpdate("920808600:12422");
-        sample.setAndUpdate("920808900:12423");
-        rrdDb.close();
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(root + "/test.rrd").build()) {
+            Sample sample = rrdDb.createSample();
+            sample.setAndUpdate("920804700:12345");
+            sample.setAndUpdate("920805000:12357");
+            sample.setAndUpdate("920805300:12363");
+            sample.setAndUpdate("920805600:12363");
+            sample.setAndUpdate("920805900:12363");
+            sample.setAndUpdate("920806200:12373");
+            sample.setAndUpdate("920806500:12383");
+            sample.setAndUpdate("920806800:12393");
+            sample.setAndUpdate("920807100:12399");
+            sample.setAndUpdate("920807400:12405");
+            sample.setAndUpdate("920807700:12411");
+            sample.setAndUpdate("920808000:12415");
+            sample.setAndUpdate("920808300:12420");
+            sample.setAndUpdate("920808600:12422");
+            sample.setAndUpdate("920808900:12423");
+        }
     }
 
     @Test
     public void testCode3() throws IOException {
         testCode1();
-        RrdDb rrdDb = new RrdDb(root + "/test.rrd");
-        FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, 920804400L, 920809200L);
-        FetchData fetchData = fetchRequest.fetchData();
-        fetchData.dump();
-        rrdDb.close();
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(root + "/test.rrd").build()) {
+            FetchRequest fetchRequest = rrdDb.createFetchRequest(ConsolFun.AVERAGE, 920804400L, 920809200L);
+            FetchData fetchData = fetchRequest.fetchData();
+            fetchData.dump();
+        }
     }
 
     @Test
@@ -183,8 +184,8 @@ public class TutorialTest {
         rrdDef.addArchive(ConsolFun.MAX, 0.5, 6, 700);
         rrdDef.addArchive(ConsolFun.MAX, 0.5, 24, 775);
         rrdDef.addArchive(ConsolFun.MAX, 0.5, 288, 797);
-        RrdDb rrdDb = new RrdDb(rrdDef);
-        rrdDb.close();
+        try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
+        }
     }
 
     @Test
@@ -200,8 +201,8 @@ public class TutorialTest {
         rrdDef.addArchive("RRA:MAX:0.5:6:700");
         rrdDef.addArchive("RRA:MAX:0.5:24:775");
         rrdDef.addArchive("RRA:MAX:0.5:288:797");
-        RrdDb rrdDb = new RrdDb(rrdDef);
-        rrdDb.close();
+        try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
+        }
     }
 
     @Test
@@ -230,7 +231,7 @@ public class TutorialTest {
         rrdDef.addDatasource("c", DsType.DERIVE, 600, Double.NaN, Double.NaN);
         rrdDef.addDatasource("d", DsType.ABSOLUTE, 600, Double.NaN, Double.NaN);
         rrdDef.addArchive(ConsolFun.AVERAGE, 0.5, 1, 10);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build();
         Sample sample = rrdDb.createSample();
         sample.setAndUpdate("978301200:300:1:600:300");
         sample.setAndUpdate("978301500:600:3:1200:600");
