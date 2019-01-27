@@ -1,11 +1,11 @@
 package org.rrd4j.graph;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
@@ -58,15 +58,11 @@ public class ImageWriterTest {
         writer.dispose();
         Assert.assertTrue(destination.exists());
         Assert.assertEquals(destination.length(), count);
-        System.out.println(type + " " + destination.length());
         ImageReader reader = ImageIO.getImageReader(writer);
         reader.setInput(new FileImageInputStream(destination));
-        Iterator<IIOImage> ii = reader.readAll(null);
-        while (ii.hasNext()) {
-            System.out.println(ii.next().getRenderedImage().getHeight());
-        }
-        System.out.println(count);
-        //Assert.assertTrue(count == 0);
+        BufferedImage img = reader.read(0);
+        Assert.assertEquals(100, img.getWidth());
+        Assert.assertEquals(100, img.getHeight());
     }
 
 }
