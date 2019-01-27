@@ -75,14 +75,4 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
         setByteBuffer(ByteBuffer.wrap(buffer));
     }
 
-    /**
-     * This method is required by the base class definition, but it does not
-     * releases any memory resources at all.
-     *
-     * @throws java.io.IOException if any.
-     */
-    protected void close() throws IOException {
-        // Don't release ressources, as backend are cached by the factory and reused
-    }
-
 }
