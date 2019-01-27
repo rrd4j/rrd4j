@@ -1,7 +1,6 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import org.rrd4j.DsType;
 
@@ -24,8 +23,7 @@ public class Datasource implements RrdUpdater<Datasource> {
 
     // definition
     private final RrdString<Datasource> dsName;
-    private final RrdString<Datasource> dsTypeName;
-    private DsType dsType;
+    private final RrdEnum<Datasource, DsType> dsType;
     private final RrdLong<Datasource> heartbeat;
     private final RrdDouble<Datasource> minValue, maxValue;
 
@@ -38,7 +36,7 @@ public class Datasource implements RrdUpdater<Datasource> {
         boolean shouldInitialize = dsDef != null;
         this.parentDb = parentDb;
         dsName = new RrdString<>(this);
-        dsTypeName = new RrdString<>(this);
+        dsType = new RrdEnum<>(this, DsType.class);
         heartbeat = new RrdLong<>(this);
         minValue = new RrdDouble<>(this);
         maxValue = new RrdDouble<>(this);
@@ -48,8 +46,7 @@ public class Datasource implements RrdUpdater<Datasource> {
         accumLastValue = Double.NaN;
         if (shouldInitialize) {
             dsName.set(dsDef.getDsName());
-            dsType = dsDef.getDsType();
-            dsTypeName.set(dsType.name());
+            dsType.set(dsDef.getDsType());
             heartbeat.set(dsDef.getHeartbeat());
             minValue.set(dsDef.getMinValue());
             maxValue.set(dsDef.getMaxValue());
@@ -57,20 +54,13 @@ public class Datasource implements RrdUpdater<Datasource> {
             accumValue.set(0.0);
             Header header = parentDb.getHeader();
             nanSeconds.set(header.getLastUpdateTime() % header.getStep());
-        } else {
-            if ( ! dsTypeName.get().isEmpty()) {
-                dsType = DsType.valueOf(dsTypeName.get().toUpperCase(Locale.ENGLISH));
-            } else {
-                dsType = null;
-            }
         }
     }
 
     Datasource(RrdDb parentDb, DataImporter reader, int dsIndex) throws IOException {
         this(parentDb, null);
         dsName.set(reader.getDsName(dsIndex));
-        dsType = reader.getDsType(dsIndex);
-        dsTypeName.set(dsType.name());
+        dsType.set(reader.getDsType(dsIndex));
         heartbeat.set(reader.getHeartbeat(dsIndex));
         minValue.set(reader.getMinValue(dsIndex));
         maxValue.set(reader.getMaxValue(dsIndex));
@@ -105,7 +95,7 @@ public class Datasource implements RrdUpdater<Datasource> {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public DsType getType() throws IOException {
-        return dsType;
+        return dsType.get();
     }
 
     /**
@@ -205,7 +195,7 @@ public class Datasource implements RrdUpdater<Datasource> {
             long newTime, double newValue) throws IOException {
         double updateValue = Double.NaN;
         if (newTime - oldTime <= heartbeat.get()) {
-            switch (dsType) {
+            switch (dsType.get()) {
             case GAUGE:
                 updateValue = newValue;
                 break;
@@ -370,8 +360,7 @@ public class Datasource implements RrdUpdater<Datasource> {
      */
     public void setDsType(DsType newDsType) throws IOException {
         // set datasource type
-        dsTypeName.set(newDsType.name());
-        dsType = newDsType;
+        dsType.set(newDsType);
         // reset datasource status
         lastValue.set(Double.NaN);
         accumValue.set(0.0);

@@ -19,8 +19,7 @@ public class Archive implements RrdUpdater<Archive> {
     private final RrdDb parentDb;
 
     // definition
-    protected final RrdString<Archive> consolFunName;
-    private   final ConsolFun consolFun;
+    private final RrdEnum<Archive, ConsolFun> consolFun;
     protected final RrdDouble<Archive> xff;
     protected final RrdInt<Archive> steps;
     protected final RrdInt<Archive> rows;
@@ -31,18 +30,17 @@ public class Archive implements RrdUpdater<Archive> {
 
     Archive(RrdDb parentDb, ArcDef arcDef) throws IOException {
         this.parentDb = parentDb;
-        consolFunName = new RrdString<>(this, false); // Don't cache, as the enum type should be used instead
+        consolFun = new RrdEnum<>(this, false, ConsolFun.class); // Don't cache, as the enum type should be used instead
         xff = new RrdDouble<>(this);
         steps = new RrdInt<>(this, true);             // constant, may be cached
         rows = new RrdInt<>(this, true);              // constant, may be cached
         boolean shouldInitialize = arcDef != null;
         if (shouldInitialize) {
-            consolFunName.set(arcDef.getConsolFun().name());
+            consolFun.set(arcDef.getConsolFun());
             xff.set(arcDef.getXff());
             steps.set(arcDef.getSteps());
             rows.set(arcDef.getRows());
         }
-        consolFun = ConsolFun.valueOf(consolFunName.get());
         int n = parentDb.getHeader().getDsCount();
         int numRows = rows.get();
         states = new ArcState[n];
@@ -102,19 +100,19 @@ public class Archive implements RrdUpdater<Archive> {
     String dump() throws IOException {
         StringBuilder sb = new StringBuilder("== ARCHIVE ==\n");
         sb.append("RRA:")
-          .append(consolFun.name())
-          .append(":")
-          .append(xff.get())
-          .append(":")
-          .append(steps.get())
-          .append(":")
-          .append(rows.get())
-          .append("\n")
-          .append("interval [")
-          .append(getStartTime())
-          .append(", ")
-          .append(getEndTime())
-          .append("]" + "\n");
+        .append(consolFun.name())
+        .append(":")
+        .append(xff.get())
+        .append(":")
+        .append(steps.get())
+        .append(":")
+        .append(rows.get())
+        .append("\n")
+        .append("interval [")
+        .append(getStartTime())
+        .append(", ")
+        .append(getEndTime())
+        .append("]" + "\n");
         for (int i = 0; i < robins.length; i++) {
             sb.append(states[i].dump());
             sb.append(robins[i].dump());
@@ -158,25 +156,25 @@ public class Archive implements RrdUpdater<Archive> {
         if (Double.isNaN(value)) {
             state.setNanSteps(state.getNanSteps() + 1);
         } else {
-            switch (consolFun) {
-                case MIN:
-                    state.setAccumValue(Util.min(state.getAccumValue(), value));
-                    break;
-                case MAX:
-                    state.setAccumValue(Util.max(state.getAccumValue(), value));
-                    break;
-                case FIRST:
-                    if (Double.isNaN(state.getAccumValue())) {
-                        state.setAccumValue(value);
-                    }
-                    break;
-                case LAST:
+            switch (consolFun.get()) {
+            case MIN:
+                state.setAccumValue(Util.min(state.getAccumValue(), value));
+                break;
+            case MAX:
+                state.setAccumValue(Util.max(state.getAccumValue(), value));
+                break;
+            case FIRST:
+                if (Double.isNaN(state.getAccumValue())) {
                     state.setAccumValue(value);
-                    break;
-                case AVERAGE:
-                case TOTAL:
-                    state.setAccumValue(Util.sum(state.getAccumValue(), value));
-                    break;
+                }
+                break;
+            case LAST:
+                state.setAccumValue(value);
+                break;
+            case AVERAGE:
+            case TOTAL:
+                state.setAccumValue(Util.sum(state.getAccumValue(), value));
+                break;
             }
         }
     }
@@ -189,7 +187,7 @@ public class Archive implements RrdUpdater<Archive> {
         //double nanPct = (double) nanSteps / (double) arcSteps;
         double accumValue = state.getAccumValue();
         if (nanSteps <= arcXff * arcSteps && !Double.isNaN(accumValue)) {
-            if (consolFun == ConsolFun.AVERAGE) {
+            if (consolFun.get() == ConsolFun.AVERAGE) {
                 accumValue /= (arcSteps - nanSteps);
             }
             robin.store(accumValue);
@@ -207,7 +205,7 @@ public class Archive implements RrdUpdater<Archive> {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public ConsolFun getConsolFun() throws IOException {
-        return consolFun;
+        return consolFun.get();
     }
 
     /**

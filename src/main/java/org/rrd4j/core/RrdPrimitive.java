@@ -91,6 +91,23 @@ abstract class RrdPrimitive<U extends RrdUpdater<U>> {
         backend.writeString(pointer, value);
     }
 
+    final protected <E extends Enum<E>> E readEnum(Class<E> clazz) throws IOException {
+        String value = backend.readString(pointer);
+        if (value == null || value.isEmpty()) {
+            return null;
+        } else {
+            try {
+                return Enum.valueOf(clazz, value);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidRrdException("Invalid value for " + clazz.getSimpleName(), e);
+            }
+        }
+    }
+
+    final protected <E extends Enum<E>> void writeEnum(E value) throws IOException {
+        writeString(value.name());
+    }
+
     final boolean isCachingAllowed() {
         return cachingAllowed;
     }
