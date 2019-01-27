@@ -34,10 +34,10 @@ public class Header implements RrdUpdater<Header> {
     Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
         this.parentDb = parentDb;
 
-        String initSignature = null;		
+        String initSignature = null;
         if(rrdDef != null) {
             version = rrdDef.getVersion(); 
-            initSignature = SIGNATURE + ", " + VERSIONS[ version - 1];
+            initSignature = SIGNATURE + ", " + VERSIONS[version - 1];
         }
         else {
             initSignature = DEFAULT_SIGNATURE;
@@ -60,11 +60,18 @@ public class Header implements RrdUpdater<Header> {
 
     Header(RrdDb parentDb, DataImporter reader) throws IOException {
         this(parentDb, (RrdDef) null);
-        String version = reader.getVersion();
-        if (!RRDTOOL_VERSION1.equals(version) && !RRDTOOL_VERSION3.equals(version) ) {
-            throw new IllegalArgumentException("Could not unserialize xml version " + version);
+        String importVersion = reader.getVersion();
+        switch(importVersion) {
+        case RRDTOOL_VERSION1:
+            version = 1;
+            break;
+        case RRDTOOL_VERSION3:
+            version = 2;
+            break;
+        default:
+            throw new IllegalArgumentException("Could not get version " + version);
         }
-        signature.set(DEFAULT_SIGNATURE);
+        signature.set(SIGNATURE + ", " + VERSIONS[version - 1]);
         step.set(reader.getStep());
         dsCount.set(reader.getDsCount());
         arcCount.set(reader.getArcCount());
