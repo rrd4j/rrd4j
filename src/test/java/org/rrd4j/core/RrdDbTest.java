@@ -261,14 +261,20 @@ public class RrdDbTest {
     @Test
     public void testXml1Import() throws IOException {
         URL url = getClass().getResource("/rrdtool/rrdtool1.xml"); 
-        RrdDb rrd = new RrdDb(testFolder.newFile("testxml1import.rrd").getCanonicalPath(), "xml:/" + url.getFile(), RrdBackendFactory.getFactory("FILE"));
+        RrdDb rrd = RrdDb.getBuilder()
+                .setPath(testFolder.newFile("testxml1import.rrd").getCanonicalPath())
+                .setExternalPath("xml:/" + url.getFile())
+                .setBackendFactory(RrdBackendFactory.getFactory("FILE")).build();
         testRrdDbXml(rrd);
     }
 
     @Test
     public void testXml3Import() throws IOException {
         URL url = getClass().getResource("/rrdtool/rrdtool3.xml"); 
-        RrdDb rrd = new RrdDb(testFolder.newFile("testxml3import.rrd").getCanonicalPath(), "xml:/" + url.getFile(), RrdBackendFactory.getFactory("FILE"));
+        RrdDb rrd = RrdDb.getBuilder()
+                .setPath(testFolder.newFile("testxml3import.rrd").getCanonicalPath())
+                .setExternalPath("xml:/" + url.getFile())
+                .setBackendFactory(RrdBackendFactory.getFactory("FILE")).build();
         testRrdDbXml(rrd);
     }
 
@@ -350,6 +356,21 @@ public class RrdDbTest {
         Assert.assertArrayEquals(dsNames1, dsNames3);
         Assert.assertEquals("short", dsNames1[0]);
         Assert.assertEquals("veryverylongnamebiggerthatoldlimit", dsNames1[1]);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testBadBuild1() throws IOException {
+        RrdDb.getBuilder().doimport();
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testBadBuild2() throws IOException {
+        RrdDb.getBuilder().setRrdDef(new RrdDef(testFolder.newFile().getCanonicalPath())).doimport();
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testBadBuild3() throws IOException {
+        RrdDb.getBuilder().build();
     }
 
 }
