@@ -85,15 +85,6 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
     }
 
     /**
-     * Defines the caching policy for this backend.
-     *
-     * @return <code>false</code>
-     */
-    protected boolean isCachingAllowed() {
-        return false;
-    }
-
-    /**
      * <p>getLockInfo.</p>
      *
      * @return a {@link java.lang.String} object.

@@ -6,7 +6,7 @@ import java.io.IOException;
  * Factory class which creates actual {@link org.rrd4j.core.RrdSafeFileBackend} objects.
  *
  */
-@RrdBackendAnnotation(name="SAFE", shouldValidateHeader=true)
+@RrdBackendAnnotation(name="SAFE", shouldValidateHeader=true, cachingAllowed=false)
 public class RrdSafeFileBackendFactory extends RrdRandomAccessFileBackendFactory {
 
     /**

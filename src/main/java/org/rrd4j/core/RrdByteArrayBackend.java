@@ -85,13 +85,4 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
         // Don't release ressources, as backend are cached by the factory and reused
     }
 
-    /**
-     * This method is overridden to disable high-level caching in frontend RRD4J classes.
-     *
-     * @return Always returns <code>false</code>. There is no need to cache anything in high-level classes
-     *         since all RRD bytes are already in memory.
-     */
-    protected boolean isCachingAllowed() {
-        return false;
-    }
 }
