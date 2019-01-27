@@ -106,8 +106,6 @@ public class VariableTest {
                 System.out.println(cmd3);
             }
         };
-
-
     }
 
     private DataProcessor getDp(Variable v) throws IOException {
@@ -141,252 +139,252 @@ public class VariableTest {
     public void test95Percentile() throws Exception {        
         DataProcessor dp = getDp(new Variable.PERCENTILE(95));
         // rrdtools says 9.574000e+03
-        Assert.assertEquals("Wrong percentile", 9.574000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong percentile", 9.574000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void test95Percentile2() throws Exception {        
         DataProcessor dp = getDp2(new Variable.PERCENTILE(95));
         // rrdtools says 6.772000000000000e+03
-        Assert.assertEquals("Wrong percentile", 6.772000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong percentile", 6.772000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void test95Percentile3() throws Exception {        
         DataProcessor dp = getDp3(new Variable.PERCENTILE(95));
         // rrdtools says 9.571000000000000e+03
-        Assert.assertEquals("Wrong percentile", 9.571000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong percentile", 9.571000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void test95PercentileNaN() throws Exception {        
         DataProcessor dp = getDp(new Variable.PERCENTILENAN(95));
         // rrdtools says 9.574000e+03
-        Assert.assertEquals("Wrong percentile", 9.574000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong percentile", 9.574000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void test95PercentileNaN2() throws Exception {        
         DataProcessor dp = getDp2(new Variable.PERCENTILENAN(95));
         // rrdtools says 6.772000000000000e+03
-        Assert.assertEquals("Wrong percentile", 6.772000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong percentile", 6.772000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void test95PercentileNan3() throws Exception {        
         DataProcessor dp = getDp3(new Variable.PERCENTILENAN(95));
         // rrdtools says 9.574000000000000e+03
-        Assert.assertEquals("Wrong percentile", 9.574000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong percentile", 9.574000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testFirst() throws Exception {
         DataProcessor dp = getDp(new Variable.FIRST());
         // rrdtools says 9.400000e+01
-        Assert.assertEquals("Wrong first", 9.400000e+01, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong first", 9.400000e+01, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testFirst2() throws Exception {
         DataProcessor dp = getDp2(new Variable.FIRST());
         // rrdtools says 3.339000000000000e+03
-        Assert.assertEquals("Wrong first", 3.339000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong first", 3.339000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testFirst3() throws Exception {
         DataProcessor dp = getDp3(new Variable.FIRST());
         // rrdtools says 0.000000000000000e+00
-        Assert.assertEquals("Wrong first", 0.000000000000000e+00, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong first", 0.000000000000000e+00, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLast() throws Exception {
         DataProcessor dp = getDp(new Variable.LAST());
         // rrdtools says 1.600000e+07
-        Assert.assertEquals("Wrong last", 1.600000e+07, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong last", 1.600000e+07, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLast2() throws Exception {
         DataProcessor dp = getDp2(new Variable.LAST());
         // rrdtools says 7.009000000000000e+03
-        Assert.assertEquals("Wrong last", 7.009000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong last", 7.009000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLast3() throws Exception {
         DataProcessor dp = getDp3(new Variable.LAST());
         // rrdtools says 1.600000000000000e+07
-        Assert.assertEquals("Wrong last", 1.600000000000000e+07, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong last", 1.600000000000000e+07, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testMin() throws Exception {
         DataProcessor dp = getDp(new Variable.MIN());
         // rrdtools says 9.400000e+01
-        Assert.assertEquals("Wrong minimum", 9.400000e+01, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong minimum", 9.400000e+01, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testMin2() throws Exception {
         DataProcessor dp = getDp2(new Variable.MIN());
         // rrdtools says 3.339000000000000e+03
-        Assert.assertEquals("Wrong minimum", 3.339000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong minimum", 3.339000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testMin3() throws Exception {
         DataProcessor dp = getDp3(new Variable.MIN());
         // rrdtools says 0.000000000000000e+00
-        Assert.assertEquals("Wrong minimum", 0.000000000000000e+00, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong minimum", 0.000000000000000e+00, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testMax() throws Exception {
         DataProcessor dp = getDp(new Variable.MAX());
         // rrdtools says 1.600000e+07
-        Assert.assertEquals("Wrong maximum", 1.600000e+07, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong maximum", 1.600000e+07, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testMax2() throws Exception {
         DataProcessor dp = getDp2(new Variable.MAX());
         // rrdtools says 7.009000000000000e+03
-        Assert.assertEquals("Wrong maximum", 7.009000000000000e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong maximum", 7.009000000000000e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testMax3() throws Exception {
         DataProcessor dp = getDp3(new Variable.MAX());
         // rrdtools says 1.600000000000000e+07
-        Assert.assertEquals("Wrong maximum", 1.600000000000000e+07, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong maximum", 1.600000000000000e+07, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testTotal() throws Exception {
         DataProcessor dp = getDp(new Variable.TOTAL());
         // rrdtools says 9.896709e+09
-        Assert.assertEquals("Wrong total", 9.896709e+09, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong total", 9.896709e+09, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testTotal2() throws Exception {
         DataProcessor dp = getDp2(new Variable.TOTAL());
         // rrdtools says 1.039200000000000e+08
-        Assert.assertEquals("Wrong total", 1.039200000000000e+08, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong total", 1.039200000000000e+08, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testTotal3() throws Exception {
         DataProcessor dp = getDp3(new Variable.TOTAL());
         // rrdtools says 9.896720700000000e+09
-        Assert.assertEquals("Wrong total", 9.896720700000000e+09, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong total", 9.896720700000000e+09, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testAverage() throws Exception {
         DataProcessor dp = getDp(new Variable.AVERAGE());
         // rrdtools says 1.657740201e+05
-        Assert.assertEquals("Wrong average", 1.657740201e+05, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong average", 1.657740201e+05, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testAverage2() throws Exception {
         DataProcessor dp = getDp2(new Variable.AVERAGE());
         // rrdtools says 5.094117647058823e+03
-        Assert.assertEquals("Wrong average", 5.094117647058823e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong average", 5.094117647058823e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testAverage3() throws Exception {
         DataProcessor dp = getDp3(new Variable.AVERAGE());
         // rrdtools says 3.295591240875912e+03
-        Assert.assertEquals("Wrong average", 1.633122227722772e+05, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong average", 1.633122227722772e+05, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testStdDev() throws Exception {
         DataProcessor dp = getDp(new Variable.STDDEV());
         // rrdtools says 1.299157546152125e+06, but it might be wrong
-        Assert.assertEquals("Wrong standard deviation", 1302434.1151546114, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong standard deviation", 1302434.1151546114, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testStdDev2() throws Exception {
         DataProcessor dp = getDp2(new Variable.STDDEV());
         // rrdtools says 1.040348817767271e+03, but it might be wrong
-        Assert.assertEquals("Wrong standard deviation", 1048.0838597160848, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong standard deviation", 1048.0838597160848, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testStdDev3() throws Exception {
         DataProcessor dp = getDp3(new Variable.STDDEV());
         // rrdtools says 1.289630121109904e+06, but it might be wrong
-        Assert.assertEquals("Wrong standard deviation", 1292834.1760384508, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong standard deviation", 1292834.1760384508, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLslSlope() throws Exception {
         DataProcessor dp = getDp(new Variable.LSLSLOPE());
         // rrdtools says 4.823830423328765e+03
-        Assert.assertEquals("Wrong LSL slope", 4.823830423328765e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL slope", 4.823830423328765e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLslSlope2() throws Exception {
         DataProcessor dp = getDp2(new Variable.LSLSLOPE());
         // rrdtools says 5.289899606825209e+01
-        Assert.assertEquals("Wrong LSL slope", 5.289899606825209e+01, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL slope", 5.289899606825209e+01, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLslSlope3() throws Exception {
         DataProcessor dp = getDp3(new Variable.LSLSLOPE());
         // rrdtools says 4.684118512689442e+03
-        Assert.assertEquals("Wrong LSL slope", 4.684118512689442e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL slope", 4.684118512689442e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLslInt() throws Exception {
         DataProcessor dp = getDp(new Variable.LSLINT());
         // rrdtools says -3.117851918090452e+05
-        Assert.assertEquals("Wrong LSL y-intercept", -3.117851918090452e+05, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL y-intercept", -3.117851918090452e+05, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLslInt2() throws Exception {
         DataProcessor dp = getDp2(new Variable.LSLINT());
         // rrdtools says 3.322001278772379e+03
-        Assert.assertEquals("Wrong LSL y-intercept", 3.322001278772379e+03, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL y-intercept", 3.322001278772379e+03, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testLslInt3() throws Exception {
         DataProcessor dp = getDp3(new Variable.LSLINT());
         // rrdtools says -3.121258062657012e+05
-        Assert.assertEquals("Wrong LSL y-intercept", -3.402305173418378e+05, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL y-intercept", -3.402305173418378e+05, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testlslCorrel() throws Exception {
         DataProcessor dp = getDp(new Variable.LSLCORREL());
         // rrdtools says 2.132982e-01
-        Assert.assertEquals("Wrong LSL Correlation Coefficient", 2.132982e-01, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL Correlation Coefficient", 2.132982e-01, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testlslCorrel2() throws Exception {
         DataProcessor dp = getDp2(new Variable.LSLCORREL());
         // rrdtools says 9.980212206387034e-01
-        Assert.assertEquals("Wrong LSL Correlation Coefficient", 9.980212206387034e-01, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL Correlation Coefficient", 9.980212206387034e-01, dp.getVariable("value").value, 1e-6);
     }
 
     @Test
     public void testlslCorrel3() throws Exception {
         DataProcessor dp = getDp3(new Variable.LSLCORREL());
         // rrdtools says 2.117961840477416e-01
-        Assert.assertEquals("Wrong LSL Correlation Coefficient", 2.117961840477416e-01, dp.getVariable("value").value, 1e-6);        
+        Assert.assertEquals("Wrong LSL Correlation Coefficient", 2.117961840477416e-01, dp.getVariable("value").value, 1e-6);
     }
 
 }
