@@ -55,14 +55,18 @@ public class RrdGraphInfo {
      * Returns graph bytes
      *
      * @return Graph bytes
+     * @throws IllegalStateException if the images bytes are unavailable or can't be read
      */
     public byte[] getBytes() {
         try {
             byte[] content = new byte[stream.available()];
-            stream.read(content);
+            int read = stream.read(content);
+            if (read != content.length) {
+                throw new IllegalStateException("Unable to read image buffer");
+            }
             return content;
         } catch (IOException e) {
-            return new byte[0];
+            throw new IllegalStateException("Unable to read image bytes", e);
         }
     }
 
@@ -88,13 +92,14 @@ public class RrdGraphInfo {
      * Returns the number of bytes in the graph file
      *
      * @return Length of the graph file
+     * @throws IllegalStateException if the images bytes are unavailable
      */
-    public int getByteCount() {
+    public int getByteCount() throws IllegalStateException {
         try {
             stream.reset();
             return stream.available();
         } catch (IOException e) {
-            return 0;
+            throw new IllegalStateException("Unable to read image bytes", e);
         }
     }
 
