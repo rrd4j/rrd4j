@@ -1,5 +1,7 @@
 package org.rrd4j.graph;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
 public class RrdGraphInfo {
     String filename;
     int width, height;
-    byte[] bytes;
+    InputStream stream;
     String imgInfo;
     private List<String> printLines = new ArrayList<String>();
 
@@ -55,7 +57,13 @@ public class RrdGraphInfo {
      * @return Graph bytes
      */
     public byte[] getBytes() {
-        return bytes;
+        try {
+            byte[] content = new byte[stream.available()];
+            stream.read(content);
+            return content;
+        } catch (IOException e) {
+            return new byte[0];
+        }
     }
 
     /**
@@ -82,7 +90,12 @@ public class RrdGraphInfo {
      * @return Length of the graph file
      */
     public int getByteCount() {
-        return bytes != null ? bytes.length : 0;
+        try {
+            stream.reset();
+            return stream.available();
+        } catch (IOException e) {
+            return 0;
+        }
     }
 
     /**

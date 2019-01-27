@@ -10,13 +10,14 @@ import java.awt.TexturePaint;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
+import java.io.InputStream;
+import java.nio.file.Paths;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -176,12 +177,8 @@ class ImageWorker {
         g2d.dispose();
     }
 
-    void saveImage(OutputStream stream, String type, float quality, boolean interlaced) throws IOException {
-        //The first writer is arbitratry choosen
-        Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(type);
-        ImageWriter writer = iter.next();
+    void makeImage(Object stream, ImageWriter writer, ImageWriteParam iwp) throws IOException {
         BufferedImage outputImage = img; 
-        ImageWriteParam iwp = writer.getDefaultWriteParam();
 
         ImageWriterSpi imgProvider = writer.getOriginatingProvider();
 
@@ -189,27 +186,17 @@ class ImageWorker {
 
         // Some format can't manage 16M colors images
         // JPEG don't like transparency
-        if(! imgProvider.canEncodeImage(outputImage) || "image/jpeg".equals(imgProvider.getMIMETypes()[0].toLowerCase())) {
+        if (! imgProvider.canEncodeImage(outputImage) || "image/jpeg".equals(imgProvider.getMIMETypes()[0].toLowerCase())) {
             int w = img.getWidth();
             int h = img.getHeight();
             outputImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
-            if(! imgProvider.canEncodeImage(outputImage)) {
+            if (! imgProvider.canEncodeImage(outputImage)) {
                 throw new RuntimeException("Invalid image type");
-            }            
+            }
         }
 
-        //If lossy compression, use the quality
-        if(! imgProvider.isFormatLossless()) {
-            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            iwp.setCompressionQuality(quality);
-        }
-
-        if(iwp.canWriteProgressive()) {
-            iwp.setProgressiveMode(interlaced ? ImageWriteParam.MODE_DEFAULT:ImageWriteParam.MODE_DISABLED);            
-        }
-
-        if(! imgProvider.canEncodeImage(outputImage)) {
+        if (! imgProvider.canEncodeImage(outputImage)) {
             throw new RuntimeException("Invalid image type");
         }
 
@@ -220,22 +207,20 @@ class ImageWorker {
         } catch (IOException e) {
             writer.abort();
             throw e;
-        }
-        writer.dispose();
-    }
-
-    byte[] saveImage(String path, String type, float quality, boolean interlaced) throws IOException {
-        byte[] bytes = getImageBytes(type, quality, interlaced);
-        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(path))) {
-            out.write(bytes);
-            return bytes;
+        } finally {
+            writer.dispose();
         }
     }
 
-    byte[] getImageBytes(String type, float quality, boolean interlaced) throws IOException {
+    InputStream saveImage(String path, ImageWriter writer, ImageWriteParam iwp) throws IOException {
+        makeImage(Paths.get(path).toFile(), writer, iwp);
+        return new BufferedInputStream(new FileInputStream(path));
+    }
+
+    InputStream getImageBytes(ImageWriter writer, ImageWriteParam iwp) throws IOException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY)){
-            saveImage(stream, type, quality, interlaced);
-            return stream.toByteArray();
+            makeImage(stream, writer, iwp);
+            return new ByteArrayInputStream(stream.toByteArray());
         }
     }
 

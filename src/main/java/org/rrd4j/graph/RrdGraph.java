@@ -8,6 +8,10 @@ import java.awt.Paint;
 import java.awt.Stroke;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
 import javax.swing.ImageIcon;
 
 import org.rrd4j.core.Util;
@@ -34,6 +38,8 @@ public class RrdGraph implements RrdGraphConstants {
     Mapper mapper;
     private final RrdGraphInfo info = new RrdGraphInfo();
     private final String signature;
+    private final ImageWriter writer;
+    private final ImageWriteParam param;
 
     /**
      * Creates graph from the corresponding {@link org.rrd4j.graph.RrdGraphDef} object.
@@ -46,6 +52,8 @@ public class RrdGraph implements RrdGraphConstants {
         signature = gdef.getSignature();
         im = new ImageParameters();
         worker = new ImageWorker(1, 1); // Dummy worker, just to start with something
+        writer = ImageIO.getImageWritersByFormatName(gdef.imageFormat).next();
+        param = getImageParams();
         try {
             createGraph();
         }
@@ -56,10 +64,23 @@ public class RrdGraph implements RrdGraphConstants {
         }
     }
 
-    RrdGraph(RrdGraphDef gdef, ImageWorker worker, ImageParameters im) throws IOException {
+    /**
+     * <p>Creates graph from the corresponding {@link org.rrd4j.graph.RrdGraphDef} object.</p>
+     * <p>The graph will be created using customs {@link javax.imageio.ImageWriter} and {@link javax.imageio.ImageWriteParam} given.</p>
+     * <p>The ImageWriter type and ImageWriteParam settings have priority other the RrdGraphDef settings.
+
+     * @param gdef Graph definition
+     * @param writer
+     * @param param
+     * @throws IOException Thrown in case of I/O error
+     */
+    public RrdGraph(RrdGraphDef gdef, ImageWriter writer, ImageWriteParam param) throws IOException {
         this.gdef = gdef;
         signature = gdef.getSignature();
-        this.im = im;
+        im = new ImageParameters();
+        worker = new ImageWorker(1, 1); // Dummy worker, just to start with something
+        this.writer = writer;
+        this.param = param;
         try {
             createGraph();
         }
@@ -77,6 +98,21 @@ public class RrdGraph implements RrdGraphConstants {
      */
     public RrdGraphInfo getRrdGraphInfo() {
         return info;
+    }
+
+    private ImageWriteParam getImageParams() {
+        ImageWriteParam iwp = writer.getDefaultWriteParam();
+        ImageWriterSpi imgProvider = writer.getOriginatingProvider();
+        //If lossy compression, use the quality
+        if (! imgProvider.isFormatLossless()) {
+            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            iwp.setCompressionQuality(gdef.imageQuality);
+        }
+
+        if (iwp.canWriteProgressive()) {
+            iwp.setProgressiveMode(gdef.interlaced ? ImageWriteParam.MODE_DEFAULT:ImageWriteParam.MODE_DISABLED);
+        }
+        return iwp;
     }
 
     private void createGraph() throws IOException {
@@ -129,10 +165,10 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void saveImage() throws IOException {
         if (! RrdGraphConstants.IN_MEMORY_IMAGE.equals(gdef.filename)) {
-            info.bytes = worker.saveImage(gdef.filename, gdef.imageFormat, gdef.imageQuality, gdef.interlaced);
+            info.stream = worker.saveImage(gdef.filename, writer, param);
         }
         else {
-            info.bytes = worker.getImageBytes(gdef.imageFormat, gdef.imageQuality, gdef.interlaced);
+            info.stream = worker.getImageBytes(writer, param);
         }
     }
 
@@ -704,7 +740,7 @@ public class RrdGraph implements RrdGraphConstants {
         return getFontHeight(FONTTAG_LEGEND) * LEGEND_BOX;
     }
 
-    double[] xtr(long[] timestamps) {
+    private double[] xtr(long[] timestamps) {
         double[] timestampsDev = new double[2 * timestamps.length - 1];
         for (int i = 0, j = 0; i < timestamps.length; i += 1, j += 2) {
             timestampsDev[j] = mapper.xtr(timestamps[i]);
@@ -715,7 +751,7 @@ public class RrdGraph implements RrdGraphConstants {
         return timestampsDev;
     }
 
-    double[] ytr(double[] values) {
+    private double[] ytr(double[] values) {
         double[] valuesDev = new double[2 * values.length - 1];
         for (int i = 0, j = 0; i < values.length; i += 1, j += 2) {
             if (Double.isNaN(values[i])) {
