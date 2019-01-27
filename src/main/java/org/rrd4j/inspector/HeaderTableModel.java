@@ -56,26 +56,19 @@ class HeaderTableModel extends AbstractTableModel {
     }
 
     void setFile(File newFile) {
-        try {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(newFile.getAbsolutePath()).setReadOnly().build()) {
             values = null;
-            String path = newFile.getAbsolutePath();
-            RrdDb rrd = new RrdDb(path, true);
-            try {
-                Header header = rrd.getHeader();
-                String signature = header.getSignature();
-                String step = Long.toString(header.getStep());
-                String lastTimestamp = header.getLastUpdateTime() + " [" +
-                        new Date(header.getLastUpdateTime() * 1000L) + "]";
-                String datasources = Integer.toString(header.getDsCount());
-                String archives = Integer.toString(header.getArcCount());
-                String size = rrd.getRrdBackend().getLength() + " bytes";
-                values = new Object[]{
-                        path, signature, step, lastTimestamp, datasources, archives, size
-                };
-            }
-            finally {
-                rrd.close();
-            }
+            Header header = rrd.getHeader();
+            String signature = header.getSignature();
+            String step = Long.toString(header.getStep());
+            String lastTimestamp = header.getLastUpdateTime() + " [" +
+                    new Date(header.getLastUpdateTime() * 1000L) + "]";
+            String datasources = Integer.toString(header.getDsCount());
+            String archives = Integer.toString(header.getArcCount());
+            String size = rrd.getRrdBackend().getLength() + " bytes";
+            values = new Object[]{
+                    newFile.getAbsolutePath(), signature, step, lastTimestamp, datasources, archives, size
+            };
             fireTableDataChanged();
         }
         catch (Exception e) {

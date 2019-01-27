@@ -283,7 +283,7 @@ public class RrdDbPool {
         //Someone might have already open it, rechecks
         if(ref.count == 0) {
             try {
-                ref.rrdDb = new RrdDb(factory.getPath(uri), factory);
+                ref.rrdDb = RrdDb.getBuilder().setPath(factory.getPath(uri)).setBackendFactory(factory).build();
             } catch (IOException e) {
                 passNext(ACTION.DROP, ref);
                 throw e;
@@ -351,7 +351,7 @@ public class RrdDbPool {
         try {
             URI uri = RrdBackendFactory.findFactory(rrdDef.getUri()).getCanonicalUri(rrdDef.getUri());
             ref = requestEmpty(uri);
-            ref.rrdDb = new RrdDb(rrdDef);
+            ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -388,7 +388,7 @@ public class RrdDbPool {
         RrdEntry ref = null;
         try {
             ref = requestEmpty(defaultFactory.getUri(path));
-            ref.rrdDb = new RrdDb(path, sourcePath);
+            ref.rrdDb = RrdDb.getBuilder().setPath(path).setExternalPath(sourcePath).build();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -426,7 +426,7 @@ public class RrdDbPool {
         RrdEntry ref = null;
         try {
             ref = requestEmpty(uri);
-            ref.rrdDb = new RrdDb(uri, sourcePath);
+            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setExternalPath(sourcePath).build();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

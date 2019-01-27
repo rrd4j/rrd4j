@@ -63,8 +63,8 @@ public class Converter {
                     " " + rrdFile.getName() + " ");
             String sourcePath = rrdFile.getCanonicalPath();
             String destPath = sourcePath + SUFFIX;
-            RrdDb rrd = new RrdDb(destPath, RrdDb.PREFIX_RRDTool + sourcePath);
-            rrd.close();
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(destPath).setRrdToolImporter(sourcePath).build()) {
+            }
             goodCount++;
             double seconds = (System.currentTimeMillis() - start) / 1000.0;
             println("[OK, " + secondsFormatter.format(seconds) + " sec]");
@@ -103,6 +103,6 @@ public class Converter {
             System.exit(1);
         }
         Converter c = new Converter(args);
-		c.convertAll();
-	}
+        c.convertAll();
+    }
 }

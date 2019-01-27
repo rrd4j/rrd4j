@@ -44,14 +44,13 @@ public class BigStringsTest {
             dsNamesSet.add(dsName);
         }
         rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
-        RrdDb rrdDb = new RrdDb(rrdDef);
-        rrdDb.close();
+        RrdDb.getBuilder().setRrdDef(rrdDef).build().close();
 
-        rrdDb = new RrdDb(rrdPath);
-        for(Datasource ds: rrdDb.getDatasources()) {
-            Assert.assertTrue("Unexpected ds name: " + ds.getName(), dsNamesSet.contains(ds.getName()));
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdPath).build()) {
+            for(Datasource ds: rrdDb.getDatasources()) {
+                Assert.assertTrue("Unexpected ds name: " + ds.getName(), dsNamesSet.contains(ds.getName()));
+            }
         }
-        rrdDb.close();
     }
 
 }

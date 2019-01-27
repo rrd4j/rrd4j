@@ -67,18 +67,11 @@ class DataTableModel extends AbstractTableModel {
             value = Double.NaN;
         }
         if (dsIndex >= 0 && arcIndex >= 0 && file != null) {
-            try {
-                RrdDb rrd = new RrdDb(file.getAbsolutePath());
-                try {
-                    Robin robin = rrd.getArchive(arcIndex).getRobin(dsIndex);
-                    robin.setValue(rowIndex, value);
-                    values[rowIndex][2] = InspectorModel.formatDouble(robin.getValue(rowIndex));
-                }
-                finally {
-                    rrd.close();
-                }
-            }
-            catch (Exception e) {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(file.getAbsolutePath()).build()){
+                Robin robin = rrd.getArchive(arcIndex).getRobin(dsIndex);
+                robin.setValue(rowIndex, value);
+                values[rowIndex][2] = InspectorModel.formatDouble(robin.getValue(rowIndex));
+            } catch (Exception e) {
                 Util.error(null, e);
             }
         }
@@ -95,29 +88,22 @@ class DataTableModel extends AbstractTableModel {
             arcIndex = newArcIndex;
             values = null;
             if (dsIndex >= 0 && arcIndex >= 0) {
-                try {
-                    RrdDb rrd = new RrdDb(file.getAbsolutePath(), true);
-                    try {
-                        Archive arc = rrd.getArchive(arcIndex);
-                        Robin robin = arc.getRobin(dsIndex);
-                        long start = arc.getStartTime();
-                        long step = arc.getArcStep();
-                        double robinValues[] = robin.getValues();
-                        values = new Object[robinValues.length][];
-                        for (int i = 0; i < robinValues.length; i++) {
-                            long timestamp = start + i * step;
-                            String date = new Date(timestamp * 1000L).toString();
-                            String value = InspectorModel.formatDouble(robinValues[i]);
-                            values[i] = new Object[]{
-                                    Long.toString(timestamp), date, value
-                            };
-                        }
+                try (RrdDb rrd = RrdDb.getBuilder().setPath(file.getAbsolutePath()).setReadOnly().build()) {
+                    Archive arc = rrd.getArchive(arcIndex);
+                    Robin robin = arc.getRobin(dsIndex);
+                    long start = arc.getStartTime();
+                    long step = arc.getArcStep();
+                    double robinValues[] = robin.getValues();
+                    values = new Object[robinValues.length][];
+                    for (int i = 0; i < robinValues.length; i++) {
+                        long timestamp = start + i * step;
+                        String date = new Date(timestamp * 1000L).toString();
+                        String value = InspectorModel.formatDouble(robinValues[i]);
+                        values[i] = new Object[]{
+                                Long.toString(timestamp), date, value
+                        };
                     }
-                    finally {
-                        rrd.close();
-                    }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Util.error(null, e);
                 }
             }

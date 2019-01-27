@@ -25,11 +25,9 @@ public class ExportImport {
         RRDatabase rrd = new RRDatabase(url.getFile());
         rrd.toXml(new PrintStream(rrdXmlFile));
         rrd.close();
-        
+
         // create rrd4j database from the xml file created previously
-        RrdDb rrdDb = new RrdDb(testFolder.newFile("testexport.rrd").getCanonicalPath(), rrdXmlFile.getCanonicalPath());
-        rrdDb.close();
-        
+        RrdDb.getBuilder().setPath(testFolder.newFile("testexport.rrd").toURI()).setExternalPath(rrdXmlFile.getCanonicalPath()).doimport();
     }
 
 }

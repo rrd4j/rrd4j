@@ -42,7 +42,7 @@ class GraphFrame extends JFrame {
 
     private void createRrdGraph() {
         System.out.println("Creating graph...");
-        try (RrdDb rrdDb = new RrdDb(sourcePath, true)) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
             RrdDef rrdDef;
             long[] timestamps;
             double[] values;
@@ -92,7 +92,7 @@ class GraphFrame extends JFrame {
     }
 
     private void fillGraphCombo() {
-        try (RrdDb rrdDb = new RrdDb(sourcePath, true)) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
                 RrdDef rrdDef = rrdDb.getRrdDef();
                 final DsDef[] dsDefs = rrdDef.getDsDefs();
                 final ArcDef[] arcDefs = rrdDef.getArcDefs();

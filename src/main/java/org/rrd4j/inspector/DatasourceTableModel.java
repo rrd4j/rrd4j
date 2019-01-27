@@ -73,26 +73,19 @@ class DatasourceTableModel extends AbstractTableModel {
             dsIndex = newDsIndex;
             values = null;
             if (dsIndex >= 0) {
-                try {
-                    RrdDb rrd = new RrdDb(file.getAbsolutePath(), true);
-                    try {
-                        Datasource ds = rrd.getDatasource(dsIndex);
-                        values = new Object[]{
-                                ds.getName(),
-                                ds.getType(),
-                                Long.toString(ds.getHeartbeat()),
-                                InspectorModel.formatDouble(ds.getMinValue()),
-                                InspectorModel.formatDouble(ds.getMaxValue()),
-                                InspectorModel.formatDouble(ds.getLastValue()),
-                                InspectorModel.formatDouble(ds.getAccumValue()),
-                                Long.toString(ds.getNanSeconds())
-                        };
-                    }
-                    finally {
-                        rrd.close();
-                    }
-                }
-                catch (Exception e) {
+                try (RrdDb rrd = RrdDb.getBuilder().setPath(file.getAbsolutePath()).setReadOnly().build()) {
+                    Datasource ds = rrd.getDatasource(dsIndex);
+                    values = new Object[]{
+                            ds.getName(),
+                            ds.getType(),
+                            Long.toString(ds.getHeartbeat()),
+                            InspectorModel.formatDouble(ds.getMinValue()),
+                            InspectorModel.formatDouble(ds.getMaxValue()),
+                            InspectorModel.formatDouble(ds.getLastValue()),
+                            InspectorModel.formatDouble(ds.getAccumValue()),
+                            Long.toString(ds.getNanSeconds())
+                    };
+                } catch (Exception e) {
                     Util.error(null, e);
                 }
             }

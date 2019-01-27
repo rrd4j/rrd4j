@@ -86,7 +86,7 @@ public class RrdTutorial {
         // Create and check the database
         println(rrdDef.dump());
         println("Estimated file size: " + rrdDef.getEstimatedSize());
-        try (RrdDb rrdDb = new RrdDb(rrdDef)){
+        try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()){
             println("== RRD file created.");
             if (rrdDb.getRrdDef().equals(rrdDef)) {
                 println("Checking RRD file structure... OK");
@@ -97,7 +97,7 @@ public class RrdTutorial {
         }
 
         // Reopen and get ready to update
-        try (RrdDb rrdDb = new RrdDb(rrdPath)) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdPath).build()) {
             Sample sample = rrdDb.createSample();
 
             // Add these data points:
@@ -131,7 +131,7 @@ public class RrdTutorial {
         }
 
         // test read-only access!
-        try (RrdDb rrdDb = new RrdDb(rrdPath, true)) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdPath).setReadOnly().build()) {
             println("File reopen in read-only mode");
             println("== Last update time was: " + rrdDb.getLastUpdateTime());
             println("== Last info was: " + rrdDb.getInfo());

@@ -37,7 +37,7 @@ public class VariableTest {
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
 
-        try (RrdDb db = new RrdDb(def, backend)) {
+        try (RrdDb db = RrdDb.getBuilder().setRrdDef(def).setBackendFactory(backend).build()) {
             db.createSample((startTime - step )).setValue(0, 0.0).update();
 
             long sampleTime = startTime;

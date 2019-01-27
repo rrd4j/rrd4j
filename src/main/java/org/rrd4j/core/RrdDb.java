@@ -42,6 +42,161 @@ import org.rrd4j.ConsolFun;
  * @see RrdBackendFactory
  */
 public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
+
+    /**
+     * @author Fabrice Bacchella
+     * @since 3.5
+     */
+    public static class Builder {
+        String path = null;
+        URI uri = null;
+        RrdBackendFactory factory = RrdBackendFactory.getDefaultFactory();
+        boolean readOnly = false;
+        String externalPath = null;
+        DataImporter importer = null;
+        RrdDef rrdDef = null;
+
+        private Builder() {
+
+        };
+
+        public RrdDb build() throws IOException {
+            if (rrdDef != null) {
+                factory = checkFactory(rrdDef.getUri(), factory);
+                return new RrdDb(rrdDef, factory);
+            } else if ((path != null || uri != null)) {
+                URI rrdUri = buildUri(path, uri, factory);
+                factory = checkFactory(rrdUri, factory);
+                if (importer == null && externalPath == null) {
+                    return new RrdDb(null, rrdUri, readOnly, factory);
+                } else {
+                    try (DataImporter rrdImporter = resoleImporter(externalPath, importer)) {
+                        return new RrdDb(path, rrdUri, null, rrdImporter, factory);
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("Incomplete builder definition");
+            }
+        }
+
+        public void doimport() throws IOException {
+            if (rrdDef != null || (importer == null && externalPath == null)) {
+                throw new IllegalArgumentException("Not an importing configuration");
+            }
+            if (path == null && uri == null) {
+                throw new IllegalArgumentException("No rrd destination given");
+            }
+            URI rrdUri = buildUri(path, uri, factory);
+            factory = checkFactory(rrdUri, factory);
+            try (DataImporter rrdImporter = resoleImporter(externalPath, importer) ;
+                 RrdDb db = new RrdDb(path, rrdUri, null, rrdImporter, factory)) {
+            }
+        }
+
+        public Builder setPath(String path) {
+            this.rrdDef = null;
+            this.path = path;
+            this.uri = null;
+            return this;
+        }
+
+        public Builder setPath(URI uri) {
+            this.rrdDef = null;
+            this.uri = uri;
+            this.path = null;
+            return this;
+        }
+
+        public Builder setBackendFactory(RrdBackendFactory factory) {
+            this.factory = factory;
+            return this;
+        }
+
+        public Builder setReadOnly(boolean readOnly) {
+            this.readOnly = readOnly;
+            return this;
+        }
+
+        public Builder setReadOnly() {
+            this.readOnly = true;
+            return this;
+        }
+
+        public Builder setExternalPath(String externalPath) {
+            this.externalPath = externalPath;
+            this.importer = null;
+            this.rrdDef = null;
+            this.readOnly = false;
+            return this;
+        }
+
+        public Builder setImporter(DataImporter importer) {
+            this.importer = importer;
+            this.externalPath = null;
+            this.rrdDef = null;
+            this.readOnly = false;
+            return this;
+        }
+
+        public Builder setRrdToolImporter(String externalPath) throws IOException {
+            this.importer = new RrdToolReader(externalPath);
+            this.externalPath = null;
+            this.rrdDef = null;
+            this.readOnly = false;
+            return this;
+        }
+
+        public Builder setRrdDef(RrdDef rrdDef) {
+            this.rrdDef = rrdDef;
+            this.importer = null;
+            this.externalPath = null;
+            this.path = null;
+            this.uri = null;
+            this.readOnly = false;
+            return this;
+        }
+
+        private static RrdBackendFactory checkFactory(URI uri, RrdBackendFactory factory) {
+            if (factory == null) {
+                return RrdBackendFactory.findFactory(uri);
+            } else {
+                return factory;
+            }
+        }
+
+        private static URI buildUri(String rrdPath, URI rrdUri, RrdBackendFactory factory) {
+            if (rrdUri != null) {
+                return rrdUri;
+            } else if (factory == null) {
+                return RrdBackendFactory.buildGenericUri(rrdPath);
+            } else{
+                return factory.getUri(rrdPath);
+            }
+        }
+
+        private static DataImporter resoleImporter(String externalPath, DataImporter importer) throws IOException {
+            if (importer != null) {
+                return importer;
+            } else {
+                if (externalPath.startsWith(PREFIX_RRDTool)) {
+                    String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
+                    return new RrdToolReader(rrdToolPath);
+                }
+                else if (externalPath.startsWith(PREFIX_XML)) {
+                    externalPath = externalPath.substring(PREFIX_XML.length());
+                    return new XmlReader(externalPath);
+                }
+                else {
+                    return new XmlReader(externalPath);
+                }
+            }
+        }
+    }
+
+    public static Builder getBuilder() {
+        return new Builder();
+    }
+
     /**
      * Prefix to identify external XML file source used in various RrdDb constructors.
      */
@@ -96,7 +251,9 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *
      * @param rrdDef Object describing the structure of the new RRD file.
      * @throws java.io.IOException Thrown in case of I/O error.
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(RrdDef rrdDef) throws IOException {
         this(rrdDef, null);
     }
@@ -130,10 +287,12 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @param factory The factory which will be used to create storage for this RRD
      * @throws java.io.IOException Thrown in case of I/O error
      * @see RrdBackendFactory
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(RrdDef rrdDef, RrdBackendFactory factory) throws IOException {
 
-        factory = checkFactory(rrdDef.getUri(), factory);
+        factory = Builder.checkFactory(rrdDef.getUri(), factory);
 
         if (!rrdDef.hasDatasources()) {
             throw new IllegalArgumentException("No RRD datasource specified. At least one is needed.");
@@ -178,7 +337,9 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *                 open in read-only mode (<code>readOnly</code> set to <code>true</code>),
      *                 <code>IOException</code> will be thrown.
      * @throws java.io.IOException Thrown in case of I/O error.
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(String path, boolean readOnly) throws IOException {
         this(path, readOnly, null);
     }
@@ -198,7 +359,9 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @throws FileNotFoundException Thrown if the requested file does not exist.
      * @throws java.io.IOException           Thrown in case of general I/O error (bad RRD file, for example).
      * @see RrdBackendFactory
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(String path, boolean readOnly, RrdBackendFactory factory) throws IOException {
         this(path, null, readOnly, factory);
     }
@@ -215,7 +378,9 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *                 open in read-only mode (<code>readOnly</code> set to <code>true</code>),
      *                 <code>IOException</code> will be thrown.
      * @throws java.io.IOException Thrown in case of I/O error.
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(URI path, boolean readOnly) throws IOException {
         this(null, path, readOnly, null);
     }
@@ -227,7 +392,9 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *
      * @param path Path to existing RRD.
      * @throws java.io.IOException Thrown in case of I/O error.
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(String path) throws IOException {
         this(path, false, null);
     }
@@ -239,7 +406,9 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *
      * @param path Path to existing RRD.
      * @throws java.io.IOException Thrown in case of I/O error.
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(URI path) throws IOException {
         this(null, path, false, null);
     }
@@ -252,15 +421,17 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @param factory Backend factory used to create this RRD.
      * @throws java.io.IOException Thrown in case of I/O error.
      * @see RrdBackendFactory
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(String path, RrdBackendFactory factory) throws IOException {
         this(path, null, false, factory);
     }
 
     private RrdDb(String rrdPath, URI rrdUri, boolean readOnly, RrdBackendFactory factory) throws IOException {
 
-        rrdUri = buildUri(rrdPath, rrdUri, factory);
-        factory = checkFactory(rrdUri, factory);
+        rrdUri = Builder.buildUri(rrdPath, rrdUri, factory);
+        factory = Builder.checkFactory(rrdUri, factory);
         // opens existing RRD file - throw exception if the file does not exist...
         if (!factory.exists(rrdUri)) {
             throw new FileNotFoundException("Could not open " + rrdUri + " [non existent]");
@@ -333,9 +504,11 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @param externalPath Path to an external file which should be imported, with an optional
      *                     <code>xml:/</code> or <code>rrdtool:/</code> prefix.
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(String rrdPath, String externalPath) throws IOException {
-        this(rrdPath, null, externalPath, null);
+        this(rrdPath, null, externalPath, null, null);
     }
 
     /**
@@ -378,9 +551,11 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @param externalPath Path to an external file which should be imported, with an optional
      *                     <code>xml:/</code> or <code>rrdtool:/</code> prefix.
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(URI rrdPath, String externalPath) throws IOException {
-        this(null, rrdPath, externalPath, null);
+        this(null, rrdPath, externalPath, null, null);
     }
 
     /**
@@ -423,18 +598,20 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @param factory      Backend factory which will be used to create storage (backend) for this RRD.
      * @throws java.io.IOException Thrown in case of I/O error
      * @see RrdBackendFactory
+     * @deprecated Use the builder instead.
      */
+    @Deprecated
     public RrdDb(String rrdPath, String externalPath, RrdBackendFactory factory) throws IOException {
-        this(rrdPath, null, externalPath, factory);
+        this(rrdPath, null, externalPath, null, factory);
     }
 
-    private RrdDb(String rrdPath, URI rrdUri, String externalPath, RrdBackendFactory factory) throws IOException {
+    private RrdDb(String rrdPath, URI rrdUri, String externalPath, DataImporter importer, RrdBackendFactory factory) throws IOException {
 
-        rrdUri = buildUri(rrdPath, rrdUri, factory);
-        factory = checkFactory(rrdUri, factory);
+        rrdUri = Builder.buildUri(rrdPath, rrdUri, factory);
+        factory = Builder.checkFactory(rrdUri, factory);
 
         backend = factory.getBackend(this, rrdUri, false);
-        try (DataImporter reader = getImporter(externalPath)){
+        try (DataImporter reader = Builder.resoleImporter(externalPath, importer)){
             backend.setLength(reader.getEstimatedSize());
             // create header
             header = new Header(this, reader);
@@ -451,38 +628,6 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         } catch (IOException e) {
             backend.rrdClose();
             throw e;
-        }
-    }
-    
-    private DataImporter getImporter(String externalPath) throws IOException {
-        if (externalPath.startsWith(PREFIX_RRDTool)) {
-            String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
-            return new RrdToolReader(rrdToolPath);
-        }
-        else if (externalPath.startsWith(PREFIX_XML)) {
-            externalPath = externalPath.substring(PREFIX_XML.length());
-            return new XmlReader(externalPath);
-        }
-        else {
-            return new XmlReader(externalPath);
-        }
-    }
-
-    private RrdBackendFactory checkFactory(URI uri, RrdBackendFactory factory) {
-        if (factory == null) {
-            return RrdBackendFactory.findFactory(uri);
-        } else {
-            return factory;
-        }
-    }
-
-    private URI buildUri(String rrdPath, URI rrdUri, RrdBackendFactory factory) {
-        if (rrdUri != null) {
-            return rrdUri;
-        } else if (factory == null) {
-            return RrdBackendFactory.buildGenericUri(rrdPath);
-        } else{
-            return factory.getUri(rrdPath);
         }
     }
 

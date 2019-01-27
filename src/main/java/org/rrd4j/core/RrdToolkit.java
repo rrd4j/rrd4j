@@ -30,6 +30,7 @@ import java.util.List;
  * (files which are currently in use).
  *
  */
+@SuppressWarnings("deprecation")
 public class RrdToolkit {
 
     private static final String SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME = "Source and destination paths are the same";

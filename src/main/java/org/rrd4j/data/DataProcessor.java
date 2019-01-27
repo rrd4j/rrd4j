@@ -880,12 +880,8 @@ public class DataProcessor {
         RrdBackendFactory backend = def.getBackend();
         if (poolUsed && backend == null) {
             return RrdDbPool.getInstance().requestRrdDb(path);
-        }
-        else if (backend != null) {
-            return new RrdDb(path, true, backend);
-        }
-        else {
-            return new RrdDb(path, true);
+        } else {
+            return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).setReadOnly().build();
         }
     }
 

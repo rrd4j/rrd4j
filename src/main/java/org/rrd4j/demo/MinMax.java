@@ -28,7 +28,7 @@ class MinMax {
         rrdDef.addArchive(AVERAGE, 0.5, 1, 300);
         rrdDef.addArchive(MIN, 0.5, 12, 300);
         rrdDef.addArchive(MAX, 0.5, 12, 300);
-        try(RrdDb rrdDb = new RrdDb(rrdDef)) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
             // update
             for (long t = start; t < end; t += 300) {
                 Sample sample = rrdDb.createSample(t);

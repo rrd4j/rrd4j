@@ -189,7 +189,7 @@ public class RrdDbTest {
         rrdDef.addArchive(MAX, 0.5, 6, 700);
         rrdDef.addArchive(MAX, 0.5, 24, 775);
         rrdDef.addArchive(MAX, 0.5, 288, 797);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build();
         testRrdDb(rrdDb);
         Assert.assertEquals("not expected version", 1, rrdDb.getRrdDef().getVersion());
     }
@@ -214,7 +214,7 @@ public class RrdDbTest {
         rrdDef.addArchive(MAX, 0.5, 6, 700);
         rrdDef.addArchive(MAX, 0.5, 24, 775);
         rrdDef.addArchive(MAX, 0.5, 288, 797);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build();
         testRrdDb(rrdDb);
 
         Assert.assertEquals("not expected version", 2, rrdDb.getRrdDef().getVersion());
@@ -223,27 +223,29 @@ public class RrdDbTest {
     @Test
     public void testRead1() throws IOException {
         URL url = getClass().getResource("/demo1.rrd"); 
-        RrdDb rrd = new RrdDb(url.getFile(), RrdBackendFactory.getFactory("FILE"));
-        testRrdDb(rrd);
-        checkValues(rrd);
-        Assert.assertEquals("not expected version", 1, rrd.getRrdDef().getVersion());
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(url.getFile()).setBackendFactory(RrdBackendFactory.getFactory("FILE")).build()) {
+            testRrdDb(rrd);
+            checkValues(rrd);
+            Assert.assertEquals("not expected version", 1, rrd.getRrdDef().getVersion());
+        }
     }
 
     @Test
     public void testRead2() throws IOException {
         URL url = getClass().getResource("/demo2.rrd"); 
-        RrdDb rrd = new RrdDb(url.getFile(), RrdBackendFactory.getFactory("FILE"));
-        testRrdDb(rrd);
-        Assert.assertEquals("not expected version", 2, rrd.getRrdDef().getVersion());
-        checkValues(rrd);
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(url.getFile()).setBackendFactory(RrdBackendFactory.getFactory("FILE")).build()) {
+            testRrdDb(rrd);
+            checkValues(rrd);
+            Assert.assertEquals("not expected version", 2, rrd.getRrdDef().getVersion());
+        }
     }
 
     @Test(expected=InvalidRrdException.class)
     public void testReadCorruptSignature() throws Exception {
         URL url = getClass().getResource("/corrupt.rrd"); 
         RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
-
-        try (RrdDb rdb = new RrdDb(url.getFile(), backendFactory)) {
+        try (RrdDb rdb = RrdDb.getBuilder().setPath(url.toURI()).setBackendFactory(backendFactory).build()) {
+            fail();
         }
     }
 
@@ -251,8 +253,7 @@ public class RrdDbTest {
     public void testReadEmpty() throws Exception {
         URL url = getClass().getResource("/empty.rrd"); 
         RrdBackendFactory backendFactory = RrdBackendFactory.getFactory("FILE");
-
-        try (RrdDb rdb = new RrdDb(url.getFile(), backendFactory)){
+        try (RrdDb rdb = RrdDb.getBuilder().setPath(url.toURI()).setBackendFactory(backendFactory).build()) {
             fail();
         }
     }

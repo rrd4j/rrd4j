@@ -15,30 +15,23 @@ class MainTreeModel extends DefaultTreeModel {
     }
 
     boolean setFile(File newFile) {
-        try {
-            RrdDb rrd = new RrdDb(newFile.getAbsolutePath(), true);
-            try {
-                DefaultMutableTreeNode root = new DefaultMutableTreeNode(new RrdNode(rrd));
-                int dsCount = rrd.getRrdDef().getDsCount();
-                int arcCount = rrd.getRrdDef().getArcCount();
-                for (int dsIndex = 0; dsIndex < dsCount; dsIndex++) {
-                    DefaultMutableTreeNode dsNode =
-                            new DefaultMutableTreeNode(new RrdNode(rrd, dsIndex));
-                    for (int arcIndex = 0; arcIndex < arcCount; arcIndex++) {
-                        DefaultMutableTreeNode arcNode =
-                                new DefaultMutableTreeNode(new RrdNode(rrd, dsIndex, arcIndex));
-                        dsNode.add(arcNode);
-                    }
-                    root.add(dsNode);
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(newFile.getAbsolutePath()).setReadOnly().build()) {
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode(new RrdNode(rrd));
+            int dsCount = rrd.getRrdDef().getDsCount();
+            int arcCount = rrd.getRrdDef().getArcCount();
+            for (int dsIndex = 0; dsIndex < dsCount; dsIndex++) {
+                DefaultMutableTreeNode dsNode =
+                        new DefaultMutableTreeNode(new RrdNode(rrd, dsIndex));
+                for (int arcIndex = 0; arcIndex < arcCount; arcIndex++) {
+                    DefaultMutableTreeNode arcNode =
+                            new DefaultMutableTreeNode(new RrdNode(rrd, dsIndex, arcIndex));
+                    dsNode.add(arcNode);
                 }
-                setRoot(root);
+                root.add(dsNode);
             }
-            finally {
-                rrd.close();
-            }
+            setRoot(root);
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             setRoot(INVALID_NODE);
             Util.error(null, e);
         }

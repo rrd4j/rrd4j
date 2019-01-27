@@ -38,7 +38,7 @@ public class HeartbeatFix {
             RrdToolkit.setDsHeartbeat(files[i].getAbsolutePath(), 1, heartbeat);
             System.out.print("fixed");
             // check consistency of the file
-            try (RrdDb rrd = new RrdDb(path)) {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(path).build()) {
                 if (rrd.getRrdDef().getEstimatedSize() == files[i].length() &&
                         rrd.getDatasource(0).getHeartbeat() == heartbeat &&
                         rrd.getDatasource(1).getHeartbeat() == heartbeat) {

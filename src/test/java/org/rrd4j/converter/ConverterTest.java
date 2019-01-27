@@ -107,7 +107,7 @@ public class ConverterTest {
 
     private void testImport(String file) throws IOException {
         URL url = getClass().getResource(file); 
-        RrdDb rrd = new RrdDb("test", "rrdtool:/" + url.getFile(), new RrdMemoryBackendFactory());
+        RrdDb rrd = RrdDb.getBuilder().setPath("test").setRrdToolImporter(url.getFile()).setBackendFactory(new RrdMemoryBackendFactory()).build();
         testRrdDbXml(rrd);
     }
 }

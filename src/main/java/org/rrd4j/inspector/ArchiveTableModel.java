@@ -68,27 +68,20 @@ class ArchiveTableModel extends AbstractTableModel {
             arcIndex = newArcIndex;
             values = null;
             if (dsIndex >= 0 && arcIndex >= 0) {
-                try {
-                    RrdDb rrd = new RrdDb(file.getAbsolutePath(), true);
-                    try {
-                        Archive arc = rrd.getArchive(arcIndex);
-                        ArcState state = arc.getArcState(dsIndex);
-                        values = new Object[]{
-                                arc.getConsolFun(),
-                                Double.toString(arc.getXff()),
-                                Integer.toString(arc.getSteps()),
-                                Integer.toString(arc.getRows()),
-                                InspectorModel.formatDouble(state.getAccumValue()),
-                                Long.toString(state.getNanSteps()),
-                                Long.toString(arc.getStartTime()) + " [" + new Date(arc.getStartTime() * 1000L) + "]",
-                                Long.toString(arc.getEndTime()) + " [" + new Date(arc.getEndTime() * 1000L) + "]"
-                        };
-                    }
-                    finally {
-                        rrd.close();
-                    }
-                }
-                catch (Exception e) {
+                try (RrdDb rrd = RrdDb.getBuilder().setPath(file.getAbsolutePath()).setReadOnly().build()){
+                    Archive arc = rrd.getArchive(arcIndex);
+                    ArcState state = arc.getArcState(dsIndex);
+                    values = new Object[]{
+                            arc.getConsolFun(),
+                            Double.toString(arc.getXff()),
+                            Integer.toString(arc.getSteps()),
+                            Integer.toString(arc.getRows()),
+                            InspectorModel.formatDouble(state.getAccumValue()),
+                            Long.toString(state.getNanSteps()),
+                            Long.toString(arc.getStartTime()) + " [" + new Date(arc.getStartTime() * 1000L) + "]",
+                            Long.toString(arc.getEndTime()) + " [" + new Date(arc.getEndTime() * 1000L) + "]"
+                    };
+                } catch (Exception e) {
                     Util.error(null, e);
                 }
             }

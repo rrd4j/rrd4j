@@ -449,10 +449,8 @@ public class RrdInspector extends JFrame {
         }
         try {
             String sourcePath = inspectorModel.getFile().getCanonicalPath();
-            RrdDb rrd = new RrdDb(sourcePath, true);
-            try {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
                 DsDef dsDef = rrd.getRrdDef().getDsDefs()[dsIndex];
-                rrd.close();
                 DsDef newDsDef = new EditDatasourceDialog(this, dsDef).getDsDef();
                 if (newDsDef != null) {
                     // action!
@@ -463,9 +461,6 @@ public class RrdInspector extends JFrame {
                     inspectorModel.refresh();
                     tabbedPane.setSelectedIndex(0);
                 }
-            }
-            finally {
-                rrd.close();
             }
         }
         catch (Exception e) {
@@ -486,10 +481,8 @@ public class RrdInspector extends JFrame {
         }
         try {
             String sourcePath = inspectorModel.getFile().getCanonicalPath();
-            RrdDb rrd = new RrdDb(sourcePath, true);
-            try {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
                 ArcDef arcDef = rrd.getRrdDef().getArcDefs()[arcIndex];
-                rrd.close();
                 ArcDef newArcDef = new EditArchiveDialog(this, arcDef).getArcDef();
                 if (newArcDef != null) {
                     // action!
@@ -502,9 +495,6 @@ public class RrdInspector extends JFrame {
                     inspectorModel.refresh();
                     tabbedPane.setSelectedIndex(0);
                 }
-            }
-            finally {
-                rrd.close();
             }
         }
         catch (Exception e) {
@@ -525,12 +515,8 @@ public class RrdInspector extends JFrame {
         }
         try {
             String sourcePath = inspectorModel.getFile().getCanonicalPath(), dsName;
-            RrdDb rrd = new RrdDb(sourcePath, true);
-            try {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
                 dsName = rrd.getRrdDef().getDsDefs()[dsIndex].getDsName();
-            }
-            finally {
-                rrd.close();
             }
             RrdToolkit.removeDatasource(sourcePath, dsName, SHOULD_CREATE_BACKUPS);
             inspectorModel.refresh();
@@ -556,14 +542,10 @@ public class RrdInspector extends JFrame {
             String sourcePath = inspectorModel.getFile().getCanonicalPath();
             ConsolFun consolFun;
             int steps;
-            RrdDb rrd = new RrdDb(sourcePath, true);
-            try {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
                 ArcDef arcDef = rrd.getRrdDef().getArcDefs()[arcIndex];
                 consolFun = arcDef.getConsolFun();
                 steps = arcDef.getSteps();
-            }
-            finally {
-                rrd.close();
             }
             RrdToolkit.removeArchive(sourcePath, consolFun, steps, SHOULD_CREATE_BACKUPS);
             inspectorModel.refresh();
