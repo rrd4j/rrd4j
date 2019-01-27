@@ -91,7 +91,7 @@ abstract class RrdPrimitive<U extends RrdUpdater<U>> {
         backend.writeString(pointer, value);
     }
 
-    final protected <E extends Enum<E>> E readEnum(Class<E> clazz) throws IOException {
+    protected final <E extends Enum<E>> E readEnum(Class<E> clazz) throws IOException {
         String value = backend.readString(pointer);
         if (value == null || value.isEmpty()) {
             return null;
@@ -104,7 +104,7 @@ abstract class RrdPrimitive<U extends RrdUpdater<U>> {
         }
     }
 
-    final protected <E extends Enum<E>> void writeEnum(E value) throws IOException {
+    protected final <E extends Enum<E>> void writeEnum(E value) throws IOException {
         writeString(value.name());
     }
 

@@ -1,19 +1,46 @@
 package org.rrd4j.inspector;
 
-import org.rrd4j.core.*;
-import org.rrd4j.graph.RrdGraphDef;
-import org.rrd4j.graph.RrdGraph;
-import org.rrd4j.graph.RrdGraphInfo;
-import org.rrd4j.data.LinearInterpolator;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.IOException;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Date;
+
+import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
+
+import org.rrd4j.core.ArcDef;
+import org.rrd4j.core.Archive;
+import org.rrd4j.core.Datasource;
+import org.rrd4j.core.DsDef;
+import org.rrd4j.core.Robin;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdDef;
+import org.rrd4j.data.LinearInterpolator;
+import org.rrd4j.data.Variable;
+import org.rrd4j.graph.RrdGraph;
+import org.rrd4j.graph.RrdGraphDef;
+import org.rrd4j.graph.RrdGraphInfo;
 
 class GraphFrame extends JFrame {
     private static final Color COLOR = Color.RED;

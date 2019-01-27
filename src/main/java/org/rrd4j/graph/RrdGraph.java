@@ -73,6 +73,7 @@ public class RrdGraph implements RrdGraphConstants {
      * @param writer
      * @param param
      * @throws IOException Thrown in case of I/O error
+     * @since 3.5
      */
     public RrdGraph(RrdGraphDef gdef, ImageWriter writer, ImageWriteParam param) throws IOException {
         this.gdef = gdef;

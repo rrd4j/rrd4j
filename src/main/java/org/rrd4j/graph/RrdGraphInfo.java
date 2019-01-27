@@ -94,7 +94,7 @@ public class RrdGraphInfo {
      * @return Length of the graph file
      * @throws IllegalStateException if the images bytes are unavailable
      */
-    public int getByteCount() throws IllegalStateException {
+    public int getByteCount() {
         try {
             stream.reset();
             return stream.available();
