@@ -17,10 +17,10 @@ class TimeAxis extends Axis {
             new TimeAxisSetting(600, HOUR, 6, DAY, 1, DAY, 1, 24 * 3600, "EEE"),
             new TimeAxisSetting(1800, HOUR, 12, DAY, 1, DAY, 2, 24 * 3600, "EEE"),
             new TimeAxisSetting(3600, DAY, 1, WEEK, 1, WEEK, 1, 7 * 24 * 3600, "'Week 'w"),
-            new TimeAxisSetting(3 * 3600, WEEK, 1, MONTH, 1, WEEK, 2, 7 * 24 * 3600, "'Week 'w"),
-            new TimeAxisSetting(6 * 3600, MONTH, 1, MONTH, 1, MONTH, 1, 30 * 24 * 3600, "MMM"),
-            new TimeAxisSetting(48 * 3600, MONTH, 1, MONTH, 3, MONTH, 3, 30 * 24 * 3600, "MMM"),
-            new TimeAxisSetting(10 * 24 * 3600, YEAR, 1, YEAR, 1, YEAR, 1, 365 * 24 * 3600, "yy"),
+            new TimeAxisSetting(3 * 3600L, WEEK, 1, MONTH, 1, WEEK, 2, 7 * 24 * 3600, "'Week 'w"),
+            new TimeAxisSetting(6 * 3600L, MONTH, 1, MONTH, 1, MONTH, 1, 30 * 24 * 3600, "MMM"),
+            new TimeAxisSetting(48 * 3600L, MONTH, 1, MONTH, 3, MONTH, 3, 30 * 24 * 3600, "MMM"),
+            new TimeAxisSetting(10 * 24 * 3600L, YEAR, 1, YEAR, 1, YEAR, 1, 365 * 24 * 3600, "yy"),
             new TimeAxisSetting(-1, MONTH, 0, MONTH, 0, MONTH, 0, 0, "")
     };
 
