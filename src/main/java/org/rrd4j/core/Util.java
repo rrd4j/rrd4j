@@ -12,6 +12,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -483,6 +484,25 @@ public class Util {
      * Various DOM utility functions.
      */
     public static class Xml {
+
+        private static class SingletonHelper {
+            private static final DocumentBuilderFactory factory;
+            static {
+                factory = DocumentBuilderFactory.newInstance();
+                try {
+                    factory.setIgnoringComments(true);
+                    factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                    factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    factory.setValidating(false);
+                    factory.setNamespaceAware(false);
+                } catch (ParserConfigurationException e) {
+                    throw new UnsupportedOperationException("Missing DOM feature: " + e.getMessage(), e);
+                }
+            }
+        }
+
         private static final ErrorHandler eh = new ErrorHandler() {
             public void error(SAXParseException exception) throws SAXException {
                 throw exception;
@@ -602,16 +622,8 @@ public class Util {
         }
 
         public static Element getRootElement(InputSource inputSource) throws IOException {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             try {
-                factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            } catch (ParserConfigurationException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-            factory.setValidating(false);
-            factory.setNamespaceAware(false);
-            try {
-                DocumentBuilder builder = factory.newDocumentBuilder();
+                DocumentBuilder builder = SingletonHelper.factory.newDocumentBuilder();
                 builder.setErrorHandler(eh);
                 Document doc = builder.parse(inputSource);
                 return doc.getDocumentElement();
