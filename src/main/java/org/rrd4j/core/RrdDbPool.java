@@ -292,6 +292,7 @@ public class RrdDbPool {
     }
 
     private RrdDb requestRrdDb(URI uri, RrdBackendFactory factory) throws IOException {
+        uri = factory.getCanonicalUri(uri);
         RrdEntry ref = null;
         try {
             ref = getEntry(uri, true);
@@ -441,6 +442,7 @@ public class RrdDbPool {
             throws IOException {
 
         RrdEntry ref = null;
+        uri = backend.getCanonicalUri(uri);
         try {
             ref = requestEmpty(uri);
             ref.rrdDb = RrdDb.getBuilder().setPath(uri).setExternalPath(sourcePath).setBackendFactory(backend).build();
