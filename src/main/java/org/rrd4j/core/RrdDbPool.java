@@ -266,7 +266,9 @@ public class RrdDbPool {
      * @param path Path to existing RRD file
      * @return reference for the give RRD file
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated Use the {@link org.rrd4j.core.RrdDb.Builder} instead.
      */
+    @Deprecated
     public RrdDb requestRrdDb(String path) throws IOException {
         return requestRrdDb(defaultFactory.getUri(path), defaultFactory);
     }
@@ -285,13 +287,15 @@ public class RrdDbPool {
      * @param uri {@link URI} to existing RRD file
      * @return reference for the give RRD file
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated Use the {@link org.rrd4j.core.RrdDb.Builder} instead.
      */
+    @Deprecated
     public RrdDb requestRrdDb(URI uri) throws IOException {
         RrdBackendFactory factory = RrdBackendFactory.findFactory(uri);
         return requestRrdDb(uri, factory);
     }
 
-    private RrdDb requestRrdDb(URI uri, RrdBackendFactory factory) throws IOException {
+    RrdDb requestRrdDb(URI uri, RrdBackendFactory factory) throws IOException {
         uri = factory.getCanonicalUri(uri);
         RrdEntry ref = null;
         try {
@@ -367,11 +371,16 @@ public class RrdDbPool {
      * @param rrdDef Definition of the RRD file to be created
      * @return Reference to the newly created RRD file
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated Use the {@link org.rrd4j.core.RrdDb.Builder} instead.
      */
+    @Deprecated
     public RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
+        return requestRrdDb(rrdDef, RrdBackendFactory.findFactory(rrdDef.getUri()));
+    }
+
+    RrdDb requestRrdDb(RrdDef rrdDef, RrdBackendFactory backend) throws IOException {
         RrdEntry ref = null;
         try {
-            RrdBackendFactory backend = RrdBackendFactory.findFactory(rrdDef.getUri());
             URI uri = backend.getCanonicalUri(rrdDef.getUri());
             ref = requestEmpty(uri);
             ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).setBackendFactory(backend).build();
@@ -408,7 +417,9 @@ public class RrdDbPool {
      * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format
      * @return Reference to the newly created RRD file
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated Use the {@link org.rrd4j.core.RrdDb.Builder} instead.
      */
+    @Deprecated
     public RrdDb requestRrdDb(String path, String sourcePath)
             throws IOException {
         return requestRrdDb(RrdBackendFactory.getDefaultFactory().getUri(path), RrdBackendFactory.getDefaultFactory(), sourcePath);
@@ -432,7 +443,9 @@ public class RrdDbPool {
      * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format
      * @return Reference to the newly created RRD file
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated Use the {@link org.rrd4j.core.RrdDb.Builder} instead.
      */
+    @Deprecated
     public RrdDb requestRrdDb(URI uri, String sourcePath)
             throws IOException {
         return requestRrdDb(uri, null, sourcePath);
@@ -459,7 +472,27 @@ public class RrdDbPool {
                 passNext(ACTION.SWAP, ref);
             }
         }
+    }
 
+    RrdDb requestRrdDb(URI uri, RrdBackendFactory backend, DataImporter importer) throws IOException {
+        uri = backend.getCanonicalUri(uri);
+        RrdEntry ref = null;
+        try {
+            ref = requestEmpty(uri);
+            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setImporter(importer).setBackendFactory(backend).build();
+            return ref.rrdDb;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("request interrupted for new rrd " + uri, e);
+        } catch (RuntimeException e) {
+            passNext(ACTION.DROP, ref);
+            ref = null;
+            throw e;
+        } finally {
+            if (ref != null) {
+                passNext(ACTION.SWAP, ref);
+            }
+        }
     }
 
     /**

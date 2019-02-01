@@ -55,30 +55,54 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         String externalPath = null;
         DataImporter importer = null;
         RrdDef rrdDef = null;
+        boolean usePool = false;
 
         private Builder() {
 
         };
 
+        /**
+         * @return a new build RrdDb
+         * @throws IOException
+         * @throws IllegalArgumentException if the builder settings were incomplete
+         */
         public RrdDb build() throws IOException {
             if (rrdDef != null) {
                 factory = checkFactory(rrdDef.getUri(), factory);
+                if (usePool) {
+                    return RrdDbPool.getInstance().requestRrdDb(rrdDef, factory);
+                } else {
                 return new RrdDb(rrdDef, factory);
+                }
             } else if ((path != null || uri != null)) {
                 URI rrdUri = buildUri(path, uri, factory);
                 factory = checkFactory(rrdUri, factory);
                 if (importer == null && externalPath == null) {
+                    if (usePool) {
+                        return RrdDbPool.getInstance().requestRrdDb(rrdUri, factory);
+                    } else {
                     return new RrdDb(null, rrdUri, readOnly, factory);
+                    }
                 } else {
                     try (DataImporter rrdImporter = resoleImporter(externalPath, importer)) {
+                        if (usePool) {
+                            return RrdDbPool.getInstance().requestRrdDb(rrdUri, factory, importer);
+                        } else {
                         return new RrdDb(path, rrdUri, null, rrdImporter, factory);
                     }
+                }
                 }
             } else {
                 throw new IllegalArgumentException("Incomplete builder definition");
             }
         }
 
+        /**
+         * Import an external rrd data, import definition must have been done using {@link #setExternalPath(String)}
+         * or {@link #setImporter(DataImporter)}
+         * @throws IOException
+         * @throws IllegalArgumentException if the builder settings were incomplete
+         */
         public void doimport() throws IOException {
             if (rrdDef != null || (importer == null && externalPath == null)) {
                 throw new IllegalArgumentException("Not an importing configuration");
@@ -119,6 +143,16 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
 
         public Builder setReadOnly() {
             this.readOnly = true;
+            return this;
+        }
+
+        public Builder setUsePool(boolean usePool) {
+            this.usePool = usePool;
+            return this;
+        }
+
+        public Builder usePool() {
+            this.usePool = true;
             return this;
         }
 
