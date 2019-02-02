@@ -167,11 +167,21 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             return this;
         }
 
+        /**
+         * Activate the pool usage
+         * @return
+         */
         public Builder usePool() {
             this.usePool = true;
             return this;
         }
 
+        /**
+         * Set the pool that will be used if {@link #usePool} is true. If not defined,
+         * the singloton instance will be used.
+         * @param pool
+         * @return
+         */
         public Builder setPool(RrdDbPool pool) {
             this.pool = pool;
             return this;

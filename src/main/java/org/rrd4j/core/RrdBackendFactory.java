@@ -388,6 +388,7 @@ public abstract class RrdBackendFactory implements Closeable {
      * 
      * @param rootUri
      * @param uri
+     * @param relative
      * @return a calculate normalized absolute URI or null if the tried URL don't match against the root.
      */
     protected URI resolve(URI rootUri, URI uri, boolean relative) {
@@ -446,7 +447,7 @@ public abstract class RrdBackendFactory implements Closeable {
     }
 
     /**
-     * Transform an path in a valid URI for ths backend.
+     * Transform an path in a valid URI for this backend.
      * 
      * @param path
      * @return
