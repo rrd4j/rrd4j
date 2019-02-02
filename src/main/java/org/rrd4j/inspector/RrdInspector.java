@@ -449,7 +449,7 @@ public class RrdInspector extends JFrame {
         }
         try {
             String sourcePath = inspectorModel.getFile().getCanonicalPath();
-            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).readOnly().build()) {
                 DsDef dsDef = rrd.getRrdDef().getDsDefs()[dsIndex];
                 DsDef newDsDef = new EditDatasourceDialog(this, dsDef).getDsDef();
                 if (newDsDef != null) {
@@ -481,7 +481,7 @@ public class RrdInspector extends JFrame {
         }
         try {
             String sourcePath = inspectorModel.getFile().getCanonicalPath();
-            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).readOnly().build()) {
                 ArcDef arcDef = rrd.getRrdDef().getArcDefs()[arcIndex];
                 ArcDef newArcDef = new EditArchiveDialog(this, arcDef).getArcDef();
                 if (newArcDef != null) {
@@ -515,7 +515,7 @@ public class RrdInspector extends JFrame {
         }
         try {
             String sourcePath = inspectorModel.getFile().getCanonicalPath(), dsName;
-            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).readOnly().build()) {
                 dsName = rrd.getRrdDef().getDsDefs()[dsIndex].getDsName();
             }
             RrdToolkit.removeDatasource(sourcePath, dsName, SHOULD_CREATE_BACKUPS);
@@ -542,7 +542,7 @@ public class RrdInspector extends JFrame {
             String sourcePath = inspectorModel.getFile().getCanonicalPath();
             ConsolFun consolFun;
             int steps;
-            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).setReadOnly().build()) {
+            try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).readOnly().build()) {
                 ArcDef arcDef = rrd.getRrdDef().getArcDefs()[arcIndex];
                 consolFun = arcDef.getConsolFun();
                 steps = arcDef.getSteps();

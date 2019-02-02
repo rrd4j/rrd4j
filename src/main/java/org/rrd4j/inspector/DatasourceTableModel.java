@@ -73,7 +73,7 @@ class DatasourceTableModel extends AbstractTableModel {
             dsIndex = newDsIndex;
             values = null;
             if (dsIndex >= 0) {
-                try (RrdDb rrd = RrdDb.getBuilder().setPath(file.getAbsolutePath()).setReadOnly().build()) {
+                try (RrdDb rrd = RrdDb.getBuilder().setPath(file.getAbsolutePath()).readOnly().build()) {
                     Datasource ds = rrd.getDatasource(dsIndex);
                     values = new Object[]{
                             ds.getName(),

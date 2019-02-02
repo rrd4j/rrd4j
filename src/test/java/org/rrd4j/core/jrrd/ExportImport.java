@@ -31,7 +31,7 @@ public class ExportImport {
         // create rrd4j database from the xml file created previously
         RrdDb.getBuilder().setPath(imported).setExternalPath(rrdXmlFile.getCanonicalPath()).doimport();
         
-        try (RrdDb db = RrdDb.getBuilder().setPath(imported).setReadOnly().setBackendFactory(new RrdNioBackendFactory()).build()) {
+        try (RrdDb db = RrdDb.getBuilder().setPath(imported).readOnly().setBackendFactory(new RrdNioBackendFactory()).build()) {
             Assert.assertNotNull(db.getDatasource("speed"));
             Assert.assertNotNull(db.getDatasource("weight"));
         }
@@ -45,7 +45,7 @@ public class ExportImport {
         // create rrd4j database from the xml file created previously
         RrdDb.getBuilder().setPath(imported).setRrdToolImporter(url.getFile()).doimport();
 
-        try (RrdDb db = RrdDb.getBuilder().setPath(imported).setReadOnly().setBackendFactory(new RrdNioBackendFactory()).build()) {
+        try (RrdDb db = RrdDb.getBuilder().setPath(imported).readOnly().setBackendFactory(new RrdNioBackendFactory()).build()) {
             Assert.assertNotNull(db.getDatasource("speed"));
             Assert.assertNotNull(db.getDatasource("weight"));
         }

@@ -56,7 +56,7 @@ class HeaderTableModel extends AbstractTableModel {
     }
 
     void setFile(File newFile) {
-        try (RrdDb rrd = RrdDb.getBuilder().setPath(newFile.getAbsolutePath()).setReadOnly().build()) {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(newFile.getAbsolutePath()).readOnly().build()) {
             values = null;
             Header header = rrd.getHeader();
             String signature = header.getSignature();

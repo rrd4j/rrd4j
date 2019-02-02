@@ -131,7 +131,7 @@ public class RrdTutorial {
         }
 
         // test read-only access!
-        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdPath).setReadOnly().build()) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdPath).readOnly().build()) {
             println("File reopen in read-only mode");
             println("== Last update time was: " + rrdDb.getLastUpdateTime());
             println("== Last info was: " + rrdDb.getInfo());
