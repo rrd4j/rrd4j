@@ -416,7 +416,7 @@ public abstract class RrdBackendFactory implements Closeable {
         }
         String query = uri.getQuery();
         String fragment = uri.getFragment();
-        String newUriString = String.format("%s://%s%s%s%s", scheme, authority, path , query != null ? "?" + query : "", fragment != null ? "#" + fragment : "");
+        String newUriString = String.format("%s://%s%s%s%s", scheme, authority != null ? authority : "", path , query != null ? "?" + query : "", fragment != null ? "#" + fragment : "");
         URI newURI = URI.create(newUriString);
         if (relative) {
             return rootUri.relativize(newURI);

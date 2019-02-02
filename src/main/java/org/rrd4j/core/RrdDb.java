@@ -218,7 +218,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             } else if (factory == null) {
                 return RrdBackendFactory.buildGenericUri(rrdPath);
             } else{
-                return factory.getUri(rrdPath);
+                return factory.getCanonicalUri(RrdBackendFactory.buildGenericUri(rrdPath));
             }
         }
 
