@@ -779,9 +779,7 @@ public class DataProcessor {
                     }
                 }
                 // now we have everything
-                RrdDb rrd = null;
-                try {
-                    rrd = getRrd(defSources[i]);
+                try (RrdDb rrd = getRrd(defSources[i])){
                     lastRrdArchiveUpdateTime = Math.max(lastRrdArchiveUpdateTime, rrd.getLastArchiveUpdateTime());
                     FetchRequest req = rrd.createFetchRequest(defSources[i].getConsolFun(),
                             tStart, tEndFixed, fetchRequestResolution);
@@ -792,11 +790,6 @@ public class DataProcessor {
                         if (defSources[i].isCompatibleWith(defSources[j])) {
                             defSources[j].setFetchData(data);
                         }
-                    }
-                }
-                finally {
-                    if (rrd != null) {
-                        releaseRrd(rrd, defSources[i]);
                     }
                 }
             }
@@ -878,21 +871,7 @@ public class DataProcessor {
     private RrdDb getRrd(Def def) throws IOException {
         String path = def.getPath();
         RrdBackendFactory backend = def.getBackend();
-        if (poolUsed && backend == null) {
-            return RrdDbPool.getInstance().requestRrdDb(path);
-        } else {
-            return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).setReadOnly().build();
-        }
-    }
-
-    private void releaseRrd(RrdDb rrd, Def def) throws IOException {
-        RrdBackendFactory backend = def.getBackend();
-        if (poolUsed && backend == null) {
-            RrdDbPool.getInstance().release(rrd);
-        }
-        else {
-            rrd.close();
-        }
+        return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).readOnly().setUsePool(poolUsed).build();
     }
 
     private static String format(String s, int length) {

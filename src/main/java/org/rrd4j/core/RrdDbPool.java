@@ -66,7 +66,9 @@ public class RrdDbPool {
      *
      * @return Single instance of this class
      * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.core.RrdFileBackendFactory}
+     * @deprecated should not be called directly any more, but resolved in builder
      */
+    @Deprecated
     public static RrdDbPool getInstance() {
         return RrdDbPoolSingletonHolder.instance;
     }
@@ -83,9 +85,8 @@ public class RrdDbPool {
     /**
      * Constructor for RrdDbPool.
      * 
-     * Not private, used by junit tests
      */
-    RrdDbPool() {
+    public RrdDbPool() {
         if (!(RrdBackendFactory.getDefaultFactory() instanceof RrdFileBackendFactory)) {
             throw new RuntimeException("Cannot create instance of " + getClass().getName() + " with " +
                     "a default backend factory " + RrdBackendFactory.getDefaultFactory().getName() + " not derived from RrdFileBackendFactory");
@@ -210,7 +211,9 @@ public class RrdDbPool {
      *
      * @param rrdDb RrdDb reference to be returned to the pool
      * @throws java.io.IOException Thrown in case of I/O error
+     * @deprecated a pool remember if it was open directly or from the pool, no need to manage it manually any more
      */
+    @Deprecated
     public void release(RrdDb rrdDb) throws IOException {
         // null pointer should not kill the thread, just ignore it
         if (rrdDb == null) {
@@ -239,7 +242,7 @@ public class RrdDbPool {
                 throw new IllegalStateException("Could not release [" + rrdDb.getPath() + "], pool corruption");
             }
             try {
-                ref.rrdDb.close();
+                ref.rrdDb.realClose();
             } finally {
                 passNext(ACTION.DROP, ref);
                 //If someone is waiting for an empty entry, signal it
@@ -308,7 +311,7 @@ public class RrdDbPool {
         //Someone might have already open it, rechecks
         if (ref.count == 0) {
             try {
-                ref.rrdDb = RrdDb.getBuilder().setPath(factory.getPath(uri)).setBackendFactory(factory).build();
+                ref.rrdDb = RrdDb.getBuilder().setPath(factory.getPath(uri)).setBackendFactory(factory).setPool(this).build();
             } catch (IOException | RuntimeException e) {
                 passNext(ACTION.DROP, ref);
                 throw e;
@@ -383,7 +386,7 @@ public class RrdDbPool {
         try {
             URI uri = backend.getCanonicalUri(rrdDef.getUri());
             ref = requestEmpty(uri);
-            ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).setBackendFactory(backend).build();
+            ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).setBackendFactory(backend).setPool(this).build();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -453,12 +456,11 @@ public class RrdDbPool {
 
     private RrdDb requestRrdDb(URI uri, RrdBackendFactory backend, String sourcePath)
             throws IOException {
-
         RrdEntry ref = null;
         uri = backend.getCanonicalUri(uri);
         try {
             ref = requestEmpty(uri);
-            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setExternalPath(sourcePath).setBackendFactory(backend).build();
+            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setExternalPath(sourcePath).setBackendFactory(backend).setPool(this).build();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -479,7 +481,7 @@ public class RrdDbPool {
         RrdEntry ref = null;
         try {
             ref = requestEmpty(uri);
-            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setImporter(importer).setBackendFactory(backend).build();
+            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setImporter(importer).setBackendFactory(backend).setPool(this).build();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
