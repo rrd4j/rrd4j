@@ -3,10 +3,12 @@ package org.rrd4j.core;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -391,13 +393,13 @@ public abstract class RrdBackendFactory implements Closeable {
     protected URI resolve(URI rootUri, URI uri, boolean relative) {
         String scheme = uri.getScheme();
         if (scheme != null && ! scheme.equals(rootUri.getScheme())) {
-            return null;
+            throw new IllegalArgumentException(String.format("scheme %s not compatible with %s", scheme, rootUri.getScheme()));
         } else if (scheme == null) {
             scheme = rootUri.getScheme();
         }
         String authority = uri.getAuthority();
         if (authority != null && ! authority.equals(rootUri.getAuthority())) {
-            return null;
+            throw new IllegalArgumentException("URI credential not compatible");
         } else if (authority == null) {
             authority = rootUri.getAuthority();
         }
@@ -412,11 +414,19 @@ public abstract class RrdBackendFactory implements Closeable {
             path = uri.normalize().getPath();
         }
         if (! path.startsWith(rootUri.getPath())) {
-            return null;
+            throw new IllegalArgumentException(String.format("URI destination path %s not root with %s", path, rootUri.getPath()));
         }
         String query = uri.getQuery();
         String fragment = uri.getFragment();
-        String newUriString = String.format("%s://%s%s%s%s", scheme, authority != null ? authority : "", path , query != null ? "?" + query : "", fragment != null ? "#" + fragment : "");
+        try {
+            authority = authority != null ? authority : "";
+            path = path != null ? path : "";
+            query = query != null ? "?" + URLEncoder.encode(query, "UTF-8") : "";
+            fragment = fragment != null ? "#" + URLEncoder.encode(fragment, "UTF-8") : "";
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("UTF-8 is missing");
+        }
+        String newUriString = String.format("%s://%s%s%s%s", scheme, authority, path , query, fragment);
         URI newURI = URI.create(newUriString);
         if (relative) {
             return rootUri.relativize(newURI);
