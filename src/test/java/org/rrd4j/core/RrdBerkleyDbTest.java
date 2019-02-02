@@ -45,10 +45,10 @@ public class RrdBerkleyDbTest {
                 RrdBackendFactory.setActiveFactories(factory);
                 URI dbUri = new URI("berkeley", "", "", "", "testrrd");
                 long now = Util.normalize(Util.getTimestamp(new Date()), 300);
-                try (RrdDb db = new RrdDb(getDef(dbUri))) {
+                try (RrdDb db = RrdDb.getBuilder().setRrdDef(getDef(dbUri)).build()) {
                     db.createSample(now).setValue("short", 1.0).update();
                 }
-                try (RrdDb db = new RrdDb(factory.getUri("testrrd"))) {
+                try (RrdDb db = RrdDb.getBuilder().setPath(factory.getUri("testrrd")).build()) {
                     Assert.assertEquals(now, db.getLastArchiveUpdateTime());
                 }
             }

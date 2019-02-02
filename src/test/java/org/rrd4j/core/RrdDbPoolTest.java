@@ -46,13 +46,14 @@ public class RrdDbPoolTest {
         RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
-        RrdDb db = instance.requestRrdDb(def);
-        for(int i=0; i < 9; i++ ) {
-            instance.requestRrdDb(db.getPath());
+        RrdDb[] openned = new RrdDb[10];
+        openned[0] = RrdDb.getBuilder().usePool().setPool(instance).setRrdDef(def).build();
+        for(int i = 1 ; i < 10 ; i++ ) {
+            openned[i] = RrdDb.getBuilder().usePool().setPool(instance).setPath(openned[0].getPath()).build();
         }
         Assert.assertEquals(1, instance.getOpenFileCount());
         for(int i=0; i < 10; i++ ) {
-            instance.release(db);
+            openned[i].close();
         }
         String[] files = instance.getOpenFiles();
         Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
@@ -78,7 +79,7 @@ public class RrdDbPoolTest {
                         Assert.assertTrue("too much open files", instance.getOpenFileCount() <= 10);
                         if(dbs.size() > 0) {
                             RrdDb release = dbs.poll();
-                            instance.release(release);
+                            release.close();
                             done.incrementAndGet();
                         }
                         Thread.yield();
@@ -101,7 +102,7 @@ public class RrdDbPoolTest {
                         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
                         //All thread are synchronized and will try to create a db at the same time
                         barrier.await();
-                        RrdDb db = instance.requestRrdDb(def);
+                        RrdDb db = RrdDb.getBuilder().usePool().setPool(instance).setRrdDef(def).build();
                         dbs.add(db);
                         created.incrementAndGet();
                         full.countDown();
@@ -138,7 +139,7 @@ public class RrdDbPoolTest {
                         Assert.assertTrue("too much open files", instance.getOpenFileCount() <= 1);
                         if(dbs.size() > 0) {
                             RrdDb release = dbs.poll();
-                            instance.release(release);
+                            release.close();
                             done.incrementAndGet();
                             Thread.yield();
                         }
@@ -152,7 +153,7 @@ public class RrdDbPoolTest {
         RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
-        final RrdDb db = instance.requestRrdDb(def);
+        final RrdDb db = RrdDb.getBuilder().usePool().setPool(instance).setRrdDef(def).build();
         dbs.add(db);
 
         final CountDownLatch barrier = new CountDownLatch(1);
@@ -163,7 +164,7 @@ public class RrdDbPoolTest {
                 public void run() {
                     try {
                         barrier.await();
-                        RrdDb againdb = instance.requestRrdDb(db.getCanonicalPath());
+                        RrdDb againdb = RrdDb.getBuilder().usePool().setPool(instance).setPath(db.getCanonicalPath()).build();
                         dbs.add(againdb);
                         full.countDown();
                     } catch (Exception e) {
@@ -187,7 +188,7 @@ public class RrdDbPoolTest {
         final RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
-        RrdDb db = instance.requestRrdDb(def);
+        RrdDb db = RrdDb.getBuilder().usePool().setPool(instance).setRrdDef(def).build();
         final long start = new Date().getTime();
         final AtomicInteger done = new AtomicInteger(0);
         Thread t = new Thread() {
@@ -195,8 +196,9 @@ public class RrdDbPoolTest {
             @Override
             public void run() {
                 try {
-                    RrdDb db = instance.requestRrdDb(def);
-                    instance.release(db);
+                    try (RrdDb db = RrdDb.getBuilder().usePool().setPool(instance).setRrdDef(def).build()) {
+                        
+                    }
                     done.set(1);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -206,7 +208,7 @@ public class RrdDbPoolTest {
         };
         t.start();
         Thread.sleep(100);
-        instance.release(db);
+        db.close();
         t.join();
         long end = new Date().getTime();
         Assert.assertEquals("failure in sub thread", 1, done.get()); 

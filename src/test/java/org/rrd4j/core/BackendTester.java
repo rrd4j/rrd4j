@@ -106,7 +106,7 @@ public abstract class BackendTester {
 
     protected void testRead1(RrdBackendFactory factory) throws IOException {
         URL url = getClass().getResource("/demo1.rrd"); 
-        RrdDb rrd = new RrdDb(url.getFile(), factory);
+        RrdDb rrd = RrdDb.getBuilder().setPath(url.getFile()).setBackendFactory(factory).build();
         testRrdDb(rrd);
         checkValues(rrd);
         Assert.assertEquals("not expected version", 1, rrd.getRrdDef().getVersion());
@@ -114,7 +114,7 @@ public abstract class BackendTester {
 
     public void testRead2(RrdBackendFactory factory) throws IOException {
         URL url = getClass().getResource("/demo2.rrd"); 
-        RrdDb rrd = new RrdDb(url.getFile(), factory);
+        RrdDb rrd = RrdDb.getBuilder().setPath(url.getFile()).setBackendFactory(factory).build();
         testRrdDb(rrd);
         Assert.assertEquals("not expected version", 2, rrd.getRrdDef().getVersion());
         checkValues(rrd);
@@ -122,14 +122,14 @@ public abstract class BackendTester {
 
     public void testReadCorruptSignature(RrdBackendFactory factory) throws Exception {
         URL url = getClass().getResource("/corrupt.rrd"); 
-        try (RrdDb rdb = new RrdDb(url.getFile(), factory)) {
+        try (RrdDb rdb = RrdDb.getBuilder().setPath(url.getFile()).setBackendFactory(factory).build()) {
         }
     }
 
     public void testReadEmpty(RrdBackendFactory factory) throws Exception {
         URL url = getClass().getResource("/empty.rrd"); 
 
-        try (RrdDb rdb = new RrdDb(url.getFile(), factory)){
+        try (RrdDb rdb = RrdDb.getBuilder().setPath(url.getFile()).setBackendFactory(factory).build()){
             fail();
         }
     }

@@ -46,13 +46,13 @@ public class RrdDbMongoDbTest {
             def.setStep(2);
             def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
             def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
-            try (RrdDb db = new RrdDb(def)) {
+            try (RrdDb db = RrdDb.getBuilder().setRrdDef(def).build()) {
                 Assert.assertEquals(
                         "mongodb://localhost:27017/mydb/test/therrd",
                         db.getUri().toString());
                 db.createSample().setAndUpdate("NOW:1");
             };
-            try (RrdDb db = new RrdDb("mongodb://localhost:27017/mydb/test/therrd")) {
+            try (RrdDb db = RrdDb.getBuilder().setPath("mongodb://localhost:27017/mydb/test/therrd").build()) {
                 Assert.assertEquals(
                         "mongodb://localhost:27017/mydb/test/therrd",
                         db.getUri().toString());

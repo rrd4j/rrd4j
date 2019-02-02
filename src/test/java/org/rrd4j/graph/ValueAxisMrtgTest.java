@@ -102,12 +102,12 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testOneEntryInRrd() throws IOException, FontFormatException {
         createGaugeRrd(100);
-        RrdDb rrd = new RrdDb(jrbFileName);
-        long nowSeconds = new Date().getTime();
-        long fiveMinutesAgo = nowSeconds - (5 * 60);
-        Sample sample = rrd.createSample();
-        sample.setAndUpdate(fiveMinutesAgo+":10");
-        rrd.close();
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
+            long nowSeconds = new Date().getTime();
+            long fiveMinutesAgo = nowSeconds - (5 * 60);
+            Sample sample = rrd.createSample();
+            sample.setAndUpdate(fiveMinutesAgo+":10");
+        }
         prepareGraph();
         checkForBasicGraph();
     }
@@ -115,14 +115,14 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testTwoEntriesInRrd() throws IOException, FontFormatException {
         createGaugeRrd(100);
-        RrdDb rrd = new RrdDb(jrbFileName);
 
-        for(int i=0; i<2; i++) {
-            long timestamp = startTime + 1 + (i * 60);
-            Sample sample = rrd.createSample();
-            sample.setAndUpdate(timestamp+":100");
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
+            for(int i=0; i<2; i++) {
+                long timestamp = startTime + 1 + (i * 60);
+                Sample sample = rrd.createSample();
+                sample.setAndUpdate(timestamp+":100");
+            }
         }
-        rrd.close();
         prepareGraph();
 
         expectMajorGridLine("   0");
@@ -132,20 +132,19 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
         expectMajorGridLine(" 120");
 
         run();
-
     }
 
     @Test
     public void testEntriesZeroTo100InRrd() throws IOException, FontFormatException {
         createGaugeRrd(105); //Make sure all entries are recorded (5 is just a buffer for consolidation)
-        RrdDb rrd = new RrdDb(jrbFileName);
 
-        for(int i=0; i<100; i++) {
-            long timestamp = startTime + 1 + (i * 60);
-            Sample sample = rrd.createSample();
-            sample.setAndUpdate(timestamp + ":" + i);
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
+            for(int i=0; i<100; i++) {
+                long timestamp = startTime + 1 + (i * 60);
+                Sample sample = rrd.createSample();
+                sample.setAndUpdate(timestamp + ":" + i);
+            }
         }
-        rrd.close();
         prepareGraph();
         expectMajorGridLine("   0");
         expectMajorGridLine("  25");
