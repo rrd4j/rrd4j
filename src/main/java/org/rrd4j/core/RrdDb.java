@@ -268,11 +268,10 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      */
     public static final String PREFIX_RRDTool = "rrdtool:/";
 
-    // static final String RRDTOOL = "rrdtool";
     static final int XML_BUFFER_CAPACITY = 100000; // bytes
 
-    private RrdBackend backend;
-    private RrdAllocator allocator = new RrdAllocator();
+    private final RrdBackend backend;
+    private final RrdAllocator allocator = new RrdAllocator();
 
     private final Header header;
     private final Datasource[] datasources;

@@ -58,6 +58,15 @@ public class RrdDbPool {
                 waitempty = new CountDownLatch(1);
             }
         }
+        @Override
+        public String toString() {
+            if (this.placeholder) {
+                return "RrdEntry [inuse=" + inuse.getCount()+ ", uri=" + uri + "]";
+            } else {
+                return "RrdEntry [rrdDb=" + rrdDb + ", count=" + count + ", uri=" + uri + "]";
+            }
+        }
+
     }
 
     /**
@@ -112,7 +121,7 @@ public class RrdDbPool {
         //Direct toarray from keySet can fail
         Set<URI> files = new HashSet<>();
         files.addAll(pool.keySet());
-        return files.toArray(new URI[0]);
+        return files.toArray(new URI[files.size()]);
     }
 
     /**
@@ -126,7 +135,7 @@ public class RrdDbPool {
         for (RrdEntry i: pool.values()) {
             files.add(i.rrdDb.getPath());
         }
-        return files.toArray(new String[0]);
+        return files.toArray(new String[files.size()]);
     }
 
     private RrdEntry getEntry(URI uri, boolean cancreate) throws IOException, InterruptedException {
@@ -570,4 +579,5 @@ public class RrdDbPool {
             }
         }
     }
+
 }
