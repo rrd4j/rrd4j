@@ -79,6 +79,10 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             } else if (path != null || uri != null) {
                 URI rrdUri = buildUri(path, uri, factory);
                 factory = checkFactory(rrdUri, factory);
+                rrdUri = factory.getCanonicalUri(rrdUri);
+                if ( ! factory.canStore(rrdUri)) {
+                    throw new IllegalArgumentException("Given a factory incompatible with the URI");
+                }
                 if (importer == null && externalPath == null) {
                     if (usePool) {
                         return resolvePool(pool).requestRrdDb(rrdUri, factory);
@@ -115,7 +119,10 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             }
             URI rrdUri = buildUri(path, uri, factory);
             factory = checkFactory(rrdUri, factory);
-            try (DataImporter rrdImporter = resoleImporter(externalPath, importer)){
+            if ( ! factory.canStore(rrdUri)) {
+                throw new IllegalArgumentException("Given a factory incompatible with the URI");
+            }
+            try (DataImporter rrdImporter = resoleImporter(externalPath, importer)) {
                 if (usePool) {
                     RrdDb db = resolvePool(pool).requestRrdDb(rrdUri, factory, importer);
                     resolvePool(pool).release(db);

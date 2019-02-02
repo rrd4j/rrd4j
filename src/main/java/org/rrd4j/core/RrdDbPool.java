@@ -451,7 +451,7 @@ public class RrdDbPool {
     @Deprecated
     public RrdDb requestRrdDb(URI uri, String sourcePath)
             throws IOException {
-        return requestRrdDb(uri, null, sourcePath);
+        return requestRrdDb(uri, RrdBackendFactory.findFactory(uri), sourcePath);
     }
 
     private RrdDb requestRrdDb(URI uri, RrdBackendFactory backend, String sourcePath)
