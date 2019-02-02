@@ -421,7 +421,6 @@ public abstract class RrdBackendFactory implements Closeable {
         String fragment = uri.getFragment();
         try {
             authority = authority != null ? authority : "";
-            path = path != null ? path : "";
             query = query != null ? "?" + URLEncoder.encode(query, "UTF-8") : "";
             fragment = fragment != null ? "#" + URLEncoder.encode(fragment, "UTF-8") : "";
         } catch (UnsupportedEncodingException e) {

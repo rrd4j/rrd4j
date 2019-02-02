@@ -87,7 +87,7 @@ public class RrdDbPool {
     private final Condition full = countLock.newCondition();
     private int maxCapacity = INITIAL_CAPACITY;
 
-    private final ConcurrentMap<URI, RrdEntry> pool = new ConcurrentHashMap<URI, RrdEntry>(INITIAL_CAPACITY);
+    private final ConcurrentMap<URI, RrdEntry> pool = new ConcurrentHashMap<>(INITIAL_CAPACITY);
 
     private final RrdBackendFactory defaultFactory;
 
@@ -97,7 +97,7 @@ public class RrdDbPool {
      */
     public RrdDbPool() {
         if (!(RrdBackendFactory.getDefaultFactory() instanceof RrdFileBackendFactory)) {
-            throw new RuntimeException("Cannot create instance of " + getClass().getName() + " with " +
+            throw new IllegalStateException("Cannot create instance of " + getClass().getName() + " with " +
                     "a default backend factory " + RrdBackendFactory.getDefaultFactory().getName() + " not derived from RrdFileBackendFactory");
         }
         defaultFactory = RrdBackendFactory.getDefaultFactory();
@@ -184,7 +184,7 @@ public class RrdDbPool {
 
     private enum ACTION {
         SWAP, DROP;
-    };
+    }
 
     private void passNext(ACTION a, RrdEntry e) {
         if (e == null) {
@@ -251,7 +251,7 @@ public class RrdDbPool {
                 throw new IllegalStateException("Could not release [" + rrdDb.getPath() + "], pool corruption");
             }
             try {
-                ref.rrdDb.realClose();
+                ref.rrdDb.internalClose();
             } finally {
                 passNext(ACTION.DROP, ref);
                 //If someone is waiting for an empty entry, signal it

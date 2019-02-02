@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RrdBackendAnnotation(name="MEMORY", shouldValidateHeader=false)
 public class RrdMemoryBackendFactory extends RrdBackendFactory {
 
-    protected final Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<String, RrdMemoryBackend>();
+    protected final Map<String, RrdMemoryBackend> backends = new ConcurrentHashMap<>();
 
     /**
      * {@inheritDoc}

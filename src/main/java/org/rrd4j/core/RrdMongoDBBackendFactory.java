@@ -33,7 +33,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         void save(BasicDBObject query, byte[] rrd);
         List<ServerAddress> servers();
         void close() throws IOException;
-    };
+    }
 
     private final URI rootUri;
     private final MongoWrapper wrapper;
@@ -43,6 +43,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
      * concern, is capped (if needed) and slaveOk() called if applicable. The backend will be registered as the default.
      *
      * @param rrdCollection the collection to use for storing RRD byte data
+     * @deprecated create a instance instead
      */
     @Deprecated
     public RrdMongoDBBackendFactory(DBCollection rrdCollection) {
@@ -55,6 +56,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
      * 
      * @param rrdCollection the collection to use for storing RRD byte data
      * @param registerAsDefault if true, the backend will be registered as the default
+     * @deprecated create a instance instead
      */
     @Deprecated
     public RrdMongoDBBackendFactory(final DBCollection rrdCollection, boolean registerAsDefault) {
@@ -93,6 +95,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             }
             @Override
             public void close() throws IOException {
+                // Nothing to close
             }
         };
 

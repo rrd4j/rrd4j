@@ -716,11 +716,11 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         if (pool != null) {
             pool.release(this);
         } else {
-            realClose();
+            internalClose();
         }
     }
 
-    void realClose() throws IOException {
+    void internalClose() throws IOException {
         if (!closed) {
             closed = true;
             backend.rrdClose();
@@ -903,13 +903,10 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
                         bestStepDiff = tmpStepDiff;
                         bestFullMatch = archive;
                     }
-                }
-                else {
+                } else {
                     // best partial match
                     long tmpMatch = fullMatch;
-                    if (arcStart > fetchStart) {
-                        tmpMatch -= (arcStart - fetchStart);
-                    }
+                    tmpMatch -= (arcStart - fetchStart);
                     if (bestPartialMatch == null ||
                             bestMatch < tmpMatch ||
                             (bestMatch == tmpMatch && tmpStepDiff < bestStepDiff) ) {
@@ -941,7 +938,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @throws java.io.IOException Thrown in case of I/O related error.
      */
     public Archive findStartMatchArchive(String consolFun, long startTime, long resolution) throws IOException {
-        long arcStep, diff;
+        long arcStep;
+        long diff;
         int fallBackIndex = 0;
         int arcIndex = -1;
         long minDiff = Long.MAX_VALUE;

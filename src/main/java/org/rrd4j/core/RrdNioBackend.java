@@ -161,6 +161,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
      *
      * @throws java.io.IOException Thrown in case of I/O error.
      */
+    @Override
     public synchronized void close() throws IOException {
         // cancel synchronization
         try {
