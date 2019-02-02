@@ -97,6 +97,6 @@ public class LongRunning {
         rrdDef.addArchive(ConsolFun.MAX, 0.5, 5, sampleSize + 1);
         rrdDef.addArchive(ConsolFun.MIN, 0.5, 5, sampleSize + 1);
 
-        return new RrdDb(rrdDef);
+        return RrdDb.getBuilder().setRrdDef(rrdDef).build();
     }
 }

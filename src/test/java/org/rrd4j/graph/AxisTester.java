@@ -60,7 +60,7 @@ public abstract class AxisTester<T extends Axis> {
         def.addArchive("RRA:AVERAGE:0.5:1:" + rowCount);
 
         //Create the empty rrd.  Other code may open and append data
-        try (RrdDb rrd = new RrdDb(def)) {
+        try (RrdDb rrd = RrdDb.getBuilder().setRrdDef(def).build()) {
         }
 
     }
