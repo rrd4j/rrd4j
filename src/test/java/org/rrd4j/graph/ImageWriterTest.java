@@ -3,7 +3,6 @@ package org.rrd4j.graph;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -39,8 +38,7 @@ public class ImageWriterTest {
 
     @Test
     public void testBmp() throws IOException {
-        //run(testFolder.newFile("test.bmp"), "bmp");
-        run(Paths.get("/tmp/test.bmp").toFile(), "bmp");
+        run(testFolder.newFile("test.bmp"), "bmp");
     }
 
     @Test(expected=RuntimeException.class)

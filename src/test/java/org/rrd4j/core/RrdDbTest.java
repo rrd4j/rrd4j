@@ -6,8 +6,11 @@ import static org.rrd4j.ConsolFun.MAX;
 import static org.rrd4j.ConsolFun.TOTAL;
 import static org.rrd4j.DsType.GAUGE;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -279,6 +282,16 @@ public class RrdDbTest {
     }
 
     @Test
+    public void testRrdToolImport() throws IOException {
+        URL url = getClass().getResource("/rrdtool/rrdtool.rrd"); 
+        RrdDb rrd = RrdDb.getBuilder()
+                .setPath(testFolder.newFile("testrrdtoolimport.rrd").getCanonicalPath())
+                .setRrdToolImporter(url.getFile())
+                .setBackendFactory(RrdBackendFactory.getFactory("FILE")).build();
+        testRrdDbXml(rrd);
+    }
+
+    @Test
     public void testSpike() throws IOException {
         RrdDef rrdDef = new RrdDef(testFolder.newFile("testSpike.rrd").getCanonicalPath(), 0, 60);
         rrdDef.setVersion(2);
@@ -289,7 +302,6 @@ public class RrdDbTest {
             testTime.set(Calendar.MINUTE, 0);
             testTime.set(Calendar.SECOND, 0);
             testTime.set(Calendar.MILLISECOND, 0);
-            //testTime.add(Calendar.HOUR, -1);
             long start =  Util.getTimestamp(testTime);
             long timeStamp = start;
 
@@ -323,7 +335,7 @@ public class RrdDbTest {
         rrdDef.addArchive(TOTAL, 0.5, 1, 600);
         rrdDef.addArchive(MAX, 0.5, 1, 600);
         String[] dsNames1 = new String[2];
-        try (RrdDb rrdDb = new RrdDb(rrdDef)) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
             int dsCount = rrdDb.getHeader().getDsCount();
             for(int i = 0; i < dsCount; i++) {
                 Datasource srcDs = rrdDb.getDatasource(i);
@@ -333,7 +345,7 @@ public class RrdDbTest {
             }
         }
         String[] dsNames2 = new String[2];
-        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true, new RrdNioBackendFactory())) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdDef.getPath()).setReadOnly(true).setBackendFactory(new RrdNioBackendFactory(0)).build()) {
             int dsCount = rrdDb.getHeader().getDsCount();
             for(int i = 0; i < dsCount; i++) {
                 Datasource srcDs = rrdDb.getDatasource(i);
@@ -343,7 +355,7 @@ public class RrdDbTest {
             }
         }
         String[] dsNames3 = new String[2];
-        try (RrdDb rrdDb = new RrdDb(rrdDef.getPath(), true, new RrdRandomAccessFileBackendFactory())) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdDef.getPath()).setReadOnly(true).setBackendFactory(new RrdRandomAccessFileBackendFactory()).build()) {
             int dsCount = rrdDb.getHeader().getDsCount();
             for(int i = 0; i < dsCount; i++) {
                 Datasource srcDs = rrdDb.getDatasource(i);
@@ -371,6 +383,28 @@ public class RrdDbTest {
     @Test(expected=IllegalArgumentException.class)
     public void testBadBuild3() throws IOException {
         RrdDb.getBuilder().build();
+    }
+
+    @Test(expected=FileNotFoundException.class)
+    public void getMissing() throws IOException {
+        File missing = testFolder.newFile();
+        missing.delete();
+        try (RrdDb rrdDb = RrdDb.getBuilder().setPath(missing.getPath()).setReadOnly(true).setBackendFactory(new RrdRandomAccessFileBackendFactory()).build()) {
+        }
+    }
+
+    @Test(expected=FileNotFoundException.class)
+    public void getUnreadable() throws IOException {
+        long start = START;
+
+        RrdDef rrdDef = new RrdDef(testFolder.newFile("testunreadable.rrd").getCanonicalPath(), start - 1, 300);
+        rrdDef.setVersion(2);
+        rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);
+        rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
+        RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build();
+        rrdDb.close();
+        new File(rrdDef.getPath()).setReadable(false);
+        RrdDb.getBuilder().setPath(rrdDef.getPath()).build().close();;
     }
 
 }

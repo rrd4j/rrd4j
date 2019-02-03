@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
 
 public class RrdToolkitTest {
@@ -66,12 +67,14 @@ public class RrdToolkitTest {
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
             Assert.assertTrue(db.containsDs("D"));
+            Assert.assertEquals(1, db.getArcCount());
         }
         try (RrdDb db = RrdDb.getBuilder().setPath(source).build()) {
             Assert.assertTrue(db.containsDs("A"));
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
             Assert.assertFalse(db.containsDs("D"));
+            Assert.assertEquals(1, db.getArcCount());
         }
     }
 
@@ -84,12 +87,14 @@ public class RrdToolkitTest {
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
             Assert.assertTrue(db.containsDs("D"));
+            Assert.assertEquals(1, db.getArcCount());
         }
         try (RrdDb db = RrdDb.getBuilder().setPath(source + ".bak").build()) {
             Assert.assertTrue(db.containsDs("A"));
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
             Assert.assertFalse(db.containsDs("D"));
+            Assert.assertEquals(1, db.getArcCount());
         }
     }
 
@@ -102,11 +107,13 @@ public class RrdToolkitTest {
             Assert.assertTrue(db.containsDs("A"));
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertFalse(db.containsDs("C"));
+            Assert.assertEquals(1, db.getArcCount());
         }
         try (RrdDb db = RrdDb.getBuilder().setPath(source).build()) {
             Assert.assertTrue(db.containsDs("A"));
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
+            Assert.assertEquals(1, db.getArcCount());
         }
     }
 
@@ -119,12 +126,14 @@ public class RrdToolkitTest {
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
             Assert.assertTrue(db.containsDs("D"));
+            Assert.assertEquals(1, db.getArcCount());
         }
         try (RrdDb db = RrdDb.getBuilder().setPath(source + ".bak").build()) {
             Assert.assertTrue(db.containsDs("A"));
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
             Assert.assertFalse(db.containsDs("D"));
+            Assert.assertEquals(1, db.getArcCount());
         }
     }
 
@@ -137,6 +146,32 @@ public class RrdToolkitTest {
             Assert.assertTrue(db.containsDs("B"));
             Assert.assertTrue(db.containsDs("C"));
             Assert.assertTrue(db.containsDs("D"));
+            Assert.assertEquals(1, db.getArcCount());
+        }
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void renameDatasourceFailedTest() throws IOException {
+        String source = createRrd("renamedatasource");
+        RrdToolkit.renameDatasource(source, "A", "A");
+    }
+
+    @Test
+    public void addArchiveTest() throws IOException {
+        String source = createRrd("addarchive");
+        String destination = Paths.get(testFolder.getRoot().getCanonicalPath(), "new.rrd").toString();
+        RrdToolkit.addArchive(source, destination, new ArcDef(ConsolFun.AVERAGE, 0.5, 2, 3));
+        try (RrdDb db = RrdDb.getBuilder().setPath(destination).build()) {
+            Assert.assertTrue(db.containsDs("A"));
+            Assert.assertTrue(db.containsDs("B"));
+            Assert.assertTrue(db.containsDs("C"));
+            Assert.assertEquals(2, db.getArcCount());
+        }
+        try (RrdDb db = RrdDb.getBuilder().setPath(source).build()) {
+            Assert.assertTrue(db.containsDs("A"));
+            Assert.assertTrue(db.containsDs("B"));
+            Assert.assertTrue(db.containsDs("C"));
+            Assert.assertEquals(1, db.getArcCount());
         }
     }
 

@@ -159,7 +159,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testEntriesNeg50To100InRrd() throws IOException, FontFormatException {
         createGaugeRrd(155);
-        RrdDb rrd = new RrdDb(jrbFileName);
+        RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
         for(int i=0; i<150; i++) {
             long timestamp = startTime + 1 + (i * 60);
@@ -181,7 +181,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testEntriesNeg55To105InRrd() throws IOException, FontFormatException {
         createGaugeRrd(165);
-        RrdDb rrd = new RrdDb(jrbFileName);
+        RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
         for(int i=0; i<160; i++) {
             long timestamp = startTime + 1 + (i * 60);
@@ -203,7 +203,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testEntriesNeg50To0InRrd() throws IOException, FontFormatException {
         createGaugeRrd(100);
-        RrdDb rrd = new RrdDb(jrbFileName);
+        RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
         for(int i=0; i<50; i++) {
             long timestamp = startTime + 1 + (i * 60);
@@ -233,7 +233,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testEntriesNeg80To90InRrd() throws IOException, FontFormatException {
         createGaugeRrd(180);
-        RrdDb rrd = new RrdDb(jrbFileName);
+        RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
         for(int i=0; i<170; i++) {
             long timestamp = startTime + 1 + (i * 60);
@@ -262,7 +262,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testEntriesNeg80To80InRrd() throws IOException, FontFormatException {
         createGaugeRrd(180);
-        RrdDb rrd = new RrdDb(jrbFileName);
+        RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
         for(int i=0; i<160; i++) {
             long timestamp = startTime + 1 + (i * 60);
