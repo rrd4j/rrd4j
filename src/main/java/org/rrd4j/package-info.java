@@ -17,6 +17,6 @@
  * heartbeat, RRD step, RPN, graph DEFs and CDEFs) are not explained here because they have exactly the same
  * meaning in RRD4J and RRDTool. If you are a novice RRDTool/RRD4J user,
  * <a href="http://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html">this annotated RRDTool tutorial</a> is a
- * good place to start.
+ * good place to start. A, <a href="https://github.com/rrd4j/rrd4j/wiki/Tutorial">adapted version</a> for RRD4J is available
  */
 package org.rrd4j;

@@ -12,11 +12,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This class should be used to synchronize access to RRD files
+ * <p>This class should be used to synchronize access to RRD files
  * in a multithreaded environment. This class should be also used to prevent opening of
  * too many RRD files at the same time (thus avoiding operating system limits).
- * <p>
- * It's much more scalable than the previous pool
+ * </p>
+ * <p>It should not be called directly. Use {@link RrdDb.Builder#usePool()} instead.</p>
  */
 public class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
@@ -93,7 +93,7 @@ public class RrdDbPool {
 
     /**
      * Constructor for RrdDbPool.
-     * 
+     * @since 3.5
      */
     public RrdDbPool() {
         if (!(RrdBackendFactory.getDefaultFactory() instanceof RrdFileBackendFactory)) {

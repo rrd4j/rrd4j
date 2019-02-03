@@ -136,6 +136,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * <p>Setter for the field <code>syncThreadPool</code>.</p>
      *
      * @param syncThreadPool the RrdSyncThreadPool to use to sync the memory-mapped files.
+     * @deprecated Create a custom instance instead
      */
     @Deprecated
     public void setSyncThreadPool(RrdSyncThreadPool syncThreadPool) {
@@ -146,6 +147,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * <p>Setter for the field <code>syncThreadPool</code>.</p>
      *
      * @param syncThreadPool the ScheduledExecutorService that will back the RrdSyncThreadPool used to sync the memory-mapped files.
+     * @deprecated Create a custom instance instead
      */
     @Deprecated
     public void setSyncThreadPool(ScheduledExecutorService syncThreadPool) {
