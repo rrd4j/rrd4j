@@ -301,7 +301,7 @@ public class Datasource implements RrdUpdater<Datasource> {
         if (!datasource.dsName.get().equals(dsName.get())) {
             throw new IllegalArgumentException("Incompatible datasource names");
         }
-        if (datasource.dsType != dsType) {
+        if (datasource.dsType.get() != dsType.get()) {
             throw new IllegalArgumentException("Incompatible datasource types");
         }
         datasource.lastValue.set(lastValue.get());

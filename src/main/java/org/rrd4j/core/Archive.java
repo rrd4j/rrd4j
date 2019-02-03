@@ -369,7 +369,7 @@ public class Archive implements RrdUpdater<Archive> {
      * Copies object's internal state to another Archive object.
      */
     public void copyStateTo(Archive arc) throws IOException {
-        if (arc.consolFun != consolFun) {
+        if (arc.consolFun.get() != consolFun.get()) {
             throw new IllegalArgumentException("Incompatible consolidation functions");
         }
         if (arc.steps.get() != steps.get()) {
