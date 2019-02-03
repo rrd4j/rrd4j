@@ -96,10 +96,6 @@ public class RrdDbPool {
      * @since 3.5
      */
     public RrdDbPool() {
-        if (!(RrdBackendFactory.getDefaultFactory() instanceof RrdFileBackendFactory)) {
-            throw new IllegalStateException("Cannot create instance of " + getClass().getName() + " with " +
-                    "a default backend factory " + RrdBackendFactory.getDefaultFactory().getName() + " not derived from RrdFileBackendFactory");
-        }
         defaultFactory = RrdBackendFactory.getDefaultFactory();
     }
 
