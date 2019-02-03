@@ -81,7 +81,7 @@ import java.util.regex.Pattern;
 public abstract class RrdBackendFactory implements Closeable {
 
     private static final class Registry {
-        private static final Map<String, RrdBackendFactory> factories = new HashMap<String, RrdBackendFactory>();
+        private static final Map<String, RrdBackendFactory> factories = new HashMap<>();
         static {
             RrdRandomAccessFileBackendFactory fileFactory = new RrdRandomAccessFileBackendFactory();
             factories.put(fileFactory.name, fileFactory);

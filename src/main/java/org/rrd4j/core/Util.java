@@ -535,7 +535,7 @@ public class Util {
         }
 
         public static Node[] getChildNodes(Node parentNode, String childName) {
-            ArrayList<Node> nodes = new ArrayList<Node>();
+            ArrayList<Node> nodes = new ArrayList<>();
             NodeList nodeList = parentNode.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);

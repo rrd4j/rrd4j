@@ -63,7 +63,7 @@ public abstract class RrdBackend {
     private static final int PRIVATEAREASIZE = ENDPRIVATEAREACODEPOINT - STARTPRIVATEAREACODEPOINT + 1;
     private static final int MAXUNSIGNEDSHORT = Short.MAX_VALUE - Short.MIN_VALUE;
 
-    private volatile static boolean instanceCreated = false;
+    private static volatile boolean instanceCreated = false;
     private final String path;
     private RrdBackendFactory factory;
     private long nextBigStringOffset = -1;

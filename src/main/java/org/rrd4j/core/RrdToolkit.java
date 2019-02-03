@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -180,16 +181,13 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void renameDatasource(String sourcePath, String oldDsName, String newDsName) throws IOException {
-        RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build();
-        try {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             if (rrd.containsDs(oldDsName)) {
                 Datasource datasource = rrd.getDatasource(oldDsName);
                 datasource.setDsName(newDsName);
             } else {
                 throw new IllegalArgumentException("Could not find datasource [" + oldDsName + "] in file " + sourcePath);
             }
-        } finally {
-            rrd.close();
         }
     }
 
@@ -205,8 +203,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static int forceZerosForNans(String sourcePath, String dsName) throws IOException {
-        RrdDb rrd = new RrdDb(sourcePath);
-        try {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource[] datasources;
             if (dsName == null) {
                 datasources = rrd.getDatasources();
@@ -226,8 +223,6 @@ public class RrdToolkit {
                 }
             }
             return count;
-        } finally {
-            rrd.close();
         }
     }
 
@@ -245,11 +240,11 @@ public class RrdToolkit {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
-        try (RrdDb rrdSource = new RrdDb(sourcePath)) {
+        try (RrdDb rrdSource = RrdDb.getBuilder().setPath(sourcePath).build()) {
             RrdDef rrdDef = rrdSource.getRrdDef();
             rrdDef.setPath(destPath);
             rrdDef.addArchive(newArchive);
-            try (RrdDb rrdDest = new RrdDb(rrdDef)) {
+            try (RrdDb rrdDest = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
                 rrdSource.copyStateTo(rrdDest);
             }
         }
@@ -293,11 +288,11 @@ public class RrdToolkit {
             throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
 
-        try (RrdDb rrdSource = new RrdDb(sourcePath)) {
+        try (RrdDb rrdSource = RrdDb.getBuilder().setPath(sourcePath).build()) {
             RrdDef rrdDef = rrdSource.getRrdDef();
             rrdDef.setPath(destPath);
             rrdDef.removeArchive(consolFun, steps);
-            try (RrdDb rrdDest = new RrdDb(rrdDef)) {
+            try (RrdDb rrdDest = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
                 rrdSource.copyStateTo(rrdDest);
             }
         }
@@ -370,7 +365,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsHeartbeat(String sourcePath, String datasourceName, long newHeartbeat) throws IOException {
-        try (RrdDb rrd = new RrdDb(sourcePath)) {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setHeartbeat(newHeartbeat);
         }
@@ -385,7 +380,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void setDsHeartbeat(String sourcePath, int dsIndex, long newHeartbeat) throws IOException {
-        try (RrdDb rrd = new RrdDb(sourcePath)) {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(dsIndex);
             ds.setHeartbeat(newHeartbeat);
         }
@@ -403,7 +398,7 @@ public class RrdToolkit {
      */
     public static void setDsMinValue(String sourcePath, String datasourceName,
             double newMinValue, boolean filterArchivedValues) throws IOException {
-        try (RrdDb rrd = new RrdDb(sourcePath)) {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMinValue(newMinValue, filterArchivedValues);
         }
@@ -421,7 +416,7 @@ public class RrdToolkit {
      */
     public static void setDsMaxValue(String sourcePath, String datasourceName,
             double newMaxValue, boolean filterArchivedValues) throws IOException {
-        try (RrdDb rrd = new RrdDb(sourcePath)) {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMaxValue(newMaxValue, filterArchivedValues);
         }
@@ -441,7 +436,7 @@ public class RrdToolkit {
     public static void setDsMinMaxValue(String sourcePath, String datasourceName,
             double newMinValue, double newMaxValue, boolean filterArchivedValues)
                     throws IOException {
-        try (RrdDb rrd = new RrdDb(sourcePath)) {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Datasource ds = rrd.getDatasource(datasourceName);
             ds.setMinMaxValue(newMinValue, newMaxValue, filterArchivedValues);
         }
@@ -458,7 +453,7 @@ public class RrdToolkit {
      */
     public static void setArcXff(String sourcePath, ConsolFun consolFun, int steps,
             double newXff) throws IOException {
-        try (RrdDb rrd = new RrdDb(sourcePath)) {
+        try (RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build()) {
             Archive arc = rrd.getArchive(consolFun, steps);
             arc.setXff(newXff);
         }
@@ -485,7 +480,7 @@ public class RrdToolkit {
             throw new IllegalArgumentException("New archive size must be at least 2");
         }
 
-        try (RrdDb rrdSource = new RrdDb(sourcePath)) {
+        try (RrdDb rrdSource = RrdDb.getBuilder().setPath(sourcePath).build()) {
             RrdDef rrdDef = rrdSource.getRrdDef();
             ArcDef arcDef = rrdDef.findArchive(consolFun, numSteps);
             if (arcDef.getRows() != newRows) {
@@ -521,8 +516,8 @@ public class RrdToolkit {
     }
 
     private static void deleteFile(File file) throws IOException {
-        if (file.exists() && !file.delete()) {
-            throw new RrdException("Could not delete file: " + file.getCanonicalPath());
+        if (file.exists()) {
+            Files.delete(file.toPath());
         }
     }
 
@@ -537,13 +532,13 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void split(String sourcePath) throws IOException {
-        try (RrdDb rrdSource = new RrdDb(sourcePath)) {
+        try (RrdDb rrdSource = RrdDb.getBuilder().setPath(sourcePath).build()) {
             String[] dsNames = rrdSource.getDsNames();
             for (String dsName : dsNames) {
                 RrdDef rrdDef = rrdSource.getRrdDef();
                 rrdDef.setPath(createSplitPath(dsName, sourcePath));
                 rrdDef.saveSingleDatasource(dsName);
-                try (RrdDb rrdDest = new RrdDb(rrdDef)) {
+                try (RrdDb rrdDest = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
                     rrdSource.copyStateTo(rrdDest);
                 }
             }
@@ -594,5 +589,6 @@ public class RrdToolkit {
         String parentDir = path.substring(0, 1 + path.lastIndexOf(Util.getFileSeparator()));
         return parentDir + newName;
     }
+
 }
 
