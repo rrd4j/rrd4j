@@ -23,7 +23,7 @@ public class RrdSyncThreadPool
     /**
      * The reference to the shutdown hook, or null.
      */
-    private final AtomicReference<Thread> shutdownHook = new AtomicReference<Thread>();
+    private final AtomicReference<Thread> shutdownHook = new AtomicReference<>();
 
     /**
      * The {@link java.util.concurrent.ScheduledExecutorService} used to periodically sync the mapped file to disk with.

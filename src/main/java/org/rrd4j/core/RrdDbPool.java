@@ -134,7 +134,7 @@ public class RrdDbPool {
         return files.toArray(new String[files.size()]);
     }
 
-    private RrdEntry getEntry(URI uri, boolean cancreate) throws IOException, InterruptedException {
+    private RrdEntry getEntry(URI uri, boolean cancreate) throws InterruptedException {
         RrdEntry ref = null;
         try {
             do {

@@ -24,7 +24,7 @@ import com.sleepycat.je.OperationStatus;
 public class RrdBerkeleyDbBackendFactory extends RrdBackendFactory {
 
     private final Database rrdDatabase;
-    private final Set<String> pathCache = new CopyOnWriteArraySet<String>();
+    private final Set<String> pathCache = new CopyOnWriteArraySet<>();
 
     /**
      * <p>Constructor for RrdBerkeleyDbBackendFactory.</p>

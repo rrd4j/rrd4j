@@ -1,6 +1,8 @@
 package org.rrd4j.converter;
 
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdNioBackendFactory;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -11,18 +13,18 @@ import java.util.Date;
  * Rrd4j's native RRD format. Conversion process is quite fast.
  */
 public class Converter {
-    private static final String FACTORY_NAME = "FILE";
     private static final String SUFFIX = ".jrb";
     private static final DecimalFormat secondsFormatter = new DecimalFormat("##0.000");
     private static final DecimalFormat countFormatter = new DecimalFormat("0000");
 
     private String[] files;
-    private int totalCount, badCount, goodCount;
+    private int totalCount;
+    private int badCount;
+    private int goodCount;
 
-    @SuppressWarnings("deprecation")
     private Converter(String[] files) {
         try {
-            RrdDb.setDefaultFactory(FACTORY_NAME);
+            RrdBackendFactory.setActiveFactories(new RrdNioBackendFactory(0));
         }
         catch (Exception e) {
             e.printStackTrace();

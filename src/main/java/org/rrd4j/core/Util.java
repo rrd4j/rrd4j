@@ -628,10 +628,7 @@ public class Util {
                 Document doc = builder.parse(inputSource);
                 return doc.getDocumentElement();
             }
-            catch (ParserConfigurationException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-            catch (SAXException e) {
+            catch (ParserConfigurationException | SAXException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }

@@ -80,7 +80,7 @@ class XmlReader extends DataImporter {
 
     public double getXff(int arcIndex) {
         Node arc = arcNodes[arcIndex];
-        Node params[] = Util.Xml.getChildNodes(arc, "params");
+        Node[] params = Util.Xml.getChildNodes(arc, "params");
         //RRD4J xml, xff is in the archive definition
         if(params.length == 0) {
             return Util.Xml.getChildValueAsDouble(arc, "xff");

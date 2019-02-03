@@ -37,6 +37,7 @@ public abstract class RrdByteArrayBackend extends ByteBufferBackend {
      * @throws java.io.IOException if any.
      * @throws java.lang.IllegalArgumentException if offset is bigger that the possible length.
      */
+    @Override
     protected synchronized void read(long offset, byte[] bytes) throws IOException {
         if (offset < 0 || offset > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal offset: " + offset);

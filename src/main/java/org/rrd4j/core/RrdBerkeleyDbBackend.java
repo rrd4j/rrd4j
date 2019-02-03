@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
@@ -45,9 +46,10 @@ public class RrdBerkeleyDbBackend extends RrdByteArrayBackend {
      *
      * @throws java.io.IOException if any.
      */
+    @Override
     protected void close() throws IOException {
         if (isDirty()) {
-            DatabaseEntry theKey = new DatabaseEntry(getPath().getBytes("UTF-8"));
+            DatabaseEntry theKey = new DatabaseEntry(getPath().getBytes(StandardCharsets.UTF_8));
             DatabaseEntry theData = new DatabaseEntry(getBuffer());
 
             try {

@@ -7,8 +7,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Stack;
 import java.util.TimeZone;
 
 /**
@@ -28,7 +29,7 @@ public class XmlWriter {
 
     private final PrintWriter writer;
     private final StringBuilder indent = new StringBuilder("");
-    private final Stack<String> openTags = new Stack<String>();
+    private final Deque<String> openTags = new LinkedList<>();
 
     /**
      * Creates XmlWriter with the specified output stream to send XML code to.

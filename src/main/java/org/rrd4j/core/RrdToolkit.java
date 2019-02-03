@@ -353,12 +353,12 @@ public class RrdToolkit {
     }
 
     private static String getBackupPath(String destPath) {
-        String backupPath = destPath;
+        StringBuilder backupPath = new StringBuilder(destPath);
         do {
-            backupPath += ".bak";
+            backupPath.append( ".bak");
         }
-        while (Util.fileExists(backupPath));
-        return backupPath;
+        while (Util.fileExists(backupPath.toString()));
+        return backupPath.toString();
     }
 
     /**
@@ -567,7 +567,7 @@ public class RrdToolkit {
         if (!baseDir.isDirectory()) {
             throw new RrdException("Not a directory: " + directory);
         }
-        List<String> fileList = new LinkedList<String>();
+        List<String> fileList = new LinkedList<>();
         traverseDirectory(new File(directory), extension, resursive, fileList);
         String[] result = fileList.toArray(new String[fileList.size()]);
         Arrays.sort(result);

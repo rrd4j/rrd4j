@@ -177,7 +177,7 @@ public abstract class RrdBackendFactory implements Closeable {
      * @return Default backend factory.
      */
     public static synchronized RrdBackendFactory getDefaultFactory() {
-        if (activeFactories.size() > 0) {
+        if (!activeFactories.isEmpty()) {
             return activeFactories.get(0);
         } else {
             return Registry.defaultFactory;
@@ -246,7 +246,7 @@ public abstract class RrdBackendFactory implements Closeable {
      */
     public static synchronized RrdBackendFactory findFactory(URI uri) {
         // If no active factory defined, will try the default factory
-        if (activeFactories.size() == 0 && Registry.defaultFactory.canStore(uri)) {
+        if (activeFactories.isEmpty() && Registry.defaultFactory.canStore(uri)) {
             return Registry.defaultFactory;
         } else {
             for (RrdBackendFactory tryfactory: activeFactories) {
@@ -313,7 +313,7 @@ public abstract class RrdBackendFactory implements Closeable {
             backend = null;
             super.clear();
         }
-    };
+    }
 
     private final ReferenceQueue<RrdDb> refQueue = new ReferenceQueue<>();
 

@@ -71,6 +71,7 @@ public class RrdSafeFileBackend extends RrdRandomAccessFileBackend {
      *
      * @throws java.io.IOException if any.
      */
+    @Override
     public void close() throws IOException {
         try {
             if (lock != null) {

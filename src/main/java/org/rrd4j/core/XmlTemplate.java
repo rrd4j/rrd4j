@@ -24,8 +24,8 @@ public abstract class XmlTemplate {
     private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
 
     protected Element root;
-    private HashMap<String, Object> valueMap = new HashMap<String, Object>();
-    private HashSet<Node> validatedNodes = new HashSet<Node>();
+    private HashMap<String, Object> valueMap = new HashMap<>();
+    private HashSet<Node> validatedNodes = new HashSet<>();
 
     /**
      * <p>Constructor for XmlTemplate.</p>
@@ -129,11 +129,11 @@ public abstract class XmlTemplate {
     }
 
     private String byteToHex(int i) {
-        String s = Integer.toHexString(i);
+        StringBuilder s = new StringBuilder(Integer.toHexString(i));
         while (s.length() < 2) {
-            s = "0" + s;
+            s.insert(0, "0");
         }
-        return s;
+        return s.toString();
     }
 
     /**
@@ -188,7 +188,7 @@ public abstract class XmlTemplate {
      * @return List of variable names as an array of strings.
      */
     public String[] getVariables() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         Matcher m = PATTERN.matcher(root.toString());
 
         while (m.find()) {

@@ -238,7 +238,6 @@ public class TimeParser {
             break;
         case TimeToken.NUMBER:
             /* get numeric <sec since 1970>, MM/DD/[YY]YY, or DD.MM.[YY]YY */
-            // int tlen = token.value.length();
             mon = Long.parseLong(token.value);
             if (mon > 10L * 365L * 24L * 60L * 60L) {
                 spec.localtime(mon);
