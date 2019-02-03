@@ -69,13 +69,13 @@ public class RrdToolkit {
         if (Util.sameFilePath(sourcePath, destPath)) {
             throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
-        try (RrdDb rrdSource = new RrdDb(sourcePath)) {
+        try (RrdDb rrdSource = RrdDb.getBuilder().setPath(sourcePath).build()) {
             RrdDef rrdDef = rrdSource.getRrdDef();
             rrdDef.setPath(destPath);
             for (DsDef newDatasource : newDatasources) {
                 rrdDef.addDatasource(newDatasource);
             }
-            try (RrdDb rrdDest = new RrdDb(rrdDef)) {
+            try (RrdDb rrdDest = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
                 rrdSource.copyStateTo(rrdDest);
             }
         }
@@ -139,11 +139,11 @@ public class RrdToolkit {
             throw new IllegalArgumentException(SOURCE_AND_DESTINATION_PATHS_ARE_THE_SAME);
         }
 
-        try (RrdDb rrdSource = new RrdDb(sourcePath)) {
+        try (RrdDb rrdSource = RrdDb.getBuilder().setPath(sourcePath).build()) {
             RrdDef rrdDef = rrdSource.getRrdDef();
             rrdDef.setPath(destPath);
             rrdDef.removeDatasource(dsName);
-            try (RrdDb rrdDest = new RrdDb(rrdDef)) {
+            try (RrdDb rrdDest = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
                 rrdSource.copyStateTo(rrdDest);
             }
         }
@@ -180,7 +180,7 @@ public class RrdToolkit {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public static void renameDatasource(String sourcePath, String oldDsName, String newDsName) throws IOException {
-        RrdDb rrd = new RrdDb(sourcePath);
+        RrdDb rrd = RrdDb.getBuilder().setPath(sourcePath).build();
         try {
             if (rrd.containsDs(oldDsName)) {
                 Datasource datasource = rrd.getDatasource(oldDsName);

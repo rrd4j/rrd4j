@@ -22,6 +22,7 @@ import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -417,8 +418,18 @@ public class Util {
         }
     }
 
-    static boolean sameFilePath(String path1, String path2) throws IOException {
-        return Files.isSameFile(Paths.get(path1), Paths.get(path2));
+    static boolean sameFilePath(String pathname1, String pathname2) throws IOException {
+        Path path1 = Paths.get(pathname1);
+        Path path2 = Paths.get(pathname2);
+        if (Files.exists(path1) != Files.exists(path2)) {
+            return false;
+        } else if (Files.exists(path1) && Files.exists(path2)){
+            path1 = Paths.get(pathname1).toRealPath().normalize();
+            path2 = Paths.get(pathname2).toRealPath().normalize();
+            return Files.isSameFile(path1, path2);
+        } else {
+            return false;
+        }
     }
 
     static int getMatchingDatasourceIndex(RrdDb rrd1, int dsIndex, RrdDb rrd2) throws IOException {
