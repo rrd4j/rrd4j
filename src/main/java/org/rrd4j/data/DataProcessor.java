@@ -60,6 +60,7 @@ public class DataProcessor {
      */
     public static final boolean DEFAULT_POOL_USAGE_POLICY = false;
     private boolean poolUsed = DEFAULT_POOL_USAGE_POLICY;
+    private RrdDbPool pool = null;
 
     private final long tStart;
     private long tEnd, timestamps[];
@@ -138,6 +139,20 @@ public class DataProcessor {
     public void setPoolUsed(boolean poolUsed) {
         this.poolUsed = poolUsed;
     }
+
+    public RrdDbPool getPool() {
+        return pool;
+    }
+
+    /**
+     * Defines the {@link org.rrd4j.core.RrdDbPool RrdDbPool} to use. If not defined, but {{@link #setPoolUsed(boolean)}
+     * set to true, the default {@link RrdDbPool#getInstance()} will be used.
+     * @param pool
+     */
+    public void setPool(RrdDbPool pool) {
+        this.pool = pool;
+    }
+
 
     /**
      * <p>Sets the number of pixels (target graph width). This number is used only to calculate pixel coordinates
@@ -871,7 +886,7 @@ public class DataProcessor {
     private RrdDb getRrd(Def def) throws IOException {
         String path = def.getPath();
         RrdBackendFactory backend = def.getBackend();
-        return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).readOnly().setUsePool(poolUsed).build();
+        return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).readOnly().setUsePool(poolUsed).setPool(pool).build();
     }
 
     private static String format(String s, int length) {
