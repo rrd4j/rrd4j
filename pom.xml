@@ -9,12 +9,6 @@
     <version>3.5-SNAPSHOT</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
-    <!-- Use the Sonatype parent to be able to sync to central. -->
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
