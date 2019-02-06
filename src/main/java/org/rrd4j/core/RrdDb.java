@@ -44,7 +44,8 @@ import org.rrd4j.ConsolFun;
 public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
 
     /**
-     * 
+     * Builder for {@link RrdDb} instances.
+     *
      * @author Fabrice Bacchella
      * @since 3.5
      */
@@ -61,11 +62,13 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
 
         private Builder() {
 
-        };
+        }
 
         /**
+         * Builds a {@link RrdDb} instance.
+         *
          * @return a new build RrdDb
-         * @throws IOException
+         * @throws IOException              in case of I/O error.
          * @throws IllegalArgumentException if the builder settings were incomplete
          */
         public RrdDb build() throws IOException {
@@ -80,7 +83,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
                 URI rrdUri = buildUri(path, uri, factory);
                 factory = checkFactory(rrdUri, factory);
                 rrdUri = factory.getCanonicalUri(rrdUri);
-                if ( ! factory.canStore(rrdUri)) {
+                if (!factory.canStore(rrdUri)) {
                     throw new IllegalArgumentException("Given a factory incompatible with the URI");
                 }
                 if (importer == null && externalPath == null) {
@@ -106,7 +109,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         /**
          * Import an external rrd data, import definition must have been done using {@link #setExternalPath(String)}
          * or {@link #setImporter(DataImporter)}
-         * @throws IOException
+         *
+         * @throws IOException              in case of I/O error.
          * @throws IllegalArgumentException if the builder settings were incomplete
          */
         @SuppressWarnings("deprecation")
@@ -119,7 +123,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             }
             URI rrdUri = buildUri(path, uri, factory);
             factory = checkFactory(rrdUri, factory);
-            if ( ! factory.canStore(rrdUri)) {
+            if (!factory.canStore(rrdUri)) {
                 throw new IllegalArgumentException("Given a factory incompatible with the URI");
             }
             try (DataImporter rrdImporter = resoleImporter(externalPath, importer)) {
@@ -127,7 +131,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
                     RrdDb db = resolvePool(pool).requestRrdDb(rrdUri, factory, importer);
                     resolvePool(pool).release(db);
                 } else {
-                    try(RrdDb db = new RrdDb(path, rrdUri, null, rrdImporter, factory, null)) {
+                    try (RrdDb db = new RrdDb(path, rrdUri, null, rrdImporter, factory, null)) {
                     }
                 }
             }
@@ -169,6 +173,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
 
         /**
          * Activate the pool usage
+         *
          * @return
          */
         public Builder usePool() {
@@ -178,7 +183,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
 
         /**
          * Set the pool that will be used if {@link #usePool} is true. If not defined,
-         * the singloton instance will be used.
+         * the singleton instance will be used.
+         *
          * @param pool
          * @return
          */
@@ -234,7 +240,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
                 return rrdUri;
             } else if (factory == null) {
                 return RrdBackendFactory.buildGenericUri(rrdPath);
-            } else{
+            } else {
                 return factory.getCanonicalUri(RrdBackendFactory.buildGenericUri(rrdPath));
             }
         }
@@ -246,12 +252,10 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
                 if (externalPath.startsWith(PREFIX_RRDTool)) {
                     String rrdToolPath = externalPath.substring(PREFIX_RRDTool.length());
                     return new RrdToolReader(rrdToolPath);
-                }
-                else if (externalPath.startsWith(PREFIX_XML)) {
+                } else if (externalPath.startsWith(PREFIX_XML)) {
                     externalPath = externalPath.substring(PREFIX_XML.length());
                     return new XmlReader(externalPath);
-                }
-                else {
+                } else {
                     return new XmlReader(externalPath);
                 }
             }
@@ -313,7 +317,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * def.addArchive(ConsolFun.CF_MAX, 0.5, 6, 700);
      * def.addArchive(ConsolFun.CF_MAX, 0.5, 24, 797);
      * def.addArchive(ConsolFun.CF_MAX, 0.5, 288, 775);
-     * 
+     *
      * // RRD definition is now completed, create the database!
      * RrdDb rrd = new RrdDb(def);
      * // new RRD file has been created on your disk
@@ -326,6 +330,43 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     @Deprecated
     public RrdDb(RrdDef rrdDef) throws IOException {
         this(rrdDef, null, null);
+    }
+
+    /**
+     * <p>Returns a new RRD object from the definition. If the rrdDef was constructed
+     * giving an {@link java.net.URI}, {@link org.rrd4j.core.RrdBackendFactory#findFactory(URI)} will be used to resolve
+     * the needed factory. If not, or a relative URI was given, this RRD object will be backed
+     * with a storage (backend) of the default type. Initially, storage type defaults to "NIO"
+     * (RRD bytes will be put in a file on the disk). Default storage type can be changed with a static
+     * {@link org.rrd4j.core.RrdBackendFactory#setDefaultFactory(String)} method call.</p>
+     * <p>New RRD file structure is specified with an object of class
+     * {@link RrdDef <b>RrdDef</b>}. The underlying RRD storage is created as soon
+     * as the method returns.</p>
+     * <p>Typical scenario:</p>
+     * <pre>
+     * // create new RRD definition
+     * RrdDef def = new RrdDef("test.rrd", 300);
+     * def.addDatasource("input", DsType.DT_COUNTER, 600, 0, Double.NaN);
+     * def.addDatasource("output", DsType.DT_COUNTER, 600, 0, Double.NaN);
+     * def.addArchive(ConsolFun.CF_AVERAGE, 0.5, 1, 600);
+     * def.addArchive(ConsolFun.CF_AVERAGE, 0.5, 6, 700);
+     * def.addArchive(ConsolFun.CF_AVERAGE, 0.5, 24, 797);
+     * def.addArchive(ConsolFun.CF_AVERAGE, 0.5, 288, 775);
+     * def.addArchive(ConsolFun.CF_MAX, 0.5, 1, 600);
+     * def.addArchive(ConsolFun.CF_MAX, 0.5, 6, 700);
+     * def.addArchive(ConsolFun.CF_MAX, 0.5, 24, 797);
+     * def.addArchive(ConsolFun.CF_MAX, 0.5, 288, 775);
+     *
+     * // RRD definition is now completed, create the database!
+     * RrdDb rrd = RrdDb.of(def);
+     * // new RRD file has been created on your disk
+     * </pre>
+     *
+     * @param rrdDef Object describing the structure of the new RRD file.
+     * @throws java.io.IOException Thrown in case of I/O error.
+     */
+    public static RrdDb of(RrdDef rrdDef) throws IOException {
+        return new RrdDb(rrdDef, null, null);
     }
 
     /**
@@ -359,7 +400,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @see RrdBackendFactory
      * @deprecated Use the builder instead.
      */
-    @Deprecated 
+    @Deprecated
     public RrdDb(RrdDef rrdDef, RrdBackendFactory factory) throws IOException {
         this(rrdDef, factory, null);
     }
@@ -392,8 +433,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             for (int i = 0; i < arcDefs.length; i++) {
                 archives[i] = new Archive(this, arcDefs[i]);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             backend.rrdClose();
             throw e;
         }
@@ -474,6 +514,18 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     }
 
     /**
+     * <p>Opens an existing RRD with read/write access.
+     * The path will be parsed as an URI and checked against the active factories.
+     * If it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
+     *
+     * @param path Path to existing RRD.
+     * @throws java.io.IOException Thrown in case of I/O error.
+     */
+    public static RrdDb of(String path) throws IOException {
+        return new RrdDb(path, null, false, null, null);
+    }
+
+    /**
      * <p>Constructor used to open already existing RRD. The URI will checked against the active factories. If
      * it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
      * <p>Constructor obtains read/write access to this RRD.</p>
@@ -485,6 +537,18 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     @Deprecated
     public RrdDb(URI uri) throws IOException {
         this(null, uri, false, null, null);
+    }
+
+    /**
+     * <p>Opens an existing RRD with read/write access.
+     * The URI will checked against the active factories.
+     * If it's a relative URI (no scheme given, or just a plain path), the default factory will be used.</p>
+     *
+     * @param uri URI to existing RRD.
+     * @throws java.io.IOException Thrown in case of I/O error.
+     */
+    public static RrdDb of(URI uri) throws IOException {
+        return new RrdDb(null, uri, false, null, null);
     }
 
     /**
@@ -531,8 +595,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             for (int i = 0; i < arcCount; i++) {
                 archives[i] = new Archive(this, null);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             backend.rrdClose();
             throw e;
         }
@@ -621,7 +684,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * <p>Note that the prefix <code>xml:/</code> or <code>rrdtool:/</code> is necessary to distinguish
      * between XML and RRDTool's binary sources. If no prefix is supplied, XML format is assumed.</p>
      *
-     * @param uri      Path to a RRD file which will be created
+     * @param uri          Path to a RRD file which will be created
      * @param externalPath Path to an external file which should be imported, with an optional
      *                     <code>xml:/</code> or <code>rrdtool:/</code> prefix.
      * @throws java.io.IOException Thrown in case of I/O error
@@ -685,7 +748,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         factory = Builder.checkFactory(rrdUri, factory);
 
         backend = factory.getBackend(this, rrdUri, false);
-        try (DataImporter reader = Builder.resoleImporter(externalPath, importer)){
+        try (DataImporter reader = Builder.resoleImporter(externalPath, importer)) {
             backend.setLength(reader.getEstimatedSize());
             // create header
             header = new Header(this, reader);
@@ -805,8 +868,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * {@link org.rrd4j.core.Sample#update() update()} method to actually
      * store sample in the RRD associated with it.</p>
      *
-     * @return Fresh sample with the current timestamp and all
-     *         data source values set to 'unknown'.
+     * @return Fresh sample with the current timestamp and all data source values set to 'unknown'.
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public Sample createSample() throws IOException {
@@ -908,7 +970,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
                     tmpMatch -= (arcStart - fetchStart);
                     if (bestPartialMatch == null ||
                             bestMatch < tmpMatch ||
-                            (bestMatch == tmpMatch && tmpStepDiff < bestStepDiff) ) {
+                            (bestMatch == tmpMatch && tmpStepDiff < bestStepDiff)) {
                         bestPartialMatch = archive;
                         bestMatch = tmpMatch;
                     }
@@ -917,11 +979,9 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         }
         if (bestFullMatch != null) {
             return bestFullMatch;
-        }
-        else if (bestPartialMatch != null) {
+        } else if (bestPartialMatch != null) {
             return bestPartialMatch;
-        }
-        else {
+        } else {
             throw new IllegalStateException("RRD file does not contain RRA: " + consolFun + " archive");
         }
     }
@@ -954,13 +1014,11 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
                     if (diff == 0)                // Best possible match either way
                     {
                         return archives[i];
-                    }
-                    else if (diff < minDiff) {
+                    } else if (diff < minDiff) {
                         minDiff = diff;
                         arcIndex = i;
                     }
-                }
-                else if (diff < fallBackDiff) {
+                } else if (diff < fallBackDiff) {
                     fallBackDiff = diff;
                     fallBackIndex = i;
                 }
@@ -992,7 +1050,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     final void archive(Datasource datasource, double value, double lastValue, long numUpdates) throws IOException {
         int dsIndex = getDsIndex(datasource.getName());
         for (Archive archive : archives) {
-            if(ConsolFun.AVERAGE.equals(archive.getConsolFun())) { 
+            if (ConsolFun.AVERAGE.equals(archive.getConsolFun())) {
                 archive.archive(dsIndex, value, numUpdates);
             } else {
                 archive.archive(dsIndex, lastValue, numUpdates);
@@ -1068,8 +1126,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     /**
      * This method is just an alias for {@link #dumpXml(OutputStream) dumpXml} method.
      *
-     * @throws java.io.IOException Thrown in case of I/O related error
      * @param destination a {@link java.io.OutputStream} object.
+     * @throws java.io.IOException Thrown in case of I/O related error
      */
     public synchronized void exportXml(OutputStream destination) throws IOException {
         dumpXml(destination);
@@ -1108,7 +1166,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *
      * <code>RrdDb rrd = new RrdDb("original.rrd");
      * rrd.dumpXml("original.xml");</code>
-     *
+     * <p>
      * Use <code>original.xml</code> file to create the corresponding RRDTool file
      * (from your command line):
      *
@@ -1118,7 +1176,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @throws java.io.IOException Thrown in case of I/O related error.
      */
     public synchronized void dumpXml(String filename) throws IOException {
-        try (OutputStream outputStream= new FileOutputStream(filename, false)) {
+        try (OutputStream outputStream = new FileOutputStream(filename, false)) {
             dumpXml(outputStream);
         }
     }
@@ -1126,8 +1184,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     /**
      * This method is just an alias for {@link #dumpXml(String) dumpXml(String)} method.
      *
-     * @throws java.io.IOException Thrown in case of I/O related error
      * @param filename a {@link java.lang.String} object.
+     * @throws java.io.IOException Thrown in case of I/O related error
      */
     public synchronized void exportXml(String filename) throws IOException {
         dumpXml(filename);
@@ -1184,7 +1242,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Copies object's internal state to another RrdDb object.
      */
     public synchronized void copyStateTo(RrdDb otherRrd) throws IOException {
@@ -1207,15 +1265,13 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * Returns Datasource object corresponding to the given datasource name.
      *
      * @param dsName Datasource name
-     * @return Datasource object corresponding to the give datasource name or null
-     *         if not found.
+     * @return Datasource object corresponding to the give datasource name or null if not found.
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public Datasource getDatasource(String dsName) throws IOException {
         try {
             return getDatasource(getDsIndex(dsName));
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
@@ -1250,8 +1306,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
     public Archive getArchive(ConsolFun consolFun, int steps) throws IOException {
         try {
             return getArchive(getArcIndex(consolFun, steps));
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
@@ -1263,13 +1318,12 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *
      * @return Canonical path to RRD file;
      * @throws java.io.IOException Thrown in case of I/O error or if the underlying backend is
-     *                     not derived from RrdFileBackend.
+     *                             not derived from RrdFileBackend.
      */
     public String getCanonicalPath() throws IOException {
         if (backend instanceof RrdFileBackend) {
             return ((RrdFileBackend) backend).getCanonicalPath();
-        }
-        else {
+        } else {
             throw new RrdBackendException("The underlying backend has no canonical path");
         }
     }
@@ -1326,7 +1380,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *
      * @param factoryName Name of the backend factory to be set as default.
      * @throws java.lang.IllegalArgumentException Thrown if invalid factory name is supplied, or not called
-     *                                  before the first backend object (before the first RrdDb object) is created.
+     *                                            before the first backend object (before the first RrdDb object) is created.
      * @deprecated uses {@link RrdBackendFactory#setActiveFactories(RrdBackendFactory...)} instead.
      */
     @Deprecated
@@ -1354,7 +1408,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *
      * @param dsName Datasource name
      * @return Last stored value for the given datasource
-     * @throws java.io.IOException              Thrown in case of I/O error
+     * @throws java.io.IOException                Thrown in case of I/O error
      * @throws java.lang.IllegalArgumentException Thrown if no datasource in this RrdDb matches the given datasource name
      */
     public synchronized double getLastDatasourceValue(String dsName) throws IOException {
