@@ -1,6 +1,6 @@
 package org.rrd4j.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.ConsolFun.MAX;
 import static org.rrd4j.ConsolFun.TOTAL;
@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -154,7 +153,6 @@ public class RrdDbTest {
         Assert.assertEquals("Invalid value for second ds in second archive: " + value, 2591.2066666666665, value, 1e-5);
 
         FetchData fd = db.createFetchRequest(ConsolFun.AVERAGE, 1277928000, 1278107700).fetchData();
-
         Aggregates speedAggr = fd.getAggregates("sun");
         Assert.assertEquals("Invalid average for sun", 1.1985168039e1, speedAggr.getAverage(), 1e-7);
         Assert.assertEquals("Invalid first for sun", 3.5834466667e3, speedAggr.getFirst(), 1e-7);

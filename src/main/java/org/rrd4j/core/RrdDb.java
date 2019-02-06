@@ -257,7 +257,6 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
             }
         }
 
-        @SuppressWarnings("deprecation")
         private static RrdDbPool resolvePool(RrdDbPool pool) {
             return pool != null ? pool : RrdDbPool.getInstance();
         }
