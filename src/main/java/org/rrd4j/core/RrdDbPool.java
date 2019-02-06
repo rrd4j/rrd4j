@@ -75,9 +75,7 @@ public class RrdDbPool {
      *
      * @return Single instance of this class
      * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.core.RrdFileBackendFactory}
-     * @deprecated should not be called directly any more, but resolved in builder
      */
-    @Deprecated
     public static RrdDbPool getInstance() {
         return RrdDbPoolSingletonHolder.instance;
     }
