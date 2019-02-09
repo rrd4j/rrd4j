@@ -428,7 +428,9 @@ public class RrdDbPool {
     @Deprecated
     public RrdDb requestRrdDb(String path, String sourcePath)
             throws IOException {
-        return requestRrdDb(RrdBackendFactory.getDefaultFactory().getUri(path), RrdBackendFactory.getDefaultFactory(), sourcePath);
+        URI uri = RrdBackendFactory.getDefaultFactory().getUri(path);
+        RrdBackendFactory backend = RrdBackendFactory.getDefaultFactory();
+        return requestRrdDb(RrdDb.getBuilder().setExternalPath(sourcePath), uri, backend);
     }
 
     /**
@@ -454,16 +456,17 @@ public class RrdDbPool {
     @Deprecated
     public RrdDb requestRrdDb(URI uri, String sourcePath)
             throws IOException {
-        return requestRrdDb(uri, RrdBackendFactory.findFactory(uri), sourcePath);
+        RrdBackendFactory backend = RrdBackendFactory.getDefaultFactory();
+        return requestRrdDb(RrdDb.getBuilder().setExternalPath(sourcePath), uri, backend);
     }
 
-    private RrdDb requestRrdDb(URI uri, RrdBackendFactory backend, String sourcePath)
+    private RrdDb requestRrdDb(RrdDb.Builder builder, URI uri, RrdBackendFactory backend)
             throws IOException {
         RrdEntry ref = null;
         uri = backend.getCanonicalUri(uri);
         try {
             ref = requestEmpty(uri);
-            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setExternalPath(sourcePath).setBackendFactory(backend).setPool(this).build();
+            ref.rrdDb = builder.setPath(uri).setBackendFactory(backend).setPool(this).build();
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -480,24 +483,7 @@ public class RrdDbPool {
     }
 
     RrdDb requestRrdDb(URI uri, RrdBackendFactory backend, DataImporter importer) throws IOException {
-        uri = backend.getCanonicalUri(uri);
-        RrdEntry ref = null;
-        try {
-            ref = requestEmpty(uri);
-            ref.rrdDb = RrdDb.getBuilder().setPath(uri).setImporter(importer).setBackendFactory(backend).setPool(this).build();
-            return ref.rrdDb;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("request interrupted for new rrd " + uri, e);
-        } catch (RuntimeException e) {
-            passNext(ACTION.DROP, ref);
-            ref = null;
-            throw e;
-        } finally {
-            if (ref != null) {
-                passNext(ACTION.SWAP, ref);
-            }
-        }
+        return requestRrdDb(RrdDb.getBuilder().setImporter(importer), uri, backend);
     }
 
     /**
