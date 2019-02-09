@@ -96,7 +96,6 @@ public class RrdGraphInfo {
      */
     public int getByteCount() {
         try {
-            stream.reset();
             return stream.available();
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read image bytes", e);
