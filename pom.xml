@@ -20,6 +20,7 @@
         <pax-exam.version>4.13.1</pax-exam.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <sonar.coverage.exclusions>>org/rrd4j/demo/**/*</sonar.coverage.exclusions>
         <!-- current year. -->
         <year>2018</year>
     </properties>
