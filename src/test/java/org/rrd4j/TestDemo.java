@@ -106,7 +106,7 @@ public class TestDemo {
 
         log.println(rrdDef.dump());
 
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = RrdDb.of(rrdDef);
 
         Assert.assertTrue(rrdDb.getRrdDef().equals(rrdDef));
         rrdDb.close();
@@ -117,7 +117,7 @@ public class TestDemo {
         GaugeSource shadeSource = new GaugeSource(300, 10);
 
         long t = start;
-        rrdDb = new RrdDb(rrdPath);
+        rrdDb = RrdDb.of(rrdPath);
         Sample sample = rrdDb.createSample();
 
         while (t <= end + 172800L) {
@@ -131,7 +131,7 @@ public class TestDemo {
         rrdDb.close();
 
         // test read-only access!
-        rrdDb = new RrdDb(rrdPath, true);
+        rrdDb = RrdDb.getBuilder().setPath(rrdPath).readOnly().build();
         Calendar c = new GregorianCalendar(TimeZone.getTimeZone("CET"), Locale.US);
         c.setTimeInMillis(rrdDb.getLastUpdateTime() * 1000);
 
@@ -141,7 +141,7 @@ public class TestDemo {
 
         // dump to XML file
         rrdDb.exportXml(xmlPath);
-        RrdDb rrdRestoredDb = new RrdDb(rrdRestoredPath, xmlPath);
+        RrdDb rrdRestoredDb = RrdDb.getBuilder().setPath(rrdRestoredPath).setExternalPath(xmlPath).build();
 
         // close files
         rrdDb.close();
