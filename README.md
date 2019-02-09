@@ -88,7 +88,7 @@ gDef.setImageFormat("png");
 RrdGraph graph = new RrdGraph(gDef); // will create the graph in the path specified
 ```
 
-Go through the source of [Demo](https://github.com/rrd4j/rrd4j/blob/master/src/main/java/org/rrd4j/demo/Demo.java) for more examples.
+Go through the source of [Demo](https://github.com/rrd4j/rrd4j/blob/master/src/main/java/org/rrd4j/demo/Demo.java) for more examples. The package [org.rrd4j.demo](https://github.com/rrd4j/rrd4j/blob/master/src/main/java/org/rrd4j/demo) contains other demo code.
 
 ### Supported Backends
 
