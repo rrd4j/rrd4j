@@ -16,6 +16,7 @@ import java.util.Random;
 
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.FetchRequest;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.RrdSafeFileBackend;
@@ -58,7 +59,6 @@ public class Demo {
      * @param args the name of the backend factory to use (optional)
      * @throws java.io.IOException Thrown
      */
-    @SuppressWarnings("deprecation")
     public static void main(String[] args) throws IOException {
         System.setProperty("java.awt.headless","true");
 
@@ -66,7 +66,7 @@ public class Demo {
         long startMillis = System.currentTimeMillis();
         if (args.length > 0) {
             println("Setting default backend factory to " + args[0]);
-            RrdDb.setDefaultFactory(args[0]);
+            RrdBackendFactory.setActiveFactories(resolveFactory(args[0]));
         }
         long start = START;
         long end = END;
@@ -97,7 +97,7 @@ public class Demo {
         println(rrdDef.dump());
         log.println(rrdDef.dump());
         println("Estimated file size: " + rrdDef.getEstimatedSize());
-        try (RrdDb rrdDb = new RrdDb(rrdDef)){
+        try (RrdDb rrdDb = RrdDb.of(rrdDef)){
             println("== RRD file created.");
             if (rrdDb.getRrdDef().equals(rrdDef)) {
                 println("Checking RRD file structure... OK");
@@ -116,7 +116,7 @@ public class Demo {
                 MAX_STEP + " seconds (* denotes 1000 updates)");
         long t = start;
         int n = 0;
-        try (RrdDb rrdDb = new RrdDb(rrdPath)){
+        try (RrdDb rrdDb = RrdDb.of(rrdPath)){
             Sample sample = rrdDb.createSample();
             while (t <= end + 172800L) {
                 sample.setTime(t);
@@ -135,7 +135,7 @@ public class Demo {
         println("== Finished. RRD file updated " + n + " times");
 
         // test read-only access!
-        RrdDb rrdDb = new RrdDb(rrdPath, true);
+        RrdDb rrdDb = RrdDb.getBuilder().setPath(rrdPath).readOnly().build();
         println("File reopen in read-only mode");
         println("== Last update time was: " + rrdDb.getLastUpdateTime());
         println("== Last info was: " + rrdDb.getInfo());
@@ -156,7 +156,7 @@ public class Demo {
         println("== Dumping RRD file to XML file " + xmlPath + " (can be restored with RRDTool)");
         rrdDb.exportXml(xmlPath);
         println("== Creating RRD file " + rrdRestoredPath + " from XML file " + xmlPath);
-        RrdDb rrdRestoredDb = new RrdDb(rrdRestoredPath, xmlPath);
+        RrdDb rrdRestoredDb = RrdDb.getBuilder().setPath(rrdRestoredPath).setExternalPath(xmlPath).build();
 
         // close files
         println("== Closing both RRD files");
@@ -235,8 +235,11 @@ public class Demo {
                 ((System.currentTimeMillis() - startMillis) / 1000.0) + " sec");
     }
 
+    @SuppressWarnings("deprecation")
+    private static RrdBackendFactory resolveFactory(String name) {
+        return RrdBackendFactory.getFactory(name);
+    }
     static void println(String msg) {
-        //System.out.println(msg + " " + Util.getLapTime());
         System.out.println(msg);
     }
 

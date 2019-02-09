@@ -44,6 +44,7 @@ import java.util.TimeZone;
  * </pre>
  */
 public class DataProcessor {
+
     /**
      * Constant representing the default number of pixels on a Rrd4j graph (will be used if
      * no other value is specified with {@link #setStep(long) setStep()} method.
@@ -895,65 +896,6 @@ public class DataProcessor {
             b.append(' ');
         }
         return b.toString();
-    }
-
-    /**
-     * Cute little demo. Uses demo.rrd file previously created by basic Rrd4j demo.
-     *
-     * @param args Not used
-     * @throws java.io.IOException if any.
-     */
-    @SuppressWarnings("deprecation")
-    public static void main(String[] args) throws IOException {
-        // time span
-        long t1 = Util.getTimestamp(2003, 4, 1);
-        long t2 = Util.getTimestamp(2003, 5, 1);
-        System.out.println("t1 = " + t1);
-        System.out.println("t2 = " + t2);
-
-        // RRD file to use
-        String rrdPath = Util.getRrd4jDemoPath("demo.rrd");
-
-        // constructor
-        DataProcessor dp = new DataProcessor(t1, t2);
-
-        // uncomment and run again
-        //dp.setFetchRequestResolution(86400);
-
-        // uncomment and run again
-        //dp.setStep(86500);
-
-        // datasource definitions
-        dp.addDatasource("X", rrdPath, "sun", ConsolFun.AVERAGE);
-        dp.addDatasource("Y", rrdPath, "shade", ConsolFun.AVERAGE);
-        dp.addDatasource("Z", "X,Y,+,2,/");
-        dp.addDatasource("DERIVE[Z]", "Z,PREV(Z),-,STEP,/");
-        dp.addDatasource("TREND[Z]", "DERIVE[Z],SIGN");
-        dp.addDatasource("AVG[Z]", "Z", new Variable.AVERAGE());
-        dp.addDatasource("DELTA", "Z,AVG[Z],-");
-
-        // action
-        long laptime = System.currentTimeMillis();
-        //dp.setStep(86400);
-        dp.processData();
-        System.out.println("Data processed in " + (System.currentTimeMillis() - laptime) + " milliseconds\n---");
-        System.out.println(dp.dump());
-
-        // aggregates
-        System.out.println("\nAggregates for X");
-        Aggregates agg = dp.getAggregates("X");
-        System.out.println(agg.dump());
-        System.out.println("\nAggregates for Y");
-        agg = dp.getAggregates("Y");
-        System.out.println(agg.dump());
-
-        // 95-percentile
-
-        System.out.println("\n95-percentile for X: " + Util.formatDouble(dp.getVariable("X", new Variable.PERCENTILE(95)).value));
-        System.out.println("95-percentile for Y: " + Util.formatDouble(dp.getVariable("Y", new Variable.PERCENTILE(95)).value));
-
-        // lastArchiveUpdateTime
-        System.out.println("\nLast archive update time was: " + dp.getLastRrdArchiveUpdateTime());
     }
 
 }
