@@ -1,4 +1,4 @@
-Changes in version 3.5 - Not yet released.
+Changes in version 3.5 - 10 Feb 2019.
 ------------------------------------
 
 This version include minor tunings, that should slightly reduce memory usage.
