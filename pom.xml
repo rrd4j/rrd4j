@@ -6,7 +6,7 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <properties>
@@ -285,7 +285,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.3</version>
                 <configuration>
                     <output>file</output>
                     <append>true</append>
