@@ -17,8 +17,8 @@ public class DataProcessorDemo {
      */
     public static void main(String[] args) throws IOException {
         // time span
-        long t1 = Util.getTimestamp(2003, 4, 1);
-        long t2 = Util.getTimestamp(2003, 5, 1);
+        long t1 = Demo.START;
+        long t2 = Demo.END;
         System.out.println("t1 = " + t1);
         System.out.println("t2 = " + t2);
 

@@ -396,9 +396,18 @@ public class Util {
      *         was successfully created. Null if such directory could not be created.
      */
     public static String getRrd4jDemoDirectory() {
-        String homeDirPath = getUserHomeDirectory() + RRD4J_DIR + getFileSeparator();
-        File homeDirFile = new File(homeDirPath);
-        return (homeDirFile.exists() || homeDirFile.mkdirs()) ? homeDirPath : null;
+        Path root;
+        if (System.getProperty("rrd4j.demopath") != null) {
+            root = Paths.get(System.getProperty("rrd4j.demopath"));
+        } else {
+            root = Paths.get(getUserHomeDirectory(), RRD4J_DIR);
+        }
+        try {
+            Files.createDirectories(root);
+            return root.toAbsolutePath().toString() + File.separator;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**

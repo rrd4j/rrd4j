@@ -26,7 +26,7 @@ public class HeartbeatFix {
         long heartbeat = Long.parseLong(args[1]);
         File[] files = directory.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
-                return pathname.isFile() && pathname.getName().endsWith(".rrd.jrb");
+                return pathname.isFile() && pathname.getName().endsWith(".rrd");
             }
         });
         System.out.println(files.length + " files found");
@@ -35,13 +35,11 @@ public class HeartbeatFix {
             System.out.print((i + 1) + ": " + path + ": ");
             // fix heartbeat
             RrdToolkit.setDsHeartbeat(files[i].getAbsolutePath(), 0, heartbeat);
-            RrdToolkit.setDsHeartbeat(files[i].getAbsolutePath(), 1, heartbeat);
             System.out.print("fixed");
             // check consistency of the file
             try (RrdDb rrd = RrdDb.getBuilder().setPath(path).build()) {
                 if (rrd.getRrdDef().getEstimatedSize() == files[i].length() &&
-                        rrd.getDatasource(0).getHeartbeat() == heartbeat &&
-                        rrd.getDatasource(1).getHeartbeat() == heartbeat) {
+                        rrd.getDatasource(0).getHeartbeat() == heartbeat) {
                     System.out.println(", verified");
                 }
                 else {

@@ -149,7 +149,7 @@ public class Demo {
         println("== Data fetched. " + fetchData.getRowCount() + " points obtained");
         println(fetchData.toString());
         println("== Dumping fetched data to XML format");
-        println(fetchData.exportXml());
+        fetchData.exportXml(Util.getRrd4jDemoPath(FILE + "_fetch.xml"));
         println("== Fetch completed");
 
         // dump to XML file
