@@ -127,7 +127,7 @@ public class ArcDef {
     }
 
     boolean exactlyEqual(ArcDef def) {
-        return consolFun == def.consolFun && Double.compare(xff,def.xff)==0 && steps == def.steps && rows == def.rows;
+        return consolFun == def.consolFun && Double.compare(xff,def.xff)==0  && steps == def.steps && rows == def.rows;
     }
 
 }
