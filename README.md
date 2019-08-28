@@ -30,7 +30,7 @@ Add this dependency to your project's POM file:
 <dependency>
     <groupId>org.rrd4j</groupId>
     <artifactId>rrd4j</artifactId>
-    <version>3.4</version>
+    <version>3.5</version>
 </dependency>
 ```
 
