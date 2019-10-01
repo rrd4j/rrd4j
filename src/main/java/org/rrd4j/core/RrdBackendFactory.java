@@ -97,6 +97,21 @@ public abstract class RrdBackendFactory implements Closeable {
     }
 
     /**
+     * Closes all known {@link RrdBackendFactory} implementations.
+     * 
+     * @throws IOException
+     */
+    public static void closeAll() throws IOException {
+        List<RrdBackendFactory> factories = new ArrayList<>();
+        factories.addAll(Registry.factories.values());
+        factories.addAll(activeFactories);
+        
+        for (RrdBackendFactory factory : factories) {
+            factory.close();
+        }
+    }
+
+    /**
      * The default factory type. It will also put in the active factories list.
      * 
      */
