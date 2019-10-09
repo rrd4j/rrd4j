@@ -507,10 +507,7 @@ public abstract class RrdBackendFactory implements Closeable {
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     RrdBackend getBackend(RrdDb rrdDb, URI uri, boolean readOnly) throws IOException {
-        checkClosing();
-        RrdBackend backend =  open(getPath(uri), readOnly);
-        backend.done(this, new ClosingReference(rrdDb, backend, refQueue));
-        return backend;
+        return getBackend(rrdDb, getPath(uri), readOnly);
     }
 
     /**

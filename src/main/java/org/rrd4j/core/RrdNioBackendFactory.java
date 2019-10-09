@@ -2,6 +2,7 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Supplier;
 
 /**
  * Factory class which creates actual {@link org.rrd4j.core.RrdNioBackend} objects. This is the default factory since
@@ -16,6 +17,17 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 @RrdBackendAnnotation(name="NIO", shouldValidateHeader=true)
 public class RrdNioBackendFactory extends RrdFileBackendFactory {
+
+    /**
+     * Supplier that always returns "null" for a {@link RrdSyncThreadPool}.
+     */
+    public static final Supplier<RrdSyncThreadPool> NULLTHREADPOOL = new Supplier<RrdSyncThreadPool>() {
+        @Override
+        public RrdSyncThreadPool get() {
+            return null;
+        }
+    };
+    
     /**
      * Period in seconds between consecutive synchronizations when
      * sync-mode is set to SYNC_BACKGROUND. By default in-memory cache will be
@@ -79,14 +91,25 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
 
     /**
      * The thread pool to pass to newly-created RrdNioBackend instances.
+     * @see #syncThreadPoolLock
      */
     private RrdSyncThreadPool syncThreadPool;
+    
+    /**
+     * The thread pool factory to use.
+     */
+    private Supplier<RrdSyncThreadPool> syncThreadPoolFactory = new Supplier<RrdSyncThreadPool>() {
+        @Override
+        public RrdSyncThreadPool get() {
+            return new RrdSyncThreadPool(defaultSyncPoolSize);
+        }
+     };
 
     /**
      * Creates a new RrdNioBackendFactory with default settings.
      */
     public RrdNioBackendFactory() {
-        this(RrdNioBackendFactory.defaultSyncPeriod, DefaultSyncThreadPool.INSTANCE);
+        this(RrdNioBackendFactory.defaultSyncPeriod);
     }
 
     /**
@@ -95,7 +118,7 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @param syncPeriod If syncPeriod is negative or 0, sync threads are disabled.
      */
     public RrdNioBackendFactory(int syncPeriod) {
-        this(syncPeriod, syncPeriod > 0 ? DefaultSyncThreadPool.INSTANCE : null);
+        this(syncPeriod, syncPeriod > 0 ? defaultSyncPoolSize : -1);
     }
 
     /**
@@ -104,8 +127,13 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @param syncPeriod
      * @param syncPoolSize The number of threads to use to sync the mapped file to disk, if inferior to 0, sync threads are disabled.
      */
-    public RrdNioBackendFactory(int syncPeriod, int syncPoolSize) {
-        this(syncPeriod, syncPoolSize > 0 ? new RrdSyncThreadPool(syncPoolSize) : null);
+    public RrdNioBackendFactory(int syncPeriod, final int syncPoolSize) {
+        this(syncPeriod, syncPoolSize > 0 ? new Supplier<RrdSyncThreadPool>() {
+            @Override
+            public RrdSyncThreadPool get() {
+                return new RrdSyncThreadPool(syncPoolSize);
+            }
+        } : NULLTHREADPOOL);
     }
 
     /**
@@ -114,22 +142,27 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
      * @param syncPeriod
      * @param syncThreadPool If null, disable background sync threads
      */
-    public RrdNioBackendFactory(int syncPeriod, ScheduledExecutorService syncThreadPool) {
-        this(syncPeriod, syncThreadPool != null ? new RrdSyncThreadPool(syncThreadPool) :null);
+    public RrdNioBackendFactory(int syncPeriod, final ScheduledExecutorService syncThreadPool) {
+        this(syncPeriod, syncThreadPool != null ? new Supplier<RrdSyncThreadPool>() {
+            @Override
+            public RrdSyncThreadPool get() {
+                return new RrdSyncThreadPool(syncThreadPool);
+            }
+        } : NULLTHREADPOOL);
     }
 
     /**
      * Creates a new RrdNioBackendFactory.
      *
      * @param syncPeriod
-     * @param syncThreadPool If null, disable background sync threads
+     * @param syncThreadPoolFactory If null, disable background sync threads
      */
-    public RrdNioBackendFactory(int syncPeriod, RrdSyncThreadPool syncThreadPool) {
+    public RrdNioBackendFactory(int syncPeriod, Supplier<RrdSyncThreadPool> syncThreadPoolFactory) {
         if (syncThreadPool != null && syncPeriod < 0) {
             throw new IllegalArgumentException("Both thread pool defined and negative sync period");
         }
         this.syncPeriod = syncPeriod;
-        this.syncThreadPool = syncThreadPool;
+        this.syncThreadPoolFactory = syncThreadPoolFactory;
     }
 
     /**
@@ -157,16 +190,20 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     /**
      * {@inheritDoc}
      *
-     * Creates RrdNioBackend object for the given file path.
+     * Creates RrdNioBackend object for the given file path, using the currently set thread pool factory to create a thread pool.
+     * @see #syncThreadPoolFactory
      */
     protected RrdBackend open(String path, boolean readOnly) throws IOException {
-        return new RrdNioBackend(path, readOnly, syncThreadPool, syncPeriod);
+        return new RrdNioBackend(path, readOnly, getSyncThreadPool(), syncPeriod);
     }
 
     /**
      * @return The {@link RrdSyncThreadPool} or null if syncing is disabled
      */
     public RrdSyncThreadPool getSyncThreadPool() {
+        if (syncThreadPool == null) {
+            syncThreadPool = syncThreadPoolFactory.get();
+        }
         return syncThreadPool;
     }
 
@@ -174,25 +211,8 @@ public class RrdNioBackendFactory extends RrdFileBackendFactory {
     public void close() throws IOException {
         if (syncThreadPool != null) {
             syncThreadPool.shutdown();
+            syncThreadPool = null;
         }
-    }
-
-    /**
-     * This is a holder class as per the "initialisation on demand" Java idiom. The only purpose of this holder class is
-     * to ensure that the thread pool is created lazily the first time that it is needed, and not before.
-     * <p/>
-     * In practice this thread pool will be used if clients rely on the factory returned by {@link
-     * org.rrd4j.core.RrdBackendFactory#getDefaultFactory()}, but not if clients provide their own backend instance when
-     * creating {@code RrdDb} instances or syncing was not disabled.
-     */
-    private static class DefaultSyncThreadPool
-    {
-        /**
-         * The default thread pool used to periodically sync the mapped file to disk with.
-         */
-        static final RrdSyncThreadPool INSTANCE = new RrdSyncThreadPool(defaultSyncPoolSize);
-
-        private DefaultSyncThreadPool() {}
     }
 
 }
