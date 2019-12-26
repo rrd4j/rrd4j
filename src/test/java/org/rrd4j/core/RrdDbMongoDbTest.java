@@ -56,6 +56,7 @@ public class RrdDbMongoDbTest {
                 Assert.assertEquals(
                         "mongodb://localhost:27017/mydb/test/therrd",
                         db.getUri().toString());
+                Assert.assertNotNull(db.getBytes());
             };
         }
     }
