@@ -598,8 +598,8 @@ public class RrdGraphDef implements RrdGraphConstants {
 
     /**
      * Overrides the colors for the standard elements of the graph.
-     * @param colorTag
-     * @param color
+     * @param colorTag The element to change color.
+     * @param color The color of the element.
      */
     public void setColor(ElementsNames colorTag, Paint color) {
         colors[colorTag.ordinal()] = color;

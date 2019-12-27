@@ -214,7 +214,7 @@ public class RrdDbPool {
      *
      * @param rrdDb RrdDb reference to be returned to the pool
      * @throws java.io.IOException Thrown in case of I/O error
-     * @deprecated a pool remember if it was open directly or from the pool, no need to manage it manually any more
+     * @deprecated a db remember if it was open directly or from the pool, no need to manage it manually any more
      */
     @Deprecated
     public void release(RrdDb rrdDb) throws IOException {
