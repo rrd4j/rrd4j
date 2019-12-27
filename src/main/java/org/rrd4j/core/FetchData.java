@@ -435,9 +435,9 @@ public class FetchData {
         }
         writer.closeTag(); // data
         writer.closeTag(); // fetch_data
-        writer.flush();            
+        writer.flush();
     }
-    
+
     /**
      * Dumps fetch data to file in XML format.
      *

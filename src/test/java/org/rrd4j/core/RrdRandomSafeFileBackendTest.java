@@ -16,7 +16,7 @@ public class RrdRandomSafeFileBackendTest extends BackendTester {
     public void testBackendFactory() throws IOException {
         File rrdfile = testFolder.newFile("testfile");
         try(RrdSafeFileBackendFactory factory = new RrdSafeFileBackendFactory()) {
-            super.testBackendFactory(factory,rrdfile.getCanonicalPath());
+            super.testBackendFactory(factory, rrdfile.getCanonicalPath());
         }
     }
 
