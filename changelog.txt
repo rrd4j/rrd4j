@@ -1,3 +1,12 @@
+Changes in version 3.6-SNAPSHOT
+-------------------------------
+
+Adding source for background or overlay image. They can be now URL or event custom generated image.
+
+An image can also be added in the canvas (they area where the plot are drawn).
+
+* Fixed Issue 135: ByteBufferBackend.get fails with BufferUnderflow.
+
 Changes in version 3.5 - 10 Feb 2019.
 ------------------------------------
 
