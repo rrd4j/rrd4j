@@ -669,14 +669,14 @@ public class RrdGraph implements RrdGraphConstants {
         im.end = gdef.endTime;
     }
 
-    private boolean lazyCheck() {
+    private boolean lazyCheck() throws IOException {
         // redraw if lazy option is not set or file does not exist
         if (!gdef.lazy || !Util.fileExists(gdef.filename)) {
             return false; // 'false' means 'redraw'
         }
         // redraw if not enough time has passed
         long secPerPixel = (gdef.endTime - gdef.startTime) / gdef.width;
-        long elapsed = Util.getTimestamp() - Util.getLastModified(gdef.filename);
+        long elapsed = Util.getTimestamp() - Util.getLastModifiedTime(gdef.filename);
         return elapsed <= secPerPixel;
     }
 
