@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.RrdBackendFactory;
@@ -31,6 +32,7 @@ public class ImageTest {
         RrdBackendFactory.setActiveFactories(previousBackend);
     }
 
+    @Ignore
     @Test
     public void testOne() throws IOException, URISyntaxException {
         RrdGraphDef gDef = new RrdGraphDef();
