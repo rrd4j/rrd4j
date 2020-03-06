@@ -205,6 +205,14 @@ public class RpnCalculatorTest {
     }
 
     @Test
+    public void testModulus() throws IOException {
+        DataProcessor dp = new DataProcessor(1, 6);
+        dp.addDatasource("source1", new Myplottable(3.0, 4.0, 5.0, 1.0,        Double.NaN, Double.NaN));
+        dp.addDatasource("source2", new Myplottable(3.0, 3.0, 3.0, Double.NaN, 1.0,        Double.NaN));
+        expected(dp, "source1, source2, %", 0.0, 1.0, 2.0, Double.NaN, Double.NaN, Double.NaN);
+    }
+
+    @Test
     public void testLIMIT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
         dp.addDatasource("source1", new Myplottable(1.0, 2.0, 3.0, 4.0));

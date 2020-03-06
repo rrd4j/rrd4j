@@ -51,4 +51,15 @@ public class ExportImport {
         }
     }
 
+    @Test
+    public void testImportDirectly() throws Exception {
+        URL url = getClass().getResource("/rrdtool/0003l648.rrd"); 
+
+        String imported = testFolder.getRoot().getAbsolutePath() + "/testexport.rrd";
+        try (RrdDb db = RrdDb.getBuilder().setPath(imported).setRrdToolImporter(url.getFile()).setBackendFactory(new RrdNioBackendFactory()).build()) {
+            Assert.assertNotNull(db.getDatasource("speed"));
+            Assert.assertNotNull(db.getDatasource("weight"));
+        }
+    }
+
 }
