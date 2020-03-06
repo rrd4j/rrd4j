@@ -3,7 +3,13 @@ Changes in version 3.6-SNAPSHOT
 
 Adding source for background or overlay image. They can be now URL or event custom generated image.
 
-An image can also be added in the canvas (they area where the plot are drawn).
+An image can also be added in the canvas (the area where the plot are drawn).
+
+This is the last version to be expected to run on Java 1.7.
+
+Build settings to compile with latest JVM, but still able to run on the officially support JVM.
+
+A race condition was fixed in RrdDbPool. As some assert were added, running a jvm with -ea might help identify other hidden one.
 
 * Fixed Issue 135: ByteBufferBackend.get fails with BufferUnderflow.
 

@@ -22,6 +22,10 @@ RRD4J 3.4 (released 2018-12-27) - [Download](https://github.com/rrd4j/rrd4j/rele
 RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/). Automated builds are uploaded
 to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
+Tests needs a running mongo instance to succeds. It could be started with:
+
+    docker run --rm  -p 27017:27017 mongo:latest
+
 ### Using with Maven
 
 Add this dependency to your project's POM file:
