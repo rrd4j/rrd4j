@@ -480,6 +480,26 @@ Export-Package: !org.rrd4j.inspector, \
                 </plugins>
             </build>
         </profile>
+       <profile>
+           <id>sonar</id>
+           <build>
+               <plugins>
+                   <plugin>
+                       <groupId>org.sonarsource.scanner.maven</groupId>
+                       <artifactId>sonar-maven-plugin</artifactId>
+                       <version>3.7.0.1746</version>
+                       <executions>
+                           <execution>
+                               <phase>deploy</phase>
+                               <goals>
+                                   <goal>sonar</goal>
+                               </goals>
+                           </execution>
+                       </executions>
+                   </plugin>
+               </plugins>
+           </build>
+       </profile>
     </profiles>
     <developers>
         <developer>

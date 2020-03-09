@@ -27,13 +27,13 @@ addons:
   sonarcloud:
     organization: rrd4j
     token:
-      secure: "jQYJJtZwMLL584h/D3DMyF/N2GUHVucEAsH6EbvlPPhEkArZh97/HFOMLJhqxi/RRndpd0fVIUqwToIBfYepnkgZlsbLEVFztZoFqIWygCOu1rbTXVpU0mTX/dsxxzPyyJI3YhmvWQpwuKQrSk8DL9RUOr6niSbr9wgloPIPgtQ="
+      secure: "PUUhvfJjSp9dIbrP68Po/ZXnGf5votEEzwYuau2e+i9mAQQyO3LYm6m98+tPxgw1TbujDKpqkCGDGpOOxaK7A4RetqYF4Opg3fi8JeIlXB5VuY6XRvzvSXcAhRTWtCi7L/jYDf2VX/qWRi8axKNEW8k/U+7jLBhGmufvp7p289c="
 matrix:
   include:
       # Sonarcloud don't work on jdk11 yet
       # See https://github.com/SonarSource/sonar-scanner-maven/pull/47
     - jdk: openjdk8
       script:
-        - mvn org.jacoco:jacoco-maven-plugin:prepare-agent compile package sonar:sonar deploy --settings deploy-settings.xml
+        - mvn clean deploy --settings deploy-settings.xml
       on:
           branch: master
