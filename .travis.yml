@@ -14,7 +14,7 @@ cache:
 install:
   - mvn clean validate
 script:
-  - mvn compile verify
+  - mvn test
 notifications:
   webhooks:
     urls:
@@ -22,8 +22,6 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
-  irc:
-    - irc.freenode.org#jrds
 addons:
   sonarcloud:
     organization: rrd4j
@@ -31,8 +29,6 @@ addons:
       secure: "PUUhvfJjSp9dIbrP68Po/ZXnGf5votEEzwYuau2e+i9mAQQyO3LYm6m98+tPxgw1TbujDKpqkCGDGpOOxaK7A4RetqYF4Opg3fi8JeIlXB5VuY6XRvzvSXcAhRTWtCi7L/jYDf2VX/qWRi8axKNEW8k/U+7jLBhGmufvp7p289c="
 matrix:
   include:
-      # Sonarcloud don't work on jdk11 yet
-      # See https://github.com/SonarSource/sonar-scanner-maven/pull/47
     - jdk: openjdk13
       script:
         - mvn clean deploy -Psonar --settings deploy-settings.xml
