@@ -10,8 +10,6 @@ import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.rrd4j.core.timespec.TimeParser;
-import org.rrd4j.core.timespec.TimeSpec;
 
 /**
  * Mostly about testing TimeParser; relies on TimeSpec to be working as well (and to some degree exercises it implicitly; 
