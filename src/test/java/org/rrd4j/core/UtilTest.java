@@ -1,21 +1,16 @@
 package org.rrd4j.core;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UtilTest {
+import org.junit.Assert;
+import org.junit.Test;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+public class UtilTest {
 
     @Test
     public void testToDoubleArray() {
@@ -52,12 +47,12 @@ public class UtilTest {
     @Test
     public void testChildNodes() throws Exception {
         String testXml = "<sample>" +
-                         "   <test>1</test>" +
-                         "   <test>2</test>" +
-                         "   <test>3</test>" +
-                         "   <other>4</other>" +
-                         "   <other>5</other>" +
-                         "</sample>";
+                "   <test>1</test>" +
+                "   <test>2</test>" +
+                "   <test>3</test>" +
+                "   <other>4</other>" +
+                "   <other>5</other>" +
+                "</sample>";
         Element root = Util.Xml.getRootElement(testXml);
 
         Assert.assertEquals(5, Util.Xml.getChildNodes(root).length);
@@ -69,7 +64,12 @@ public class UtilTest {
         Assert.assertFalse(Util.Xml.hasChildNode(root, "non-existent"));
 
         Assert.assertEquals("other", Util.Xml.getFirstChildNode(root, "other").getNodeName());
-        thrown.expect(IllegalArgumentException.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testChildNodesInvalid() throws Exception {
+        String testXml = "<sample />";
+        Element root = Util.Xml.getRootElement(testXml);
         Util.Xml.getFirstChildNode(root, "non-existent");
     }
 
@@ -88,12 +88,12 @@ public class UtilTest {
     @Test
     public void testGetChildValue() throws Exception {
         String testXml =  "<sample>" +
-                          "   <NaN>test</NaN>" +
-                          "   <zero>0</zero>" +
-                          "   <one>1</one>" +
-                          "   <twopointthree>2.3</twopointthree>" +
-                          "   <true>on</true>" +
-                          "</sample>";
+                "   <NaN>test</NaN>" +
+                "   <zero>0</zero>" +
+                "   <one>1</one>" +
+                "   <twopointthree>2.3</twopointthree>" +
+                "   <true>on</true>" +
+                "</sample>";
         Element root = Util.Xml.getRootElement(testXml);
 
         Assert.assertEquals("test", Util.Xml.getChildValue(root, "NaN"));
@@ -122,7 +122,10 @@ public class UtilTest {
         Assert.assertEquals(100_000, calendar3.getTime().getTime());
 
         Calendar calendar4 = Util.getCalendar("2019-01-02 03:04:05");
-        Assert.assertEquals(1_546_398_245_000L, calendar4.getTime().getTime());
+        Calendar calendarref = Calendar.getInstance();
+        calendarref.setTimeInMillis(0);
+        calendarref.set(2019, 00, 02, 03, 04, 05);
+        Assert.assertEquals(calendarref, calendar4);
     }
 
     @Test
@@ -133,9 +136,14 @@ public class UtilTest {
         Calendar calendar = Util.getCalendar(200);
         Assert.assertEquals(200, Util.getTimestamp(calendar));
 
-        Assert.assertEquals(1_549_076_640L, Util.getTimestamp(2019, 1, 2, 3, 4));
+        Calendar ref = Calendar.getInstance();
+        ref.clear();
+        ref.set(2019, 1, 2, 3, 4, 0);
+        Assert.assertEquals(ref.getTimeInMillis() / 1000, Util.getTimestamp(2019, 1, 2, 3, 4));
 
-        Assert.assertEquals(1_549_065_600L, Util.getTimestamp(2019, 1, 2));
+        ref.clear();
+        ref.set(2019, 1, 2);
+        Assert.assertEquals(ref.getTimeInMillis() / 1000, Util.getTimestamp(2019, 1, 2));
     }
 
     @Test
@@ -159,12 +167,12 @@ public class UtilTest {
     @Test
     public void testGetRootElement() throws IOException {
         String testXml = "<sample>" +
-                         "   <test>1</test>" +
-                         "   <test>2</test>" +
-                         "   <test>3</test>" +
-                         "   <other>4</other>" +
-                         "   <other>5</other>" +
-                         "</sample>";
+                "   <test>1</test>" +
+                "   <test>2</test>" +
+                "   <test>3</test>" +
+                "   <other>4</other>" +
+                "   <other>5</other>" +
+                "</sample>";
 
         Assert.assertNotNull(Util.Xml.getRootElement(testXml));
     }
@@ -245,9 +253,10 @@ public class UtilTest {
         Assert.assertEquals(187, color3.getGreen());
         Assert.assertEquals(204, color3.getBlue());
         Assert.assertEquals(221, color3.getAlpha());
+    }
 
-        // Test invalid
-        thrown.expect(IllegalArgumentException.class);
+    @Test(expected=IllegalArgumentException.class)
+    public void testParseColorInvalid() {
         Util.parseColor("not a  color string");
     }
 
