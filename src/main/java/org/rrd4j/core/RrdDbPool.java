@@ -3,13 +3,16 @@ package org.rrd4j.core;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * <p>This class should be used to synchronize access to RRD files
@@ -25,6 +28,12 @@ public class RrdDbPool {
         private RrdDbPoolSingletonHolder() {}
     }
 
+    private static class PoolFullException extends RuntimeException {
+        PoolFullException() {
+            super("", null, false, false);
+        }
+    }
+
     /**
      * Initial capacity of the pool i.e. maximum number of simultaneously open RRD files. The pool will
      * never open too many RRD files at the same time.
@@ -36,7 +45,7 @@ public class RrdDbPool {
      * - null, the URI is available, just take it and play
      * - placeholder is true, it's not the real RrdDb entry, just a place holder
      *   meaning that some other thread is using it. Wait until the real entry is put back.
-     * - placeholder is false, this is the real entry pointing to a RrdDb. It's
+     * - placeholder is false, this is the active entry pointing to a RrdDb. It's
      *   only used by the current thread.
      *
      */
@@ -44,26 +53,32 @@ public class RrdDbPool {
         RrdDb rrdDb = null;
         int count = 0;
         final CountDownLatch waitempty;
-        final CountDownLatch inuse;
+        final ReentrantReadWriteLock inuse;
+        final Lock lock;
         final boolean placeholder;
         final URI uri;
-        RrdEntry(boolean placeholder, URI canonicalPath) {
-            this.placeholder = placeholder;
-            this.uri = canonicalPath;
-            if (placeholder) {
-                inuse = new CountDownLatch(1);
-                waitempty = null;
-            } else {
-                inuse = null;
-                waitempty = new CountDownLatch(1);
-            }
+        RrdEntry(URI canonicalPath) throws InterruptedException {
+            placeholder = false;
+            uri = canonicalPath;
+            inuse = new ReentrantReadWriteLock();
+            lock = this.inuse.writeLock();
+            waitempty = new CountDownLatch(1);
+            lock.lockInterruptibly();
+        }
+        RrdEntry(RrdEntry parent) throws InterruptedException {
+            assert ! parent.placeholder;
+            placeholder = true;
+            uri = parent.uri;
+            inuse = null;
+            lock = parent.inuse.readLock();
+            waitempty = null;
         }
         @Override
         public String toString() {
-            if (this.placeholder) {
-                return "RrdEntry [inuse=" + inuse.getCount()+ ", uri=" + uri + "]";
+            if (placeholder) {
+                return String.format("RrdEntry [placeholder, uri=%s]", uri);
             } else {
-                return "RrdEntry [rrdDb=" + rrdDb + ", count=" + count + ", uri=" + uri + "]";
+                return String.format("RrdEntry [count=%d, rrdDb=%s, uri%s]", count, rrdDb, uri);
             }
         }
     }
@@ -80,8 +95,6 @@ public class RrdDbPool {
     }
 
     private final AtomicInteger usage = new AtomicInteger(0);
-    private final ReentrantLock usageLock = new ReentrantLock();
-    private final Condition full = usageLock.newCondition();
     private int maxCapacity = INITIAL_CAPACITY;
 
     private final ConcurrentMap<URI, RrdEntry> pool = new ConcurrentHashMap<>(INITIAL_CAPACITY);
@@ -134,45 +147,62 @@ public class RrdDbPool {
     private RrdEntry getEntry(URI uri, boolean cancreate) throws InterruptedException {
         RrdEntry ref = null;
         try {
+            CompletableFuture<RrdEntry> holder = new CompletableFuture<>();
             do {
-                ref = pool.get(uri);
-                if (ref == null && cancreate) {
-                    //Slot empty
-                    //If still absent put a place holder, and create the entry to return
-                    try {
-                        usageLock.lockInterruptibly();
-                        // The pool is full, will need to try again
-                        if (usage.get() >= maxCapacity) {
-                            full.await();
-                            // A dummy place holder, just to skip the loop
-                            ref = new RrdEntry(true, uri);
-                        } else {
-                            ref = pool.putIfAbsent(uri, new RrdEntry(true, uri));
-                            if (ref == null) {
-                                ref = new RrdEntry(false, uri);
-                                usage.incrementAndGet();
+                try {
+                    ref = pool.compute(uri, (u, e) -> {
+                        try {
+                            if (e == null) {
+                                if (cancreate) {
+                                    synchronized (this) {
+                                        if (usage.get() >= maxCapacity) {
+                                            throw new PoolFullException();
+                                        } else {
+                                            RrdEntry r = new RrdEntry(u);
+                                            holder.complete(r);
+                                            usage.incrementAndGet();
+                                            return new RrdEntry(r);
+                                        }
+                                    }
+                                } else {
+                                    throw new IllegalStateException("Unknown URI in pool: " + u);
+                                }
+                            } else {
+                                if (e.placeholder) {
+                                    return e;
+                                } else {
+                                    e.lock.lock();
+                                    holder.complete(e);
+                                    return new RrdEntry(e);
+                                }
                             }
+                        } catch (InterruptedException ex) {
+                            holder.completeExceptionally(ex);
+                            return null;
                         }
-                    } finally {
-                        usageLock.unlock();
+                    });
+                } catch (PoolFullException e) {
+                    ref = null;
+                    try {
+                        synchronized (this) {
+                            this.wait();
+                        }
+                    } catch (InterruptedException ex) {
+                        holder.completeExceptionally(ex);
+                        Thread.currentThread().interrupt();
                     }
-                    assert ref != null;
-                } else if (ref == null ) {
-                    // Nothing found, nothing to create, so give up
-                    break;
-                } else if (! ref.placeholder) {
-                    // Real entry, try to put a place holder if this thread is still the only owner of the ref
-                    RrdEntry holder = new RrdEntry(true, uri);
-                    if (! pool.replace(uri, ref, holder)) {
-                        // Failed, not the only owner any more, need to try again
-                        ref=holder;
-                    }
-                } else {
-                    // a place holder, wait for the using task to finish
-                    ref.inuse.await();
                 }
-            } while (ref.placeholder);
-            return ref;
+                if (ref != null && !holder.isDone()) {
+                    // Wait for a signal from the active entry, it's available
+                    ref.lock.lockInterruptibly();
+                    ref.lock.unlock();
+                }
+            } while (! holder.isDone());
+            return holder.get();
+        } catch (ExecutionException e) {
+            InterruptedException ex = (InterruptedException) e.getCause();
+            Thread.currentThread().interrupt();
+            throw ex;
         } catch (InterruptedException | RuntimeException e) {
             // Oups we were interrupted, put everything back and go away
             passNext(ACTION.SWAP, ref);
@@ -188,9 +218,7 @@ public class RrdDbPool {
     }
 
     private void passNext(ACTION a, RrdEntry e) {
-        if (e == null) {
-            return;
-        }
+        assert e != null;
         RrdEntry o = null;
         switch (a) {
         case SWAP:
@@ -200,12 +228,8 @@ public class RrdDbPool {
             o = pool.remove(e.uri);
             assert o == null || o.placeholder;
             if (usage.getAndDecrement() <= maxCapacity) {
-                try {
-                    usageLock.lockInterruptibly();
-                    full.signalAll();
-                    usageLock.unlock();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
+                synchronized (this) {
+                    notifyAll();
                 }
             }
             break;
@@ -213,9 +237,8 @@ public class RrdDbPool {
         assert o != e : String.format("Same entry, action=%s, entry=%s\n", a, e);
         assert o == null || ((e.placeholder && ! o.placeholder) || (o.placeholder && ! e.placeholder)) : String.format("Inconsistent entry, action=%s, in=%s out=%s\n", a, e, o);
         //task finished, waiting on a place holder can go on
-        if (o != null) {
-            o.inuse.countDown();
-        }
+        //System.out.format("%s\n    e=%s\n    o=%s\n", Thread.currentThread().getName(), e, o);
+        e.lock.unlock();
     }
 
     /**
@@ -344,7 +367,6 @@ public class RrdDbPool {
      */
     private RrdEntry requestEmpty(URI uri) throws InterruptedException, IOException {
         RrdEntry ref = waitEmpty(uri);
-        ref.count = 1;
         return ref;
     }
 
@@ -353,23 +375,23 @@ public class RrdDbPool {
         RrdEntry ref = null;
         try {
             ref = getEntry(uri, true);
+
+            // Someone might have already open it, rechecks
+            if (ref.count == 0) {
+                try {
+                    ref.rrdDb = RrdDb.getBuilder().setPath(factory.getPath(uri)).setBackendFactory(factory).setPool(this).build();
+                } catch (IOException | RuntimeException e) {
+                    passNext(ACTION.DROP, ref);
+                    throw e;
+                }
+            }
+            ref.count++;
+            passNext(ACTION.SWAP, ref);
+            return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("request interrupted for " + uri, e);
         }
-
-        // Someone might have already open it, rechecks
-        if (ref.count == 0) {
-            try {
-                ref.rrdDb = RrdDb.getBuilder().setPath(factory.getPath(uri)).setBackendFactory(factory).setPool(this).build();
-            } catch (IOException | RuntimeException e) {
-                passNext(ACTION.DROP, ref);
-                throw e;
-            }
-        }
-        ref.count++;
-        passNext(ACTION.SWAP, ref);
-        return ref.rrdDb;
     }
 
     RrdDb requestRrdDb(RrdDef rrdDef, RrdBackendFactory backend) throws IOException {
@@ -378,6 +400,7 @@ public class RrdDbPool {
             URI uri = backend.getCanonicalUri(rrdDef.getUri());
             ref = requestEmpty(uri);
             ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).setBackendFactory(backend).setPool(this).build();
+            ref.count = 1;
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -400,6 +423,7 @@ public class RrdDbPool {
         try {
             ref = requestEmpty(uri);
             ref.rrdDb = builder.setPath(uri).setBackendFactory(backend).setPool(this).build();
+            ref.count = 1;
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -502,16 +526,11 @@ public class RrdDbPool {
      * @throws IllegalStateException if done will the pool is not empty.
      */
     public void setCapacity(int newCapacity) {
-        try {
-            usageLock.lockInterruptibly();
+        synchronized (this) {
             if (usage.get() != 0) {
                 throw new IllegalStateException("Can only be done on a empty pool");
             }
             maxCapacity = newCapacity;
-            usageLock.unlock();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Interrupted will resizing");
         }
     }
 
@@ -557,11 +576,7 @@ public class RrdDbPool {
         RrdEntry ref = null;
         try {
             ref = getEntry(uri, false);
-            if (ref == null)
-                return 0;
-            else {
-                return ref.count;
-            }
+            return Optional.ofNullable(ref).map(e -> e.count).orElse(0);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("getOpenCount interrupted", e);
