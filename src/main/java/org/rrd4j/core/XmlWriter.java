@@ -15,7 +15,7 @@ import java.util.TimeZone;
 /**
  * Extremely simple utility class used to create XML documents.
  */
-public class XmlWriter {
+public class XmlWriter implements AutoCloseable {
     static final String INDENT_STR = "   ";
     private static final String STYLE = "style";
     private static final SimpleDateFormat ISOLIKE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ", Locale.ENGLISH);
@@ -203,6 +203,12 @@ public class XmlWriter {
 
     private static String escape(String s) {
         return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
+    @Override
+    public void close() {
+        writer.flush();
+        writer.close();
     }
 
 }

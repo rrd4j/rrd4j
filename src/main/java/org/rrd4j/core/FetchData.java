@@ -405,37 +405,38 @@ public class FetchData {
      */
     public void exportXml(OutputStream outputStream) throws IOException {
         //No auto flush for XmlWriter, it will be flushed once, when export is finished
-        XmlWriter writer = new XmlWriter(outputStream, false);
-        writer.startTag("fetch_data");
-        writer.startTag("request");
-        writer.writeTag("file", request.getParentDb().getPath());
-        writer.writeComment(Util.getDate(request.getFetchStart()));
-        writer.writeTag("start", request.getFetchStart());
-        writer.writeComment(Util.getDate(request.getFetchEnd()));
-        writer.writeTag("end", request.getFetchEnd());
-        writer.writeTag("resolution", request.getResolution());
-        writer.writeTag("cf", request.getConsolFun());
-        writer.closeTag(); // request
-        writer.startTag("datasources");
-        for (String dsName : dsNames) {
-            writer.writeTag("name", dsName);
-        }
-        writer.closeTag(); // datasources
-        writer.startTag("data");
-        for (int i = 0; i < timestamps.length; i++) {
-            writer.startTag("row");
-            writer.writeComment(Util.getDate(timestamps[i]));
-            writer.writeTag("timestamp", timestamps[i]);
-            writer.startTag("values");
-            for (int j = 0; j < dsNames.length; j++) {
-                writer.writeTag("v", values[j][i]);
+        try (XmlWriter writer = new XmlWriter(outputStream, false)) {
+            writer.startTag("fetch_data");
+            writer.startTag("request");
+            writer.writeTag("file", request.getParentDb().getPath());
+            writer.writeComment(Util.getDate(request.getFetchStart()));
+            writer.writeTag("start", request.getFetchStart());
+            writer.writeComment(Util.getDate(request.getFetchEnd()));
+            writer.writeTag("end", request.getFetchEnd());
+            writer.writeTag("resolution", request.getResolution());
+            writer.writeTag("cf", request.getConsolFun());
+            writer.closeTag(); // request
+            writer.startTag("datasources");
+            for (String dsName : dsNames) {
+                writer.writeTag("name", dsName);
             }
-            writer.closeTag(); // values
-            writer.closeTag(); // row
+            writer.closeTag(); // datasources
+            writer.startTag("data");
+            for (int i = 0; i < timestamps.length; i++) {
+                writer.startTag("row");
+                writer.writeComment(Util.getDate(timestamps[i]));
+                writer.writeTag("timestamp", timestamps[i]);
+                writer.startTag("values");
+                for (int j = 0; j < dsNames.length; j++) {
+                    writer.writeTag("v", values[j][i]);
+                }
+                writer.closeTag(); // values
+                writer.closeTag(); // row
+            }
+            writer.closeTag(); // data
+            writer.closeTag(); // fetch_data
+            writer.flush();
         }
-        writer.closeTag(); // data
-        writer.closeTag(); // fetch_data
-        writer.flush();
     }
 
     /**
