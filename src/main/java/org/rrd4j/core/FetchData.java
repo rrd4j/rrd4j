@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.data.Aggregates;
 import org.rrd4j.data.DataProcessor;
+import org.rrd4j.data.Variable;
 
 /**
  * Class used to represent data fetched from the RRD.
