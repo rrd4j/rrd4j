@@ -15,11 +15,16 @@
         <maven.plugin.surefire.version>3.0.0-M3</maven.plugin.surefire.version>
         <junit.version>4.13</junit.version>
         <log4j>2.13.1</log4j>
-        <pax-exam.version>4.13.1</pax-exam.version>
+        <pax-exam.version>4.13.3</pax-exam.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <jdk.compile.home>${jdk.8.home}</jdk.compile.home>
+        <bootclasspath>${jdk.compile.home}/jre/lib/rt.jar</bootclasspath>
         <!-- current year. -->
         <year>2020</year>
+        <!-- Indirection needed to keep optionnal jacoco settings and external argument lines-->
+        <arg.line></arg.line>
+        <argLine>${arg.line}</argLine>
     </properties>
     <licenses>
         <license>
@@ -155,6 +160,7 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.1.1</version>
                     <configuration>
+                        <bootclasspath>${bootclasspath}</bootclasspath>
                         <detectJavaApiLink>true</detectJavaApiLink>
                         <show>protected</show>
                         <bottom><![CDATA[
@@ -203,9 +209,12 @@
                 <version>3.8.0</version>
                 <configuration>
                     <compilerArgs>
-                        <arg>-Xlint</arg>
+                        <arg>-Xbootclasspath/p:${bootclasspath}</arg>
                     </compilerArgs>
                     <showWarnings>false</showWarnings>
+                    <!-- needed for maven-plugin-javadoc to find the source version to use -->
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -417,6 +426,37 @@
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.5</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                            <report>property-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!-- select non-aggregate reports -->
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <excludes>
+                        <exclude>org/rrd4j/demo/**/*.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </reporting>
     <profiles>
@@ -498,6 +538,27 @@ Export-Package: !org.rrd4j.inspector, \
                    </plugin>
                </plugins>
            </build>
+       </profile>
+       <profile>
+           <id>versions</id>
+           <reporting>
+               <plugins>
+                   <plugin>
+                       <groupId>org.codehaus.mojo</groupId>
+                       <artifactId>versions-maven-plugin</artifactId>
+                       <version>2.7</version>
+                       <reportSets>
+                           <reportSet>
+                               <reports>
+                                   <report>dependency-updates-report</report>
+                                   <report>plugin-updates-report</report>
+                                   <report>property-updates-report</report>
+                               </reports>
+                           </reportSet>
+                       </reportSets>
+                   </plugin>
+               </plugins>
+           </reporting>
        </profile>
     </profiles>
     <developers>

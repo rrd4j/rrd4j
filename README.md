@@ -22,6 +22,28 @@ RRD4J 3.4 (released 2018-12-27) - [Download](https://github.com/rrd4j/rrd4j/rele
 RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/). Automated builds are uploaded
 to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
+The build settings allows to use any jvm, even latest one. But to produce compatible jar, it needs to know the path to the compatible runtime.
+So it's necessary to define the java 7 java home in the property jdk.7.home. For example, at compile time:
+
+    mvn clean compile -Djdk.8.home=.../jdk1.8.0_241.jdk
+
+Or in settings.xml
+
+    <settings>
+        <activeProfiles>
+            <activeProfile>jdkpaths</activeProfile>
+        </activeProfiles>
+        <profiles>
+            <profile>
+                <id>jdkpaths</id>
+                <properties>
+                    <jdk.8.home>.../jdk1.8.0_241.jdk</jdk.8.home>
+                    ...
+                </properties>
+            </profile>
+        </profiles>
+    </settings>
+    
 Tests needs a running mongo instance to succeds. It could be started with:
 
     docker run --rm  -p 27017:27017 mongo:latest
