@@ -44,7 +44,7 @@ public class RrdDef {
      * Default RRD step to be used if not specified in constructor (300 seconds).
      */
     public static final long DEFAULT_STEP = 300L;
-    
+
     /**
      * If not specified in constructor, starting timestamp will be set to the
      * current timestamp plus DEFAULT_INITIAL_SHIFT seconds (-10).
