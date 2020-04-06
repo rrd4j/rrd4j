@@ -2,6 +2,7 @@ package org.rrd4j.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
@@ -199,20 +201,20 @@ public class RrdDbPoolTest {
 
     @Test(timeout=2000)
     public void testWaitEmpty() throws IOException, InterruptedException {
-        RrdDbPool instance = new RrdDbPool();
+        RrdDbPool instance = new RrdDbPool(new RrdRandomAccessFileBackendFactory());
         RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
-        RrdDb db = RrdDb.getBuilder().usePool().setPool(instance).setRrdDef(def).build();
-        final long start = new Date().getTime();
-        final AtomicInteger done = new AtomicInteger(0);
+        RrdDb db = instance.requestRrdDb(def);
+        long start = new Date().getTime();
+        AtomicBoolean done = new AtomicBoolean(false);
         Thread t = getThread(() -> {
             try {
                 try (RrdDb ldb = RrdDb.getBuilder().usePool().setPool(instance).setRrdDef(def).build()) {
                 }
-                done.set(1);
+                done.set(true);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
         });
         t.start();
@@ -220,7 +222,7 @@ public class RrdDbPoolTest {
         db.close();
         t.join();
         long end = new Date().getTime();
-        Assert.assertEquals("failure in sub thread", 1, done.get()); 
+        Assert.assertTrue("failure in sub thread", done.get()); 
         Assert.assertTrue("requestRrdDb didn't wait for available path", (end - start) > 100); 
         String[] files = instance.getOpenFiles();
         Assert.assertArrayEquals(new String[]{}, files);
