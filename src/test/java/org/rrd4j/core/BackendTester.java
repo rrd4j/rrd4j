@@ -29,6 +29,8 @@ public abstract class BackendTester {
 
     public void testRrdDb(RrdDb db) throws IOException {
 
+        Assert.assertNotNull(db.getBytes());
+
         Assert.assertEquals("Invalid step", 300L, db.getHeader().getStep());
 
         Assert.assertEquals("Invalid number of datasources", 2, db.getDsCount());

@@ -55,6 +55,8 @@ class GraphFrame extends JFrame {
     private String sourcePath;
     private int dsIndex, arcIndex;
 
+    private int counted = 0;
+
     GraphFrame(String sourcePath, int dsIndex, int arcIndex) {
         this.sourcePath = sourcePath;
         this.dsIndex = dsIndex;
@@ -75,35 +77,41 @@ class GraphFrame extends JFrame {
             double[] values;
             String dsName;
             long t1, t2;
-                Datasource ds = rrdDb.getDatasource(dsIndex);
-                Archive arc = rrdDb.getArchive(arcIndex);
-                Robin robin = arc.getRobin(dsIndex);
-                dsName = ds.getName();
-                t1 = arc.getStartTime();
-                t2 = arc.getEndTime();
-                long step = arc.getArcStep();
-                int count = robin.getSize();
-                timestamps = new long[count];
-                for (int i = 0; i < count; i++) {
-                    timestamps[i] = t1 + i * step;
-                }
-                values = robin.getValues();
-                rrdDef = rrdDb.getRrdDef();
+            Datasource ds = rrdDb.getDatasource(dsIndex);
+            Archive arc = rrdDb.getArchive(arcIndex);
+            Robin robin = arc.getRobin(dsIndex);
+            dsName = ds.getName();
+            t1 = arc.getStartTime();
+            t2 = arc.getEndTime();
+            long step = arc.getArcStep();
+            int count = robin.getSize();
+            timestamps = new long[count];
+            for (int i = 0; i < count; i++) {
+                timestamps[i] = t1 + i * step;
+            }
+            values = robin.getValues();
+            rrdDef = rrdDb.getRrdDef();
             RrdGraphDef rrdGraphDef = new RrdGraphDef();
             rrdGraphDef.setTimeSpan(t1, t2);
             rrdGraphDef.setImageFormat("png");
             rrdGraphDef.setTitle(rrdDef.getDsDefs()[dsIndex].dump() + " " +
                     rrdDef.getArcDefs()[arcIndex].dump());
             LinearInterpolator linearInterpolator = new LinearInterpolator(timestamps, values);
-            linearInterpolator.setInterpolationMethod(LinearInterpolator.Method.RIGHT);
+            linearInterpolator.setInterpolationMethod(LinearInterpolator.Method.LINEAR);
             rrdGraphDef.datasource(dsName, linearInterpolator);
             rrdGraphDef.area(dsName, color, dsName + "\\r");
             rrdGraphDef.comment("START: " + new Date(t1 * 1000L) + "\\r");
             rrdGraphDef.comment("END: " + new Date(t2 * 1000L) + "\\r");
+            rrdGraphDef.datasource("max", dsName, new Variable.MAX());
+            rrdGraphDef.datasource("min", dsName, new Variable.MIN());
+            rrdGraphDef.gprint("max", "%f");
+            rrdGraphDef.gprint("min", "%f");
             int width = graphPanel.getWidth(), height = graphPanel.getHeight();
             rrdGraphDef.setWidth(width + deltaWidth);
             rrdGraphDef.setHeight(height + deltaHeight);
+            rrdGraphDef.setFilename("/tmp/try" + counted++ + ".png");
             rrdGraph = new RrdGraph(rrdGraphDef);
+
             if (deltaWidth == 0 && deltaHeight == 0) {
                 RrdGraphInfo info = rrdGraph.getRrdGraphInfo();
                 deltaWidth = graphPanel.getWidth() - info.getWidth();
@@ -120,22 +128,22 @@ class GraphFrame extends JFrame {
 
     private void fillGraphCombo() {
         try (RrdDb rrdDb = RrdDb.getBuilder().setPath(sourcePath).readOnly().build()) {
-                RrdDef rrdDef = rrdDb.getRrdDef();
-                final DsDef[] dsDefs = rrdDef.getDsDefs();
-                final ArcDef[] arcDefs = rrdDef.getArcDefs();
-                GraphComboItem[] items = new GraphComboItem[rrdDef.getDsCount() * rrdDef.getArcCount()];
-                int selectedItem = -1;
-                for (int i = 0, k = 0; i < rrdDef.getDsCount(); i++) {
-                    for (int j = 0; j < rrdDef.getArcCount(); k++, j++) {
-                        String description = dsDefs[i].dump() + " " + arcDefs[j].dump();
-                        items[k] = new GraphComboItem(description, i, j);
-                        if (i == dsIndex && j == arcIndex) {
-                            selectedItem = k;
-                        }
+            RrdDef rrdDef = rrdDb.getRrdDef();
+            final DsDef[] dsDefs = rrdDef.getDsDefs();
+            final ArcDef[] arcDefs = rrdDef.getArcDefs();
+            GraphComboItem[] items = new GraphComboItem[rrdDef.getDsCount() * rrdDef.getArcCount()];
+            int selectedItem = -1;
+            for (int i = 0, k = 0; i < rrdDef.getDsCount(); i++) {
+                for (int j = 0; j < rrdDef.getArcCount(); k++, j++) {
+                    String description = dsDefs[i].dump() + " " + arcDefs[j].dump();
+                    items[k] = new GraphComboItem(description, i, j);
+                    if (i == dsIndex && j == arcIndex) {
+                        selectedItem = k;
                     }
                 }
-                graphCombo.setModel(new DefaultComboBoxModel<GraphComboItem>(items));
-                graphCombo.setSelectedIndex(selectedItem);
+            }
+            graphCombo.setModel(new DefaultComboBoxModel<GraphComboItem>(items));
+            graphCombo.setSelectedIndex(selectedItem);
         } catch (Exception e) {
             Util.error(this, e);
         }

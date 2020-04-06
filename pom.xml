@@ -6,22 +6,25 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>3.5</version>
+    <version>3.6</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.plugin.javadoc.version>3.0.1</maven.plugin.javadoc.version>
-        <maven.plugin.resources.version>2.7</maven.plugin.resources.version>
-        <maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
-        <junit.version>4.12</junit.version>
-        <log4j>2.11.1</log4j>
-        <pax-exam.version>4.13.1</pax-exam.version>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.plugin.surefire.version>3.0.0-M3</maven.plugin.surefire.version>
+        <junit.version>4.13</junit.version>
+        <log4j>2.13.1</log4j>
+        <pax-exam.version>4.13.3</pax-exam.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <jdk.compile.home>${jdk.8.home}</jdk.compile.home>
+        <bootclasspath>${jdk.compile.home}/jre/lib/rt.jar</bootclasspath>
         <!-- current year. -->
-        <year>2018</year>
+        <year>2020</year>
+        <!-- Indirection needed to keep optionnal jacoco settings and external argument lines-->
+        <arg.line></arg.line>
+        <argLine>${arg.line}</argLine>
     </properties>
     <licenses>
         <license>
@@ -41,13 +44,13 @@
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>18.3.12</version>
+            <version>18.1.11</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.9.1</version>
+            <version>3.12.2</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
@@ -60,7 +63,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.6</version>
+            <version>4.2</version>
             <scope>test</scope>
         </dependency>
         <!-- Test dependencies for OSGi setup -->
@@ -85,7 +88,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
-            <version>6.0.1</version>
+            <version>6.0.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -121,11 +124,81 @@
                 </includes>
             </resource>
         </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.9</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <bootclasspath>${bootclasspath}</bootclasspath>
+                        <detectJavaApiLink>true</detectJavaApiLink>
+                        <show>protected</show>
+                        <bottom><![CDATA[
+                            <p>&copy; ${year} The RRD4J Authors. &copy; 2001-2005 Sasa Markovic and Ciaran Treanor. &copy; ${year} The OpenNMS Group, Inc.</p>
+                            ]]>
+                        </bottom>
+                        <links>
+                            <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                            <link>http://api.mongodb.org/java/2.0/</link>
+                            <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
+                            <link>http://junit.sourceforge.net/javadoc/</link>
+                        </links>
+                        <source>${maven.compiler.source}</source>
+                        <quiet>true</quiet>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <!-- use to build the descriptor.json used by travis -->
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
@@ -151,10 +224,12 @@
                 <version>3.8.0</version>
                 <configuration>
                     <compilerArgs>
-                        <arg>-Xlint</arg>
-                        <arg>-Xbootclasspath:${jdk.compile.home}/jre/lib/rt.jar</arg>
+                        <arg>-Xbootclasspath/p:${bootclasspath}</arg>
                     </compilerArgs>
-                    <showWarnings>true</showWarnings>
+                    <showWarnings>false</showWarnings>
+                    <!-- needed for maven-plugin-javadoc to find the source version to use -->
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -286,51 +361,25 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
                 <configuration>
                     <output>file</output>
                     <append>true</append>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>jacoco-initialize</id>
+                        <id>jacoco-prepare</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>jacoco-site</id>
+                        <id>jacoco-verify</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.5.0.1254</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.6.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -356,18 +405,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.plugin.javadoc.version}</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <links>
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                        <link>http://api.mongodb.org/java/2.0/</link>
-                        <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
-                        <link>http://junit.sourceforge.net/javadoc/</link>
-                    </links>
-                    <bootclasspath>${sun.boot.class.path}</bootclasspath>
-                    <source>${maven.compiler.source}</source>
-                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -384,28 +421,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.9</version>
-            </plugin>
-            <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.plugin.javadoc.version}</version>
-                <configuration>
-                    <quiet>false</quiet>
-                    <detectJavaApiLink>true</detectJavaApiLink>
-                    <show>protected</show>
-                    <bottom><![CDATA[
-                        <p>&copy; ${year} The RRD4J Authors. &copy; 2001-2005 Sasa Markovic and Ciaran Treanor. &copy; ${year} The OpenNMS Group, Inc.</p>
-                        ]]>
-                    </bottom>
-                    <links>
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                        <link>http://api.mongodb.org/java/2.0/</link>
-                        <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
-                        <link>http://junit.sourceforge.net/javadoc/</link>
-                    </links>
-                    <source>${maven.compiler.source}</source>
-                </configuration>
                 <reportSets>
                     <reportSet>
                         <id>javadoc-report</id>
@@ -420,27 +436,26 @@
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!-- select non-aggregate reports -->
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <excludes>
+                        <exclude>org/rrd4j/demo/**/*.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </reporting>
     <profiles>
-        <profile>
-            <id>withoutosgi</id>
-            <activation>
-                <jdk>[,1.8)</jdk>
-            </activation>
-            <properties>
-                <manifestPath>${project.build.outputDirectory}/META-INF/MANIFEST.M</manifestPath>
-            </properties>
-            <build>
-                <resources>
-                    <resource>
-                        <targetPath>${project.build.outputDirectory}/META-INF/</targetPath>
-                        <directory>src/main/build/</directory>
-                        <filtering>true</filtering>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
         <profile>
             <id>withosgi</id>
             <activation>
@@ -472,6 +487,7 @@ Export-Package: !org.rrd4j.inspector, \
                         </configuration>
                         <executions>
                             <execution>
+                                <id>bnd-process</id>
                                 <goals>
                                     <goal>bnd-process</goal>
                                 </goals>
@@ -480,6 +496,47 @@ Export-Package: !org.rrd4j.inspector, \
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <version>3.7.0.1746</version>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>sonar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>versions</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <version>2.7</version>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>dependency-updates-report</report>
+                                    <report>plugin-updates-report</report>
+                                    <report>property-updates-report</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
     </profiles>
     <developers>
@@ -497,9 +554,8 @@ Export-Package: !org.rrd4j.inspector, \
     </developers>
     <distributionManagement>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>bintray-release</id>
+            <url>https://api.bintray.com/maven/rrd4j/RRD4J/org.rrd4j%3Arrd4j</url>
         </repository>
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>

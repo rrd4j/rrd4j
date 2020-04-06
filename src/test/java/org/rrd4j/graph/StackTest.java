@@ -5,9 +5,7 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.rrd4j.data.Plottable;
 
 public class StackTest {
@@ -16,9 +14,6 @@ public class StackTest {
     public static void prepare() {
         System.getProperties().setProperty("java.awt.headless","true");
     }
-    
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void test1() throws IOException {
@@ -52,7 +47,7 @@ public class StackTest {
             Assert.assertEquals("base3 value failed", 2.0, base3.getValues()[i], 0.0000001);
         }
     }
-    
+
     @Test
     public void test2() throws IOException {
         RrdGraphDef def = new RrdGraphDef();
@@ -85,7 +80,7 @@ public class StackTest {
             Assert.assertEquals("base3 value failed", 2.0, base3.getValues()[i], 0.0000001);
         }
     }
-    
+
     @Test
     public void fail() throws IOException {
         RrdGraphDef def = new RrdGraphDef();
@@ -96,9 +91,9 @@ public class StackTest {
             public double getValue(long timestamp) {
                 return (timestamp % 2 == 0) ? Double.NaN : 1;
             }});
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("You have to stack graph onto something (line or area)");
-        def.line("base1", Color.RED, null, 1.0f, true);
+        Assert.assertThrows("You have to stack graph onto something (line or area)", IllegalArgumentException.class, () -> {
+            def.line("base1", Color.RED, null, 1.0f, true);
+        });
     }
 
 }

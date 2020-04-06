@@ -91,7 +91,7 @@ public class TestLSL {
         rrdDef.addArchive(AVERAGE, 0.5, 1, 600);
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700);
         rrdDef.addArchive(AVERAGE, 0.5, 24, 775);
-        RrdDb rrdDb = new RrdDb(rrdDef);
+        RrdDb rrdDb = RrdDb.of(rrdDef);
 
         long t = START;
         Sample sample = rrdDb.createSample();

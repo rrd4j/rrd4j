@@ -1,0 +1,213 @@
+version: 2.1
+jobs:
+    checkout:
+        docker:
+            - image: circleci/openjdk:14-jdk-buster
+        steps:
+            - checkout
+            - restore_cache:
+                key: rrd4j-{{ checksum "pom.xml" }}
+            - run: mkdir -p /home/circleci/.sonar/cache /home/circleci/.m2/repository
+            - run:
+                command: "mvn -B dependency:go-offline -Psonar,versions -s .circleci/settings.xml"
+                environment:
+                    JAVA_HOME: /usr/java/openjdk-14
+                    MAVEN_OPTS: "-Xmx1024m"
+            - persist_to_workspace:
+                root: /
+                paths:
+                    - home/circleci/.m2/repository
+                    - home/circleci/.sonar/cache
+                    - home/circleci/project
+    jdk8:
+        docker:
+            - image: circleci/openjdk:8-buster
+        steps:
+            - persist_to_workspace:
+                root: /usr/local
+                paths:
+                    - openjdk-8
+    build:
+        docker:
+            - image: circleci/openjdk:14-jdk-buster
+        steps:
+            - attach_workspace:
+                at: /tmp/ws
+            - run:
+                command: |
+                    mv -n /tmp/ws/home/circleci/.m2 /home/circleci/
+                    mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
+                    mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
+            - run:
+                command: mvn -B clean compile -s .circleci/settings.xml
+                environment:
+                    JAVA_HOME: /usr/java/openjdk-14
+                    MAVEN_OPTS: "-Xmx2048m"
+            - persist_to_workspace:
+                root: /
+                paths:
+                    - home/circleci/.m2/repository
+                    - home/circleci/project/target
+    testsj13:
+        docker:
+            - image: circleci/openjdk:13-jdk-buster
+            - image: mongo:3
+        steps:
+            - attach_workspace:
+                at: /tmp/ws
+            - run:
+                command: |
+                    mv -n /tmp/ws/home/circleci/.m2 /home/circleci/
+                    mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
+                    mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
+            - run:
+                command: |
+                    mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
+                environment:
+                    JAVA_HOME: /usr/java/openjdk-13
+                    MAVEN_OPTS: "-Xmx1024m"
+            - store_test_results:
+                path: target/surefire-reports
+            - persist_to_workspace:
+                root: /
+                paths:
+                    - home/circleci/.m2/repository
+                    - home/circleci/.sonar/cache
+    # Sonar don't handle Java 14
+    testsj14:
+        docker:
+            - image: circleci/openjdk:14-buster
+            - image: mongo:3
+        steps:
+            - attach_workspace:
+                at: /tmp/ws
+            - run:
+                command: |
+                    mv -n /tmp/ws/home/circleci/.m2 /home/circleci/
+                    mv -n /tmp/ws/home/circleci/.sonar /home/circleci/
+                    mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
+                    mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
+            - run:
+                command: |
+                    mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
+                environment:
+                    JAVA_HOME: /usr/java/openjdk-14
+                    MAVEN_OPTS: "-Xmx512m"
+            - store_test_results:
+                path: target/surefire-reports
+            #don't persist_to_workspace, can't be done in parallel with testsj13
+    testsj11:
+        docker:
+            - image: circleci/openjdk:11-buster
+            - image: mongo:3
+        steps:
+            - attach_workspace:
+                at: /tmp/ws
+            - run:
+                command: |
+                    mv -n /tmp/ws/home/circleci/.m2 /home/circleci/
+                    mv -n /tmp/ws/home/circleci/.sonar /home/circleci/
+                    mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
+                    mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
+            - run:
+                command: |
+                    mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
+                environment:
+                    JAVA_HOME: /usr/local/openjdk-11
+                    MAVEN_OPTS: "-Xmx512m"
+            - store_test_results:
+                path: target/surefire-reports
+            #don't persist_to_workspace, can't be done in parallel with testsj13
+    testsj8:
+        docker:
+            - image: circleci/openjdk:8-buster
+            - image: mongo:3
+        steps:
+            - attach_workspace:
+                at: /tmp/ws
+            - run:
+                command: |
+                    mv -n /tmp/ws/home/circleci/.m2 /home/circleci/
+                    mv -n /tmp/ws/home/circleci/.sonar /home/circleci/
+                    mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
+                    mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
+            - run:
+                command: |
+                    mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
+                environment:
+                    JAVA_HOME: /usr/local/openjdk-8
+                    MAVEN_OPTS: "-Xmx512m"
+            - store_test_results:
+                path: target/surefire-reports
+            #don't persist_to_workspace, can't be done in parallel with testsj13
+    publish:
+        docker:
+            - image: circleci/openjdk:14-jdk-buster
+        steps:
+            - attach_workspace:
+                at: /tmp/ws
+            - run:
+                command: |
+                    mv -n /tmp/ws/home/circleci/.m2 /home/circleci/
+                    mv -n /tmp/ws/home/circleci/.sonar /home/circleci/
+                    mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
+                    mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
+            - run:
+                command: |
+                    mvn -B deploy -Pskip -Dmaven.test.skip=true -s .circleci/settings.xml
+                environment:
+                    JAVA_HOME: /usr/java/openjdk-14
+                    MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.shade=ERROR -Xmx2048m"
+            - persist_to_workspace:
+                root: /
+                paths:
+                    - home/circleci/.m2/repository
+                    - home/circleci/.sonar/cache
+    savecache:
+        docker:
+            - image: circleci/openjdk:14-jdk-buster
+        steps:
+            - attach_workspace:
+                at: /tmp/ws
+            - run:
+                command: |
+                    mv /tmp/ws/home/circleci/project/pom.xml /home/circleci/project/
+                    mv /tmp/ws/home/circleci/.m2 /home/circleci/
+                    mv /tmp/ws/home/circleci/.sonar /home/circleci/
+            - save_cache:
+                paths:
+                    - /home/circleci/.m2/repository
+                    - /home/circleci/.sonar/cache
+                key: rrd4j-{{ checksum "pom.xml" }}
+            
+workflows:
+  version: 2.1
+  build_and_test:
+    jobs:
+      - checkout
+      - jdk8
+      - build:
+          requires:
+              - checkout
+              - jdk8
+      - testsj8:
+          requires:
+              - build
+      - testsj11:
+          requires:
+              - build
+      - testsj13:
+          requires:
+              - build
+      - testsj14:
+          requires:
+              - build
+      - publish:
+          requires:
+              - testsj8
+              - testsj11
+              - testsj13
+              - testsj14
+      - savecache:
+          requires:
+              - publish

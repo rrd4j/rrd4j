@@ -18,8 +18,19 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 
 /**
- * {@link org.rrd4j.core.RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
- * MongoDB {@link com.mongodb.DBCollection} or {@link com.mongodb.client.MongoCollection} and pass it via the constructor.
+ * <p>{@link org.rrd4j.core.RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
+ * MongoDB {@link com.mongodb.DBCollection} or {@link com.mongodb.client.MongoCollection} and pass it via the constructor.</p>
+ * 
+ * <p>A simple use case could be </p>
+ * <pre>
+ * MongoClient mongoClient = ...
+ * MongoCollection&lt;DBObject&gt; collection = 
+ * RrdBackendFactory factory = new RrdMongoDBBackendFactory(mongoClient, collection, false);
+ * RrdBackendFactory.setActiveFactories(factory);
+ * RrdDef def = new RrdDef(factory.getUri(...));
+ * </pre>
+ * 
+ * <p>A mongo factory is in the form <code>mongodb://host:port/dbName/collectionName/</code></p>
  *
  * @author Mathias Bogaert
  */

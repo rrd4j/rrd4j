@@ -1,3 +1,20 @@
+Changes in version 3.6 - 06 Apr 2020.
+-------------------------------
+
+Adding source for background or overlay image. They can be now an URL or even a custom generated image.
+
+An image can also be added in the canvas (the area where the plot are drawn).
+
+Dropped java 1.7 support.
+
+Build settings to compile with latest JVM, but still able to run on the officially support JVM.
+
+A new pool, using features from Java 8. They were some rare leaks in the old one and using modern java features should reduce locking.
+It contains some assert so it might help discover problems early. All the public requestRrdDb are not deprecated any more, as they provide
+a convenient way to get RrdDb using a pool.
+
+* Fixed Issue 135: ByteBufferBackend.get fails with BufferUnderflow.
+
 Changes in version 3.5 - 10 Feb 2019.
 ------------------------------------
 
