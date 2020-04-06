@@ -1,8 +1,5 @@
 package org.rrd4j.osgi;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assume.assumeThat;
 import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -20,9 +17,9 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.rrd4j.DsType;
-import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.Sample;
 
 /**
@@ -38,7 +35,7 @@ import org.rrd4j.core.Sample;
  */
 @RunWith(PaxExam.class)
 public class OSGiSmokeTest {
-    
+
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
@@ -49,11 +46,6 @@ public class OSGiSmokeTest {
 
     @Test
     public void basicUsage() throws IOException {
-
-        // OSGi metadata is only added for Java8+, so skip this test on Java 7
-        String javaVersion = System.getProperty("java.version");
-        assumeThat(javaVersion, not(startsWith((("1.7")))));
-
         RrdDef rrdDef = new RrdDef(temp.newFile().getAbsolutePath(), 300);
         rrdDef.addArchive(AVERAGE, 0.5, 1, 600); // 1 step, 600 rows
         rrdDef.addArchive(AVERAGE, 0.5, 6, 700); // 6 steps, 700 rows
@@ -63,8 +55,8 @@ public class OSGiSmokeTest {
         Random rnd = new Random();
 
         // due to sun.misc usually not being exported, default to the FILE backend
-        try (@SuppressWarnings("deprecation")
-        RrdDb rrdDb = new RrdDb(rrdDef, RrdBackendFactory.getFactory("FILE"))) {
+        try (RrdDb rrdDb = RrdDb.getBuilder().setBackendFactory(new RrdRandomAccessFileBackendFactory()).setRrdDef(rrdDef).build()
+        ) {
             long time = System.currentTimeMillis() / 1000;
             Sample sample = rrdDb.createSample();
             for ( int i = 0 ; i < 10; i++ ) {
@@ -74,4 +66,5 @@ public class OSGiSmokeTest {
             }
         }
     }
+
 }
