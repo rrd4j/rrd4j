@@ -1,4 +1,4 @@
-Changes in version 3.6-SNAPSHOT
+Changes in version 3.6 - 06 Apr 2020.
 -------------------------------
 
 Adding source for background or overlay image. They can be now an URL or even a custom generated image.
