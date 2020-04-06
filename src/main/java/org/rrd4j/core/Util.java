@@ -237,6 +237,7 @@ public class Util {
 
     /**
      * Returns timestamp (unix epoch) for the given year, month, day, hour and minute.
+     * <p>The date is resolved in the current time zone</p>
      *
      * @param year  Year
      * @param month Month (zero-based)
@@ -254,6 +255,7 @@ public class Util {
 
     /**
      * Returns timestamp (unix epoch) for the given year, month and day.
+     * <p>The date is resolved in the current time zone</p>
      *
      * @param year  Year
      * @param month Month (zero-based)
