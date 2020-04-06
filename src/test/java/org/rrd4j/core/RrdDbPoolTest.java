@@ -99,7 +99,7 @@ public class RrdDbPoolTest {
                 full.await();
                 while (created.get() < (capacity + 2)  || instance.getOpenFileCount() > 0) {
                     int used = instance.getOpenFileCount();
-                    Assert.assertTrue("too much open files: "+ used, used <= capacity);
+                    Assert.assertTrue("Too many open files: "+ used, used <= capacity);
                     if(dbs.size() > 0) {
                         RrdDb release = dbs.poll();
                         release.close();
@@ -107,7 +107,9 @@ public class RrdDbPoolTest {
                     }
                     Thread.yield();
                 }
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -137,7 +139,7 @@ public class RrdDbPoolTest {
         //Finished when pool is empty
         t.join();
         String[] files = instance.getOpenFiles();
-        Assert.assertArrayEquals("not all rrd released", new String[]{}, files);
+        Assert.assertArrayEquals("Not all rrd released", new String[]{}, files);
         Assert.assertEquals("finished, but not all db seen", capacity + 2, done.get()); 
     }
 

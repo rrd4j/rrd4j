@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -95,12 +96,13 @@ public class RrdDbPool {
         return RrdDbPoolSingletonHolder.instance;
     }
 
-    private final AtomicInteger usage = new AtomicInteger(0);
     private int maxCapacity = INITIAL_CAPACITY;
-    private final ReentrantReadWriteLock usageLock;
+    private Semaphore usage = new Semaphore(maxCapacity);
     private final ReentrantReadWriteLock.WriteLock usageWLock;
     private final ReentrantReadWriteLock.ReadLock usageRLock;
     private final Condition fullCondition;
+    // Needed because external threads can detect waiting condition
+    private final AtomicBoolean waitFull = new AtomicBoolean(false);
 
     private final ConcurrentMap<URI, RrdEntry> pool = new ConcurrentHashMap<>(INITIAL_CAPACITY);
 
@@ -121,7 +123,7 @@ public class RrdDbPool {
      */
     public RrdDbPool(RrdBackendFactory defaultFactory) {
         this.defaultFactory = defaultFactory;
-        usageLock = new ReentrantReadWriteLock(true);
+        ReentrantReadWriteLock usageLock = new ReentrantReadWriteLock(true);
         usageWLock = usageLock.writeLock();
         usageRLock = usageLock.readLock();
         fullCondition = usageWLock.newCondition();
@@ -133,7 +135,7 @@ public class RrdDbPool {
      * @return Number of currently open RRD files held in the pool.
      */
     public int getOpenFileCount() {
-        return usage.get();
+        return pool.size();
     }
 
     /**
@@ -143,9 +145,9 @@ public class RrdDbPool {
      */
     public URI[] getOpenUri() {
         //Direct toarray from keySet can fail
-        Set<URI> files = new HashSet<>();
-        files.addAll(pool.keySet());
-        return files.toArray(new URI[files.size()]);
+        Set<URI> uris = new HashSet<>(pool.size());
+        pool.forEach((k,v) -> uris.add(k));
+        return uris.toArray(new URI[uris.size()]);
     }
 
     /**
@@ -155,11 +157,9 @@ public class RrdDbPool {
      */
     public String[] getOpenFiles() {
         //Direct toarray from keySet can fail
-        Set<String> files = new HashSet<>();
-        for (URI i: pool.keySet()) {
-            files.add(i.getPath());
-        }
-        return files.toArray(new String[files.size()]);
+        Set<String> uris = new HashSet<>(pool.size());
+        pool.forEach((k,v) -> uris.add(k.getPath()));
+        return uris.toArray(new String[uris.size()]);
     }
 
     private RrdEntry getEntry(URI uri, boolean cancreate) throws InterruptedException {
@@ -174,12 +174,11 @@ public class RrdDbPool {
                                 if (cancreate) {
                                     usageRLock.lockInterruptibly();
                                     try {
-                                        if (usage.get() >= maxCapacity) {
+                                        if (! usage.tryAcquire()) {
                                             throw new PoolFullException();
                                         } else {
                                             RrdEntry r = new RrdEntry(u);
                                             holder.complete(r);
-                                            usage.incrementAndGet();
                                             r.lock.lock();
                                             return new RrdEntry(r);
                                         }
@@ -207,12 +206,14 @@ public class RrdDbPool {
                     ref = null;
                     try {
                         usageWLock.lockInterruptibly();
+                        waitFull.set(true);
                         fullCondition.await();
                     } catch (InterruptedException ex) {
                         holder.completeExceptionally(ex);
                         Thread.currentThread().interrupt();
                     } finally {
                         if (usageWLock.isHeldByCurrentThread()) {
+                            waitFull.set(false);
                             usageWLock.unlock();
                         }
                     }
@@ -253,8 +254,9 @@ public class RrdDbPool {
             break;
         case DROP:
             o = pool.remove(e.uri);
+            usage.release();
             assert o == null || o.placeholder;
-            if (usage.getAndDecrement() <= maxCapacity) {
+            if (waitFull.get()) {
                 try {
                     usageWLock.lockInterruptibly();
                     fullCondition.signalAll();
@@ -546,7 +548,7 @@ public class RrdDbPool {
     public void setDefaultFactory(RrdBackendFactory defaultFactory) {
         try {
             usageWLock.lockInterruptibly();
-            if (usage.get() != 0) {
+            if (usage.availablePermits() != maxCapacity) {
                 throw new IllegalStateException("Can only be done on a empty pool");
             }
             this.defaultFactory = defaultFactory;
@@ -555,7 +557,7 @@ public class RrdDbPool {
             throw new IllegalStateException("Factory not changed");
         } finally {
             if (usageWLock.isHeldByCurrentThread()) {
-                usageLock.writeLock().unlock();
+                usageWLock.unlock();
             }
         }
     }
@@ -569,16 +571,17 @@ public class RrdDbPool {
     public void setCapacity(int newCapacity) {
         try {
             usageWLock.lockInterruptibly();
-            if (usage.get() != 0) {
+            if (usage.availablePermits() != maxCapacity) {
                 throw new IllegalStateException("Can only be done on a empty pool");
             }
             maxCapacity = newCapacity;
+            usage = new Semaphore(maxCapacity);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Resizing interrupted");
         } finally {
             if (usageWLock.isHeldByCurrentThread()) {
-                usageLock.writeLock().unlock();
+                usageWLock.unlock();
             }
         }
     }
