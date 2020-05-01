@@ -291,8 +291,7 @@ public class RrdDbPool {
         if (rrdDb == null) {
             return;
         }
-
-        URI dburi = rrdDb.getUri();
+        URI dburi = rrdDb.getCanonicalUri();
         RrdEntry ref = null;
         try {
             ref = getEntry(dburi, false);
@@ -613,7 +612,7 @@ public class RrdDbPool {
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(RrdDb rrdDb) throws IOException {
-        return getOpenCount(rrdDb.getUri());
+        return getOpenCount(rrdDb.getCanonicalUri());
     }
 
     /**
@@ -624,7 +623,7 @@ public class RrdDbPool {
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(String path) throws IOException {
-        return getOpenCount(defaultFactory.getUri(path));
+        return getOpenCount(defaultFactory.getCanonicalUri(defaultFactory.getUri(path)));
     }
 
     /**
