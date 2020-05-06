@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Queue;
@@ -228,6 +232,21 @@ public class RrdDbPoolTest {
         Assert.assertTrue("requestRrdDb didn't wait for available path", (end - start) > 100); 
         String[] files = instance.getOpenFiles();
         Assert.assertArrayEquals(new String[]{}, files);
+    }
+
+    @Test(timeout=2000)
+    public void testCanonical() throws IOException {
+        RrdDbPool instance = new RrdDbPool(new RrdRandomAccessFileBackendFactory());
+        URI testRoot = testFolder.getRoot().toURI();
+        Path link1 = Files.createSymbolicLink(Paths.get("link1"), Paths.get(testRoot));
+        Path link2 = Files.createSymbolicLink(Paths.get("link2"), Paths.get(testRoot));
+        RrdDef def = new RrdDef(new File(link1.toString(), "test.rrd").getPath());
+        def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
+        def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+        try (RrdDb db1 = instance.requestRrdDb(def);
+             RrdDb db2 = instance.requestRrdDb(new File(link2.toString(), "test.rrd").getPath());) {
+            Assert.assertEquals(db1, db2);
+        }
     }
 
 }
