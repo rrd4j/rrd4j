@@ -1,3 +1,10 @@
+Changes in version 3.7-SNAPSHOT.
+-------------------------------
+
+The font used by RRD4J can now be defined a set of properties. See the introduction of the class RrdGraphConstants for more details.
+
+Fixing a small bug in canonical path resolution by the pool.
+
 Changes in version 3.6 - 06 Apr 2020.
 -------------------------------
 
