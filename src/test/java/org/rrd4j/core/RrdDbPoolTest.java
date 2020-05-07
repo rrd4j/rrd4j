@@ -237,9 +237,9 @@ public class RrdDbPoolTest {
     @Test(timeout=2000)
     public void testCanonical() throws IOException {
         RrdDbPool instance = new RrdDbPool(new RrdRandomAccessFileBackendFactory());
-        URI testRoot = testFolder.getRoot().toURI();
-        Path link1 = Files.createSymbolicLink(Paths.get("link1"), Paths.get(testRoot));
-        Path link2 = Files.createSymbolicLink(Paths.get("link2"), Paths.get(testRoot));
+        URI testRoot = testFolder.newFolder().toURI();
+        Path link1 = Files.createSymbolicLink(Paths.get(testFolder.getRoot().getCanonicalPath(), "link1"), Paths.get(testRoot));
+        Path link2 = Files.createSymbolicLink(Paths.get(testFolder.getRoot().getCanonicalPath(), "link2"), Paths.get(testRoot));
         RrdDef def = new RrdDef(new File(link1.toString(), "test.rrd").getPath());
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
