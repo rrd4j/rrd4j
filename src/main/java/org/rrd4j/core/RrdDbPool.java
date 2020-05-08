@@ -411,7 +411,7 @@ public class RrdDbPool {
             // Someone might have already open it, rechecks
             if (ref.count == 0) {
                 try {
-                    ref.rrdDb = RrdDb.getBuilder().setPath(factory.getPath(uri)).setBackendFactory(factory).setPool(this).build();
+                    ref.rrdDb = RrdDb.getBuilder().setPath(factory.getPath(uri)).setBackendFactory(factory).setPoolInternal(this).build();
                 } catch (IOException | RuntimeException e) {
                     passNext(ACTION.DROP, ref);
                     throw e;
@@ -431,7 +431,7 @@ public class RrdDbPool {
         try {
             URI uri = backend.getCanonicalUri(rrdDef.getUri());
             ref = requestEmpty(uri);
-            ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).setBackendFactory(backend).setPool(this).build();
+            ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).setBackendFactory(factory).setPoolInternal(this).build();
             ref.count = 1;
             return ref.rrdDb;
         } catch (InterruptedException e) {
@@ -452,7 +452,7 @@ public class RrdDbPool {
         uri = backend.getCanonicalUri(uri);
         try {
             ref = requestEmpty(uri);
-            ref.rrdDb = builder.setPath(uri).setBackendFactory(backend).setPool(this).build();
+            ref.rrdDb = builder.setPath(uri).setBackendFactory(factory).setPoolInternal(this).build();
             ref.count = 1;
             return ref.rrdDb;
         } catch (InterruptedException e) {

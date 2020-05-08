@@ -203,10 +203,22 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
          */
         public Builder setPool(RrdDbPool pool) {
             this.pool = pool;
+            this.usePool = true;
             return this;
         }
 
         /**
+         * Internal method used to memorized the pool, without generating a loop
+         * @param pool
+         * @return
+         */
+        Builder setPoolInternal(RrdDbPool pool) {
+            this.pool = pool;
+            this.usePool = false;
+            return this;
+        }
+
+       /**
          * Set when the builder will be used to import external data with a predefined source: XML or RRDTool.
          * @param externalPath an URI-like indication of RRD data to import
          * @return the same builder.
