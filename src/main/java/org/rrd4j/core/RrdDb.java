@@ -1393,7 +1393,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         return backend.getUri();
     }
 
-    public URI getCanonicalUri() throws IOException {
+    public URI getCanonicalUri() {
         return backend.getFactory().getCanonicalUri(getUri());
     }
 

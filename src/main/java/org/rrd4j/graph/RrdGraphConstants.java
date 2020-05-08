@@ -319,7 +319,7 @@ public interface RrdGraphConstants {
      * Font constructor, to use embedded fonts. Not really useful outside internal use for RRD4J.
      */
     static class FontConstructor {
-        static final private Properties fileProps = new Properties();
+        private static final Properties fileProps = new Properties();
         static {
             refreshConf();
         }

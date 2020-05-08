@@ -539,8 +539,9 @@ public class RrdDbPool {
      *
      * @param defaultFactory The factory to use.
      * @throws IllegalStateException if called while the pool is not empty or the thread was interrupted.
-     * @deprecated the pool is no longer a singleton, create a new pool instead.
+     * @deprecated the pool is no longer a singleton, create a new pool instead of changing it.
      */
+    @Deprecated
     public void setDefaultFactory(RrdBackendFactory defaultFactory) {
         try {
             usageWLock.lockInterruptibly();
