@@ -3,9 +3,7 @@ package org.rrd4j.core;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -81,7 +79,7 @@ public class RrdDbPool {
             if (placeholder) {
                 return String.format("RrdEntry [placeholder, uri=%s]", uri);
             } else {
-                return String.format("RrdEntry [count=%d, rrdDb=%s, uri%s]", count, rrdDb, uri);
+                return String.format("RrdEntry [count=%d, rrdDb=%s, uri %s]", count, rrdDb, uri);
             }
         }
     }
@@ -144,10 +142,7 @@ public class RrdDbPool {
      * @return Array with {@link URI} to open RRD held in the pool.
      */
     public URI[] getOpenUri() {
-        //Direct toarray from keySet can fail
-        Set<URI> uris = new HashSet<>(pool.size());
-        pool.forEach((k,v) -> uris.add(k));
-        return uris.toArray(new URI[uris.size()]);
+        return pool.keySet().stream().toArray(URI[]::new);
     }
 
     /**
@@ -156,10 +151,7 @@ public class RrdDbPool {
      * @return Array with canonical path to open RRD path held in the pool.
      */
     public String[] getOpenFiles() {
-        //Direct toarray from keySet can fail
-        Set<String> uris = new HashSet<>(pool.size());
-        pool.forEach((k,v) -> uris.add(k.getPath()));
-        return uris.toArray(new String[uris.size()]);
+        return pool.keySet().stream().map(URI::getPath).toArray(String[]::new);
     }
 
     private RrdEntry getEntry(URI uri, boolean cancreate) throws InterruptedException {
