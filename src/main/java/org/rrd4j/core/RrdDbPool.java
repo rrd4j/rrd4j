@@ -362,8 +362,7 @@ public class RrdDbPool {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb requestRrdDb(URI uri) throws IOException {
-        RrdBackendFactory factory = RrdBackendFactory.findFactory(uri);
-        return requestRrdDb(uri, factory);
+        return requestRrdDb(uri, checkFactory(uri));
     }
 
     /**
@@ -427,10 +426,10 @@ public class RrdDbPool {
         }
     }
 
-    RrdDb requestRrdDb(RrdDef rrdDef, RrdBackendFactory backend) throws IOException {
+    RrdDb requestRrdDb(RrdDef rrdDef, RrdBackendFactory factory) throws IOException {
         RrdEntry ref = null;
         try {
-            URI uri = backend.getCanonicalUri(rrdDef.getUri());
+            URI uri = factory.getCanonicalUri(rrdDef.getUri());
             ref = requestEmpty(uri);
             ref.rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).setBackendFactory(factory).setPoolInternal(this).build();
             ref.count = 1;
@@ -447,10 +446,10 @@ public class RrdDbPool {
         }
     }
 
-    private RrdDb requestRrdDb(RrdDb.Builder builder, URI uri, RrdBackendFactory backend)
+    private RrdDb requestRrdDb(RrdDb.Builder builder, URI uri, RrdBackendFactory factory)
             throws IOException {
         RrdEntry ref = null;
-        uri = backend.getCanonicalUri(uri);
+        uri = factory.getCanonicalUri(uri);
         try {
             ref = requestEmpty(uri);
             ref.rrdDb = builder.setPath(uri).setBackendFactory(factory).setPoolInternal(this).build();
@@ -488,7 +487,7 @@ public class RrdDbPool {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
-        return requestRrdDb(rrdDef, RrdBackendFactory.findFactory(rrdDef.getUri()));
+        return requestRrdDb(rrdDef, checkFactory(rrdDef.getUri()));
     }
 
     /**
@@ -536,7 +535,7 @@ public class RrdDbPool {
      */
     public RrdDb requestRrdDb(URI uri, String sourcePath)
             throws IOException {
-        return requestRrdDb(RrdDb.getBuilder().setExternalPath(sourcePath), uri, RrdBackendFactory.findFactory(uri));
+        return requestRrdDb(RrdDb.getBuilder().setExternalPath(sourcePath), uri, checkFactory(uri));
     }
 
     /**
@@ -613,7 +612,7 @@ public class RrdDbPool {
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(RrdDb rrdDb) throws IOException {
-        return getOpenCount(rrdDb.getCanonicalUri());
+        return getCanonicalUriUsage(rrdDb.getCanonicalUri());
     }
 
     /**
@@ -624,7 +623,7 @@ public class RrdDbPool {
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(String path) throws IOException {
-        return getOpenCount(defaultFactory.getCanonicalUri(defaultFactory.getUri(path)));
+        return getCanonicalUriUsage(defaultFactory.getCanonicalUri(defaultFactory.getUri(path)));
     }
 
     /**
@@ -635,6 +634,10 @@ public class RrdDbPool {
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(URI uri) throws IOException {
+        return getCanonicalUriUsage(checkFactory(uri).getCanonicalUri(uri));
+    }
+
+    private int getCanonicalUriUsage(URI uri) {
         RrdEntry ref = null;
         try {
             ref = getEntry(uri, false);
@@ -667,6 +670,10 @@ public class RrdDbPool {
             throw e;
         }
         return usageWLock;
+    }
+
+    private RrdBackendFactory checkFactory(URI uri) {
+        return defaultFactory.canStore(uri) ? defaultFactory : RrdBackendFactory.findFactory(uri);
     }
 
 }
