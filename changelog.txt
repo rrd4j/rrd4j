@@ -3,7 +3,11 @@ Changes in version 3.7-SNAPSHOT.
 
 The font used by RRD4J can now be defined a set of properties. See the introduction of the class RrdGraphConstants for more details.
 
-Fixing a small bug in canonical path resolution by the pool.
+Improving URI normalization used internally by the pool, to ensure that same RRD opened using different path are indeed resolved as the same.
+
+Added a RrdDbPool.lockEmpty method to wait for an empty pool and lock it.
+
+The RrdDb.Builder.setPool now automatically enable the pool usage.
 
 Changes in version 3.6 - 06 Apr 2020.
 -------------------------------
