@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -644,6 +645,28 @@ public class RrdDbPool {
         } finally {
             passNext(ACTION.SWAP, ref);
         }
+    }
+
+    /**
+     * Wait until the pool is empty and return a lock that prevent any additions of new RrdDb references until it's released.
+     * 
+     * @since 3.7
+     *
+     * @param timeout the time to wait for the write lock
+     * @param unit the time unit of the timeout argument
+     * @return a lock to release when operations on this pool are finished.
+     * @throws InterruptedException
+     */
+    public Lock lockEmpty(long timeout, TimeUnit unit) throws InterruptedException {
+        usageWLock.tryLock(timeout, unit);
+        try {
+            usage.acquire(maxCapacity);
+        } catch (InterruptedException e) {
+            usageWLock.unlock();
+            Thread.currentThread().interrupt();
+            throw e;
+        }
+        return usageWLock;
     }
 
 }
