@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * in a multithreaded environment. This class should be also used to prevent opening of
  * too many RRD files at the same time (thus avoiding operating system limits).
  * </p>
- * <p>It should not be called directly. Use {@link RrdDb.Builder#usePool()} instead.</p>
+ * <p>It can also be used a factory for RrdDb, using a default backend factory.</p>
  */
 public class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
@@ -39,8 +39,8 @@ public class RrdDbPool {
     }
 
     /**
-     * Initial capacity of the pool i.e. maximum number of simultaneously open RRD files. The pool will
-     * never open too many RRD files at the same time.
+     * Initial capacity of the pool i.e. maximum number of simultaneously open RRD. The pool will
+     * never open too many RRD at the same time.
      */
     public static final int INITIAL_CAPACITY = 200;
 
@@ -91,7 +91,6 @@ public class RrdDbPool {
      * or returns already existing one. Uses Initialization On Demand Holder idiom.
      *
      * @return Single instance of this class
-     * @throws java.lang.RuntimeException Thrown if the default RRD backend is not derived from the {@link org.rrd4j.core.RrdFileBackendFactory}
      */
     public static RrdDbPool getInstance() {
         return RrdDbPoolSingletonHolder.instance;
@@ -110,7 +109,7 @@ public class RrdDbPool {
     private RrdBackendFactory defaultFactory;
 
     /**
-     * Constructor for RrdDbPool.
+     * Constructor for RrdDbPool. It will use the default backend factory.
      * @since 3.5
      */
     public RrdDbPool() {
@@ -119,7 +118,7 @@ public class RrdDbPool {
 
     /**
      * Constructor for RrdDbPool.
-     * @param defaultFactory the default factory used when given simple path of a rrdDb.
+     * @param defaultFactory the default factory used when given a simple path of a RRD.
      * @since 3.6
      */
     public RrdDbPool(RrdBackendFactory defaultFactory) {
@@ -131,18 +130,18 @@ public class RrdDbPool {
     }
 
     /**
-     * Returns the number of open RRD files.
+     * Returns the number of open RRD.
      *
-     * @return Number of currently open RRD files held in the pool.
+     * @return Number of currently open RRD held in the pool.
      */
     public int getOpenFileCount() {
         return pool.size();
     }
 
     /**
-     * Returns an array of open file URI.
+     * Returns an array of open RRD URI.
      *
-     * @return Array with {@link URI} to open RRD files held in the pool.
+     * @return Array with {@link URI} to open RRD held in the pool.
      */
     public URI[] getOpenUri() {
         //Direct toarray from keySet can fail
@@ -152,9 +151,9 @@ public class RrdDbPool {
     }
 
     /**
-     * Returns an array of open file path.
+     * Returns an array of open RRD.
      *
-     * @return Array with canonical path to open RRD files held in the pool.
+     * @return Array with canonical path to open RRD path held in the pool.
      */
     public String[] getOpenFiles() {
         //Direct toarray from keySet can fail
@@ -279,11 +278,11 @@ public class RrdDbPool {
 
     /**
      * Releases RrdDb reference previously obtained from the pool. When a reference is released, its usage
-     * count is decremented by one. If usage count drops to zero, the underlying RRD file will be closed.
+     * count is decremented by one. If usage count drops to zero, the underlying RRD will be closed.
      *
      * @param rrdDb RrdDb reference to be returned to the pool
      * @throws java.io.IOException Thrown in case of I/O error
-     * @deprecated a db remember if it was open directly or from the pool, no need to manage it manually any more
+     * @deprecated A RrdDb remember if it was open directly or from a pool, no need to manage it manually any more
      */
     @Deprecated
     public void release(RrdDb rrdDb) throws IOException {
@@ -326,20 +325,19 @@ public class RrdDbPool {
     }
 
     /**
-     * <p>Requests a RrdDb reference for the given RRD file path.</p>
+     * <p>Requests a RrdDb reference for the given RRD path.</p>
      * <ul>
-     * <li>If the file is already open, previously returned RrdDb reference will be returned. Its usage count
+     * <li>If the RRD is already open, previously returned RrdDb reference will be returned. Its usage count
      * will be incremented by one.
-     * <li>If the file is not already open and the number of already open RRD files is less than
-     * {@link #INITIAL_CAPACITY}, the file will be open and a new RrdDb reference will be returned.
-     * If the file is not already open and the number of already open RRD files is equal to
-     * {@link #INITIAL_CAPACITY}, the method blocks until some RRD file is closed.
+     * <li>If the RRD is not already open and the number of already open RRD is less than
+     * {@link #getCapacity()}, it will be opened and a new RrdDb reference will be returned.
+     * If the RRD is not already open and the number of already open RRD is equal to
+     * {@link #getCapacity()}, the method blocks until some RRD are closed.
      * </ul>
-     * <p>The path is transformed internally to URI using the default factory, that is the reference that will
-     * be used elsewhere.</p>
+     * <p>The path is transformed to an URI using the default factory defined at the creation of the pool.</p>
      *
-     * @param path Path to existing RRD file
-     * @return reference for the give RRD file
+     * @param path Path to existing RRD.
+     * @return reference for the given RRD.
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb requestRrdDb(String path) throws IOException {
@@ -347,15 +345,18 @@ public class RrdDbPool {
     }
 
     /**
-     * <p>Requests a RrdDb reference for the given RRD file path.</p>
+     * <p>Requests a RrdDb reference for the given RRD URI.</p>
      * <ul>
-     * <li>If the file is already open, previously returned RrdDb reference will be returned. Its usage count
+     * <li>If the RRD is already open, previously returned RrdDb reference will be returned. Its usage count
      * will be incremented by one.
-     * <li>If the file is not already open and the number of already open RRD files is less than
-     * {@link #INITIAL_CAPACITY}, the file will be open and a new RrdDb reference will be returned.
-     * If the file is not already open and the number of already open RRD files is equal to
-     * {@link #INITIAL_CAPACITY}, the method blocks until some RRD file is closed.
+     * <li>If the RRD is not already open and the number of already open RRD is less than
+     * {@link #getCapacity()}, it will be opened and a new RrdDb reference will be returned.
+     * If the RRD is not already open and the number of already open RRD is equal to
+     * {@link #getCapacity()}, the method blocks until some RRD are closed.
      * </ul>
+     * <p>
+     * If the default backend factory for the pool can handle this URI, it will be used, 
+     * or else {@link RrdBackendFactory#findFactory(URI)} will be used to find the backend factory used.
      *
      * @param uri {@link URI} to existing RRD file
      * @return reference for the give RRD file
@@ -467,46 +468,49 @@ public class RrdDbPool {
         }
     }
 
-    RrdDb requestRrdDb(URI uri, RrdBackendFactory backend, DataImporter importer) throws IOException {
-        return requestRrdDb(RrdDb.getBuilder().setImporter(importer), uri, backend);
+    RrdDb requestRrdDb(URI uri, RrdBackendFactory factory, DataImporter importer) throws IOException {
+        return requestRrdDb(RrdDb.getBuilder().setImporter(importer), uri, factory);
     }
 
     /**
-     * <p>Requests a RrdDb reference for the given RRD file definition object.</p>
+     * <p>Requests a RrdDb reference for the given RRD definition object.</p>
      * <ul>
-     * <li>If the file with the path specified in the RrdDef object is already open,
+     * <li>If the RRD with the path specified in the RrdDef object is already open,
      * the method blocks until the file is closed.
-     * <li>If the file is not already open and the number of already open RRD files is less than
-     * {@link #INITIAL_CAPACITY}, a new RRD file will be created and a its RrdDb reference will be returned.
-     * If the file is not already open and the number of already open RRD files is equal to
-     * {@link #INITIAL_CAPACITY}, the method blocks until some RRD file is closed.
+     * <li>If the RRD is not already open and the number of already open RRD is less than
+     * {@link #getCapacity()}, a new RRD will be created and it's RrdDb reference will be returned.
+     * If the RRD is not already open and the number of already open RRD is equal to
+     * {@link #getCapacity()}, the method blocks until some RrdDb references are closed.
      * </ul>
+     * <p>
+     * If the factory defined when creating the pool can handle the URI, it will be used, 
+     * or else {@link RrdBackendFactory#findFactory(URI)} will be used.
      *
-     * @param rrdDef Definition of the RRD file to be created
-     * @return Reference to the newly created RRD file
-     * @throws java.io.IOException Thrown in case of I/O error
+     * @param rrdDef Definition of the RRD file to be created.
+     * @return Reference to the newly created RRD file.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
         return requestRrdDb(rrdDef, checkFactory(rrdDef.getUri()));
     }
 
     /**
-     * <p>Requests a RrdDb reference for the given path. The file will be created from
+     * <p>Requests a RrdDb reference for the given path. The RRD will be created from
      * external data (from XML dump or RRDTool's binary RRD file).</p>
      * <ul>
-     * <li>If the file with the path specified is already open,
+     * <li>If the RRD with the path specified is already open,
      * the method blocks until the file is closed.
-     * <li>If the file is not already open and the number of already open RRD files is less than
-     * {@link #INITIAL_CAPACITY}, a new RRD file will be created and a its RrdDb reference will be returned.
-     * If the file is not already open and the number of already open RRD files is equal to
-     * {@link #INITIAL_CAPACITY}, the method blocks until some RRD file is closed.
+     * <li>If the RRD is not already open and the number of already open RRD is less than
+     * {@link #getCapacity()}, a new RRD will be created and it's RrdDb reference will be returned.
+     * If the RRD is not already open and the number of already open RRD is equal to
+     * {@link #getCapacity()}, the method blocks until some RrdDb references are closed.
      * </ul>
-     * <p>The path is transformed internally to an URI using the default factory of the pool.</p>
+     * <p>The path is transformed to an URI using the default factory of the pool.</p>
      *
-     * @param path       Path to RRD file which should be created
-     * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format
-     * @return Reference to the newly created RRD file
-     * @throws java.io.IOException Thrown in case of I/O error
+     * @param path       Path to the RRD that should be created.
+     * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format.
+     * @return Reference to the newly created RRD.
+     * @throws java.io.IOException Thrown in case of I/O error.
      */
     public RrdDb requestRrdDb(String path, String sourcePath)
             throws IOException {
@@ -515,22 +519,22 @@ public class RrdDbPool {
     }
 
     /**
-     * <p>Requests a RrdDb reference for the given path. The file will be created from
+     * <p>Requests a RrdDb reference for the given URI. The RRD will be created from
      * external data (from XML dump or RRDTool's binary RRD file).</p>
      * <ul>
-     * <li>If the file with the path specified is already open,
+     * <li>If the RRD with the URI specified is already open,
      * the method blocks until the file is closed.
-     * <li>If the file is not already open and the number of already open RRD files is less than
-     * {@link #INITIAL_CAPACITY}, a new RRD file will be created and a its RrdDb reference will be returned.
-     * If the file is not already open and the number of already open RRD files is equal to
-     * {@link #INITIAL_CAPACITY}, the method blocks until some RRD file is closed.
+     * <li>If the RRD is not already open and the number of already open RRD is less than
+     * {@link #getCapacity()}, a new RRD will be created and it's RrdDb reference will be returned.
+     * If the RRD is not already open and the number of already open RRD is equal to
+     * {@link #getCapacity()}, the method blocks until some RrdDb references are closed.
      * </ul>
-     * <p>The path is transformed internally to URI using the default factory, that is the reference that will
-     * be used elsewhere.</p>
+     * If the factory defined when creating the pool can handle the URI, it will be used, 
+     * or else {@link RrdBackendFactory#findFactory(URI)} will be used to choose the factory.
      *
-     * @param uri       Path to RRD file which should be created
+     * @param uri        URI to the RRD that should be created
      * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format
-     * @return Reference to the newly created RRD file
+     * @return Reference to the newly created RRD
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public RrdDb requestRrdDb(URI uri, String sourcePath)
@@ -539,10 +543,11 @@ public class RrdDbPool {
     }
 
     /**
-     * Sets the default factory to use when obtaining rrdDb from simple path and not URI.
+     * Sets the default factory to use when obtaining RrdDb reference from simple path and not URI.
      *
-     * @param defaultFactory The factory to used.
-     * @throws IllegalStateException if done will the pool is not empty or the thread was interrupted.
+     * @param defaultFactory The factory to use.
+     * @throws IllegalStateException if called while the pool is not empty or the thread was interrupted.
+     * @deprecated the pool is no longer a singleton, create a new pool instead.
      */
     public void setDefaultFactory(RrdBackendFactory defaultFactory) {
         try {
@@ -562,10 +567,10 @@ public class RrdDbPool {
     }
 
     /**
-     * Sets the maximum number of simultaneously open RRD files.
+     * Sets the maximum number of simultaneously open RRD.
      *
-     * @param newCapacity Maximum number of simultaneously open RRD files.
-     * @throws IllegalStateException if done will the pool is not empty or the thread was interrupted.
+     * @param newCapacity Maximum number of simultaneously open RRD.
+     * @throws IllegalStateException if called while the pool is not empty or the thread was interrupted.
      */
     public void setCapacity(int newCapacity) {
         try {
@@ -586,9 +591,9 @@ public class RrdDbPool {
     }
 
     /**
-     * Returns the maximum number of simultaneously open RRD files.
+     * Returns the maximum number of simultaneously open RRD.
      *
-     * @return maximum number of simultaneously open RRD files
+     * @return maximum number of simultaneously open RRD
      */
     public int getCapacity() {
         try {
@@ -608,7 +613,7 @@ public class RrdDbPool {
      * Returns the number of usage for a RRD.
      *
      * @param rrdDb RrdDb reference for which informations is needed.
-     * @return the number of request for this rrd
+     * @return the number of request for this RRD.
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(RrdDb rrdDb) throws IOException {
@@ -617,9 +622,10 @@ public class RrdDbPool {
 
     /**
      * Returns the number of usage for a RRD.
+     * <p>The path is transformed to an URI using the default factory.</p>
      *
      * @param path RRD's path for which informations is needed.
-     * @return the number of request for this file
+     * @return the number of request for this RRD.
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(String path) throws IOException {
@@ -629,8 +635,8 @@ public class RrdDbPool {
     /**
      * Returns the number of usage for a RRD.
      *
-     * @param uri RRD's uri for which informations is needed.
-     * @return the number of request for this file
+     * @param uri RRD's URI for which informations is needed.
+     * @return the number of request for this RRD.
      * @throws java.io.IOException if any.
      */
     public int getOpenCount(URI uri) throws IOException {

@@ -185,7 +185,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         }
 
         /**
-         * Activate the pool usage
+         * Activate the pool usage. If the pool is not declared using
+         * {@link #setPool(RrdDbPool)}, the singleton instance will be used.
          *
          * @return the same builder.
          */
@@ -195,8 +196,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         }
 
         /**
-         * Set the pool that will be used if {@link #usePool} is true. If not defined,
-         * the singleton instance will be used.
+         * Set the pool that will be used and set usePool to true.
          *
          * @param pool true if a pool is going to be used
          * @return the same builder.
