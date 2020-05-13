@@ -69,7 +69,7 @@ public abstract class Variable {
             }
         }
         if (first == -1 || last == -1) {
-            val = new Value(Long.MIN_VALUE, Double.NaN);
+            val = INVALIDVALUE;
         } else if (s instanceof VDef) {
             // Already a variable, just check if it fits
             Value v = ((VDef) s).getValue();
