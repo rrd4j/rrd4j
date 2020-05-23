@@ -169,13 +169,11 @@ public class RrdTutorial {
         // DEF:myspeed=test.rrd:speed:AVERAGE \
         // LINE2:myspeed#FF0000
         println("== Creating graph 1");
-        RrdGraphDef gDef1 = new RrdGraphDef();
+        RrdGraphDef gDef1 = new RrdGraphDef(920804400, 920808000);
         gDef1.setWidth(IMG_WIDTH);
         gDef1.setHeight(IMG_HEIGHT);
         String img1Path = Util.getRrd4jDemoPath(FILE + "." + FILE_FORMAT);
         gDef1.setFilename(img1Path);
-        gDef1.setStartTime(920804400);
-        gDef1.setEndTime(920808000);
         gDef1.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
         gDef1.line(MYSPEED, new Color(0xFF, 0x00, 0x00), SPEED);
         gDef1.comment("Graph 1\\r");
@@ -194,13 +192,11 @@ public class RrdTutorial {
         // CDEF:realspeed=myspeed,1000,\* \
         // LINE2:realspeed#FF0000
         println("== Creating graph 2");
-        RrdGraphDef gDef2 = new RrdGraphDef();
+        RrdGraphDef gDef2 = new RrdGraphDef(920804400, 920808000);
         gDef2.setWidth(IMG_WIDTH);
         gDef2.setHeight(IMG_HEIGHT);
         String img2Path = Util.getRrd4jDemoPath(FILE + "2" + "." + FILE_FORMAT);
         gDef2.setFilename(img2Path);
-        gDef2.setStartTime(920804400);
-        gDef2.setEndTime(920808000);
         gDef2.setVerticalLabel("m/s");
         gDef2.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
         gDef2.datasource(REALSPEED, "myspeed,1000,*");
@@ -225,13 +221,11 @@ public class RrdTutorial {
         // AREA:good#00FF00:"Good speed" \
         // AREA:fast#FF0000:"Too fast"
         println("== Creating graph 3");
-        RrdGraphDef gDef3 = new RrdGraphDef();
+        RrdGraphDef gDef3 = new RrdGraphDef(920804400, 920808000);
         gDef3.setWidth(IMG_WIDTH);
         gDef3.setHeight(IMG_HEIGHT);
         String img3Path = Util.getRrd4jDemoPath(FILE + "3" + "." + FILE_FORMAT);
         gDef3.setFilename(img3Path);
-        gDef3.setStartTime(920804400);
-        gDef3.setEndTime(920808000);
         gDef3.setVerticalLabel("km/h");
         gDef3.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
         gDef3.datasource("kmh", "myspeed,3600,*");
@@ -263,13 +257,11 @@ public class RrdTutorial {
         // AREA:fast#550000:"Too fast" \
         // STACK:over#FF0000:"Over speed"
         println("== Creating graph 4");
-        RrdGraphDef gDef4 = new RrdGraphDef();
+        RrdGraphDef gDef4 = new RrdGraphDef(920804400, 920808000);
         gDef4.setWidth(IMG_WIDTH);
         gDef4.setHeight(IMG_HEIGHT);
         String img4Path = Util.getRrd4jDemoPath(FILE + "4" + "." + FILE_FORMAT);
         gDef4.setFilename(img4Path);
-        gDef4.setStartTime(920804400);
-        gDef4.setEndTime(920808000);
         gDef4.setVerticalLabel("km/h");
         gDef4.datasource(MYSPEED, rrdPath, SPEED, AVERAGE);
         gDef4.datasource("nonans", "myspeed,UN,0,myspeed,IF");

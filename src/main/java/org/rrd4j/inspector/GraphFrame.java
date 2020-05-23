@@ -91,8 +91,7 @@ class GraphFrame extends JFrame {
             }
             values = robin.getValues();
             rrdDef = rrdDb.getRrdDef();
-            RrdGraphDef rrdGraphDef = new RrdGraphDef();
-            rrdGraphDef.setTimeSpan(t1, t2);
+            RrdGraphDef rrdGraphDef = new RrdGraphDef(t1, t2);
             rrdGraphDef.setImageFormat("png");
             rrdGraphDef.setTitle(rrdDef.getDsDefs()[dsIndex].dump() + " " +
                     rrdDef.getArcDefs()[arcIndex].dump());

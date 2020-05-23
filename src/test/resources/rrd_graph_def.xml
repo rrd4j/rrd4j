@@ -4,7 +4,7 @@
     <filename>test.png</filename>
     <!-- starting and ending timestamps can be specified by using at-style time specification, or by specifying exact timestamps since epoch (without milliseconds) -->
     <span>
-        <start>now - 1d</start>
+        <start>now - 2d</start>
         <end>now</end>
     </span>
     <options>

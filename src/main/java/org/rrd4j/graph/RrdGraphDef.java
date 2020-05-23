@@ -178,7 +178,9 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
     /**
      * Creates RrdGraphDef object and sets default time span (default ending time is 'now',
      * default starting time is 'end-1day'.
+     * @deprecated Uses default value that will be probably overriden.
      */
+    @Deprecated
     public RrdGraphDef() {
         setTimeSpan(Util.getTimestamps(DEFAULT_START, DEFAULT_END));
     }

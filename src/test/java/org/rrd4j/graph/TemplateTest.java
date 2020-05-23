@@ -9,6 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -47,8 +49,8 @@ public class TemplateTest {
     public void test2() throws IOException {
         InputStream in = getClass().getResourceAsStream("/rrd_graph_def.xml"); 
         RrdGraphDefTemplate template = new RrdGraphDefTemplate(new InputSource(in));
-        @SuppressWarnings("unused")
         RrdGraphDef gdef = template.getRrdGraphDef();
+        Assert.assertEquals(Duration.ofDays(2).get(ChronoUnit.SECONDS), gdef.getEndTime() - gdef.getStartTime());
     }
 
     @Test

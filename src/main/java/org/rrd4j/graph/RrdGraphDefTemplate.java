@@ -5,7 +5,9 @@ import java.awt.Paint;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TimeZone;
+import java.util.function.BiFunction;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
@@ -306,17 +308,23 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             throw new IllegalArgumentException("XML definition must start with <rrd_graph_def>");
         }
         validateTagsOnlyOnce(root, new String[]{"filename", "span", "options", "datasources", "graph"});
-        rrdGraphDef = new RrdGraphDef();
+        BiFunction<String, String, Long> resolve = (k, d)-> {
+            String value = Optional.ofNullable(Util.Xml.getFirstChildNode(root, "span"))
+            .map( n -> Util.Xml.getFirstChildNode(n, k))
+            .map(Node::getTextContent)
+            .map(String::trim)
+            .orElse(d);
+            return Util.getTimestamp(value);
+        };
+        long start = resolve.apply("start", DEFAULT_START);
+        long end = resolve.apply("end", DEFAULT_END);
+        rrdGraphDef = new RrdGraphDef(start, end);
         // traverse all nodes
         Node[] childNodes = getChildNodes(root);
         for (Node childNode : childNodes) {
             String nodeName = childNode.getNodeName();
             if (nodeName.equals("filename")) {
                 resolveFilename(childNode);
-            }
-            // SPAN
-            else if (nodeName.equals("span")) {
-                resolveSpan(childNode);
             }
             // OPTIONS
             else if (nodeName.equals("options")) {
@@ -669,15 +677,6 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
     private void resolveFilename(Node filenameNode) {
         String filename = getValue(filenameNode);
         rrdGraphDef.setFilename(filename);
-    }
-
-    private void resolveSpan(Node spanNode) {
-        validateTagsOnlyOnce(spanNode, new String[]{"start", "end"});
-        String startStr = getChildValue(spanNode, "start");
-        String endStr = getChildValue(spanNode, "end");
-        long[] span = Util.getTimestamps(startStr, endStr);
-        rrdGraphDef.setStartTime(span[0]);
-        rrdGraphDef.setEndTime(span[1]);
     }
 
     private void resolveOptions(Node rootOptionNode) {

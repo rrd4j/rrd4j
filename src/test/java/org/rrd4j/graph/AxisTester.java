@@ -68,11 +68,9 @@ public abstract class AxisTester<T extends Axis> {
     //Cannot be called until the RRD has been populated; wait
     void prepareGraph() throws IOException {
 
-        graphDef = new RrdGraphDef();
+        graphDef = new RrdGraphDef(startTime, startTime + (60*60*24));
         graphDef.datasource("testvalue", jrbFileName, "testvalue", ConsolFun.AVERAGE);
         graphDef.area("testvalue", Util.parseColor("#FF0000"), "TestValue");
-        graphDef.setStartTime(startTime);
-        graphDef.setEndTime(startTime + (60*60*24));
         graphDef.setLocale(Locale.US);
 
         setupGraphDef();

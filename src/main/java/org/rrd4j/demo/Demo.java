@@ -168,7 +168,7 @@ public class Demo {
         // create graph
         println("Creating graph " + Util.getLapTime());
         println("== Creating graph from the second file");
-        RrdGraphDef gDef = new RrdGraphDef();
+        RrdGraphDef gDef = new RrdGraphDef(start, end);
         gDef.setTimeLabelFormat(new CustomTimeLabelFormat());
         gDef.setLocale(Locale.US);
         gDef.setWidth(IMG_WIDTH);
@@ -178,8 +178,6 @@ public class Demo {
         //gDef.setFontSet(true);
 
         gDef.setFilename(imgPath);
-        gDef.setStartTime(start);
-        gDef.setEndTime(end);
         gDef.setTitle("Temperatures in May-June 2010");
         gDef.setVerticalLabel("temperature");
 

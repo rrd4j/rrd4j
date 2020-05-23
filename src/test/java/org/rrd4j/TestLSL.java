@@ -107,12 +107,10 @@ public class TestLSL {
         FetchRequest week = rrdDb.createFetchRequest(ConsolFun.AVERAGE, LASTWEEK, END);
         FetchRequest month = rrdDb.createFetchRequest(ConsolFun.AVERAGE, START, END);
 
-        RrdGraphDef gdef = new RrdGraphDef();
+        RrdGraphDef gdef = new RrdGraphDef(LASTWEEK, END);
         gdef.setLocale(Locale.US);
         gdef.setTimeZone(TimeZone.getTimeZone("CET"));
         gdef.setFilename(testFolder.newFile("trend.png").getCanonicalPath());
-        gdef.setStartTime(LASTWEEK);
-        gdef.setEndTime(END);
         gdef.setImageFormat("png");
         gdef.setTitle("Disk Usage Prediction: /");                              //--title="Disk Usage Prediction: {ns-dskPath}"
         gdef.setWidth(620);                                                     //--width 620

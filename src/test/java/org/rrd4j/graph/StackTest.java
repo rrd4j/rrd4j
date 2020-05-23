@@ -17,9 +17,7 @@ public class StackTest {
 
     @Test
     public void test1() throws IOException {
-        RrdGraphDef def = new RrdGraphDef();
-        def.setStartTime(1);
-        def.setEndTime(100);
+        RrdGraphDef def = new RrdGraphDef(1, 100);
         def.datasource("base1", new Plottable() {
             @Override
             public double getValue(long timestamp) {
@@ -50,9 +48,7 @@ public class StackTest {
 
     @Test
     public void test2() throws IOException {
-        RrdGraphDef def = new RrdGraphDef();
-        def.setStartTime(1);
-        def.setEndTime(100);
+        RrdGraphDef def = new RrdGraphDef(1, 100);
         def.datasource("base1", new Plottable() {
             @Override
             public double getValue(long timestamp) {
@@ -83,9 +79,7 @@ public class StackTest {
 
     @Test
     public void fail() throws IOException {
-        RrdGraphDef def = new RrdGraphDef();
-        def.setStartTime(1);
-        def.setEndTime(100);
+        RrdGraphDef def = new RrdGraphDef(1, 100);
         def.datasource("base1", new Plottable() {
             @Override
             public double getValue(long timestamp) {

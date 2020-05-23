@@ -44,9 +44,7 @@ public class PercentileTest {
 
         createRrdFile(fileName, startTime);
 
-        RrdGraphDef graphDef = new RrdGraphDef();
-        graphDef.setStartTime(startTime - 300);
-        graphDef.setEndTime(endTime + 300);
+        RrdGraphDef graphDef = new RrdGraphDef(startTime - 300, endTime + 300);
         graphDef.datasource("baz", backend.getUri(fileName).toString(), "bar", ConsolFun.AVERAGE);
         graphDef.datasource("nfp", "baz", new Variable.PERCENTILE(95));
         graphDef.print("nfp", "%le", false);
@@ -73,9 +71,7 @@ public class PercentileTest {
 
         createRrdFile(fileName, startTime);
 
-        RrdGraphDef graphDef = new RrdGraphDef();
-        graphDef.setStartTime(startTime - 300);
-        graphDef.setEndTime(endTime + 300);
+        RrdGraphDef graphDef = new RrdGraphDef(startTime - 300, endTime + 300);
         graphDef.datasource("baz", backend.getUri(fileName).toString(), "bar", ConsolFun.AVERAGE);
         graphDef.datasource("nfp", "baz", new Variable.PERCENTILE(95));
         graphDef.print("nfp", "%le", false);
