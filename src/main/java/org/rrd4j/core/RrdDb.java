@@ -408,6 +408,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * </pre>
      *
      * @param rrdDef Object describing the structure of the new RRD file.
+     * @return a new Rrdb created from the definition.
      * @throws java.io.IOException Thrown in case of I/O error.
      */
     public static RrdDb of(RrdDef rrdDef) throws IOException {

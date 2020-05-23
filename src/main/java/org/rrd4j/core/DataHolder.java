@@ -55,10 +55,7 @@ public interface DataHolder {
     void setEndTime(long time);
 
     /**
-     * Returns ending timestamp. Basically, this value is equal to the ending timestamp
-     * specified in the constructor. However, if the ending timestamps was zero, it
-     * will be replaced with the real timestamp when the {@link #processData()} method returns. The real
-     * value will be calculated from the last update times of processed RRD files.
+     * Returns ending timestamp.
      *
      * @return Ending timestamp in seconds
      */
@@ -73,10 +70,7 @@ public interface DataHolder {
     void setStartTime(long time);
 
     /**
-     * Returns starting timestamp. Basically, this value is equal to the star timestamp
-     * specified in the constructor. However, if the ending timestamps was zero, it
-     * will be replaced with the real timestamp when the {@link #processData()} method returns. The real
-     * value will be calculated from the last update times of processed RRD files.
+     * Returns starting timestamp.
      *
      * @return Starting timestamp in seconds
      */
@@ -108,9 +102,7 @@ public interface DataHolder {
     void setStep(long step);
 
     /**
-     * Returns the time step used for data processing. Initially, this method returns zero.
-     * Once {@link #processData()} is finished, the method will return the real value used for
-     * all internal computations. Roughly corresponds to the --step option in RRDTool's graph/xport commands.
+     * Returns the time step used for data processing.
      *
      * @return Step used for data processing.
      */
@@ -118,8 +110,7 @@ public interface DataHolder {
 
     /**
      * Defines virtual datasource. This datasource can then be used
-     * in other methods like {@link #datasource(String, String)} or
-     * {@link #gprint(String, ConsolFun, String)}.
+     * in other methods like {@link #datasource(String, String)}.
      *
      * @param name      Source name
      * @param rrdPath   Path to RRD file
@@ -131,8 +122,7 @@ public interface DataHolder {
 
     /**
      * Defines virtual datasource. This datasource can then be used
-     * in other methods like {@link #datasource(String, String)} or
-     * {@link #gprint(String, ConsolFun, String)}.
+     * in other methods like {@link #datasource(String, String)}.
      *
      * @param name      Source name
      * @param rrdPath   Path to RRD file

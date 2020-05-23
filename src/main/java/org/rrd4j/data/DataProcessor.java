@@ -50,7 +50,7 @@ public class DataProcessor implements DataHolder {
 
     /**
      * Constant representing the default number of pixels on a Rrd4j graph (will be used if
-     * no other value is specified with {@link #setStep(long) setStep()} method.
+     * no other value is specified with {@link #setPixelCount(int)} method.
      */
     public static final int DEFAULT_PIXEL_COUNT = 600;
     /** Constant <code>DEFAULT_PERCENTILE=95.0</code> */
@@ -526,7 +526,7 @@ public class DataProcessor implements DataHolder {
      * @param name          source name.
      * @param rpnExpression RPN expression containing comma delimited simple and complex
      *                      source names, RPN constants, functions and operators.
-     * @deprecated Uses {@link #datasource(String, String) instead
+     * @deprecated Uses {@link #datasource(String, String)} instead
      */
     @Deprecated
     public void addDatasource(String name, String rpnExpression) {

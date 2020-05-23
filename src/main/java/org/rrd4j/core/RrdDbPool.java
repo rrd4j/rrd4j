@@ -657,7 +657,7 @@ public class RrdDbPool {
      * @param timeout the time to wait for the write lock
      * @param unit the time unit of the timeout argument
      * @return a lock to release when operations on this pool are finished.
-     * @throws InterruptedException
+     * @throws InterruptedException if interrupted whole waiting for the lock
      */
     public Lock lockEmpty(long timeout, TimeUnit unit) throws InterruptedException {
         usageWLock.tryLock(timeout, unit);
