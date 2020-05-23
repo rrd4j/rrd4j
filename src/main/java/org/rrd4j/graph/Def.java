@@ -33,10 +33,10 @@ class Def extends Source {
 
     void requestData(DataProcessor dproc) {
         if (backend == null) {
-            dproc.addDatasource(name, rrdPath, dsName, consolFun);
+            dproc.datasource(name, rrdPath, dsName, consolFun);
         }
         else {
-            dproc.addDatasource(name, rrdPath, dsName, consolFun, backend);
+            dproc.datasource(name, rrdPath, dsName, consolFun, backend);
         }
     }
 }

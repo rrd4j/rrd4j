@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -17,8 +19,10 @@ import java.util.TimeZone;
 import javax.imageio.ImageIO;
 
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.DataHolder;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.RrdBackendFactory;
+import org.rrd4j.core.RrdDbPool;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
 import org.rrd4j.data.Plottable;
@@ -52,7 +56,7 @@ import org.rrd4j.data.Variable;
  * without forcing a newline, you can use the special tag \J at the end of
  * the string to disable the auto justification.</p>
  */
-public class RrdGraphDef implements RrdGraphConstants {
+public class RrdGraphDef implements RrdGraphConstants, DataHolder {
 
     /**
      * <p>Implementations of this class can be used to generate image than can be
@@ -96,7 +100,8 @@ public class RrdGraphDef implements RrdGraphConstants {
         }
     }
 
-    boolean poolUsed = false; // ok
+    boolean poolUsed = DEFAULT_POOL_USAGE_POLICY;
+    private RrdDbPool pool = null;
     boolean antiAliasing = false; // ok
     boolean textAntiAliasing = false; // ok
     String filename = RrdGraphConstants.IN_MEMORY_IMAGE; // ok
@@ -179,11 +184,38 @@ public class RrdGraphDef implements RrdGraphConstants {
     }
 
     /**
+     * Creates RrdGraphDef object and sets default time span (default ending time is 'now',
+     * default starting time is 'end-1day'.
+     */
+    public RrdGraphDef(long t1, long t2) {
+        if ((t1 < t2 && t1 > 0 && t2 > 0) || (t1 > 0 && t2 == 0)) {
+            this.startTime = t1;
+            this.endTime = t2;
+        }
+        else {
+            throw new IllegalArgumentException("Invalid timestamps specified: " + t1 + ", " + t2);
+        }
+    }
+
+    /**
+     * Creates new DataProcessor object for the given time duration. The given duration will be
+     * substracted from current time.
+     *
+     * @param d duration to substract.
+     */
+    public RrdGraphDef(TemporalAmount d) {
+        Instant now = Instant.now();
+        this.endTime = now.getEpochSecond();
+        this.startTime = now.minus(d).getEpochSecond();
+    }
+
+    /**
      * Sets the time when the graph should begin. Time in seconds since epoch
      * (1970-01-01) is required. Negative numbers are relative to the current time.
      *
      * @param time Starting time for the graph in seconds since epoch
      */
+    @Override
     public void setStartTime(long time) {
         this.startTime = time;
         if (time <= 0) {
@@ -197,6 +229,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param time Ending time for the graph in seconds since epoch
      */
+    @Override
     public void setEndTime(long time) {
         this.endTime = time;
         if (time <= 0) {
@@ -211,6 +244,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param startTime Starting time in seconds since epoch
      * @param endTime   Ending time in seconds since epoch
      */
+    @Override
     public void setTimeSpan(long startTime, long endTime) {
         setStartTime(startTime);
         setEndTime(endTime);
@@ -234,8 +268,25 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param poolUsed true, if RrdDbPool class should be used. False otherwise.
      */
+    @Override
     public void setPoolUsed(boolean poolUsed) {
         this.poolUsed = poolUsed;
+    }
+
+    @Override
+    public boolean isPoolUsed() {
+        return poolUsed;
+    }
+
+    @Override
+    public RrdDbPool getPool() {
+        return pool;
+    }
+
+    @Override
+    public void setPool(RrdDbPool pool) {
+        this.poolUsed = true;
+        this.pool = pool;
     }
 
     /**
@@ -781,6 +832,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param step Desired time step (don't use this method if you don't know what you're doing).
      */
+    @Override
     public void setStep(long step) {
         this.step = step;
     }
@@ -948,6 +1000,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param dsName    Datasource name in the specified RRD file
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      */
+    @Override
     public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun) {
         sources.add(new Def(name, rrdPath, dsName, consolFun));
     }
@@ -981,6 +1034,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      * @param backend   Backend to be used while fetching data from a RRD file.
      */
+    @Override
     public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun, RrdBackendFactory backend) {
         sources.add(new Def(name, rrdPath, dsName, consolFun, backend));
     }
@@ -992,6 +1046,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param name          Source name
      * @param rpnExpression RPN expression.
      */
+    @Override
     public void datasource(String name, String rpnExpression) {
         sources.add(new CDef(name, rpnExpression));
     }
@@ -1010,6 +1065,19 @@ public class RrdGraphDef implements RrdGraphConstants {
         datasource(name, defName, consolFun.getVariable());
     }
 
+    /**
+     * Creates a datasource that performs a variable calculation on an
+     * another named datasource to yield a single combined timestamp/value.
+     *
+     * Requires that the other datasource has already been defined; otherwise, it'll
+     * end up with no data
+     *
+     * @param name - the new virtual datasource name
+     * @param defName - the datasource from which to extract the percentile. Must be a previously
+     *                     defined virtual datasource
+     * @param var - a new instance of a Variable used to do the calculation
+     */
+    @Override
     public void datasource(String name, String defName, Variable var) {
         sources.add(new VDef(name, defName, var));
     }
@@ -1021,6 +1089,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param name      Source name.
      * @param plottable Plottable object.
      */
+    @Override
     public void datasource(String name, Plottable plottable) {
         sources.add(new PDef(name, plottable));
     }
@@ -1032,6 +1101,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param name      Source name.
      * @param fetchData FetchData object.
      */
+    @Override
     public void datasource(String name, FetchData fetchData) {
         sources.add(new TDef(name, name, fetchData));
     }
@@ -1045,6 +1115,7 @@ public class RrdGraphDef implements RrdGraphConstants {
      * @param dsName    Source name in fetchData.
      * @param fetchData FetchData object.
      */
+    @Override
     public void datasource(String name, String dsName, FetchData fetchData) {
         sources.add(new TDef(name, dsName, fetchData));
     }
@@ -1723,8 +1794,14 @@ public class RrdGraphDef implements RrdGraphConstants {
      *
      * @param tz the time zone to set
      */
+    @Override
     public void setTimeZone(TimeZone tz) {
         this.tz = tz;
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
+        return this.tz;
     }
 
     /**
@@ -1782,6 +1859,21 @@ public class RrdGraphDef implements RrdGraphConstants {
 
     Paint getColor(ElementsNames element) {
         return colors[element.ordinal()];
+    }
+
+    @Override
+    public long getEndTime() {
+        return this.endTime;
+    }
+
+    @Override
+    public long getStartTime() {
+        return this.startTime;
+    }
+
+    @Override
+    public long getStep() {
+        return this.step;
     }
 
 }

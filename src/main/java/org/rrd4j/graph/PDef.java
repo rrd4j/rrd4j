@@ -12,6 +12,6 @@ class PDef extends Source {
     }
 
     void requestData(DataProcessor dproc) {
-        dproc.addDatasource(name, plottable);
+        dproc.datasource(name, plottable);
     }
 }
