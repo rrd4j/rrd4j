@@ -122,13 +122,14 @@ public class RrdGraph implements RrdGraphConstants {
             fetchData();
             resolveTextElements();
             if (gdef.shouldPlot() && !lazy) {
+                initializeLimits();
                 calculatePlotValues();
                 findMinMaxValues();
                 identifySiUnit();
                 expandValueRange();
                 removeOutOfRangeRules();
                 removeOutOfRangeSpans();
-                initializeLimits();
+                mapper = new Mapper(this);
                 placeLegends();
                 createImageWorker();
                 drawBackground();
@@ -436,8 +437,6 @@ public class RrdGraph implements RrdGraphConstants {
             im.yorigin = PADDING_TOP + im.ysize;
         }
 
-        mapper = new Mapper(this);
-
         if (!gdef.onlyGraph && gdef.title != null) {
             im.yorigin += getFontHeight(FONTTAG_TITLE) + PADDING_TITLE;
         }
@@ -655,6 +654,7 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void fetchData() throws IOException {
         dproc = new DataProcessor(gdef.startTime, gdef.endTime);
+        dproc.setPixelCount(im.xsize);
         if (gdef.poolUsed) {
             dproc.setPoolUsed(gdef.poolUsed);
             dproc.setPool(gdef.getPool());

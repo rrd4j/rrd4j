@@ -49,14 +49,14 @@ import org.rrd4j.core.Util;
 public class DataProcessor implements DataHolder {
 
     /**
-     * Constant representing the default number of pixels on a Rrd4j graph (will be used if
-     * no other value is specified with {@link #setPixelCount(int)} method.
+     * Not used any more.
      */
+    @Deprecated
     public static final int DEFAULT_PIXEL_COUNT = 600;
     /** Constant <code>DEFAULT_PERCENTILE=95.0</code> */
     public static final double DEFAULT_PERCENTILE = 95.0; // %
 
-    private int pixelCount = DEFAULT_PIXEL_COUNT;
+    private int pixelCount = 0;
 
     private boolean poolUsed = DEFAULT_POOL_USAGE_POLICY;
     private RrdDbPool pool = null;
@@ -964,7 +964,14 @@ public class DataProcessor implements DataHolder {
                         }
                     }
                 }
-            }
+            } 
+        } finally {
+            Arrays.stream(batchRrd).forEach(t -> {
+                try {
+                    t.close();
+                } catch (IOException e) {
+                }
+            });
         }
     }
 
@@ -997,9 +1004,13 @@ public class DataProcessor implements DataHolder {
             // step resolved from a RRD file
             step = newStep;
         }
-        else {
-            // choose step based on the number of pixels (useful for plottable datasources)
+        else if (pixelCount != 0) {
+            // Only calculated sources. But requested in a graph. So use the graph
+            // width as an hint
             step = Math.max((tEnd - tStart) / pixelCount, 1);
+        } else if (step <= 0) {
+            // If step was not given, just 1
+            step = 1;
         }
     }
 
