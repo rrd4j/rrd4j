@@ -3,13 +3,11 @@ package org.rrd4j.data;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.TemporalAmount;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -62,7 +60,8 @@ public class DataProcessor implements DataHolder {
     private RrdDbPool pool = null;
 
     private long tStart;
-    private long tEnd, timestamps[];
+    private long tEnd;
+    private long timestamps[];
     private long lastRrdArchiveUpdateTime = 0;
     // this will be adjusted later
     private long step = 0;
@@ -928,13 +927,7 @@ public class DataProcessor implements DataHolder {
     // PRIVATE METHODS
 
     private void extractDefs() {
-        List<Def> defList = new ArrayList<Def>();
-        for (Source source : sources.values()) {
-            if (source instanceof Def) {
-                defList.add((Def) source);
-            }
-        }
-        defSources = defList.toArray(new Def[defList.size()]);
+        defSources = sources.values().stream().filter(s -> s instanceof Def).toArray(Def[]::new);
     }
 
     private void fetchRrdData() throws IOException {
@@ -1013,7 +1006,8 @@ public class DataProcessor implements DataHolder {
     private void chooseOptimalStep() {
         long newStep = Long.MAX_VALUE;
         for (Def defSource : defSources) {
-            long fetchStep = defSource.getFetchStep(), tryStep = fetchStep;
+            long fetchStep = defSource.getFetchStep();
+            long tryStep = fetchStep;
             if (step > 0) {
                 tryStep = Math.min(newStep, (((step - 1) / fetchStep) + 1) * fetchStep);
             }
@@ -1086,32 +1080,28 @@ public class DataProcessor implements DataHolder {
 
     @Override
     public void setEndTime(long time) {
-        // TODO Auto-generated method stub
-        
+        this.tEnd = time;
     }
 
     @Override
     public long getEndTime() {
-        // TODO Auto-generated method stub
-        return 0;
+        return tEnd;
     }
 
     @Override
     public void setStartTime(long time) {
-        // TODO Auto-generated method stub
-        
+        this.tStart = time;
     }
 
     @Override
     public long getStartTime() {
-        // TODO Auto-generated method stub
-        return 0;
+        return tStart;
     }
 
     @Override
     public void setTimeSpan(long startTime, long endTime) {
-        // TODO Auto-generated method stub
-        
+        this.tStart = startTime;
+        this.tEnd = endTime;
     }
 
 }
