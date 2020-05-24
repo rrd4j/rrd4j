@@ -939,22 +939,41 @@ public class DataProcessor implements DataHolder {
 
     private void fetchRrdData() throws IOException {
         long tEndFixed = (tEnd == 0) ? Util.getTime() : tEnd;
-        for (int i = 0; i < defSources.length; i++) {
-            if (!defSources[i].isLoaded()) {
-                // not fetched yet
-                Set<String> dsNames = new HashSet<String>();
-                dsNames.add(defSources[i].getDsName());
-                // look for all other datasources with the same path and the same consolidation function
-                for (int j = i + 1; j < defSources.length; j++) {
-                    if (defSources[i].isCompatibleWith(defSources[j])) {
-                        dsNames.add(defSources[j].getDsName());
-                    }
+        Arrays.stream(defSources);
+        // Storing of the RrdDb in a array to batch open/close, useful if a pool 
+        // is used.
+        RrdDb[] batchRrd = Arrays.stream(defSources).map(t -> {
+            RrdDb db;
+            try {
+                db =  getRrd(t);
+            } catch (IOException e) {
+                db = null;
+            }
+            return db;
+        }).toArray(RrdDb[]::new);
+        try {
+            for (int i = 0; i < defSources.length; i++) {
+                if (batchRrd[i] == null) {
+                    // The rrdDb failed to open, skip it
+                    continue;
                 }
-                // now we have everything
-                try (RrdDb rrd = getRrd(defSources[i])){
-                    lastRrdArchiveUpdateTime = Math.max(lastRrdArchiveUpdateTime, rrd.getLastArchiveUpdateTime());
-                    FetchRequest req = rrd.createFetchRequest(defSources[i].getConsolFun(),
-                            tStart, tEndFixed, fetchRequestResolution);
+                if (!defSources[i].isLoaded()) {
+                    // not fetched yet
+                    Set<String> dsNames = new HashSet<String>();
+                    dsNames.add(defSources[i].getDsName());
+                    // look for all other datasources with the same path and the same consolidation function
+                    for (int j = i + 1; j < defSources.length; j++) {
+                        if (defSources[i].isCompatibleWith(defSources[j])) {
+                            dsNames.add(defSources[j].getDsName());
+                        }
+                    }
+                    // now we have everything
+                    lastRrdArchiveUpdateTime = Math.max(
+                            lastRrdArchiveUpdateTime,
+                            batchRrd[i].getLastArchiveUpdateTime());
+                    FetchRequest req = batchRrd[i].createFetchRequest(
+                            defSources[i].getConsolFun(), tStart, tEndFixed,
+                            fetchRequestResolution);
                     req.setFilter(dsNames);
                     FetchData data = req.fetchData();
                     defSources[i].setFetchData(data);
