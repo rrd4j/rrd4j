@@ -1,6 +1,8 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,7 +11,7 @@ public class RrdMemoryBackendTest {
 
     @Test
     public void testBigString() throws IOException {
-        RrdMemoryBackend backend = new RrdMemoryBackend("");
+        RrdMemoryBackend backend = new RrdMemoryBackend("", new AtomicReference<ByteBuffer>());
         char c = '\ue001';
         Assert.assertTrue(c >=  '\ue000' && c <= '\uf8ff');
         StringBuffer builder = new StringBuffer();
