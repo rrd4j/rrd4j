@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Stream;
 
 /**
  * <p>This class should be used to synchronize access to RRD files
@@ -143,6 +144,15 @@ public class RrdDbPool {
      */
     public URI[] getOpenUri() {
         return pool.keySet().stream().toArray(URI[]::new);
+    }
+
+    /**
+     * Returns an stream open RRD.
+     *
+     * @return Stream with canonical URI to open RRD path held in the pool.
+     */
+    public Stream<URI> getOpenUriStream() {
+        return pool.keySet().stream();
     }
 
     /**
