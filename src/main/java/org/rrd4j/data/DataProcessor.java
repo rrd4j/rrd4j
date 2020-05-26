@@ -653,7 +653,15 @@ public class DataProcessor implements DataHolder {
      */
     @Override
     public void datasource(String name, String file, String dsName, ConsolFun consolFunc) {
-        Def def = new Def(name, file, dsName, consolFunc);
+        RrdBackendFactory factory = RrdBackendFactory.getDefaultFactory();
+        Def def = new Def(name, factory.getUri(file), dsName, consolFunc, factory);
+        sources.put(name, def);
+    }
+
+    @Override
+    public void datasource(String name, URI uri, String dsName,
+            ConsolFun consolFun) {
+        Def def = new Def(name, uri, dsName, consolFun, RrdBackendFactory.findFactory(uri));
         sources.put(name, def);
     }
 
@@ -675,7 +683,8 @@ public class DataProcessor implements DataHolder {
      */
     @Deprecated
     public void addDatasource(String name, String file, String dsName, ConsolFun consolFunc, String backend) {
-        Def def = new Def(name, file, dsName, consolFunc, RrdBackendFactory.getFactory(backend));
+        RrdBackendFactory factory = RrdBackendFactory.getFactory(backend);
+        Def def = new Def(name, factory.getUri(file), dsName, consolFunc, factory);
         sources.put(name, def);
     }
 
@@ -717,7 +726,29 @@ public class DataProcessor implements DataHolder {
      */
     @Override
     public void datasource(String name, String file, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
-        Def def = new Def(name, file, dsName, consolFunc, backend);
+        Def def = new Def(name, backend.getUri(file), dsName, consolFunc, backend);
+        sources.put(name, def);
+    }
+
+
+    /**
+     * <p>Adds simple source (<b>DEF</b>). Source <code>name</code> can be used:</p>
+     * <ul>
+     * <li>To specify sources for line, area and stack plots.</li>
+     * <li>To define complex sources
+     * </ul>
+     *
+     * @param name       Source name.
+     * @param uri        URI to RRD file.
+     * @param dsName     Data source name defined in the RRD file.
+     * @param consolFunc Consolidation function that will be used to extract data from the RRD
+     *                   file ("AVERAGE", "MIN", "MAX" or "LAST" - these string constants are conveniently defined
+     *                   in the {@link org.rrd4j.ConsolFun ConsolFun} class).
+     * @param backend    Name of the RrdBackendFactory that should be used for this RrdDb.
+     */
+    @Override
+    public void datasource(String name, URI uri, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
+        Def def = new Def(name, uri, dsName, consolFunc, backend);
         sources.put(name, def);
     }
 

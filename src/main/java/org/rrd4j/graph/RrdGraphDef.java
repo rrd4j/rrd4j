@@ -7,6 +7,7 @@ import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
 import java.time.temporal.TemporalAmount;
@@ -1004,7 +1005,14 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      */
     @Override
     public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun) {
-        sources.add(new Def(name, rrdPath, dsName, consolFun));
+        RrdBackendFactory factory = RrdBackendFactory.getDefaultFactory();
+        sources.add(new Def(name, factory.getUri(rrdPath), dsName, consolFun, factory));
+    }
+
+    @Override
+    public void datasource(String name, URI rrdUri, String dsName,
+            ConsolFun consolFun) {
+        sources.add(new Def(name, rrdUri, dsName, consolFun, RrdBackendFactory.findFactory(rrdUri)));
     }
 
     /**
@@ -1022,7 +1030,8 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      */
     @Deprecated
     public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun, String backend) {
-        sources.add(new Def(name, rrdPath, dsName, consolFun, RrdBackendFactory.getFactory(backend)));
+        RrdBackendFactory factory = RrdBackendFactory.getFactory(backend);
+        sources.add(new Def(name, factory.getUri(rrdPath), dsName, consolFun, factory));
     }
 
     /**
@@ -1038,7 +1047,13 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      */
     @Override
     public void datasource(String name, String rrdPath, String dsName, ConsolFun consolFun, RrdBackendFactory backend) {
-        sources.add(new Def(name, rrdPath, dsName, consolFun, backend));
+        sources.add(new Def(name, backend.getUri(rrdPath), dsName, consolFun, backend));
+    }
+
+    @Override
+    public void datasource(String name, URI rrdUri, String dsName,
+            ConsolFun consolFun, RrdBackendFactory backend) {
+        sources.add(new Def(name, rrdUri, dsName, consolFun, backend));
     }
 
     /**

@@ -9,7 +9,7 @@ import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 
 class Def extends Source {
-    private final String path;
+    private final URI rrdUri;
     private final String dsName;
     private final RrdBackendFactory backend;
     private final ConsolFun consolFun;
@@ -21,35 +21,23 @@ class Def extends Source {
 
     Def(String name, String dsName, FetchData fetchData) {
         this(name,
-                fetchData.getRequest().getParentDb().getPath(),
+                fetchData.getRequest().getParentDb().getCanonicalUri(),
                 dsName, fetchData.getRequest().getConsolFun(),
                 fetchData.getRequest().getParentDb().getRrdBackend().getFactory()
                 );
         this.fetchData = fetchData;
     }
 
-    Def(String name, String path, String dsName, ConsolFun consolFunc) {
-        this(name, path, dsName, consolFunc, RrdBackendFactory.getDefaultFactory());
-    }
-
-    Def(String name, String path, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
+    Def(String name, URI rrdUri, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
         super(name);
-        this.path = path;
+        this.rrdUri = backend.getCanonicalUri(rrdUri);
         this.dsName = dsName;
         this.consolFun = consolFunc;
         this.backend = backend;
     }
 
-    String getPath() {
-        return path;
-    }
-
-    String getCanonicalPath() throws IOException {
-        return backend.getCanonicalUri(backend.getUri(path)).toString();
-    }
-
     URI getCanonicalUri() throws IOException {
-        return backend.getCanonicalUri(backend.getUri(path));
+       return rrdUri;
     }
 
      String getDsName() {
@@ -65,7 +53,7 @@ class Def extends Source {
     }
 
     boolean isCompatibleWith(Def def) throws IOException {
-        return getCanonicalPath().equals(def.getCanonicalPath()) &&
+        return getCanonicalUri().equals(def.getCanonicalUri()) &&
                 getConsolFun() == def.consolFun &&
                 ((backend == null && def.backend == null) ||
                         (backend != null && def.backend != null && backend.equals(def.backend)));

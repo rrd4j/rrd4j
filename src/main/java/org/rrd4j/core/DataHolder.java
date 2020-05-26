@@ -1,5 +1,6 @@
 package org.rrd4j.core;
 
+import java.net.URI;
 import java.util.TimeZone;
 
 import org.rrd4j.ConsolFun;
@@ -114,12 +115,37 @@ public interface DataHolder {
      * in other methods like {@link #datasource(String, String)}.
      *
      * @param name      Source name
+     * @param uri       URI to RRD file
+     * @param dsName    Datasource name in the specified RRD file
+     * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
+     */
+    void datasource(String name, URI rrdUri, String dsName,
+            ConsolFun consolFun);
+
+    /**
+     * Defines virtual datasource. This datasource can then be used
+     * in other methods like {@link #datasource(String, String)}.
+     *
+     * @param name      Source name
      * @param rrdPath   Path to RRD file
      * @param dsName    Datasource name in the specified RRD file
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      * @param backend   Backend to be used while fetching data from a RRD file.
      */
     void datasource(String name, String rrdPath, String dsName,
+            ConsolFun consolFun, RrdBackendFactory backend);
+
+    /**
+     * Defines virtual datasource. This datasource can then be used
+     * in other methods like {@link #datasource(String, String)}.
+     *
+     * @param name      Source name
+     * @param uri       URI to RRD file
+     * @param dsName    Datasource name in the specified RRD file
+     * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
+     * @param backend   Backend to be used while fetching data from a RRD file.
+     */
+    void datasource(String name, URI rrdUri, String dsName,
             ConsolFun consolFun, RrdBackendFactory backend);
 
     /**
