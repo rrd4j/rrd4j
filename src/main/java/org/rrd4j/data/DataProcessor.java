@@ -2,15 +2,16 @@ package org.rrd4j.data;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.time.Instant;
 import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -923,10 +924,29 @@ public class DataProcessor implements DataHolder {
         long tEndFixed = (tEnd == 0) ? Util.getTime() : tEnd;
         Arrays.stream(defSources);
         RrdDb[] batchRrd = new RrdDb[defSources.length];
+        Map<URI, RrdDb> openRrd = new HashMap<>(defSources.length);
+        Set<RrdDb> newDb = new HashSet<>(defSources.length);
         try {
             // Storing of the RrdDb in a array to batch open/close, useful if a pool 
             // is used.
-            Arrays.stream(defSources).map(this::getRrd).toArray(i -> batchRrd);
+            int d = 0;
+            for (Def def: defSources) {
+                URI curi = def.getCanonicalUri();
+                batchRrd[d++] = openRrd.computeIfAbsent(curi, uri -> {
+                    if (! def.isLoaded()) {
+                        RrdBackendFactory backend = def.getBackend();
+                        try {
+                            RrdDb rrdDb =  RrdDb.getBuilder().setPath(curi).setBackendFactory(backend).readOnly().setPool(pool).setUsePool(poolUsed).build();
+                            newDb.add(rrdDb);
+                            return rrdDb;
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    } else {
+                        return def.getRrdDb();
+                    }
+                });
+            }
             for (int i = 0; i < defSources.length; i++) {
                 if (batchRrd[i] == null) {
                     // The rrdDb failed to open, skip it
@@ -963,7 +983,7 @@ public class DataProcessor implements DataHolder {
         } catch (UncheckedIOException ex){
             throw ex.getCause();
         } finally {
-            Arrays.stream(batchRrd).filter(Objects::nonNull).forEach(t -> {
+            newDb.forEach(t -> {
                 try {
                     t.close();
                 } catch (IOException e) {
@@ -1046,16 +1066,6 @@ public class DataProcessor implements DataHolder {
             if (source instanceof NonRrdSource) {
                 ((NonRrdSource)source).calculate(tStart, tEnd, this);
             }
-        }
-    }
-
-    private RrdDb getRrd(Def def) {
-        try {
-            String path = def.getPath();
-            RrdBackendFactory backend = def.getBackend();
-            return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).readOnly().setPool(pool).setUsePool(poolUsed).build();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 

@@ -1,11 +1,12 @@
 package org.rrd4j.data;
 
+import java.io.IOException;
+import java.net.URI;
+
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.FetchData;
 import org.rrd4j.core.RrdBackendFactory;
-import org.rrd4j.core.Util;
-
-import java.io.IOException;
+import org.rrd4j.core.RrdDb;
 
 class Def extends Source {
     private final String path;
@@ -28,7 +29,7 @@ class Def extends Source {
     }
 
     Def(String name, String path, String dsName, ConsolFun consolFunc) {
-        this(name, path, dsName, consolFunc, null);
+        this(name, path, dsName, consolFunc, RrdBackendFactory.getDefaultFactory());
     }
 
     Def(String name, String path, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
@@ -44,10 +45,14 @@ class Def extends Source {
     }
 
     String getCanonicalPath() throws IOException {
-        return Util.getCanonicalPath(path);
+        return backend.getCanonicalUri(backend.getUri(path)).toString();
     }
 
-    String getDsName() {
+    URI getCanonicalUri() throws IOException {
+        return backend.getCanonicalUri(backend.getUri(path));
+    }
+
+     String getDsName() {
         return dsName;
     }
 
@@ -64,6 +69,10 @@ class Def extends Source {
                 getConsolFun() == def.consolFun &&
                 ((backend == null && def.backend == null) ||
                         (backend != null && def.backend != null && backend.equals(def.backend)));
+    }
+
+    RrdDb getRrdDb() {
+        return fetchData.getRequest().getParentDb();
     }
 
     void setFetchData(FetchData fetchData) {
