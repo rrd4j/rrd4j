@@ -3,7 +3,7 @@ package org.rrd4j.core;
 import java.util.TimeZone;
 
 import org.rrd4j.ConsolFun;
-import org.rrd4j.data.Plottable;
+import org.rrd4j.data.IPlottable;
 import org.rrd4j.data.Variable;
 
 public interface DataHolder {
@@ -161,9 +161,9 @@ public interface DataHolder {
      * object.
      *
      * @param name      Source name.
-     * @param plottable Plottable object.
+     * @param plottable IPlottable object.
      */
-    void datasource(String name, Plottable plottable);
+    void datasource(String name, IPlottable plottable);
 
     /**
      * Creates a new 'fetched' datasource. Datasource values are obtained from the

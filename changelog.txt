@@ -9,6 +9,8 @@ Added a RrdDbPool.lockEmpty method to wait for an empty pool and lock it.
 
 The RrdDb.Builder.setPool now automatically enable the pool usage.
 
+Plottable usages are all replaced by an IPlottable interface, so lambda can be used instead. This class is now marked as deprecated.
+
 Changes in version 3.6 - 06 Apr 2020.
 -------------------------------
 

@@ -25,7 +25,7 @@ import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDbPool;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.DataProcessor;
-import org.rrd4j.data.Plottable;
+import org.rrd4j.data.IPlottable;
 import org.rrd4j.data.Variable;
 
 /**
@@ -1092,7 +1092,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * @param plottable Plottable object.
      */
     @Override
-    public void datasource(String name, Plottable plottable) {
+    public void datasource(String name, IPlottable plottable) {
         sources.add(new PDef(name, plottable));
     }
 

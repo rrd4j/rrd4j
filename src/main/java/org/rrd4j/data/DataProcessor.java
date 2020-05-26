@@ -499,7 +499,7 @@ public class DataProcessor implements DataHolder {
      * @param plottable class that extends Plottable class and is suited for graphing.
      */
     @Override
-    public void datasource(String name, Plottable plottable) {
+    public void datasource(String name, IPlottable plottable) {
         PDef pDef = new PDef(name, plottable);
         sources.put(name, pDef);
     }

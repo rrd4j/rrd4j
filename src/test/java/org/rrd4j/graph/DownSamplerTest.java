@@ -13,6 +13,7 @@ import org.rrd4j.graph.DownSampler.DataSet;
 import eu.bengreen.data.utility.LargestTriangleThreeBuckets;
 import eu.bengreen.data.utility.LargestTriangleThreeBucketsTime;
 
+@SuppressWarnings("deprecation")
 public class DownSamplerTest {
 
     private static final long[] al = new long[]{};

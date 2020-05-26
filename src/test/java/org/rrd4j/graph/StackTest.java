@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.rrd4j.data.Plottable;
+import org.rrd4j.data.IPlottable;
 
 public class StackTest {
 
@@ -18,21 +18,9 @@ public class StackTest {
     @Test
     public void test1() throws IOException {
         RrdGraphDef def = new RrdGraphDef(1, 100);
-        def.datasource("base1", new Plottable() {
-            @Override
-            public double getValue(long timestamp) {
-                return (timestamp % 2 == 0) ? Double.NaN : 1;
-            }});
-        def.datasource("base2", new Plottable() {
-            @Override
-            public double getValue(long timestamp) {
-                return (timestamp % 2 == 0) ? 1: Double.NaN;
-            }});
-        def.datasource("base3", new Plottable() {
-            @Override
-            public double getValue(long timestamp) {
-                return 1;
-            }});
+        def.datasource("base1", ts -> (ts % 2 == 0) ? Double.NaN : 1);
+        def.datasource("base2", ts -> (ts % 2 == 0) ? 1: Double.NaN);
+        def.datasource("base3", ts  -> 1);
         def.line("base1", Color.BLUE);
         def.stack("base2", Color.RED);
         def.stack("base3", Color.RED);
@@ -49,21 +37,9 @@ public class StackTest {
     @Test
     public void test2() throws IOException {
         RrdGraphDef def = new RrdGraphDef(1, 100);
-        def.datasource("base1", new Plottable() {
-            @Override
-            public double getValue(long timestamp) {
-                return (timestamp % 2 == 0) ? Double.NaN : 1;
-            }});
-        def.datasource("base2", new Plottable() {
-            @Override
-            public double getValue(long timestamp) {
-                return (timestamp % 2 == 0) ? 1: Double.NaN;
-            }});
-        def.datasource("base3", new Plottable() {
-            @Override
-            public double getValue(long timestamp) {
-                return 1;
-            }});
+        def.datasource("base1", ts -> (ts % 2 == 0) ? Double.NaN : 1);
+        def.datasource("base2", ts -> (ts % 2 == 0) ? 1: Double.NaN);
+        def.datasource("base3", ts  -> 1);
         def.line("base1", Color.BLUE);
         def.line("base2", Color.RED, null, 1.0f, true);
         def.area("base3", Color.RED, null, true);
@@ -80,7 +56,7 @@ public class StackTest {
     @Test
     public void fail() throws IOException {
         RrdGraphDef def = new RrdGraphDef(1, 100);
-        def.datasource("base1", new Plottable() {
+        def.datasource("base1", new IPlottable() {
             @Override
             public double getValue(long timestamp) {
                 return (timestamp % 2 == 0) ? Double.NaN : 1;
