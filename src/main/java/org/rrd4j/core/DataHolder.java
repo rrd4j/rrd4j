@@ -86,23 +86,12 @@ public interface DataHolder {
     void setTimeSpan(long startTime, long endTime);
 
     /**
-     * <p>Roughly corresponds to the --step option in RRDTool's graph/xport commands. Here is an explanation borrowed
-     * from RRDTool:</p>
-     * <p><i>"By default rrdgraph calculates the width of one pixel in the time
-     * domain and tries to get data at that resolution from the RRD. With
-     * this switch you can override this behavior. If you want rrdgraph to
-     * get data at 1 hour resolution from the RRD, then you can set the
-     * step to 3600 seconds. Note, that a step smaller than 1 pixel will
-     * be silently ignored."</i></p>
-     * <p>I think this option is not that useful, but it's here just for compatibility.</p>
-     * @param step Time step at which data should be fetched from RRD files. If this method is not used,
-     *             the step will be equal to the smallest RRD step of all processed RRD files. If no RRD file is processed,
-     *             the step will be roughly equal to the with of one graph pixel (in seconds).
-     */
+     * Set the step for timestamp interval.
+    */
     void setStep(long step);
 
     /**
-     * Returns the time step used for data processing.
+     * Returns the time step used for timestamp interval.
      *
      * @return Step used for data processing.
      */

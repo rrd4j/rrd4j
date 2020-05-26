@@ -1,6 +1,7 @@
 package org.rrd4j.data;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -176,9 +178,6 @@ public class DataProcessor implements DataHolder {
      * and similar methods. In other words, aggregated values will not change once you decide to change
      * the dimension of your graph.</p>
      *
-     * The default number of pixels is defined by constant {@link #DEFAULT_PIXEL_COUNT}
-     * and can be changed with a {@link #setPixelCount(int)} method.
-     *
      * @param pixelCount The number of pixels. If you process RRD data in order to display it on the graph,
      *                   this should be the width of your graph.
      */
@@ -196,18 +195,9 @@ public class DataProcessor implements DataHolder {
     }
 
     /**
-     * <p>Roughly corresponds to the --step option in RRDTool's graph/xport commands. Here is an explanation borrowed
-     * from RRDTool:</p>
-     * <p><i>"By default rrdgraph calculates the width of one pixel in the time
-     * domain and tries to get data at that resolution from the RRD. With
-     * this switch you can override this behavior. If you want rrdgraph to
-     * get data at 1 hour resolution from the RRD, then you can set the
-     * step to 3600 seconds. Note, that a step smaller than 1 pixel will
-     * be silently ignored."</i></p>
-     * <p>I think this option is not that useful, but it's here just for compatibility.</p>
-     * @param step Time step at which data should be fetched from RRD files. If this method is not used,
-     *             the step will be equal to the smallest RRD step of all processed RRD files. If no RRD file is processed,
-     *             the step will be roughly equal to the with of one graph pixel (in seconds).
+     * Once data are fetched, the step value will be used to generate values. If not defined, or set to 0, a optimal
+     * step will be calculated.
+     * @param step Default to 0.
      */
     @Override
     public void setStep(long step) {
@@ -216,8 +206,7 @@ public class DataProcessor implements DataHolder {
 
     /**
      * Returns the time step used for data processing. Initially, this method returns zero.
-     * Once {@link #processData()} is finished, the method will return the real value used for
-     * all internal computations. Roughly corresponds to the --step option in RRDTool's graph/xport commands.
+     * Once {@link #processData()} is finished, the method will return the time stamp interval.
      *
      * @return Step used for data processing.
      */
@@ -281,7 +270,7 @@ public class DataProcessor implements DataHolder {
      */
     public long[] getTimestamps() {
         if (timestamps == null) {
-            throw new IllegalArgumentException("Timestamps not calculated yet");
+            throw new IllegalStateException("Timestamps not calculated yet");
         }
         else {
             return timestamps;
@@ -933,18 +922,11 @@ public class DataProcessor implements DataHolder {
     private void fetchRrdData() throws IOException {
         long tEndFixed = (tEnd == 0) ? Instant.now().getEpochSecond() : tEnd;
         Arrays.stream(defSources);
-        // Storing of the RrdDb in a array to batch open/close, useful if a pool 
-        // is used.
-        RrdDb[] batchRrd = Arrays.stream(defSources).map(t -> {
-            RrdDb db;
-            try {
-                db =  getRrd(t);
-            } catch (IOException e) {
-                db = null;
-            }
-            return db;
-        }).toArray(RrdDb[]::new);
+        RrdDb[] batchRrd = new RrdDb[defSources.length];
         try {
+            // Storing of the RrdDb in a array to batch open/close, useful if a pool 
+            // is used.
+            Arrays.stream(defSources).map(this::getRrd).toArray(i -> batchRrd);
             for (int i = 0; i < defSources.length; i++) {
                 if (batchRrd[i] == null) {
                     // The rrdDb failed to open, skip it
@@ -969,6 +951,7 @@ public class DataProcessor implements DataHolder {
                             fetchRequestResolution);
                     req.setFilter(dsNames);
                     FetchData data = req.fetchData();
+                    assert data != null;
                     defSources[i].setFetchData(data);
                     for (int j = i + 1; j < defSources.length; j++) {
                         if (defSources[i].isCompatibleWith(defSources[j])) {
@@ -976,9 +959,11 @@ public class DataProcessor implements DataHolder {
                         }
                     }
                 }
-            } 
+            }
+        } catch (UncheckedIOException ex){
+            throw ex.getCause();
         } finally {
-            Arrays.stream(batchRrd).forEach(t -> {
+            Arrays.stream(batchRrd).filter(Objects::nonNull).forEach(t -> {
                 try {
                     t.close();
                 } catch (IOException e) {
@@ -1064,10 +1049,14 @@ public class DataProcessor implements DataHolder {
         }
     }
 
-    private RrdDb getRrd(Def def) throws IOException {
-        String path = def.getPath();
-        RrdBackendFactory backend = def.getBackend();
-        return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).readOnly().setUsePool(poolUsed).setPool(pool).build();
+    private RrdDb getRrd(Def def) {
+        try {
+            String path = def.getPath();
+            RrdBackendFactory backend = def.getBackend();
+            return RrdDb.getBuilder().setPath(path).setBackendFactory(backend).readOnly().setPool(pool).setUsePool(poolUsed).build();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private static String format(String s, int length) {
