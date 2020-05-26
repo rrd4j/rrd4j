@@ -931,7 +931,7 @@ public class DataProcessor implements DataHolder {
     }
 
     private void fetchRrdData() throws IOException {
-        long tEndFixed = (tEnd == 0) ? Util.getTime() : tEnd;
+        long tEndFixed = (tEnd == 0) ? Instant.now().getEpochSecond() : tEnd;
         Arrays.stream(defSources);
         // Storing of the RrdDb in a array to batch open/close, useful if a pool 
         // is used.

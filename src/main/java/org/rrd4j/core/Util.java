@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -84,15 +85,13 @@ public class Util {
     }
 
     /**
-     * Returns current timestamp in seconds (without milliseconds). Returned timestamp
-     * is obtained with the following expression:
-     * <p>
-     * <code>(System.currentTimeMillis() + 500L) / 1000L</code>
+     * Returns current timestamp in seconds (without milliseconds). It the second part of
+     * <code>Instant.now()</code>
      *
      * @return Current timestamp
      */
     public static long getTime() {
-        return (System.currentTimeMillis() + 500L) / 1000L;
+        return Instant.now().getEpochSecond();
     }
 
     /**
@@ -221,8 +220,7 @@ public class Util {
      * @return Corresponding timestamp (without milliseconds)
      */
     public static long getTimestamp(Date date) {
-        // round to whole seconds, ignore milliseconds
-        return (date.getTime() + 499L) / 1000L;
+        return date.toInstant().getEpochSecond();
     }
 
     /**
