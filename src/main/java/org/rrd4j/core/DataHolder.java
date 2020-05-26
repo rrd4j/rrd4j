@@ -7,6 +7,10 @@ import org.rrd4j.ConsolFun;
 import org.rrd4j.data.IPlottable;
 import org.rrd4j.data.Variable;
 
+/**
+ * @author Fabrice Bacchella
+ * @since 3;7
+ */
 public interface DataHolder {
 
    /**
@@ -115,7 +119,7 @@ public interface DataHolder {
      * in other methods like {@link #datasource(String, String)}.
      *
      * @param name      Source name
-     * @param uri       URI to RRD file
+     * @param rrdUri    rrdUri to RRD file
      * @param dsName    Datasource name in the specified RRD file
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      */
@@ -140,7 +144,7 @@ public interface DataHolder {
      * in other methods like {@link #datasource(String, String)}.
      *
      * @param name      Source name
-     * @param uri       URI to RRD file
+     * @param rrdUri    URI to RRD file
      * @param dsName    Datasource name in the specified RRD file
      * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
      * @param backend   Backend to be used while fetching data from a RRD file.

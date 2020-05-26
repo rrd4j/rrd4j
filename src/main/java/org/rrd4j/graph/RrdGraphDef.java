@@ -187,8 +187,8 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
     }
 
     /**
-     * Creates RrdGraphDef object and sets default time span (default ending time is 'now',
-     * default starting time is 'end-1day'.
+     * Creates RrdGraphDef object.
+     * @since 3.7
      */
     public RrdGraphDef(long t1, long t2) {
         if ((t1 < t2 && t1 > 0 && t2 > 0) || (t1 > 0 && t2 == 0)) {
@@ -205,6 +205,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      * substracted from current time.
      *
      * @param d duration to substract.
+     * @since 3.7
      */
     public RrdGraphDef(TemporalAmount d) {
         Instant now = Instant.now();
@@ -276,16 +277,25 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
         this.poolUsed = poolUsed;
     }
 
+    /**
+     * @since 3.7
+     */
     @Override
     public boolean isPoolUsed() {
         return poolUsed;
     }
 
+    /**
+     * @since 3.7
+     */
     @Override
     public RrdDbPool getPool() {
         return pool;
     }
 
+    /**
+     * @since 3.7
+     */
     @Override
     public void setPool(RrdDbPool pool) {
         this.poolUsed = true;
@@ -1009,6 +1019,17 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
         sources.add(new Def(name, factory.getUri(rrdPath), dsName, consolFun, factory));
     }
 
+    /**
+     * Defines virtual datasource. This datasource can then be used
+     * in other methods like {@link #datasource(String, String)} or
+     * {@link #gprint(String, ConsolFun, String)}.
+     *
+     * @param name      Source name
+     * @param rrdUri    URI to RRD file
+     * @param dsName    Datasource name in the specified RRD file
+     * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
+     * @since 3.7
+     */
     @Override
     public void datasource(String name, URI rrdUri, String dsName,
             ConsolFun consolFun) {
@@ -1050,6 +1071,18 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
         sources.add(new Def(name, backend.getUri(rrdPath), dsName, consolFun, backend));
     }
 
+    /**
+     * Defines virtual datasource. This datasource can then be used
+     * in other methods like {@link #datasource(String, String)} or
+     * {@link #gprint(String, ConsolFun, String)}.
+     *
+     * @param name      Source name
+     * @param rrdUri    Path to RRD file
+     * @param dsName    Datasource name in the specified RRD file
+     * @param consolFun Consolidation function (AVERAGE, MIN, MAX, LAST)
+     * @param backend   Backend to be used while fetching data from a RRD file.
+     * @since 3.7
+     */
     @Override
     public void datasource(String name, URI rrdUri, String dsName,
             ConsolFun consolFun, RrdBackendFactory backend) {
@@ -1105,6 +1138,7 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
      *
      * @param name      Source name.
      * @param plottable Plottable object.
+     * @since 3.7
      */
     @Override
     public void datasource(String name, IPlottable plottable) {
@@ -1816,6 +1850,9 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
         this.tz = tz;
     }
 
+    /**
+     * @since 3.7
+     */
     @Override
     public TimeZone getTimeZone() {
         return this.tz;
@@ -1878,16 +1915,25 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
         return colors[element.ordinal()];
     }
 
+    /**
+     * @since 3.7
+     */
     @Override
     public long getEndTime() {
         return this.endTime;
     }
 
+    /**
+     * @since 3.7
+     */
     @Override
     public long getStartTime() {
         return this.startTime;
     }
 
+    /**
+     * @since 3.7
+     */
     @Override
     public long getStep() {
         return this.step;

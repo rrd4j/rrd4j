@@ -5,6 +5,7 @@ package org.rrd4j.data;
  *
  * <p>If you wish to use a custom datasource in a graph, you should create a class implementing this interface
  * that represents that datasource, and then pass this class on to the RrdGraphDef.</p>
+ * @since 3.7
  */
 @FunctionalInterface
 public interface IPlottable {

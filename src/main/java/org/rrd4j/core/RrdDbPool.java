@@ -150,6 +150,7 @@ public class RrdDbPool {
      * Returns an stream open RRD.
      *
      * @return Stream with canonical URI to open RRD path held in the pool.
+     * @since 3.7
      */
     public Stream<URI> getOpenUriStream() {
         return pool.keySet().stream();

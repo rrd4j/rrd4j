@@ -473,7 +473,7 @@ public class DataProcessor implements DataHolder {
      *
      * @param name      source name.
      * @param plottable class that extends Plottable class and is suited for graphing.
-     * @deprecated Uses {@link #datasource(String, Plottable)} instead
+     * @deprecated Uses {@link #datasource(String, IPlottable)} instead
      */
     @Deprecated
     public void addDatasource(String name, Plottable plottable) {
@@ -487,6 +487,7 @@ public class DataProcessor implements DataHolder {
      *
      * @param name      source name.
      * @param plottable class that extends Plottable class and is suited for graphing.
+     * @since 3.7
      */
     @Override
     public void datasource(String name, IPlottable plottable) {
@@ -543,6 +544,7 @@ public class DataProcessor implements DataHolder {
      * @param name          source name.
      * @param rpnExpression RPN expression containing comma delimited simple and complex
      *                      source names, RPN constants, functions and operators.
+     * @since 3.7
      */
     @Override
     public void datasource(String name, String rpnExpression) {
@@ -612,6 +614,7 @@ public class DataProcessor implements DataHolder {
      * @param defName - the datasource from which to extract the percentile. Must be a previously
      *                     defined virtual datasource
      * @param var - a new instance of a Variable used to do the calculation
+     * @since 3.7
      */
     @Override
     public void datasource(String name, String defName, Variable var) {
@@ -650,6 +653,7 @@ public class DataProcessor implements DataHolder {
      * @param file       Path to RRD file.
      * @param dsName     Datasource name defined in the RRD file.
      * @param consolFunc Consolidation function that will be used to extract data from the RRD
+     * @since 3.7
      */
     @Override
     public void datasource(String name, String file, String dsName, ConsolFun consolFunc) {
@@ -658,10 +662,24 @@ public class DataProcessor implements DataHolder {
         sources.put(name, def);
     }
 
+    /**
+     * <p>Adds simple datasource (<b>DEF</b>). Simple source <code>name</code>
+     * can be used:</p>
+     * <ul>
+     * <li>To specify sources for line, area and stack plots.</li>
+     * <li>To define complex sources
+     * </ul>
+     *
+     * @param name       source name.
+     * @param rrdUri     URI to RRD file.
+     * @param dsName     Datasource name defined in the RRD file.
+     * @param consolFunc Consolidation function that will be used to extract data from the RRD
+     * @since 3.7
+     */
     @Override
-    public void datasource(String name, URI uri, String dsName,
-            ConsolFun consolFun) {
-        Def def = new Def(name, uri, dsName, consolFun, RrdBackendFactory.findFactory(uri));
+    public void datasource(String name, URI rrdUri, String dsName,
+            ConsolFun consolFunc) {
+        Def def = new Def(name, rrdUri, dsName, consolFunc, RrdBackendFactory.findFactory(rrdUri));
         sources.put(name, def);
     }
 
@@ -723,6 +741,7 @@ public class DataProcessor implements DataHolder {
      *                   file ("AVERAGE", "MIN", "MAX" or "LAST" - these string constants are conveniently defined
      *                   in the {@link org.rrd4j.ConsolFun ConsolFun} class).
      * @param backend    Name of the RrdBackendFactory that should be used for this RrdDb.
+     * @since 3.7
      */
     @Override
     public void datasource(String name, String file, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
@@ -745,6 +764,7 @@ public class DataProcessor implements DataHolder {
      *                   file ("AVERAGE", "MIN", "MAX" or "LAST" - these string constants are conveniently defined
      *                   in the {@link org.rrd4j.ConsolFun ConsolFun} class).
      * @param backend    Name of the RrdBackendFactory that should be used for this RrdDb.
+     * @since 3.7
      */
     @Override
     public void datasource(String name, URI uri, String dsName, ConsolFun consolFunc, RrdBackendFactory backend) {
@@ -771,6 +791,7 @@ public class DataProcessor implements DataHolder {
      *
      * @param name      Source name.
      * @param fetchData Fetched data containing values for the given source name.
+     * @since 3.7
      */
     @Override
     public void datasource(String name, FetchData fetchData) {
@@ -802,6 +823,7 @@ public class DataProcessor implements DataHolder {
      * @param name      Source name.
      * @param dsName    Source name in the fetch data.
      * @param fetchData Fetched data containing values for the given source name.
+     * @since 3.7
      */
     @Override
     public void datasource(String name, String dsName, FetchData fetchData) {
@@ -1108,11 +1130,19 @@ public class DataProcessor implements DataHolder {
         return b.toString();
     }
 
+    /**
+     *
+     * @since 3.7
+     */
     @Override
     public void setEndTime(long time) {
         this.tEnd = time;
     }
 
+    /**
+    *
+    * @since 3.7
+    */
     @Override
     public long getEndTime() {
         return tEnd;
@@ -1123,11 +1153,19 @@ public class DataProcessor implements DataHolder {
         this.tStart = time;
     }
 
+    /**
+    *
+    * @since 3.7
+    */
     @Override
     public long getStartTime() {
         return tStart;
     }
 
+    /**
+    *
+    * @since 3.7
+    */
     @Override
     public void setTimeSpan(long startTime, long endTime) {
         this.tStart = startTime;
