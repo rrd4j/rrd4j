@@ -203,7 +203,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
          */
         public Builder setPool(RrdDbPool pool) {
             this.pool = pool;
-            this.usePool = true;
+            this.usePool = pool != null;
             return this;
         }
 
