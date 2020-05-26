@@ -920,7 +920,7 @@ public class DataProcessor implements DataHolder {
     }
 
     private void fetchRrdData() throws IOException {
-        long tEndFixed = (tEnd == 0) ? Instant.now().getEpochSecond() : tEnd;
+        long tEndFixed = (tEnd == 0) ? Util.getTime() : tEnd;
         Arrays.stream(defSources);
         RrdDb[] batchRrd = new RrdDb[defSources.length];
         try {
