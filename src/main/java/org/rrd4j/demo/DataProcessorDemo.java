@@ -35,13 +35,13 @@ public class DataProcessorDemo {
         //dp.setStep(86500);
 
         // datasource definitions
-        dp.addDatasource("X", rrdPath, "sun", ConsolFun.AVERAGE);
-        dp.addDatasource("Y", rrdPath, "shade", ConsolFun.AVERAGE);
-        dp.addDatasource("Z", "X,Y,+,2,/");
-        dp.addDatasource("DERIVE[Z]", "Z,PREV(Z),-,STEP,/");
-        dp.addDatasource("TREND[Z]", "DERIVE[Z],SIGN");
-        dp.addDatasource("AVG[Z]", "Z", new Variable.AVERAGE());
-        dp.addDatasource("DELTA", "Z,AVG[Z],-");
+        dp.datasource("X", rrdPath, "sun", ConsolFun.AVERAGE);
+        dp.datasource("Y", rrdPath, "shade", ConsolFun.AVERAGE);
+        dp.datasource("Z", "X,Y,+,2,/");
+        dp.datasource("DERIVE[Z]", "Z,PREV(Z),-,STEP,/");
+        dp.datasource("TREND[Z]", "DERIVE[Z],SIGN");
+        dp.datasource("AVG[Z]", "Z", new Variable.AVERAGE());
+        dp.datasource("DELTA", "Z,AVG[Z],-");
 
         // action
         long laptime = System.currentTimeMillis();
