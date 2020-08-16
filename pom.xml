@@ -18,8 +18,6 @@
         <pax-exam.version>4.13.3</pax-exam.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <jdk.compile.home>${jdk.8.home}</jdk.compile.home>
-        <bootclasspath>${jdk.compile.home}/jre/lib/rt.jar</bootclasspath>
         <!-- current year. -->
         <year>2020</year>
         <!-- Indirection needed to keep optional jacoco settings and external argument lines-->
@@ -538,6 +536,79 @@ Export-Package: !org.rrd4j.inspector, \
                    </plugin>
                </plugins>
            </reporting>
+       </profile>
+       <profile>
+           <id>versions</id>
+           <reporting>
+               <plugins>
+                   <plugin>
+                       <groupId>org.codehaus.mojo</groupId>
+                       <artifactId>versions-maven-plugin</artifactId>
+                       <version>2.7</version>
+                       <reportSets>
+                           <reportSet>
+                               <reports>
+                                   <report>dependency-updates-report</report>
+                                   <report>plugin-updates-report</report>
+                                   <report>property-updates-report</report>
+                               </reports>
+                           </reportSet>
+                       </reportSets>
+                   </plugin>
+               </plugins>
+           </reporting>
+       </profile>
+       <profile>
+           <!-- With this profile, it's possible to used the latest jvm but still get jar compatible with pre-9 JVM.
+           It's activated when jdk.compile.home is defined. Example:
+           JAVA_HOME=$JAVA14_HOME mvn compile -Djdk.compile.home=$JAVA8_HOME !-->
+           <id>crosscompile</id>
+           <activation>
+               <property>
+                   <name>jdk.compile.home</name>
+               </property>
+           </activation>
+           <properties>
+               <bootclasspath>${jdk.compile.home}/jre/lib/rt.jar</bootclasspath>
+           </properties>
+           <build>
+               <plugins>
+                   <plugin>
+                       <groupId>org.apache.maven.plugins</groupId>
+                       <artifactId>maven-compiler-plugin</artifactId>
+                       <configuration>
+                           <compilerArgs>
+                               <arg>-Xbootclasspath:${bootclasspath}</arg>
+                           </compilerArgs>
+                           <!-- needed for maven-plugin-javadoc to find the source version to use -->
+                           <source>${maven.compiler.source}</source>
+                           <target>${maven.compiler.target}</target>
+                       </configuration>
+                   </plugin>
+               </plugins>
+           </build>
+       </profile>
+       <profile>
+           <!-- The default compile settings, when jdk.compile.home is not defined -->
+           <id>nocrosscompile</id>
+           <activation>
+               <property>
+                   <name>!jdk.compile.home</name>
+               </property>
+           </activation>
+           <build>
+               <plugins>
+                   <plugin>
+                       <groupId>org.apache.maven.plugins</groupId>
+                       <artifactId>maven-compiler-plugin</artifactId>
+                       <configuration>
+                           <!-- needed for maven-plugin-javadoc to find the source version to use -->
+                           <source>${maven.compiler.source}</source>
+                           <target>${maven.compiler.target}</target>
+                       </configuration>
+                   </plugin>
+               </plugins>
+           </build>
        </profile>
     </profiles>
     <developers>
