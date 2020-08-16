@@ -70,6 +70,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
          * @return a new build RrdDb
          * @throws IOException              in case of I/O error.
          * @throws IllegalArgumentException if the builder settings were incomplete
+         * @throws java.lang.IllegalStateException if the thread was interrupted in pool usage
          */
         public RrdDb build() throws IOException {
             if (rrdDef != null) {
@@ -113,6 +114,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
          *
          * @throws IOException              in case of I/O error.
          * @throws IllegalArgumentException if the builder settings were incomplete
+         * @throws java.lang.IllegalStateException if the thread was interrupted in pool usage
          */
         public void doimport() throws IOException {
             if (rrdDef != null || (importer == null && externalPath == null)) {
@@ -820,6 +822,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * Closes RRD. No further operations are allowed on this RrdDb object.
      *
      * @throws java.io.IOException Thrown in case of I/O related error.
+     * @throws java.lang.IllegalStateException if the thread was interrupted in pool usage.
      */
     @SuppressWarnings("deprecation")
     public synchronized void close() throws IOException {

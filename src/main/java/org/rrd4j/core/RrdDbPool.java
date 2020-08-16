@@ -1,7 +1,6 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -23,6 +22,7 @@ import java.util.stream.Stream;
  * too many RRD files at the same time (thus avoiding operating system limits).
  * </p>
  * <p>It can also be used a factory for RrdDb, using a default backend factory.</p>
+ * <p>In case of interruptions, it throws IllegalStateException.
  */
 public class RrdDbPool {
     private static class RrdDbPoolSingletonHolder {
@@ -263,8 +263,9 @@ public class RrdDbPool {
                 try {
                     usageWLock.lockInterruptibly();
                     fullCondition.signalAll();
-                } catch (InterruptedException ex) {
-                    throw new UndeclaredThrowableException(ex);
+                } catch (InterruptedException e1) {
+                    // Lost slot available notification
+                    Thread.currentThread().interrupt();
                 } finally {
                     if (usageWLock.isHeldByCurrentThread()) {
                         usageWLock.unlock();
@@ -285,6 +286,7 @@ public class RrdDbPool {
      *
      * @param rrdDb RrdDb reference to be returned to the pool
      * @throws java.io.IOException Thrown in case of I/O error
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      * @deprecated A RrdDb remember if it was open directly or from a pool, no need to manage it manually any more
      */
     @Deprecated
@@ -440,7 +442,7 @@ public class RrdDbPool {
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("request interrupted for new rrdDef " + rrdDef.getPath(), e);
+            throw new IllegalStateException("request interrupted for new rrdDef " + rrdDef.getPath(), e);
         } catch (RuntimeException e) {
             passNext(ACTION.DROP, ref);
             ref = null;
@@ -461,7 +463,7 @@ public class RrdDbPool {
             return ref.rrdDb;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("request interrupted for new rrd " + uri, e);
+            throw new IllegalStateException("request interrupted for new rrd " + uri, e);
         } catch (RuntimeException e) {
             passNext(ACTION.DROP, ref);
             ref = null;
@@ -491,7 +493,8 @@ public class RrdDbPool {
      *
      * @param rrdDef Definition of the RRD file to be created.
      * @return Reference to the newly created RRD file.
-     * @throws java.io.IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      */
     public RrdDb requestRrdDb(RrdDef rrdDef) throws IOException {
         return requestRrdDb(rrdDef, checkFactory(rrdDef.getUri()));
@@ -513,7 +516,8 @@ public class RrdDbPool {
      * @param path       Path to the RRD that should be created.
      * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format.
      * @return Reference to the newly created RRD.
-     * @throws java.io.IOException Thrown in case of I/O error.
+     * @throws java.io.IOException Thrown in case of I/O error
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      */
     public RrdDb requestRrdDb(String path, String sourcePath)
             throws IOException {
@@ -539,6 +543,7 @@ public class RrdDbPool {
      * @param sourcePath Path to external data which is to be converted to Rrd4j's native RRD file format
      * @return Reference to the newly created RRD
      * @throws java.io.IOException Thrown in case of I/O error
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      */
     public RrdDb requestRrdDb(URI uri, String sourcePath)
             throws IOException {
@@ -549,7 +554,8 @@ public class RrdDbPool {
      * Sets the default factory to use when obtaining RrdDb reference from simple path and not URI.
      *
      * @param defaultFactory The factory to use.
-     * @throws IllegalStateException if called while the pool is not empty or the thread was interrupted.
+     * @throws IllegalStateException if called while the pool is not empty or the thread was interrupted
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      * @deprecated the pool is no longer a singleton, create a new pool instead of changing it.
      */
     @Deprecated
@@ -598,6 +604,7 @@ public class RrdDbPool {
      * Returns the maximum number of simultaneously open RRD.
      *
      * @return maximum number of simultaneously open RRD
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      */
     public int getCapacity() {
         try {
@@ -618,7 +625,8 @@ public class RrdDbPool {
      *
      * @param rrdDb RrdDb reference for which informations is needed.
      * @return the number of request for this RRD.
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException if any
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      */
     public int getOpenCount(RrdDb rrdDb) throws IOException {
         return getCanonicalUriUsage(rrdDb.getCanonicalUri());
@@ -630,7 +638,8 @@ public class RrdDbPool {
      *
      * @param path RRD's path for which informations is needed.
      * @return the number of request for this RRD.
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException if any
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      */
     public int getOpenCount(String path) throws IOException {
         return getCanonicalUriUsage(defaultFactory.getCanonicalUri(defaultFactory.getUri(path)));
@@ -641,7 +650,8 @@ public class RrdDbPool {
      *
      * @param uri RRD's URI for which informations is needed.
      * @return the number of request for this RRD.
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException if any
+     * @throws java.lang.IllegalStateException if the thread was interrupted
      */
     public int getOpenCount(URI uri) throws IOException {
         return getCanonicalUriUsage(checkFactory(uri).getCanonicalUri(uri));
@@ -654,7 +664,7 @@ public class RrdDbPool {
             return Optional.ofNullable(ref).map(e -> e.count).orElse(0);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("getOpenCount interrupted", e);
+            throw new IllegalStateException("getOpenCount interrupted", e);
         } finally {
             passNext(ACTION.SWAP, ref);
         }
