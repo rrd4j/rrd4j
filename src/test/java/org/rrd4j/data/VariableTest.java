@@ -387,4 +387,15 @@ public class VariableTest {
         Assert.assertEquals("Wrong LSL Correlation Coefficient", 2.117961840477416e-01, dp.getVariable("value").value, 1e-6);
     }
 
+    @Test
+    public void testSmall() {
+        Source s = new Source("name") {};
+        s.setTimestamps(new long[] {1, 2, 3});
+        s.setValues(new double[] {1, 2, 3});
+        Variable v = new Variable.AVERAGE();
+        v.calculate(s, 1, 2);
+        Assert.assertNotEquals(Long.MIN_VALUE, v.getValue().timestamp);
+        Assert.assertFalse(Double.isNaN(v.getValue().value));
+    }
+
 }

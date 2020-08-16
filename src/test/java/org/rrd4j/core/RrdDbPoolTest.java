@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -246,7 +247,42 @@ public class RrdDbPoolTest {
         try (RrdDb db1 = instance.requestRrdDb(def);
              RrdDb db2 = instance.requestRrdDb(new File(link2.toString(), "test.rrd").getPath());) {
             Assert.assertEquals(db1, db2);
+            URI[] opendb = instance.getOpenUri();
+            Assert.assertEquals(1, opendb.length);
+            Assert.assertEquals(Paths.get(testRoot.getPath(), "test.rrd").toRealPath().toString(), opendb[0].getPath());
         }
+    }
+
+    @Test(timeout=2000)
+    public void testWaitPoolEmtpy() throws IOException, InterruptedException {
+        RrdDbPool instance = new RrdDbPool(new RrdRandomAccessFileBackendFactory());
+        RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
+        def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
+        def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+        AtomicBoolean done = new AtomicBoolean(false);
+        CountDownLatch l = new CountDownLatch(1);
+        long start = new Date().getTime();
+        Thread t = getThread(() -> {
+            try (RrdDb db = instance.requestRrdDb(def)) {
+                l.countDown();
+                Thread.sleep(100);
+                done.set(true);
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                e.getCause().printStackTrace();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
+        l.await();
+        instance.lockEmpty(1000, TimeUnit.SECONDS).unlock();
+        long end = new Date().getTime();
+        Assert.assertTrue("failure in sub thread", done.get()); 
+        Assert.assertTrue("requestRrdDb didn't wait for available path", (end - start) > 100); 
+        String[] files = instance.getOpenFiles();
+        Assert.assertArrayEquals(new String[]{}, files);
     }
 
 }
