@@ -24,12 +24,12 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rrd4j.data.DataProcessor;
-import org.rrd4j.data.Plottable;
+import org.rrd4j.data.IPlottable;
 import org.rrd4j.data.Variable;
 
 public class PrintTextTest {
 
-    class ConstantStaticDef extends Plottable {
+    class ConstantStaticDef implements IPlottable {
         private double m_startTime = Double.NEGATIVE_INFINITY;
         private double m_endTime = Double.POSITIVE_INFINITY;
 
@@ -59,10 +59,10 @@ public class PrintTextTest {
         PrintText ct3 = new PrintText("max", "%10.0lf\\g", true, false);
         DataProcessor dproc = new DataProcessor(startDate, endDate);
         ValueScaler valueScaler = new ValueScaler(1000);
-        dproc.addDatasource("test", sdef);
-        dproc.addDatasource("avg", "test", new Variable.AVERAGE());
-        dproc.addDatasource("max", "test", new Variable.MAX());
-        dproc.addDatasource("min", "test", new Variable.MIN());
+        dproc.datasource("test", sdef);
+        dproc.datasource("avg", "test", new Variable.AVERAGE());
+        dproc.datasource("max", "test", new Variable.MAX());
+        dproc.datasource("min", "test", new Variable.MIN());
         dproc.processData();
         ct1.resolveText(Locale.ENGLISH, dproc, valueScaler);
         ct2.resolveText(Locale.ENGLISH, dproc, valueScaler);

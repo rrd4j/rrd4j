@@ -148,14 +148,12 @@ public class TestDemo {
         rrdRestoredDb.close();
 
         // create graph
-        RrdGraphDef gDef = new RrdGraphDef();
+        RrdGraphDef gDef = new RrdGraphDef(start, end);
         gDef.setLocale(Locale.US);
         gDef.setTimeZone(TimeZone.getTimeZone("CET"));
         gDef.setWidth(IMG_WIDTH);
         gDef.setHeight(IMG_HEIGHT);
         gDef.setFilename(imgPath);
-        gDef.setStartTime(start);
-        gDef.setEndTime(end);
         gDef.setTitle("Temperatures in May-June 2010");
         gDef.setVerticalLabel("temperature");
         gDef.setColor(ElementsNames.xaxis, Color.BLUE);

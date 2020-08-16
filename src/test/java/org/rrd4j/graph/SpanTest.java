@@ -16,9 +16,7 @@ public class SpanTest {
 
     @Test
     public void test1() throws IOException {
-        RrdGraphDef def = new RrdGraphDef();
-        def.setStartTime(1);
-        def.setEndTime(100);
+        RrdGraphDef def = new RrdGraphDef(1, 100);
         def.hspan(0, 1, Color.BLUE, "span test");
         def.vspan(0, 1, Color.BLUE, "span test");
         def.setLazy(false);

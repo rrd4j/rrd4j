@@ -35,7 +35,7 @@ public class ImageTest {
     @Ignore
     @Test
     public void testOne() throws IOException, URISyntaxException {
-        RrdGraphDef gDef = new RrdGraphDef();
+        RrdGraphDef gDef = new RrdGraphDef(1, 100);
         gDef.setImageFormat("png");
         gDef.setWidth(200);
         gDef.setHeight(200);

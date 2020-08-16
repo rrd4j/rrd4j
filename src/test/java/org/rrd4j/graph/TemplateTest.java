@@ -9,19 +9,38 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.RrdDefTemplate;
+import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.data.Variable;
 import org.xml.sax.InputSource;
 
 public class TemplateTest {
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
@@ -47,13 +66,12 @@ public class TemplateTest {
     public void test2() throws IOException {
         InputStream in = getClass().getResourceAsStream("/rrd_graph_def.xml"); 
         RrdGraphDefTemplate template = new RrdGraphDefTemplate(new InputSource(in));
-        @SuppressWarnings("unused")
         RrdGraphDef gdef = template.getRrdGraphDef();
+        Assert.assertEquals(Duration.ofDays(2).get(ChronoUnit.SECONDS), gdef.getEndTime() - gdef.getStartTime());
     }
 
     @Test
     public void testRrdDefString() throws IOException {
-
         RrdDef rrdDef = new RrdDef(testFolder.newFile().getAbsolutePath());
         rrdDef.setVersion(2);
         rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);
@@ -78,7 +96,6 @@ public class TemplateTest {
 
     @Test
     public void testRrdDefUri() throws IOException {
-
         RrdDef rrdDef = new RrdDef(testFolder.newFile().toURI());
         rrdDef.setVersion(2);
         rrdDef.addDatasource("sun", GAUGE, 600, 0, Double.NaN);

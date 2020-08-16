@@ -107,12 +107,10 @@ public class TestLSL {
         FetchRequest week = rrdDb.createFetchRequest(ConsolFun.AVERAGE, LASTWEEK, END);
         FetchRequest month = rrdDb.createFetchRequest(ConsolFun.AVERAGE, START, END);
 
-        RrdGraphDef gdef = new RrdGraphDef();
+        RrdGraphDef gdef = new RrdGraphDef(LASTWEEK, END);
         gdef.setLocale(Locale.US);
         gdef.setTimeZone(TimeZone.getTimeZone("CET"));
         gdef.setFilename(testFolder.newFile("trend.png").getCanonicalPath());
-        gdef.setStartTime(LASTWEEK);
-        gdef.setEndTime(END);
         gdef.setImageFormat("png");
         gdef.setTitle("Disk Usage Prediction: /");                              //--title="Disk Usage Prediction: {ns-dskPath}"
         gdef.setWidth(620);                                                     //--width 620
@@ -168,7 +166,7 @@ public class TestLSL {
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
         String[] lines = graphinfo.getPrintLines();
         Assert.assertEquals("  Reach   90% at Wed Apr 28 10:30:00 CEST 2010 ", lines[0]);
-        Assert.assertEquals("  Reach   90% at Wed Apr 28 11:00:00 CEST 2010", lines[1]);
+        Assert.assertEquals("  Reach   90% at Wed Apr 28 10:30:00 CEST 2010", lines[1]);
         Assert.assertEquals("  Reach  100% at Sat May 01 00:00:00 CEST 2010 ", lines[2]);
         Assert.assertEquals("  Reach  100% at Sat May 01 00:00:00 CEST 2010", lines[3]);
         rrdDb.close();

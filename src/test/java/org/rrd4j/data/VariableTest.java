@@ -110,8 +110,8 @@ public class VariableTest {
 
     private DataProcessor getDp(Variable v) throws IOException {
         DataProcessor dp = new DataProcessor(startTime, endTime);
-        dp.addDatasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
-        dp.addDatasource("value", "baz", v);
+        dp.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
+        dp.datasource("value", "baz", v);
         dp.processData();
         return dp;
     }
@@ -120,8 +120,8 @@ public class VariableTest {
     private DataProcessor getDp2(Variable v) throws IOException {
         long interval = (endTime - startTime) / 3;
         DataProcessor dp = new DataProcessor(startTime + interval, endTime - interval);
-        dp.addDatasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
-        dp.addDatasource("value", "baz", v);
+        dp.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
+        dp.datasource("value", "baz", v);
         dp.processData();
         return dp;
     }
@@ -129,8 +129,8 @@ public class VariableTest {
     //A range that includes NaN
     private DataProcessor getDp3(Variable v) throws IOException {
         DataProcessor dp = new DataProcessor(startTime - 10 * step , endTime + 2 * step);
-        dp.addDatasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
-        dp.addDatasource("value", "baz", v);
+        dp.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
+        dp.datasource("value", "baz", v);
         dp.processData();
         return dp;
     }
@@ -385,6 +385,17 @@ public class VariableTest {
         DataProcessor dp = getDp3(new Variable.LSLCORREL());
         // rrdtools says 2.117961840477416e-01
         Assert.assertEquals("Wrong LSL Correlation Coefficient", 2.117961840477416e-01, dp.getVariable("value").value, 1e-6);
+    }
+
+    @Test
+    public void testSmall() {
+        Source s = new Source("name") {};
+        s.setTimestamps(new long[] {1, 2, 3});
+        s.setValues(new double[] {1, 2, 3});
+        Variable v = new Variable.AVERAGE();
+        v.calculate(s, 1, 2);
+        Assert.assertNotEquals(Long.MIN_VALUE, v.getValue().timestamp);
+        Assert.assertFalse(Double.isNaN(v.getValue().value));
     }
 
 }

@@ -104,8 +104,7 @@ public class TutorialTest {
     @Test
     public void testCode4() throws IOException {
         testCode1();
-        RrdGraphDef graphDef = new RrdGraphDef();
-        graphDef.setTimeSpan(920804400L, 920808000L);
+        RrdGraphDef graphDef = new RrdGraphDef(920804400L, 920808000L);
         graphDef.datasource("myspeed", root + "/test.rrd", "speed", ConsolFun.AVERAGE);
         graphDef.line("myspeed", new Color(0xFF, 0, 0), null, 2);
         graphDef.setFilename(root + "/speed.gif");
@@ -117,8 +116,7 @@ public class TutorialTest {
     @Test
     public void testCode5() throws IOException {
         testCode1();
-        RrdGraphDef graphDef = new RrdGraphDef();
-        graphDef.setTimeSpan(920804400L, 920808000L);
+        RrdGraphDef graphDef = new RrdGraphDef(920804400L, 920808000L);
         graphDef.setVerticalLabel("m/s");
         graphDef.datasource("myspeed", root + "/test.rrd", "speed", ConsolFun.AVERAGE);
         graphDef.datasource("realspeed", "myspeed,1000,*");
@@ -132,8 +130,7 @@ public class TutorialTest {
     @Test
     public void testCode6() throws IOException {
         testCode1();
-        RrdGraphDef graphDef = new RrdGraphDef();
-        graphDef.setTimeSpan(920804400L, 920808000L);
+        RrdGraphDef graphDef = new RrdGraphDef(920804400L, 920808000L);
         graphDef.setVerticalLabel("km/h");
         graphDef.datasource("myspeed", root + "/test.rrd", "speed", ConsolFun.AVERAGE);
         graphDef.datasource("kmh", "myspeed,3600,*");
@@ -151,8 +148,7 @@ public class TutorialTest {
     @Test
     public void testCode7() throws IOException {
         testCode1();
-        RrdGraphDef graphDef = new RrdGraphDef();
-        graphDef.setTimeSpan(920804400L, 920808000L);
+        RrdGraphDef graphDef = new RrdGraphDef(920804400L, 920808000L);
         graphDef.setVerticalLabel("km/h");
         graphDef.datasource("myspeed", root + "/test.rrd", "speed", ConsolFun.AVERAGE);
         graphDef.datasource("kmh", "myspeed,3600,*");
@@ -206,10 +202,9 @@ public class TutorialTest {
     @Test
     public void testCode10() throws IOException {
         testCode9();
-        RrdGraphDef graphDef = new RrdGraphDef();
         long endTime = Util.getTime();
         long startTime = endTime - (24*60*60L);
-        graphDef.setTimeSpan(startTime, endTime);
+        RrdGraphDef graphDef = new RrdGraphDef(startTime, endTime);
         graphDef.datasource("inoctets", root + "/myrouter.rrd", "input", ConsolFun.AVERAGE);
         graphDef.datasource("outoctets", root + "/myrouter.rrd", "output", ConsolFun.AVERAGE);
         graphDef.area("inoctets", new Color(0, 0xFF, 0), "In traffic");
@@ -242,8 +237,7 @@ public class TutorialTest {
         sample.setAndUpdate("978303600:2700:4:600:2700");
         sample.setAndUpdate("978303900:3000:2:1200:3000");
         rrdDb.close();
-        RrdGraphDef graphDef = new RrdGraphDef();
-        graphDef.setTimeSpan(978300600L, 978304200L);
+        RrdGraphDef graphDef = new RrdGraphDef(978300600L, 978304200L);
         graphDef.datasource("linea", root + "/all.rrd", "a", ConsolFun.AVERAGE);
         graphDef.datasource("lineb", root + "/all.rrd", "b", ConsolFun.AVERAGE);
         graphDef.datasource("linec", root + "/all.rrd", "c", ConsolFun.AVERAGE);

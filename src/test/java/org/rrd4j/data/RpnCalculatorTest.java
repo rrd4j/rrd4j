@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.rrd4j.core.Util;
 
 public class RpnCalculatorTest {
-    class Myplottable extends Plottable {
+    class Myplottable implements IPlottable {
         double[] values;
         Myplottable(double... values) {
             this.values = values;
@@ -33,55 +33,55 @@ public class RpnCalculatorTest {
     @Test
     public void testLT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
-        dp.addDatasource("source1", new Myplottable(2.0, 2.0, 4.0));
-        dp.addDatasource("source2", new Myplottable(3.0, 2.0, 1.0));
+        dp.datasource("source1", new Myplottable(2.0, 2.0, 4.0));
+        dp.datasource("source2", new Myplottable(3.0, 2.0, 1.0));
         expected(dp, "source1,source2,LT", 1.0, 0.0, 0.0);
     }
 
     @Test
     public void testLE() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
-        dp.addDatasource("source1", new Myplottable(2.0, 2.0, 4.0));
-        dp.addDatasource("source2", new Myplottable(3.0, 2.0, 1.0));
+        dp.datasource("source1", new Myplottable(2.0, 2.0, 4.0));
+        dp.datasource("source2", new Myplottable(3.0, 2.0, 1.0));
         expected(dp, "source1,source2,LE", 1.0, 1.0, 0.0);
     }
 
     @Test
     public void testGT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
-        dp.addDatasource("source1", new Myplottable(2.0, 2.0, 4.0));
-        dp.addDatasource("source2", new Myplottable(3.0, 2.0, 1.0));
+        dp.datasource("source1", new Myplottable(2.0, 2.0, 4.0));
+        dp.datasource("source2", new Myplottable(3.0, 2.0, 1.0));
         expected(dp, "source1,source2,GT", 0.0, 0.0, 1.0);
     }
 
     @Test
     public void testGE() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
-        dp.addDatasource("source1", new Myplottable(2.0, 2.0, 4.0));
-        dp.addDatasource("source2", new Myplottable(3.0, 2.0, 1.0));
+        dp.datasource("source1", new Myplottable(2.0, 2.0, 4.0));
+        dp.datasource("source2", new Myplottable(3.0, 2.0, 1.0));
         expected(dp, "source1,source2,GE", 0.0, 1.0, 1.0);
     }
 
     @Test
     public void testEQ() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
-        dp.addDatasource("source1", new Myplottable(2.0, 2.0, 4.0));
-        dp.addDatasource("source2", new Myplottable(3.0, 2.0, 1.0));
+        dp.datasource("source1", new Myplottable(2.0, 2.0, 4.0));
+        dp.datasource("source2", new Myplottable(3.0, 2.0, 1.0));
         expected(dp, "source1,source2,EQ", 0.0, 1.0, 0.0);
     }
 
     @Test
     public void testNE() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
-        dp.addDatasource("source1", new Myplottable(2.0, 2.0, 4.0));
-        dp.addDatasource("source2", new Myplottable(3.0, 2.0, 1.0));
+        dp.datasource("source1", new Myplottable(2.0, 2.0, 4.0));
+        dp.datasource("source2", new Myplottable(3.0, 2.0, 1.0));
         expected(dp, "source1,source2,NE", 1.0, 0.0, 1.0);
     }
 
     @Test
     public void testUN() throws IOException {
         DataProcessor dp = new DataProcessor(1, 2);
-        dp.addDatasource("source1", new Myplottable(Double.NaN, 2.0));
+        dp.datasource("source1", new Myplottable(Double.NaN, 2.0));
         expected(dp, "source1, UN", 1.0, 0.0);
     }
 
@@ -142,9 +142,9 @@ public class RpnCalculatorTest {
     @Test
     public void testIF() throws IOException {
         DataProcessor dp = new DataProcessor(1, 3);
-        dp.addDatasource("source1", new Myplottable(0.0, 1.0, 2.0));
-        dp.addDatasource("source2", new Myplottable(1.0, 1.0, 1.0));
-        dp.addDatasource("source3", new Myplottable(2.0, 2.0, 2.0));
+        dp.datasource("source1", new Myplottable(0.0, 1.0, 2.0));
+        dp.datasource("source2", new Myplottable(1.0, 1.0, 1.0));
+        dp.datasource("source3", new Myplottable(2.0, 2.0, 2.0));
         expected(dp, "source1, source2, source3, IF", 2.0, 1.0, 1.0);
     }
 
@@ -157,8 +157,8 @@ public class RpnCalculatorTest {
     @Test
     public void testMAXNAN() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
-        dp.addDatasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
-        dp.addDatasource("source2", new Myplottable(2.0, Double.NaN, 1.0, Double.NaN));
+        dp.datasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
+        dp.datasource("source2", new Myplottable(2.0, Double.NaN, 1.0, Double.NaN));
         expected(dp, "source1, source2, MAXNAN", 2.0, 1.0, 1.0, Double.NaN);
     }
 
@@ -171,8 +171,8 @@ public class RpnCalculatorTest {
     @Test
     public void testMINNAN() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
-        dp.addDatasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
-        dp.addDatasource("source2", new Myplottable(2.0, Double.NaN, 1.0, Double.NaN));
+        dp.datasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
+        dp.datasource("source2", new Myplottable(2.0, Double.NaN, 1.0, Double.NaN));
         expected(dp, "source1, source2, MINNAN", 1.0, 1.0, 1.0, Double.NaN);
     }
 
@@ -191,31 +191,31 @@ public class RpnCalculatorTest {
     @Test
     public void testADD() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
-        dp.addDatasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
-        dp.addDatasource("source2", new Myplottable(1.0, Double.NaN, 1.0, Double.NaN));
+        dp.datasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
+        dp.datasource("source2", new Myplottable(1.0, Double.NaN, 1.0, Double.NaN));
         expected(dp, "source1, source2, +", 2.0, Double.NaN, Double.NaN, Double.NaN);
     }
 
     @Test
     public void testADDNAN() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
-        dp.addDatasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
-        dp.addDatasource("source2", new Myplottable(1.0, Double.NaN, 1.0, Double.NaN));
+        dp.datasource("source1", new Myplottable(1.0, 1.0, Double.NaN, Double.NaN));
+        dp.datasource("source2", new Myplottable(1.0, Double.NaN, 1.0, Double.NaN));
         expected(dp, "source1, source2, ADDNAN", 2.0, 1.0, 1.0, Double.NaN);
     }
 
     @Test
     public void testModulus() throws IOException {
         DataProcessor dp = new DataProcessor(1, 6);
-        dp.addDatasource("source1", new Myplottable(3.0, 4.0, 5.0, 1.0,        Double.NaN, Double.NaN));
-        dp.addDatasource("source2", new Myplottable(3.0, 3.0, 3.0, Double.NaN, 1.0,        Double.NaN));
+        dp.datasource("source1", new Myplottable(3.0, 4.0, 5.0, 1.0,        Double.NaN, Double.NaN));
+        dp.datasource("source2", new Myplottable(3.0, 3.0, 3.0, Double.NaN, 1.0,        Double.NaN));
         expected(dp, "source1, source2, %", 0.0, 1.0, 2.0, Double.NaN, Double.NaN, Double.NaN);
     }
 
     @Test
     public void testLIMIT() throws IOException {
         DataProcessor dp = new DataProcessor(1, 4);
-        dp.addDatasource("source1", new Myplottable(1.0, 2.0, 3.0, 4.0));
+        dp.datasource("source1", new Myplottable(1.0, 2.0, 3.0, 4.0));
         expected(dp, "source1, 2, 3, LIMIT", Double.NaN, 2.0, 3.0, Double.NaN);
     }
 

@@ -27,7 +27,7 @@ public class ImageFormatTest {
     }
 
     private RrdGraphDef doGraph() throws IOException {
-        RrdGraphDef gDef = new RrdGraphDef();
+        RrdGraphDef gDef = new RrdGraphDef(1, 100);
         gDef.setWidth(200);
         gDef.setHeight(200);
         gDef.datasource("sun", rrdpath, "sun", ConsolFun.AVERAGE);

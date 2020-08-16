@@ -9,9 +9,9 @@ jobs:
                 key: rrd4j-{{ checksum "pom.xml" }}
             - run: mkdir -p /home/circleci/.sonar/cache /home/circleci/.m2/repository
             - run:
-                command: "mvn -B dependency:go-offline -Psonar,versions -s .circleci/settings.xml"
+                command: "mvn -B dependency:resolve dependency:resolve-plugins -Psonar,versions -s .circleci/settings.xml"
                 environment:
-                    JAVA_HOME: /usr/java/openjdk-14
+                    JAVA_HOME: /usr/local/openjdk-14
                     MAVEN_OPTS: "-Xmx1024m"
             - persist_to_workspace:
                 root: /
@@ -39,9 +39,9 @@ jobs:
                     mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
                     mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
             - run:
-                command: mvn -B clean compile -s .circleci/settings.xml
+                command: mvn -B clean compile -Djdk.compile.home=/tmp/ws/openjdk-8 -s .circleci/settings.xml
                 environment:
-                    JAVA_HOME: /usr/java/openjdk-14
+                    JAVA_HOME: /usr/local/openjdk-14
                     MAVEN_OPTS: "-Xmx2048m"
             - persist_to_workspace:
                 root: /
@@ -91,7 +91,7 @@ jobs:
                 command: |
                     mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
                 environment:
-                    JAVA_HOME: /usr/java/openjdk-14
+                    JAVA_HOME: /usr/local/openjdk-14
                     MAVEN_OPTS: "-Xmx512m"
             - store_test_results:
                 path: target/surefire-reports
@@ -156,7 +156,7 @@ jobs:
                 command: |
                     mvn -B deploy -Pskip -Dmaven.test.skip=true -s .circleci/settings.xml
                 environment:
-                    JAVA_HOME: /usr/java/openjdk-14
+                    JAVA_HOME: /usr/local/openjdk-14
                     MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.shade=ERROR -Xmx2048m"
             - persist_to_workspace:
                 root: /

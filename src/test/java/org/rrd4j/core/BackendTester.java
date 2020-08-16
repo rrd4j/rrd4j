@@ -85,8 +85,8 @@ public abstract class BackendTester {
 
         FetchData fd = db.createFetchRequest(ConsolFun.AVERAGE, 1277928000, 1278107700).fetchData();
         DataProcessor dp = new DataProcessor(1277928000, 1278107700);
-        dp.addDatasource("sun", fd);
-        dp.addDatasource("shade", fd);
+        dp.datasource("sun", fd);
+        dp.datasource("shade", fd);
         dp.processData();
         testVariable("Invalid average for sun", 3595.5504117974388, dp, new Variable.AVERAGE(), "sun");
         testVariable("Invalid last for sun", 3583.4466666666667, dp, new Variable.FIRST(), "sun");

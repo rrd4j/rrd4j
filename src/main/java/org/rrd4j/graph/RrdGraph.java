@@ -23,9 +23,13 @@ import org.rrd4j.graph.DownSampler.DataSet;
  */
 public class RrdGraph implements RrdGraphConstants {
     private static final double[] SENSIBLE_VALUES = {
-            1000.0, 900.0, 800.0, 750.0, 700.0, 600.0, 500.0, 400.0, 300.0, 250.0, 200.0, 125.0, 100.0,
-            90.0, 80.0, 75.0, 70.0, 60.0, 50.0, 40.0, 30.0, 25.0, 20.0, 10.0,
-            9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.5, 3.0, 2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
+            1000.0, 900.0, 800.0, 750.0, 700.0,
+            600.0, 500.0, 400.0, 300.0, 250.0,
+            200.0, 125.0, 100.0, 90.0, 80.0,
+            75.0, 70.0, 60.0, 50.0, 40.0, 30.0,
+            25.0, 20.0, 10.0, 9.0, 8.0,
+            7.0, 6.0, 5.0, 4.0, 3.5, 3.0,
+            2.5, 2.0, 1.8, 1.5, 1.2, 1.0,
             0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
     };
 
@@ -122,13 +126,14 @@ public class RrdGraph implements RrdGraphConstants {
             fetchData();
             resolveTextElements();
             if (gdef.shouldPlot() && !lazy) {
+                initializeLimits();
                 calculatePlotValues();
                 findMinMaxValues();
                 identifySiUnit();
                 expandValueRange();
                 removeOutOfRangeRules();
                 removeOutOfRangeSpans();
-                initializeLimits();
+                mapper = new Mapper(this);
                 placeLegends();
                 createImageWorker();
                 drawBackground();
@@ -436,8 +441,6 @@ public class RrdGraph implements RrdGraphConstants {
             im.yorigin = PADDING_TOP + im.ysize;
         }
 
-        mapper = new Mapper(this);
-
         if (!gdef.onlyGraph && gdef.title != null) {
             im.yorigin += getFontHeight(FONTTAG_TITLE) + PADDING_TITLE;
         }
@@ -655,7 +658,11 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void fetchData() throws IOException {
         dproc = new DataProcessor(gdef.startTime, gdef.endTime);
-        dproc.setPoolUsed(gdef.poolUsed);
+        dproc.setPixelCount(im.xsize);
+        if (gdef.poolUsed) {
+            dproc.setPoolUsed(gdef.poolUsed);
+            dproc.setPool(gdef.getPool());
+        }
         dproc.setTimeZone(gdef.tz);
         if (gdef.step > 0) {
             dproc.setStep(gdef.step);

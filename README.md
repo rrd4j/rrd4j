@@ -2,7 +2,7 @@ rrd4j
 =====
 
 [![Gitter chat](https://badges.gitter.im/rrd4j/Lobby.png)](https://gitter.im/rrd4j/Lobby)
-[![Build Status](https://travis-ci.org/rrd4j/rrd4j.svg?branch=master)](https://travis-ci.org/rrd4j/rrd4j)
+[![Build Status](https://circleci.com/gh/rrd4j/rrd4j.svg?style=svg)](https://circleci.com/gh/rrd4j/rrd4j/tree/master)
 [![Javadocs](https://www.javadoc.io/badge/org.rrd4j/rrd4j.svg)](https://www.javadoc.io/doc/org.rrd4j/rrd4j)
 
 RRD4J is a high performance data logging and graphing system for time series data, implementing [RRDTool's](http://oss.oetiker.ch/rrdtool/)
@@ -15,15 +15,15 @@ users [here](https://groups.google.com/forum/#!forum/rrd4j-discuss).
 
 ### Latest Version (requires Java 8+)
 
-RRD4J 3.6 (released 2020-04-06) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/master/changelog.txt)
+RRD4J 3.7 (released 2020-08-16) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/release/changelog.txt)
 
 ### Building (optional)
 
 RRD4J is built using Maven. The generated site is available [here](http://rrd4j.org/). Automated builds are uploaded
 to [Sonatype's repository](https://oss.sonatype.org/content/repositories/snapshots/org/rrd4j/rrd4j).
 
-The build settings allows to use any jvm, even latest one. But to produce compatible jar, it needs to know the path to the compatible runtime.
-So it's necessary to define the java 8 java home in the property jdk.8.home. For example, at compile time:
+The build settings allows to use any jvm, even latest one. But to produce compatible jar, it's recommended to define the path to a compatible runtime.
+The cross compilation settings are activated when the property is defined.
 
     mvn clean compile -Djdk.8.home=.../jdk1.8.0_241.jdk
 
@@ -38,7 +38,6 @@ Or in settings.xml
                 <id>jdkpaths</id>
                 <properties>
                     <jdk.8.home>.../jdk1.8.0_241.jdk</jdk.8.home>
-                    ...
                 </properties>
             </profile>
         </profiles>
@@ -56,7 +55,7 @@ Add this dependency to your project's POM file:
 <dependency>
     <groupId>org.rrd4j</groupId>
     <artifactId>rrd4j</artifactId>
-    <version>3.6</version>
+    <version>3.7</version>
 </dependency>
 ```
 
