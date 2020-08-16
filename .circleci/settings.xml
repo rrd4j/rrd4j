@@ -19,12 +19,6 @@
             </properties>
         </profile>
         <profile>
-            <id>jdkpaths</id>
-            <properties>
-                <jdk.8.home>/tmp/ws/openjdk-8</jdk.8.home>
-            </properties>
-        </profile>
-        <profile>
             <id>skip</id>
             <properties>
                 <maven.resources.skip>true</maven.resources.skip>
