@@ -975,7 +975,6 @@ public class DataProcessor implements DataHolder {
 
     private void fetchRrdData() throws IOException {
         long tEndFixed = (tEnd == 0) ? Util.getTime() : tEnd;
-        Arrays.stream(defSources);
         RrdDb[] batchRrd = new RrdDb[defSources.length];
         Map<URI, RrdDb> openRrd = new HashMap<>(defSources.length);
         Set<RrdDb> newDb = new HashSet<>(defSources.length);
