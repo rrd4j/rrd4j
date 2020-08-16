@@ -22,7 +22,7 @@
         <bootclasspath>${jdk.compile.home}/jre/lib/rt.jar</bootclasspath>
         <!-- current year. -->
         <year>2020</year>
-        <!-- Indirection needed to keep optionnal jacoco settings and external argument lines-->
+        <!-- Indirection needed to keep optional jacoco settings and external argument lines-->
         <arg.line></arg.line>
         <argLine>${arg.line}</argLine>
     </properties>
@@ -44,13 +44,13 @@
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>18.1.11</version>
+            <version>18.3.12</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.12.2</version>
+            <version>3.12.7</version>
             <optional>true</optional>
         </dependency>
         <!-- Test dependencies. -->
@@ -169,7 +169,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.9</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
