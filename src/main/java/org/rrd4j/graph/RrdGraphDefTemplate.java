@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
-import java.util.function.BiFunction;
+import java.util.function.ToLongBiFunction;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.core.Util;
@@ -308,16 +308,15 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             throw new IllegalArgumentException("XML definition must start with <rrd_graph_def>");
         }
         validateTagsOnlyOnce(root, new String[]{"filename", "span", "options", "datasources", "graph"});
-        BiFunction<String, String, Long> resolve = (k, d)-> {
+        ToLongBiFunction<String, String> resolve = (k, d)-> {
             String value = Optional.ofNullable(Util.Xml.getFirstChildNode(root, "span"))
-            .map( n -> Util.Xml.getFirstChildNode(n, k))
-            .map(Node::getTextContent)
-            .map(String::trim)
-            .orElse(d);
+                    .map( n -> Util.Xml.getFirstChildNode(n, k))
+                    .map(this::getValue)
+                    .orElse(d);
             return Util.getTimestamp(value);
         };
-        long start = resolve.apply("start", DEFAULT_START);
-        long end = resolve.apply("end", DEFAULT_END);
+        long start = resolve.applyAsLong("start", DEFAULT_START);
+        long end = resolve.applyAsLong("end", DEFAULT_END);
         rrdGraphDef = new RrdGraphDef(start, end);
         // traverse all nodes
         Node[] childNodes = getChildNodes(root);
