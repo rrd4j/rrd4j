@@ -13,7 +13,7 @@
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.plugin.surefire.version>3.0.0-M4</maven.plugin.surefire.version>
-        <junit.version>4.13</junit.version>
+        <junit.version>4.13.1</junit.version>
         <log4j>2.13.3</log4j>
         <pax-exam.version>4.13.3</pax-exam.version>
         <maven.compiler.source>8</maven.compiler.source>
