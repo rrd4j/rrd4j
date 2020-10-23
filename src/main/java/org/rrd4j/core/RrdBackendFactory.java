@@ -223,7 +223,7 @@ public abstract class RrdBackendFactory implements Closeable {
      * @return
      * @since 3.7
      */
-    public static Stream<RrdBackendFactory> getActiveFactories() {
+    public static synchronized Stream<RrdBackendFactory> getActiveFactories() {
         return activeFactories.stream();
     }
 
