@@ -33,7 +33,8 @@ public class RrdGraph implements RrdGraphConstants {
             0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0, -1
     };
 
-    private static final char[] SYMBOLS = {'a', 'f', 'p', 'n', 'µ', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E'};
+    private static final int SYMBOLS_CENTER = 8;
+    private static final char[] SYMBOLS = {'y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', ' ', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'};
 
     final RrdGraphDef gdef;
     final ImageParameters im;
@@ -578,7 +579,6 @@ public class RrdGraph implements RrdGraphConstants {
         im.unitsexponent = gdef.unitsExponent;
         im.base = gdef.base;
         if (!gdef.logarithmic) {
-            int symbcenter = 6;
             double digits;
             if (im.unitsexponent != Integer.MAX_VALUE) {
                 digits = Math.floor(im.unitsexponent / 3.0);
@@ -587,8 +587,8 @@ public class RrdGraph implements RrdGraphConstants {
                 digits = Math.floor(Math.log(Math.max(Math.abs(im.minval), Math.abs(im.maxval))) / Math.log(im.base));
             }
             im.magfact = Math.pow(im.base, digits);
-            if (((digits + symbcenter) < SYMBOLS.length) && ((digits + symbcenter) >= 0)) {
-                im.symbol = SYMBOLS[(int) digits + symbcenter];
+            if (((digits + SYMBOLS_CENTER) < SYMBOLS.length) && ((digits + SYMBOLS_CENTER) >= 0)) {
+                im.symbol = SYMBOLS[(int) digits + SYMBOLS_CENTER];
             }
             else {
                 im.symbol = '?';
