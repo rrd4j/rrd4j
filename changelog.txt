@@ -2,6 +2,9 @@
 Changes in version 3.8-SNAPSHOT.
 -------------------------------
 
+Slightly improving time parser, with better tests. 4 digits year can now be any year. For two digits year, 38 is used as a pivot. Before
+that, it means 20xx, after 19xx.
+
 * Fixed Issue 141: Setting graph property "start" seems broken in 3.7.
 
 Changes in version 3.7 - 16 Aug 2020.
