@@ -1,5 +1,5 @@
 =======
-Changes in version 3.7.1-SNAPSHOT.
+Changes in version 3.8-SNAPSHOT.
 -------------------------------
 
 * Fixed Issue 141: Setting graph property "start" seems broken in 3.7.
