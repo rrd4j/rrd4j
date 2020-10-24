@@ -162,7 +162,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.5</version>
+                    <version>0.8.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +172,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.8.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -473,7 +473,7 @@
                     <plugin>
                         <groupId>biz.aQute.bnd</groupId>
                         <artifactId>bnd-maven-plugin</artifactId>
-                        <version>4.1.0</version>
+                        <version>5.2.0</version>
                         <configuration>
                             <bnd><![CDATA[
 Import-Package: com.mongodb.*;resolution:=optional, \
