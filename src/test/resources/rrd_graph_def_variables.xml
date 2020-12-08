@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rrd_graph_def>
+    <!-- use '-' to represent in-memory graph -->
+    <filename>${filename}</filename>
+    <!-- starting and ending timestamps can be specified by using at-style time specification, or by specifying exact timestamps since epoch (without milliseconds) -->
+    <span>
+        <start>${start}</start>
+        <end>${end}</end>
+    </span>
+    <options>
+        <!-- specify 'true' if you want to use RrdDbPool while creating graph -->
+        <use_pool>false</use_pool>
+        <anti_aliasing>true</anti_aliasing>
+        <time_grid>
+            <show_grid>true</show_grid>
+            <!-- allowed units: second, minute, hour, day, week, month, year -->
+            <minor_grid_unit>minute</minor_grid_unit>
+            <minor_grid_unit_count>60</minor_grid_unit_count>
+            <major_grid_unit>hour</major_grid_unit>
+            <major_grid_unit_count>2</major_grid_unit_count>
+            <label_unit>hour</label_unit>
+            <label_unit_count>2</label_unit_count>
+            <label_span>1200</label_span>
+            <!-- use SimpleDateFormat or strftime-like format to format labels -->
+            <label_format>dd-MMM-yy</label_format>
+        </time_grid>
+        <value_grid>
+            <show_grid>true</show_grid>
+            <grid_step>100.0</grid_step>
+            <label_factor>5</label_factor>
+        </value_grid>
+        <no_minor_grid>true</no_minor_grid>
+        <alt_y_grid>true</alt_y_grid>
+        <alt_y_mrtg>true</alt_y_mrtg>
+        <alt_autoscale>true</alt_autoscale>
+        <alt_autoscale_max>true</alt_autoscale_max>
+        <units_exponent>3</units_exponent>
+        <units_length>13</units_length>
+        <vertical_label>Speed (kbits/sec)</vertical_label>
+        <width>${width}</width>
+        <height>222</height>
+        <interlaced>true</interlaced>
+        <image_info>filename = %s, width=%d, height=%d</image_info>
+        <image_format>png</image_format>
+        <image_quality>0.8</image_quality>
+        <background_image>luka.png</background_image>
+        <overlay_image>luka.png</overlay_image>
+        <unit>kilos</unit>
+        <lazy>false</lazy>
+        <min_value>0</min_value>
+        <max_value>5000</max_value>
+        <rigid>true</rigid>
+        <base>1000</base>
+        <logarithmic>false</logarithmic>
+        <colors>
+            <canvas>#FFFFFF</canvas>
+            <back>#FFFFFF</back>
+            <shadea>#AABBCC</shadea>
+            <shadeb>#DDDDDD</shadeb>
+            <grid>#FF0000</grid>
+            <mgrid>#00FF00</mgrid>
+            <font>#FFFFFF</font>
+            <frame>#EE00FF</frame>
+            <arrow>#FF0000</arrow>
+        </colors>
+        <no_legend>false</no_legend>
+        <only_graph>false</only_graph>
+        <force_rules_legend>false</force_rules_legend>
+        <title>This is a title</title>
+        <step>300</step>
+        <fonts>
+            <small_font>
+                <name>Courier</name>
+                <style>bold italic</style>
+                <size>12</size>
+            </small_font>
+            <large_font>
+                <name>Courier</name>
+                <style>plain</style>
+                <size>11</size>
+            </large_font>
+        </fonts>
+        <first_day_of_week>SUNDAY</first_day_of_week>
+    </options>
+    <datasources>
+        <def>
+            <name>x</name>
+            <rrd>test.rrd</rrd>
+            <source>sun</source>
+            <cf>AVERAGE</cf>
+            <backend>FILE</backend>
+        </def>
+        <def>
+            <name>y</name>
+            <rrd>test.rrd</rrd>
+            <source>shade</source>
+            <cf>AVERAGE</cf>
+        </def>
+        <cdef>
+            <name>x_plus_y</name>
+            <rpn>x,y,+</rpn>
+        </cdef>
+        <cdef>
+            <name>x_minus_y</name>
+            <rpn>x,y,-</rpn>
+        </cdef>
+        <sdef>
+            <name>x_avg</name>
+            <source>x</source>
+            <cf>AVERAGE</cf>
+        </sdef>
+        <sdef>
+            <name>y_max</name>
+            <source>y</source>
+            <cf>MAX</cf>
+        </sdef>
+    </datasources>
+    <graph>
+        <area>
+            <datasource>x</datasource>
+            <color>#FF0000</color>
+            <legend>X value\r</legend>
+        </area>
+        <stack>
+            <datasource>y</datasource>
+            <color>#00FF00</color>
+            <legend>Y value\r</legend>
+        </stack>
+        <line>
+            <datasource>x</datasource>
+            <color>#FF0000</color>
+            <legend>X value\r</legend>
+            <width>2</width>
+        </line>
+        <print>
+            <datasource>x</datasource>
+            <cf>AVERAGE</cf>
+            <format>Average is %7.3f\c</format>
+        </print>
+        <gprint>
+            <datasource>y</datasource>
+            <cf>MAX</cf>
+            <format>Max is %7.3f\c</format>
+        </gprint>
+        <hrule>
+            <value>1250</value>
+            <color>#0000FF</color>
+            <legend>This is a horizontal rule</legend>
+        </hrule>
+        <vrule>
+            <time>now-6h</time>
+            <color>#0000FF</color>
+            <legend>This is a vertical rule</legend>
+        </vrule>
+        <comment>Simple comment</comment>
+        <comment>One more comment\c</comment>
+    </graph>
+</rrd_graph_def>

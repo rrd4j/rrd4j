@@ -1,12 +1,13 @@
 package org.rrd4j.core.timespec;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
+import java.util.function.Consumer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +21,6 @@ import org.junit.Test;
  */
 public class TimeParserTest {
 
-    private final static int ONE_HOUR_IN_MILLIS=60*60*1000;
-    private final static int ONE_DAY_IN_MILLIS=24 * ONE_HOUR_IN_MILLIS;
-    //private final static int ONE_NIGHT_IN_PARIS = 0x7a57e1e55;
-
-
     @Before
     public void setup() throws InterruptedException {
         //Yeah, this looks weird, but there's method to my madness.  
@@ -32,20 +28,20 @@ public class TimeParserTest {
         // parsing code which will assume something about when 'now' is, often the current day/week
         // If we're running around midnight and the Calendar gets created on one day and the parsing
         // happens on the next, you'll get spurious failures, which would be really annoying and hard
-        // to replicate.  Initial tests show that most tests take ~100ms, so if it's within 10 seconds
-        // of midnight, wait for 30 seconds (and print a message saing why)
-        Calendar now = new GregorianCalendar();
+        // to replicate.  Initial tests show that most tests take ~100ms, so if it's within 11 seconds
+        // of midnight, wait for 30 seconds (and print a message saying why)
+        Calendar now = Calendar.getInstance(Locale.ENGLISH);
         if(now.get(Calendar.HOUR_OF_DAY) == 23 && now.get(Calendar.MINUTE) > 59 && now.get(Calendar.SECOND) > 50) {
-            Thread.sleep(30000);
+            Thread.sleep(11000);
         }
     }
 
-    private long[] parseTimes(String startTime, String endTime) {
+    private Calendar[] parseTimes(String startTime, String endTime) {
         TimeParser startParser = new TimeParser(startTime);
         TimeParser endParser = new TimeParser(endTime);
         TimeSpec specStart = startParser.parse();
         TimeSpec specEnd = endParser.parse();
-        return TimeSpec.getTimestamps(specStart, specEnd);
+        return TimeSpec.getTimes(specStart, specEnd);
     }
 
     /**
@@ -80,9 +76,39 @@ public class TimeParserTest {
      * @param desc - some description of the time.  Usually "start" or "end", could be others
      */
     private void assertTimestampsEqualWithEpsilon(long expected, long actual, int epsilon, String desc) {
-        assertTrue("Expected a "+desc+" time within "+epsilon+"ms of "+ expected
-                + " but got " + actual,
-                Math.abs(actual - expected) < epsilon);
+        assertTrue("Expected a " + desc + " time within " + epsilon + "ms of "+ expected
+                   + " but got " + actual,
+                   Math.abs(actual - expected) < epsilon);
+    }
+
+    private void check(Consumer<Calendar> startSet, String startStr) {
+        Calendar startCal = Calendar.getInstance(Locale.ENGLISH);
+        startSet.accept(startCal);
+        Date startDate = startCal.getTime();
+
+        TimeParser startParser = new TimeParser(startStr);
+        TimeSpec specStart = startParser.parse();
+
+        Instant start = Instant.ofEpochSecond(specStart.getTimestamp());
+        assertTimestampsEqualWithEpsilon(startDate.getTime(), start.toEpochMilli(), 1000, "start");
+    }
+
+    private void check(Consumer<Calendar> startSet, Consumer<Calendar> endSet, String startStr, String endStr) {
+        Calendar now = Calendar.getInstance(Locale.ENGLISH);
+        now.setLenient(true);
+
+        Calendar startCal = (Calendar) now.clone();
+        startSet.accept(startCal);
+        Date startDate = startCal.getTime();
+
+        Calendar endCal = (Calendar) now.clone();
+        endSet.accept(endCal);
+        Date endDate = endCal.getTime();
+
+        Calendar[] result = parseTimes(startStr, endStr);
+
+        assertTimestampsEqualWithEpsilon(startDate.getTime(), result[0].toInstant().toEpochMilli(), 1000, "start");
+        assertTimestampsEqualWithEpsilon(endDate.getTime(), result[1].toInstant().toEpochMilli(), 1000, "end");
     }
 
     /**
@@ -91,58 +117,47 @@ public class TimeParserTest {
      */
     @Test
     public void test24HourClockHourTodayStartEndTime() {
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 8); //8am
-        setSubHourFieldsZero(now);
-
-        Date startDate = now.getTime();
-        now.set(Calendar.HOUR_OF_DAY, 16); //4pm
-        setSubHourFieldsZero(now);
-        Date endDate = now.getTime();
-
-        long[] result = this.parseTimes("08", "16");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 8); //8am
+            setSubHourFieldsZero(c);
+        }, c -> {
+            c.set(Calendar.HOUR_OF_DAY, 16); //4pm
+            setSubHourFieldsZero(c);
+        },
+        "08", "16");
     }
 
     /**
      * Test the specification of just an "hour" (assumed today) start using "midnight", end = now
      */
     @Test
-    public void testMidnightToday() {
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 0); //midnight
-        setSubHourFieldsZero(now);
-
-        Date startDate = now.getTime();
-
-        long[] result = this.parseTimes("midnight", "16");
-        long start = result[0] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-
+    public void testMidnight() {
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 0); //midnight
+            setSubHourFieldsZero(c);
+        }, "midnight");
     }
 
     /**
      * Test the specification of just an "hour" (assumed today) start using "noon", end = now
      */
     @Test
-    public void testNoonToday() {
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 12); //noon
-        setSubHourFieldsZero(now);
+    public void testNoon() {
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 12); //noon
+            setSubHourFieldsZero(c);
+        }, "noon");
+    }
 
-        Date startDate = now.getTime();
-
-        long[] result = this.parseTimes("noon", "16");
-        long start = result[0] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-
+    /**
+     * Test the specification of just an "hour" (assumed today) start using "noon", end = now
+     */
+    @Test
+    public void testTeaTime() {
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 16); //teatime
+            setSubHourFieldsZero(c);
+        }, "teatime");
     }
 
     /**
@@ -151,21 +166,31 @@ public class TimeParserTest {
      */
     @Test
     public void testAMPMClockHourTodayStartEndTime() {
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 8); //8am
-        setSubHourFieldsZero(now);
-        Date startDate = now.getTime();
-        now.set(Calendar.HOUR_OF_DAY, 16); //4pm
-        setSubHourFieldsZero(now);
-        Date endDate = now.getTime();
+        for (int i = 0 ; i < 12 ; i++) {
+            int cur = i;
+            check(c -> {
+                c.set(Calendar.HOUR_OF_DAY, cur);
+                setSubHourFieldsZero(c);
+            }, c -> {
+                c.set(Calendar.HOUR_OF_DAY, 12 + cur);
+                setSubHourFieldsZero(c);
+            },
+            i + "am", i + "pm");
+        }
+    }
 
-        long[] result = this.parseTimes("8am", "4pm");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+    @Test
+    public void test12AMPM() {
+        check(c -> {
+            /* 12:xx AM is 00:xx, not 12:xx */
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            setSubHourFieldsZero(c);
+        }, c -> {
+            /* 12:xx PM is 12:xx, not 24:xx */
+            c.set(Calendar.HOUR_OF_DAY, 12);
+            setSubHourFieldsZero(c);
+        },
+        "12am", "12pm");
     }
 
     /**
@@ -174,20 +199,14 @@ public class TimeParserTest {
      */
     @Test
     public void testTodayTime() {
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 9); //9am
-        setSubHourFieldsZero(now);
-        Date startDate = now.getTime();
-        now.set(Calendar.HOUR_OF_DAY, 17); //5pm
-        setSubHourFieldsZero(now);
-        Date endDate = now.getTime();
-
-        long[] result = this.parseTimes("9am today", "5pm today");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 9); //9am
+            setSubHourFieldsZero(c);
+        }, c -> {
+            c.set(Calendar.HOUR_OF_DAY, 17); //5pm
+            setSubHourFieldsZero(c);
+        },
+        "9am today", "5pm today");
     }
 
     /**
@@ -196,20 +215,16 @@ public class TimeParserTest {
      */
     @Test
     public void testYesterdayTime() {
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 9); //9am
-        setSubHourFieldsZero(now);
-        Date startDate = new Date(now.getTimeInMillis()-ONE_DAY_IN_MILLIS);
-        now.set(Calendar.HOUR_OF_DAY, 17); //5pm
-        setSubHourFieldsZero(now);
-        Date endDate = new Date(now.getTimeInMillis()-ONE_DAY_IN_MILLIS);
-
-        long[] result = this.parseTimes("9am yesterday", "5pm yesterday");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 9); //9am
+            c.add(Calendar.DAY_OF_YEAR, -1);
+            setSubHourFieldsZero(c);
+        }, c -> {
+            c.set(Calendar.HOUR_OF_DAY, 17); //5pm
+            c.add(Calendar.DAY_OF_YEAR, -1);
+            setSubHourFieldsZero(c);
+        },
+        "9am yesterday", "5pm yesterday");
     }
 
     /**
@@ -218,20 +233,16 @@ public class TimeParserTest {
      */
     @Test
     public void testTomorrowTime() {
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 9); //9am
-        setSubHourFieldsZero(now);
-        Date startDate = new Date(now.getTimeInMillis()+ONE_DAY_IN_MILLIS);
-        now.set(Calendar.HOUR_OF_DAY, 17); //5pm
-        setSubHourFieldsZero(now);
-        Date endDate = new Date(now.getTimeInMillis()+ONE_DAY_IN_MILLIS);
-
-        long[] result = this.parseTimes("9am tomorrow", "5pm tomorrow");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 9); //9am
+            c.add(Calendar.DAY_OF_YEAR, +1);
+            setSubHourFieldsZero(c);
+        }, c -> {
+            c.set(Calendar.HOUR_OF_DAY, 17); //5pm
+            c.add(Calendar.DAY_OF_YEAR, +1);
+            setSubHourFieldsZero(c);
+        },
+        "9am tomorrow", "5pm tomorrow");
     }
 
     /**
@@ -243,17 +254,11 @@ public class TimeParserTest {
      */
     @Test
     public void testSimpleNegativeOffset() {
-        Calendar now = new GregorianCalendar();
-        Date endDate = now.getTime();
-        Date startDate = new Date(now.getTimeInMillis()-ONE_HOUR_IN_MILLIS);
-
-        long[] result = this.parseTimes("-1h", "now");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-
+        check(c -> {
+            c.add(Calendar.HOUR_OF_DAY, -1);
+        }, c -> {
+        },
+        "-1hour", "now");
     }
 
     /**
@@ -261,18 +266,13 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeStartOffsetEnd() {
-        Calendar now = new GregorianCalendar();
-        Date endDate = new Date(now.getTimeInMillis()-ONE_HOUR_IN_MILLIS);
-        Date startDate = new Date(now.getTimeInMillis()-(3*ONE_HOUR_IN_MILLIS));
-
+        check(c -> {
+            c.add(Calendar.HOUR_OF_DAY, -3);
+        }, c -> {
+            c.add(Calendar.HOUR_OF_DAY, -1);
+        },
         //End is 1 hour ago; start is 2 hours before that
-        long[] result = this.parseTimes("end-2h", "-1h");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-
+        "end-2hours", "-1h");
     }
 
     /**
@@ -280,18 +280,13 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeStartOffsetEndAbbreviatedEnd() {
-        Calendar now = new GregorianCalendar();
-        Date endDate = new Date(now.getTimeInMillis()-ONE_HOUR_IN_MILLIS);
-        Date startDate = new Date(now.getTimeInMillis()-(3*ONE_HOUR_IN_MILLIS));
-
+        check(c -> {
+            c.add(Calendar.HOUR_OF_DAY, -3);
+        }, c -> {
+            c.add(Calendar.HOUR_OF_DAY, -1);
+        },
         //End is 1 hour ago; start is 2 hours before that
-        long[] result = this.parseTimes("e-2h", "-1h");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-
+        "e-2h", "-1h");
     }
 
     /**
@@ -299,17 +294,12 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeEndOffsetStart() {
-        Calendar now = new GregorianCalendar();
-        Date endDate = new Date(now.getTimeInMillis()-(2*ONE_HOUR_IN_MILLIS));
-        Date startDate = new Date(now.getTimeInMillis()-(4*ONE_HOUR_IN_MILLIS));
-
-        long[] result = this.parseTimes("-4h", "start+2h");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-
+        check(c -> {
+            c.add(Calendar.HOUR_OF_DAY, -4);
+        }, c -> {
+            c.add(Calendar.HOUR_OF_DAY, -2);
+        },
+        "-4h", "start+2h");
     }
 
     /**
@@ -317,17 +307,12 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeEndOffsetStartAbbreviatedStart() {
-        Calendar now = new GregorianCalendar();
-        Date endDate = new Date(now.getTimeInMillis()-(2*ONE_HOUR_IN_MILLIS));
-        Date startDate = new Date(now.getTimeInMillis()-(4*ONE_HOUR_IN_MILLIS));
-
-        long[] result = this.parseTimes("-4h", "s+2h");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-
+        check(c -> {
+            c.add(Calendar.HOUR_OF_DAY, -4);
+        }, c -> {
+            c.add(Calendar.HOUR_OF_DAY, -2);
+        },
+        "-4h", "s+2h");
     }
 
     /**
@@ -335,26 +320,19 @@ public class TimeParserTest {
      */
     @Test
     public void testHourMinuteSyntax() {
-        Calendar now = new GregorianCalendar();
-        setSubHourFieldsZero(now);
-        now.set(Calendar.HOUR_OF_DAY, 8); 
-        now.set(Calendar.MINUTE, 30);
-
-        Date startDate = now.getTime();
-        now.set(Calendar.HOUR_OF_DAY, 16); 
-        now.set(Calendar.MINUTE, 45);
-        Date endDate = now.getTime();
-
+        check(c -> {
+            setSubHourFieldsZero(c);
+            c.set(Calendar.HOUR_OF_DAY, 8); 
+            c.set(Calendar.MINUTE, 30);
+        }, c -> {
+            setSubHourFieldsZero(c);
+            c.set(Calendar.HOUR_OF_DAY, 16); 
+            c.set(Calendar.MINUTE, 45);
+        },
         //Mixed syntaxes FTW; two tests in one
         //This also exercises the test of the order of parsing (time then day).  If
         // that order is wrong, 8.30 could be (and was at one point) interpreted as a day.month 
-        long[] result = this.parseTimes("8.30", "16:45");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+        "8.30", "16:45");
     }
 
     /**
@@ -362,21 +340,15 @@ public class TimeParserTest {
      */
     @Test
     public void testDateWithDots() {
-        //Remember: 0-based month
-        Calendar cal = new GregorianCalendar(1980,0,1);
-        Date startDate = cal.getTime();
-
-        cal = new GregorianCalendar(1980,11,15);
-        Date endDate = cal.getTime();
-
+        check(c -> {
+            setSubDayFieldsZero(c);
+            c.set(1980, 0, 1);
+        }, c -> {
+            setSubDayFieldsZero(c);
+            c.set(1980, 11, 15);
+        },
         //Start is a simple one; end ensures we have our days/months around the right way.
-        long[] result = this.parseTimes("00:00 01.01.1980", "00:00 15.12.1980");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+        "00:00 01.01.1980", "00:00 15.12.1980");
     }
 
     /**
@@ -384,21 +356,16 @@ public class TimeParserTest {
      */
     @Test
     public void testDateWithSlashes() {
-        //Remember: 0-based month
-        Calendar cal = new GregorianCalendar(1980,0,1);
-        Date startDate = cal.getTime();
-
-        cal = new GregorianCalendar(1980,11,15);
-        Date endDate = cal.getTime();
-
+        check(c -> {
+            setSubDayFieldsZero(c);
+            setSubHourFieldsZero(c);
+            c.set(1980, 0, 1);
+        }, c -> {
+            setSubDayFieldsZero(c);
+            c.set(1980, 11, 15);
+        },
         //Start is a simple one; end ensures we have our days/months around the right way.
-        long[] result = this.parseTimes("00:00 01/01/1980", "00:00 12/15/1980");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+        "00:00 01/01/1980", "00:00 12/15/1980");
     }
 
     /**
@@ -406,21 +373,33 @@ public class TimeParserTest {
      */
     @Test
     public void testDateWithNoDelimiters() {
-        //Remember: 0-based month
-        Calendar cal = new GregorianCalendar(1980,0,1);
-        Date startDate = cal.getTime();
-
-        cal = new GregorianCalendar(1980,11,15);
-        Date endDate = cal.getTime();
-
+        check(c -> {
+            setSubDayFieldsZero(c);
+            setSubHourFieldsZero(c);
+            c.set(1980, 0, 1);
+        }, c -> {
+            setSubDayFieldsZero(c);
+            c.set(1980, 11, 15);
+        },
         //Start is a simple one; end ensures we have our days/months around the right way.
-        long[] result = this.parseTimes("00:00 19800101", "00:00 19801215");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
+        "00:00 19800101", "00:00 19801215");
+    }
 
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+    /**
+     * Test a plain date specified as YYYYMMDD, using the order given in rrdfetch man page
+     */
+    @Test
+    public void testDateWithNoDelimitersReversed() {
+        check(c -> {
+            c.set(Calendar.MONTH, 6);
+            c.set(Calendar.DAY_OF_MONTH, 3);
+            c.set(Calendar.YEAR, 1997);
+            c.set(Calendar.HOUR_OF_DAY, 12);
+            c.set(Calendar.MINUTE, 45);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+        },
+        "19970703 12:45");
     }
 
     /**
@@ -432,28 +411,17 @@ public class TimeParserTest {
      */
     @Test
     public void testNamedMonthsNoYear() {
-        //Remember: 0-based month -- 2 = March
-        Calendar cal = new GregorianCalendar();
-        cal.set(Calendar.MONTH, 2); 
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        this.setSubDayFieldsZero(cal);
-        Date startDate = cal.getTime();
-
-        //10 = November 
-        cal = new GregorianCalendar();
-        cal.set(Calendar.MONTH, 10); 
-        cal.set(Calendar.DAY_OF_MONTH, 15);
-        this.setSubDayFieldsZero(cal);
-        Date endDate = cal.getTime();
-
-        //one short, one long month name
-        long[] result = this.parseTimes("00:00 Mar 1 ", "00:00 November 15");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+        check(c -> {
+            c.set(Calendar.MONTH, 2); 
+            c.set(Calendar.DAY_OF_MONTH, 1);
+            setSubDayFieldsZero(c);
+        }, c -> {
+            c.set(Calendar.MONTH, 10); 
+            c.set(Calendar.DAY_OF_MONTH, 15);
+            setSubDayFieldsZero(c);
+        },
+        // one short, one long month name
+        "00:00 Mar 1", "00:00 November 15");
     }
 
     /**
@@ -463,48 +431,53 @@ public class TimeParserTest {
      * If we find actual problems with specific months, we can add more tests
      */
     @Test
-    public void testNamedMonthsTwoDigitYear() {
-        //Remember: 0-based month -- 1 = Feb
-        Calendar cal = new GregorianCalendar(1980,1,2);
-        Date startDate = cal.getTime();
+    public void testNamedMonthsTwoDigitYearTwentiethCentury() {
+        for (int i = 38; i <= 99; i++) {
+            int cur = i;
+            check(c -> {
+                setSubDayFieldsZero(c);
+                c.set(1900 + cur, 1, 2);
+            }, c -> {
+                setSubDayFieldsZero(c);
+                c.set(1900 + cur, 9, 16);
+            }, "00:00 Feb 2 " + i, "00:00 October 16 " + i);
+        }
+    }
 
-        //9 = October 
-        cal = new GregorianCalendar(1980,9,16);
-        Date endDate = cal.getTime();
-
-        long[] result = this.parseTimes("00:00 Feb 2 80", "00:00 October 16 80");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+    /**
+     * Test named month dates with 2 digit years, in the range 00-37, means post 2000
+     */
+    @Test
+    public void testNamedMonthsTwoDigitYear2000() {
+        for (int i = 0; i <= 37; i++) {
+            int cur = i;
+            String year = String.format("%02d", i);
+            check(c -> {
+                setSubDayFieldsZero(c);
+                c.set(2000 + cur, 1, 2);
+            }, c -> {
+                setSubDayFieldsZero(c);
+                c.set(2000 + cur, 9, 16);
+            }, "00:00 Feb 2 " + year, "00:00 October 16 " + year);
+        }
     }
 
     /**
      * Test named month dates with 4 digit years
-     * 
-     * NB: Seems silly to test all, just test that an arbitrary one works, in both short and long form
-     * 
-     * If we find actual problems with specific months, we can add more tests
      */
     @Test
     public void testNamedMonthsFourDigitYear() {
-        //Remember: 0-based month -- 3 = April
-        Calendar cal = new GregorianCalendar(1980,3,6);
-        Date startDate = cal.getTime();
-
-        //8 = Sept 
-        cal = new GregorianCalendar(1980,8,17);
-        Date endDate = cal.getTime();
-
-        long[] result = this.parseTimes("00:00 Apr 6 1980", "00:00 September 17 1980");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(startDate.getTime(), start);
-        assertEquals(endDate.getTime(), end);
-
+        for (int i = 1000; i <= 3000; i += 1000) {
+            int cur = i;
+            String year = String.format("%04d", i);
+            check(c -> {
+                setSubDayFieldsZero(c);
+                c.set(cur, 1, 2);
+            }, c -> {
+                setSubDayFieldsZero(c);
+                c.set(cur, 9, 16);
+            }, "00:00 Feb 2 " + year, "00:00 October 16 " + year);
+        }
     }
 
     /**
@@ -514,26 +487,16 @@ public class TimeParserTest {
      */
     @Test
     public void testDayOfWeekTimeSpec() {
-        Calendar cal = new GregorianCalendar(Locale.US);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 12);
-        this.setSubHourFieldsZero(cal);
-        Date startDate = cal.getTime();
-
-        cal = new GregorianCalendar(Locale.US);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 18);
-        this.setSubHourFieldsZero(cal);
-        Date endDate = cal.getTime();
-
-
-        long[] result = this.parseTimes("noon Thursday", "6pm Friday");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertEquals(start, startDate.getTime());
-        assertEquals(end, endDate.getTime());
-
+        check(c -> {
+            c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+            c.set(Calendar.HOUR_OF_DAY, 12);
+            setSubHourFieldsZero(c);
+        }, c -> {
+            c.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+            c.set(Calendar.HOUR_OF_DAY, 18);
+            setSubHourFieldsZero(c);
+        },
+        "noon Thursday", "6pm Friday");
     }
 
     /**
@@ -541,21 +504,12 @@ public class TimeParserTest {
      */
     @Test
     public void testTimeOffsets1() {
-        Calendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(cal.getTimeInMillis()-60000);
-        Date startDate = cal.getTime();
-
-        cal = new GregorianCalendar();
-        cal.setTimeInMillis(cal.getTimeInMillis()-10000);
-        Date endDate = cal.getTime();
-
-        long[] result = this.parseTimes("now - 1minute", "now-10 seconds");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-
+        check(c -> {
+            c.add(Calendar.MINUTE, -1);
+        }, c -> {
+            c.add(Calendar.SECOND, -10);
+        },
+        "now - 1minute", "now-10 second");
     }
 
     /**
@@ -565,21 +519,12 @@ public class TimeParserTest {
      */
     @Test
     public void testTimeOffsets2() {
-        Calendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(cal.getTimeInMillis()-ONE_DAY_IN_MILLIS);
-        Date startDate = cal.getTime();
-
-        cal = new GregorianCalendar();
-        cal.setTimeInMillis(cal.getTimeInMillis()-(3*ONE_HOUR_IN_MILLIS));
-        Date endDate = cal.getTime();
-
-        long[] result = this.parseTimes("now - 1 day", "now-3 hours");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-
+        check(c -> {
+            c.add(Calendar.DAY_OF_YEAR, -1);
+        }, c -> {
+            c.add(Calendar.HOUR, -3);
+        },
+        "now - 1 day", "now-3 hours");
     }
 
     /**
@@ -587,25 +532,16 @@ public class TimeParserTest {
      */
     @Test
     public void testTimeOffsets3() {
-        Calendar cal = new GregorianCalendar();
-        cal.set(Calendar.MONTH, 6);
-        cal.set(Calendar.DAY_OF_MONTH, 12);
-        cal.add(Calendar.MONTH, -1);
-        Date startDate = cal.getTime();
-
-        cal = new GregorianCalendar();
-        cal.set(Calendar.MONTH, 6);
-        cal.set(Calendar.DAY_OF_MONTH, 12);
-        cal.add(Calendar.WEEK_OF_YEAR, -3);
-        Date endDate = cal.getTime();
-
-        long[] result = this.parseTimes("Jul 12 - 1 month", "Jul 12 - 3 weeks");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
-
+        check(c -> {
+            c.set(Calendar.MONTH, 6);
+            c.set(Calendar.DAY_OF_MONTH, 12);
+            c.add(Calendar.MONTH, -1);
+        }, c -> {
+            c.set(Calendar.MONTH, 6);
+            c.set(Calendar.DAY_OF_MONTH, 12);
+            c.add(Calendar.WEEK_OF_YEAR, -3);
+        },
+        "Jul 12 - 1 month", "Jul 12 - 3 weeks");
     }
 
     /**
@@ -613,19 +549,14 @@ public class TimeParserTest {
      */
     @Test
     public void testTimeOffsets4() {
-        //Month 6 = July (0 offset)
-        Calendar cal = new GregorianCalendar(1980, 6, 12);
-        Date endDate = cal.getTime();
-
-        cal = new GregorianCalendar(1979, 6, 12);
-        Date startDate = cal.getTime();
-
-        long[] result = this.parseTimes("end - 1 year", "00:00 12.07.1980");
-        long start = result[0] * 1000;
-        long end = result[1] * 1000;
-
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
-        assertTimestampsEqualWithEpsilon(endDate.getTime(), end, 1000, "end");
+        check(c -> {
+            setSubDayFieldsZero(c);
+            c.set(1979, 6, 12);
+        }, c -> {
+            setSubDayFieldsZero(c);
+            c.set(1980, 6, 12);
+        },
+        "end - 1 year", "00:00 12.07.1980");
     }
 
     /**
@@ -633,18 +564,12 @@ public class TimeParserTest {
      */
     @Test
     public void complexTest1() {
-
-        Calendar cal = new GregorianCalendar();
-        cal.set(Calendar.HOUR_OF_DAY, 9);
-        cal.add(Calendar.DAY_OF_YEAR, -1);
-        setSubHourFieldsZero(cal);
-        Date startDate = cal.getTime();
-
-
-        long[] result = this.parseTimes("noon yesterday -3hours", "now");
-        long start = result[0] * 1000;
-
-        assertEquals(startDate.getTime(), start);
+        check(c -> {
+            c.set(Calendar.HOUR_OF_DAY, 9);
+            c.add(Calendar.DAY_OF_YEAR, -1);
+            setSubHourFieldsZero(c);
+        },
+        "noon yesterday -3hours");
     }
 
     /**
@@ -652,16 +577,11 @@ public class TimeParserTest {
      */
     @Test
     public void complexTest2() {
-
-        Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.HOUR, -5);
-        cal.add(Calendar.MINUTE, -45);
-        Date startDate = cal.getTime();
-
-        long[] result = this.parseTimes("-5h45min", "now");
-        long start = result[0] * 1000;
-
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
+        check(c -> {
+            c.add(Calendar.HOUR, -5);
+            c.add(Calendar.MINUTE, -45);
+        },
+        "-5h45min");
     }
 
     /**
@@ -669,18 +589,54 @@ public class TimeParserTest {
      */
     @Test
     public void complexTest3() {
-
-        Calendar cal = new GregorianCalendar();
-        cal.add(Calendar.MONTH, -5);
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
-        cal.add(Calendar.DAY_OF_YEAR, -2);
-        Date startDate = cal.getTime();
-
-        long[] result = this.parseTimes("-5mon1w2d", "now");
-        long start = result[0] * 1000;
-
-        assertTimestampsEqualWithEpsilon(startDate.getTime(), start, 1000, "start");
+        check(c -> {
+            c.add(Calendar.MONTH, -5);
+            c.add(Calendar.WEEK_OF_YEAR, -1);
+            c.add(Calendar.DAY_OF_YEAR, -2);
+        },
+        "-5mon1w2d");
     }
 
+    /**
+     * Test some more complex offset examples
+     */
+    @Test
+    public void testGuessMinute() {
+        check(c -> {
+            c.add(Calendar.HOUR, -5);
+            c.add(Calendar.MINUTE, -45);
+        },
+        "-5h45m");
+    }
+
+    /**
+     * Test some more complex offset examples
+     */
+    @Test
+    public void testGuessMonth() {
+        check(c -> {
+            c.add(Calendar.YEAR, -1);
+            c.add(Calendar.MONTH, -2);
+        },
+        "-1y2m");
+    }
+
+    /**
+     * Test time as seconds
+     */
+    @Test
+    public void rrdfetchManSeconds() {
+        check(c -> {
+            c.setTimeZone(TimeZone.getTimeZone("UTC"));
+            c.set(Calendar.MONTH, 6);
+            c.set(Calendar.DAY_OF_MONTH, 5);
+            c.set(Calendar.YEAR, 1999);
+            c.set(Calendar.HOUR_OF_DAY, 18);
+            c.set(Calendar.MINUTE, 45);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+        },
+        "931200300");
+    }
 
 }

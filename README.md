@@ -15,7 +15,7 @@ users [here](https://groups.google.com/forum/#!forum/rrd4j-discuss).
 
 ### Latest Version (requires Java 8+)
 
-RRD4J 3.7 (released 2020-08-16) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/release/changelog.txt)
+RRD4J 3.8 (released 2020-12-08) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/release/changelog.txt)
 
 ### Building (optional)
 

@@ -73,10 +73,10 @@ jobs:
                 paths:
                     - home/circleci/.m2/repository
                     - home/circleci/.sonar/cache
-    # Sonar don't handle Java 14
-    testsj14:
+    # Sonar don't handle Java 15
+    testsj15:
         docker:
-            - image: circleci/openjdk:14-buster
+            - image: circleci/openjdk:15-jdk-buster
             - image: mongo:3
         steps:
             - attach_workspace:
@@ -91,7 +91,7 @@ jobs:
                 command: |
                     mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
                 environment:
-                    JAVA_HOME: /usr/local/openjdk-14
+                    JAVA_HOME: /usr/local/openjdk-15
                     MAVEN_OPTS: "-Xmx512m"
             - store_test_results:
                 path: target/surefire-reports
@@ -199,7 +199,7 @@ workflows:
       - testsj13:
           requires:
               - build
-      - testsj14:
+      - testsj15:
           requires:
               - build
       - publish:
@@ -207,7 +207,7 @@ workflows:
               - testsj8
               - testsj11
               - testsj13
-              - testsj14
+              - testsj15
       - savecache:
           requires:
               - publish

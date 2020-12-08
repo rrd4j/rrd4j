@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.GregorianCalendar;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -68,6 +69,25 @@ public class TemplateTest {
         RrdGraphDefTemplate template = new RrdGraphDefTemplate(new InputSource(in));
         RrdGraphDef gdef = template.getRrdGraphDef();
         Assert.assertEquals(Duration.ofDays(2).get(ChronoUnit.SECONDS), gdef.getEndTime() - gdef.getStartTime());
+    }
+
+    @Test
+    public void test_variable() throws IOException {
+        InputStream in = getClass().getResourceAsStream("/rrd_graph_def_variables.xml");
+        RrdGraphDefTemplate template = new RrdGraphDefTemplate(new InputSource(in));
+
+        // Not all variables tested, more to be added
+        template.setVariable("filename", "test.png");
+        GregorianCalendar start = new GregorianCalendar(2020, 2, 25);
+        GregorianCalendar end = new GregorianCalendar(2020, 2, 27);
+        template.setVariable("start", start);
+        template.setVariable("end", end);
+        template.setVariable("width", 444);
+        RrdGraphDef gdef = template.getRrdGraphDef();
+        Assert.assertEquals(start.getTimeInMillis(), gdef.getStartTime() * 1000);
+        Assert.assertEquals(end.getTimeInMillis(), gdef.getEndTime() * 1000);
+        Assert.assertEquals("test.png", gdef.filename);
+        Assert.assertEquals(444, gdef.width);
     }
 
     @Test

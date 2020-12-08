@@ -6,15 +6,15 @@
     <artifactId>rrd4j</artifactId>
     <name>RRD4J</name>
     <packaging>jar</packaging>
-    <version>3.7</version>
+    <version>3.8</version>
     <description>A high performance data logging and graphing system for time series data.</description>
     <url>https://github.com/rrd4j/rrd4j/</url>
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.plugin.surefire.version>3.0.0-M4</maven.plugin.surefire.version>
-        <junit.version>4.13</junit.version>
-        <log4j>2.13.3</log4j>
+        <junit.version>4.13.1</junit.version>
+        <log4j>2.14.0</log4j>
         <pax-exam.version>4.13.3</pax-exam.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
@@ -162,7 +162,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.5</version>
+                    <version>0.8.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +172,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.8.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -225,6 +225,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xbootclasspath/p:${bootclasspath}</arg>
+                    </compilerArgs>
+                    <showWarnings>false</showWarnings>
+                    <!-- needed for maven-plugin-javadoc to find the source version to use -->
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -464,7 +473,7 @@
                     <plugin>
                         <groupId>biz.aQute.bnd</groupId>
                         <artifactId>bnd-maven-plugin</artifactId>
-                        <version>4.1.0</version>
+                        <version>5.2.0</version>
                         <configuration>
                             <bnd><![CDATA[
 Import-Package: com.mongodb.*;resolution:=optional, \
