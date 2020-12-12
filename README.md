@@ -55,7 +55,7 @@ Add this dependency to your project's POM file:
 <dependency>
     <groupId>org.rrd4j</groupId>
     <artifactId>rrd4j</artifactId>
-    <version>3.7</version>
+    <version>3.8</version>
 </dependency>
 ```
 
