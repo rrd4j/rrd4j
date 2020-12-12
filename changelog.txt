@@ -1,5 +1,5 @@
 =======
-Changes in version 3.8 8 dec 2020.
+Changes in version 3.8 - 8 dec 2020.
 -------------------------------
 
 Slightly improving time parser, with better tests. 4 digits year can now be any year. For two digits year, 38 is used as a pivot. Before that, it means 20xx, after 19xx.
