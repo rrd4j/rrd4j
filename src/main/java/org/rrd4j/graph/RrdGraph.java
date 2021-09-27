@@ -7,6 +7,10 @@ import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -172,10 +176,27 @@ public class RrdGraph implements RrdGraphConstants {
 
     private void saveImage() throws IOException {
         if (! RrdGraphConstants.IN_MEMORY_IMAGE.equals(gdef.filename)) {
-            info.stream = worker.saveImage(gdef.filename, writer, param);
+            Path imgpath = Paths.get(gdef.filename);
+            worker.saveImage(gdef.filename, writer, param);
+            info.bytesSource = () -> {
+                try {
+                    return Files.readAllBytes(imgpath);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Unable to read image bytes", e);
+                }
+            };
+            info.bytesCount = () -> {
+                try {
+                    return (int) Files.size(imgpath);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Unable to read image informations", e);
+               }
+            };
         }
         else {
-            info.stream = worker.getImageBytes(writer, param);
+            byte[] content = worker.getImageBytes(writer, param);
+            info.bytesSource = () -> Arrays.copyOf(content, content.length);
+            info.bytesCount = () -> content.length;
         }
     }
 

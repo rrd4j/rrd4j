@@ -52,10 +52,9 @@ public class ImageWriterTest {
         ImageWriter writer = iter.next();
         ImageWorker iw = new ImageWorker(100, 100);
         ImageWriteParam iwp = writer.getDefaultWriteParam();
-        int count = iw.saveImage(destination.getCanonicalPath(), writer, iwp).available();
+        iw.saveImage(destination.getCanonicalPath(), writer, iwp);
         writer.dispose();
         Assert.assertTrue(destination.exists());
-        Assert.assertEquals(destination.length(), count);
         ImageReader reader = ImageIO.getImageReader(writer);
         reader.setInput(new FileImageInputStream(destination));
         BufferedImage img = reader.read(0);
