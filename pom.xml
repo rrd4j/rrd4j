@@ -186,9 +186,9 @@
                             ]]>
                         </bottom>
                         <links>
-                            <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                            <link>http://api.mongodb.org/java/2.0/</link>
-                            <link>http://docs.oracle.com/cd/E17277_02/html/java/</link>
+                            <link>https://docs.oracle.com/javase/8/docs/api/</link>
+                            <link>https://mongodb.github.io/mongo-java-driver/3.12/javadoc/</link>
+                            <link>https://docs.oracle.com/cd/E17277_02/html/java/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
                         </links>
                         <source>${maven.compiler.source}</source>
