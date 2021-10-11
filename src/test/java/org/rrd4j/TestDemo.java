@@ -210,7 +210,7 @@ public class TestDemo {
         Assert.assertEquals("avgSun = 3.000k", lines[2]);
         Assert.assertEquals("maxShade = 0.878k", lines[3]);
         Assert.assertEquals("avgShade = 0.404k", lines[4]);
-        Assert.assertEquals(412, graphinfo.getHeight());
+        Assert.assertTrue(graphinfo.getHeight() > 410 && graphinfo.getHeight() < 425);
         Assert.assertEquals(591, graphinfo.getWidth());
         Assert.assertTrue(graphinfo.getFilename().endsWith(".png"));
 
