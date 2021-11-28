@@ -9,7 +9,7 @@ jobs:
                 key: rrd4j-{{ checksum "pom.xml" }}
             - run: mkdir -p /home/circleci/.sonar/cache /home/circleci/.m2/repository
             - run:
-                command: "mvn -B dependency:resolve dependency:resolve-plugins -Psonar,versions -s .circleci/settings.xml"
+                command: "mvn -B dependency:resolve dependency:resolve-plugins -Psonar,versions,gpgsign -s .circleci/settings.xml"
                 environment:
                     JAVA_HOME: /usr/local/openjdk-17
                     MAVEN_OPTS: "-Xmx1024m"
@@ -137,12 +137,13 @@ jobs:
                     mv -n /tmp/ws/home/circleci/.sonar /home/circleci/
                     mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
                     mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
+                    echo $SECRING_GPG_ASC_BASE64 | base64 --decode | gpg --batch --no-tty --import --yes
             - run:
                 command: |
-                    mvn -B deploy -Pskip -Dmaven.test.skip=true -s .circleci/settings.xml
+                    mvn -B deploy -Pskip,gpgsign -Dmaven.test.skip=true -s .circleci/settings.xml -Dgpg.keyname=4F069858
                 environment:
                     JAVA_HOME: /usr/local/openjdk-17
-                    MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.shade=ERROR -Xmx2048m"
+                    MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.shade=ERROR -Xmx2048m "
             - persist_to_workspace:
                 root: /
                 paths:
