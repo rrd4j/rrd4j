@@ -1,14 +1,14 @@
 <settings>
     <servers>
         <server>
-            <id>sonatype-nexus-snapshots</id>
+            <id>sonatype-nexus</id>
             <username>${env.CI_DEPLOY_USERNAME}</username>
             <password>${env.CI_DEPLOY_PASSWORD}</password>
         </server>
         <server>
-            <id>bintray-release</id>
-            <username>${env.BINTRAY_USERNAME}</username>
-            <password>${env.BINTRAY_PASSWORDD}</password>
+            <id>sonatype-nexus-snapshots</id>
+            <username>${env.CI_DEPLOY_USERNAME}</username>
+            <password>${env.CI_DEPLOY_PASSWORD}</password>
         </server>
     </servers>
     <profiles>

@@ -637,8 +637,8 @@ Export-Package: !org.rrd4j.inspector, \
     </developers>
     <distributionManagement>
         <repository>
-            <id>bintray-release</id>
-            <url>https://api.bintray.com/maven/rrd4j/RRD4J/org.rrd4j%3Arrd4j</url>
+            <id>sonatype-nexus</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>
