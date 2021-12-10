@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.plugin.surefire.version>3.0.0-M5</maven.plugin.surefire.version>
         <junit.version>4.13.2</junit.version>
-        <log4j>2.14.1</log4j>
+        <log4j>2.15.0</log4j>
         <pax-exam.version>4.13.4</pax-exam.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
