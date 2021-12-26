@@ -15,7 +15,7 @@
         <maven.plugin.surefire.version>3.0.0-M5</maven.plugin.surefire.version>
         <junit.version>4.13.2</junit.version>
         <log4j>2.17.0</log4j>
-        <pax-exam.version>4.13.4</pax-exam.version>
+        <pax-exam.version>4.13.5</pax-exam.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <!-- current year. -->
@@ -31,8 +31,6 @@
         </license>
     </licenses>
     <scm>
-        <!-- See http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html -->
-        <!-- for how to perform a release from the connection below. -->
         <connection>scm:git:https://github.com/rrd4j/rrd4j.git</connection>
         <developerConnection>scm:git:https://github.com/rrd4j/rrd4j.git</developerConnection>
         <url>https://github.com/rrd4j/rrd4j/</url>
@@ -86,7 +84,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
-            <version>7.0.1</version>
+            <version>7.0.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -199,6 +197,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>3.0.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M4</version>
                 </plugin>
             </plugins>
         </pluginManagement>
