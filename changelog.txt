@@ -1,4 +1,13 @@
 =======
+Changes in version 3.8.1 - 26 dec 2021.
+-------------------------------
+
+As bintray is now closed, publication is done using Sonatype OSSRH. The keys used to sign package are listed in the KEYS
+file.
+
+* Fixed Issue 144: Unable to delete the image file.
+
+=======
 Changes in version 3.8 - 8 dec 2020.
 -------------------------------
 
