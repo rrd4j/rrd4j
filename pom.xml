@@ -16,8 +16,6 @@
         <junit.version>4.13.2</junit.version>
         <log4j.version>2.17.2</log4j.version>
         <pax-exam.version>4.13.5</pax-exam.version>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
         <!-- current year. -->
         <year>2020</year>
         <!-- Indirection needed to keep optional jacoco settings and external argument lines-->
@@ -191,7 +189,6 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.3.2</version>
                     <configuration>
-                        <bootclasspath>${bootclasspath}</bootclasspath>
                         <detectJavaApiLink>true</detectJavaApiLink>
                         <show>protected</show>
                         <bottom><![CDATA[
@@ -204,7 +201,6 @@
                             <link>https://docs.oracle.com/cd/E17277_02/html/java/</link>
                             <link>http://junit.sourceforge.net/javadoc/</link>
                         </links>
-                        <source>${maven.compiler.source}</source>
                         <quiet>true</quiet>
                     </configuration>
                 </plugin>
@@ -256,15 +252,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerArgs>
-                        <arg>-Xbootclasspath/p:${bootclasspath}</arg>
-                    </compilerArgs>
-                    <showWarnings>false</showWarnings>
-                    <!-- needed for maven-plugin-javadoc to find the source version to use -->
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -489,6 +476,25 @@
     </reporting>
     <profiles>
         <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>1.8</maven.compiler.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>notjava8</id>
+            <activation>
+                <jdk>!1.8</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>8</maven.compiler.release>
+            </properties>
+        </profile>
+        <profile>
             <id>withosgi</id>
             <activation>
                 <jdk>[1.8,)</jdk>
@@ -568,61 +574,6 @@ Export-Package: !org.rrd4j.inspector, \
                 </plugin>
             </plugins>
         </reporting>
-    </profile>
-    <profile>
-        <!-- With this profile, it's possible to used the latest jvm but 
-            still get jar compatible with pre-9 JVM. It's activated when jdk.compile.home 
-            is defined. Example: JAVA_HOME=$JAVA14_HOME mvn compile -Djdk.compile.home=$JAVA8_HOME 
-            ! -->
-        <id>crosscompile</id>
-        <activation>
-            <property>
-                <name>jdk.compile.home</name>
-            </property>
-        </activation>
-        <properties>
-            <bootclasspath>${jdk.compile.home}/jre/lib/rt.jar</bootclasspath>
-        </properties>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <compilerArgs>
-                            <arg>-Xbootclasspath:${bootclasspath}</arg>
-                        </compilerArgs>
-                        <!-- needed for maven-plugin-javadoc to find the 
-                            source version to use -->
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
-    <profile>
-        <!-- The default compile settings, when jdk.compile.home is not defined -->
-        <id>nocrosscompile</id>
-        <activation>
-            <property>
-                <name>!jdk.compile.home</name>
-            </property>
-        </activation>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <!-- needed for maven-plugin-javadoc to find the 
-                            source version to use -->
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
     </profile>
     <profile>
         <id>gpgsign</id>
