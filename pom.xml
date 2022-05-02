@@ -315,7 +315,7 @@ Export-Package: !org.rrd4j.inspector, \
                                 <exclude>*.gif</exclude>
                                 <exclude>*.png</exclude>
                                 <!-- Exclude Epoch -->
-                                <exclude>org/rrd4j/core/timespec/Epoch.class</exclude>
+                                <exclude>org/rrd4j/core/timespec/Epoch*.class</exclude>
                             </excludes>
                             <archive>
                                 <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -395,7 +395,7 @@ Export-Package: !org.rrd4j.inspector, \
                         <configuration>
                             <classifier>epoch</classifier>
                             <includes>
-                                <include>org/rrd4j/core/timespec/Epoch.class</include>
+                                <include>org/rrd4j/core/timespec/Epoch*.class</include>
                             </includes>
                             <archive>
                                 <manifest>
