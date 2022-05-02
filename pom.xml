@@ -18,9 +18,10 @@
         <pax-exam.version>4.13.5</pax-exam.version>
         <!-- current year. -->
         <year>2020</year>
-        <!-- Indirection needed to keep optional jacoco settings and external argument lines-->
+        <!-- Indirection needed to keep optionnal jacoco settings and external argument lines during tests-->
+        <!-- to use, add -Darg.line=... instead of -DargLine=-->
         <arg.line></arg.line>
-        <argLine>${arg.line}</argLine>
+        <!-- Setting for OSGI -->
         <manifestPath>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestPath>
     </properties>
     <licenses>
@@ -286,6 +287,7 @@ Export-Package: !org.rrd4j.inspector, \
     org.rrd4j.*, \
     com.tomgibara.crinch.hashing.*, \
     eu.bengreen.data.utility
+-fixupmessages: ${bnd.fixupmessages}
 ]]></bnd>
                 </configuration>
                 <executions>
@@ -486,6 +488,8 @@ Export-Package: !org.rrd4j.inspector, \
             <properties>
                 <maven.compiler.source>1.8</maven.compiler.source>
                 <maven.compiler.target>1.8</maven.compiler.target>
+                <argLine>${arg.line}</argLine>
+                <bnd.fixupmessages></bnd.fixupmessages>
             </properties>
         </profile>
         <profile>
@@ -495,7 +499,42 @@ Export-Package: !org.rrd4j.inspector, \
             </activation>
             <properties>
                 <maven.compiler.release>8</maven.compiler.release>
+                <argLine>${arg.line} --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                <bnd.fixupmessages>"Classes found in the wrong directory"; is:=warning</bnd.fixupmessages>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-java-8</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <release>8</release>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>compile-java-9</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <release>9</release>
+                                    <compileSourceRoots>
+                                        <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                                    </compileSourceRoots>
+                                    <multiReleaseOutput>true</multiReleaseOutput>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>sonar</id>
