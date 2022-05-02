@@ -1,4 +1,12 @@
 =======
+Changes in version 3.9-SNAPSHOT - 26 dec 2021.
+-------------------------------
+
+rrd4j now is integrated with JPMS (modules).
+
+* Fixed Issue 152: rrdDef.getPath() Does not return correct path in case of Windows machine.
+
+=======
 Changes in version 3.8.1 - 26 dec 2021.
 -------------------------------
 
