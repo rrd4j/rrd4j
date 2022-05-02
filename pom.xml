@@ -17,7 +17,7 @@
         <log4j.version>2.17.2</log4j.version>
         <pax-exam.version>4.13.5</pax-exam.version>
         <!-- current year. -->
-        <year>2020</year>
+        <year>2022</year>
         <!-- Indirection needed to keep optionnal jacoco settings and external argument lines during tests-->
         <!-- to use, add -Darg.line=... instead of -DargLine=-->
         <arg.line></arg.line>
