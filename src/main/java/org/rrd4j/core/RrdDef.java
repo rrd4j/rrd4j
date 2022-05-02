@@ -190,6 +190,9 @@ public class RrdDef {
 
     /**
      * Returns path for the new RRD. It's extracted from the URI. If it's an opaque URI, it return the scheme specific part.
+     * <br>
+     * It's not a reliable way to resolve an file path. Instead, one should use <code> Paths.get(def.getUri())</code>
+     * when the URI scheme is file.
      *
      * @return path to the new RRD which should be created
      */
