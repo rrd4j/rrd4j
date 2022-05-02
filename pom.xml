@@ -23,6 +23,7 @@
         <arg.line></arg.line>
         <!-- Setting for OSGI -->
         <manifestPath>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestPath>
+        <bnd.fixupmessages>"Classes found in the wrong directory"; is:=warning</bnd.fixupmessages>
     </properties>
     <licenses>
         <license>
@@ -489,7 +490,6 @@ Export-Package: !org.rrd4j.inspector, \
                 <maven.compiler.source>1.8</maven.compiler.source>
                 <maven.compiler.target>1.8</maven.compiler.target>
                 <argLine>${arg.line}</argLine>
-                <bnd.fixupmessages></bnd.fixupmessages>
             </properties>
         </profile>
         <profile>
@@ -500,7 +500,6 @@ Export-Package: !org.rrd4j.inspector, \
             <properties>
                 <maven.compiler.release>8</maven.compiler.release>
                 <argLine>${arg.line} --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                <bnd.fixupmessages>"Classes found in the wrong directory"; is:=warning</bnd.fixupmessages>
             </properties>
             <build>
                 <plugins>
