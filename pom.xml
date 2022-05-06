@@ -199,10 +199,9 @@
                             ]]>
                         </bottom>
                         <links>
-                            <link>https://docs.oracle.com/javase/8/docs/api/</link>
                             <link>https://mongodb.github.io/mongo-java-driver/3.12/javadoc/</link>
                             <link>https://docs.oracle.com/cd/E17277_02/html/java/</link>
-                            <link>http://junit.sourceforge.net/javadoc/</link>
+                            <link>https://junit.org/junit4/javadoc/latest/</link>
                         </links>
                         <quiet>true</quiet>
                     </configuration>
@@ -246,28 +245,6 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <!-- use to build the descriptor.json used by travis -->
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/build</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
@@ -276,17 +253,21 @@
                 <artifactId>bnd-maven-plugin</artifactId>
                 <configuration>
                     <bnd><![CDATA[
+Multi-Release: true
 Bundle-SymbolicName: ${project.artifactId}
 Import-Package: com.mongodb.*;resolution:=optional, \
     com.sleepycat.*;resolution:=optional, \
     org.bson.*;resolution:=optional, \
-    sun.misc;resolution:=optional, \
+    sun.misc;resolution:=optional,, \
+    !javax.swing.*, \
     *
-Export-Package: !org.rrd4j.inspector, \
-    !org.rrd4j.converter, \
-    !org.rrd4j.demo, \
-    org.rrd4j.*, \
-    com.tomgibara.crinch.hashing.*, \
+Export-Package: org.rrd4j, \
+    org.rrd4j.core, \
+    org.rrd4j.core.jrrd, \
+    org.rrd4j.core.timespec;uses:="", \
+    org.rrd4j.data, \
+    org.rrd4j.graph, \
+    !com.tomgibara.crinch.hashing.*, \
     eu.bengreen.data.utility
 -fixupmessages: ${bnd.fixupmessages}
 ]]></bnd>
@@ -495,7 +476,7 @@ Export-Package: !org.rrd4j.inspector, \
         <profile>
             <id>notjava8</id>
             <activation>
-                <jdk>!1.8</jdk>
+                <jdk>(1.8,)</jdk>
             </activation>
             <properties>
                 <maven.compiler.release>8</maven.compiler.release>
@@ -507,15 +488,6 @@ Export-Package: !org.rrd4j.inspector, \
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <executions>
-                            <execution>
-                                <id>compile-java-8</id>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <configuration>
-                                    <release>8</release>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>compile-java-9</id>
                                 <phase>compile</phase>
