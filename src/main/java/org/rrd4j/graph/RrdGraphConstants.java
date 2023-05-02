@@ -505,7 +505,7 @@ public interface RrdGraphConstants {
 
     FontTag FONTTAG_AXIS      = FontTag.AXIS;
 
-    FontTag FONTTAG_UNIT      = FontTag.AXIS;
+    FontTag FONTTAG_UNIT      = FontTag.UNIT;
 
     FontTag FONTTAG_LEGEND    = FontTag.LEGEND;
 
