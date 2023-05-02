@@ -106,6 +106,10 @@ class ValueAxis extends Axis {
                 }
                 gridstep = selectedYLabel.grid * im.magfact;
                 labfact = findLabelFactor(selectedYLabel);
+                if(labfact == -1) {
+                    // as a fallback, use the largest label factor of the selected label
+                    labfact = selectedYLabel.labelFacts[3];
+                }
             }
         }
         else {
