@@ -99,11 +99,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
         }
         try {
             if (!readOnly && threadPool != null) {
-                Runnable syncRunnable = new Runnable() {
-                    public void run() {
-                        sync();
-                    }
-                };
+                Runnable syncRunnable = this::sync;
                 syncRunnableHandle = threadPool.scheduleWithFixedDelay(syncRunnable, syncPeriod, syncPeriod, TimeUnit.SECONDS);
             }
         } catch (RuntimeException rte) {
