@@ -29,7 +29,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
     private static final Object unsafe;
     static {
         // Temporary variable, because destinations variables are final
-        // And it interfere with exceptions
+        // And it interferes with exceptions
         Method cleanerMethodTemp;
         Method cleanMethodTemp;
         Method invokeCleanerTemp;

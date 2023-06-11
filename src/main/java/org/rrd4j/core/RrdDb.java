@@ -210,7 +210,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
         }
 
         /**
-         * Internal method used to memorized the pool, without generating a loop
+         * Internal method used to memorize the pool, without generating a loop
          * @param pool
          * @return
          */
