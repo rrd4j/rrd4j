@@ -253,7 +253,6 @@
                 <artifactId>bnd-maven-plugin</artifactId>
                 <configuration>
                     <bnd><![CDATA[
-Multi-Release: true
 Bundle-SymbolicName: ${project.artifactId}
 Import-Package: com.mongodb.*;resolution:=optional, \
     com.sleepycat.*;resolution:=optional, \
