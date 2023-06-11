@@ -300,6 +300,9 @@ Export-Package: org.rrd4j, \
                             </excludes>
                             <archive>
                                 <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                                <manifestEntries>
+                                    <Automatic-Module-Name>${project.groupId}.${project.artifactId}</Automatic-Module-Name>
+                                </manifestEntries>
                             </archive>
                         </configuration>
                     </execution>
