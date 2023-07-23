@@ -279,7 +279,7 @@ public class FetchData {
     }
 
     private static String padWithBlanks(String input, int width) {
-        StringBuilder buff = new StringBuilder("");
+        StringBuilder buff = new StringBuilder();
         int diff = width - input.length();
         while (diff-- > 0) {
             buff.append(' ');

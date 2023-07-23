@@ -108,7 +108,7 @@ class TimeScanner {
     }
 
     TimeToken nextToken() {
-        StringBuilder buffer = new StringBuilder("");
+        StringBuilder buffer = new StringBuilder();
         while (pos < dateString.length()) {
             char c = dateString.charAt(pos++);
             if (Character.isWhitespace(c) || c == '_' || c == ',') {

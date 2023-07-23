@@ -178,7 +178,7 @@ class ImageWorker {
 
         // Some format can't manage 16M colors images
         // JPEG don't like transparency
-        if (! imgProvider.canEncodeImage(outputImage) || "image/jpeg".equals(imgProvider.getMIMETypes()[0].toLowerCase())) {
+        if (! imgProvider.canEncodeImage(outputImage) || "image/jpeg".equalsIgnoreCase(imgProvider.getMIMETypes()[0])) {
             int w = img.getWidth();
             int h = img.getHeight();
             outputImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
