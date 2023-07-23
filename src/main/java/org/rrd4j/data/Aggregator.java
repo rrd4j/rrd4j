@@ -61,7 +61,7 @@ class Aggregator {
     }
 
     double getPercentile(long tStart, long tEnd, double percentile) {
-        List<Double> valueList = new ArrayList<Double>();
+        List<Double> valueList = new ArrayList<>();
         // create a list of included datasource values (different from NaN)
         for (int i = 0; i < timestamps.length; i++) {
             long left = Math.max(timestamps[i] - step, tStart);

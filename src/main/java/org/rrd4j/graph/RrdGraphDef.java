@@ -172,9 +172,9 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
     Stroke tickStroke = TICK_STROKE;
     DownSampler downsampler = null;
 
-    final List<Source> sources = new ArrayList<Source>();
-    final List<CommentText> comments = new ArrayList<CommentText>();
-    final List<PlotElement> plotElements = new ArrayList<PlotElement>();
+    final List<Source> sources = new ArrayList<>();
+    final List<CommentText> comments = new ArrayList<>();
+    final List<PlotElement> plotElements = new ArrayList<>();
 
     /**
      * Creates RrdGraphDef object and sets default time span (default ending time is 'now',

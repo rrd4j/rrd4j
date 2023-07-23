@@ -346,7 +346,7 @@ public abstract class Variable {
         @Override
         protected Value fill(long[] timestamps, double[] values, long start, long end) {
             // valuesSet will be a set with NaN packet at the start
-            SortedSet<PercentElem> valuesSet = new TreeSet<PercentElem>(new ComparPercentElemen());
+            SortedSet<PercentElem> valuesSet = new TreeSet<>(new ComparPercentElemen());
             for (int i = 0 ; i < values.length ; i++) {
                 valuesSet.add(new PercentElem(i, timestamps[i], values[i]));
             }

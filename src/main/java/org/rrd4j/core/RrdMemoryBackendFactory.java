@@ -29,7 +29,7 @@ public class RrdMemoryBackendFactory extends RrdBackendFactory {
      * Creates RrdMemoryBackend object.
      */
     protected RrdBackend open(String id, boolean readOnly) throws IOException {
-        AtomicReference<ByteBuffer> refbb = backends.computeIfAbsent(id, i -> new AtomicReference<ByteBuffer>());
+        AtomicReference<ByteBuffer> refbb = backends.computeIfAbsent(id, i -> new AtomicReference<>());
         return new RrdMemoryBackend(id, refbb);
     }
 

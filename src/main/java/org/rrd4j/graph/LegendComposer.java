@@ -47,7 +47,7 @@ class LegendComposer implements RrdGraphConstants {
         private double width;
         private int spaceCount;
         private boolean noJustification;
-        private final List<CommentText> comments = new ArrayList<CommentText>();
+        private final List<CommentText> comments = new ArrayList<>();
 
         Line() {
             clear();

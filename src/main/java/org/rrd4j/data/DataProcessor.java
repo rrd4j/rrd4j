@@ -74,7 +74,7 @@ public class DataProcessor implements DataHolder {
     private TimeZone tz = TimeZone.getDefault();
 
     // the order is important, ordinary HashMap is unordered
-    private final Map<String, Source> sources = new LinkedHashMap<String, Source>();
+    private final Map<String, Source> sources = new LinkedHashMap<>();
 
     private Def[] defSources;
 
@@ -1006,7 +1006,7 @@ public class DataProcessor implements DataHolder {
                 }
                 if (!defSources[i].isLoaded()) {
                     // not fetched yet
-                    Set<String> dsNames = new HashSet<String>();
+                    Set<String> dsNames = new HashSet<>();
                     dsNames.add(defSources[i].getDsName());
                     // look for all other datasources with the same path and the same consolidation function
                     for (int j = i + 1; j < defSources.length; j++) {

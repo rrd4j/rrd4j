@@ -76,7 +76,7 @@ public class Archive {
 
     void loadCDPStatusBlocks(RRDFile file, int numBlocks) throws IOException {
 
-        cdpStatusBlocks = new ArrayList<CDPStatusBlock>();
+        cdpStatusBlocks = new ArrayList<>();
 
         for (int i = 0; i < numBlocks; i++) {
             cdpStatusBlocks.add(new CDPStatusBlock(file));

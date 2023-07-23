@@ -139,7 +139,7 @@ class GraphFrame extends JFrame {
                     }
                 }
             }
-            graphCombo.setModel(new DefaultComboBoxModel<GraphComboItem>(items));
+            graphCombo.setModel(new DefaultComboBoxModel<>(items));
             graphCombo.setSelectedIndex(selectedItem);
         } catch (Exception e) {
             Util.error(this, e);

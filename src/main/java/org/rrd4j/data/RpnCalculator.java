@@ -649,7 +649,7 @@ class RpnCalculator {
     private static final PerfectStringHash perfect;
     static
     {
-        List<String> tokenStrings = new ArrayList<String>(Token_Symbol.values().length);
+        List<String> tokenStrings = new ArrayList<>(Token_Symbol.values().length);
         for(Token_Symbol s: Token_Symbol.values()) {
             if(! s.token_string.isEmpty()) {
                 tokenStrings.add(s.token_string);
