@@ -325,8 +325,6 @@ public class RrdInspector extends JFrame {
             File file = chooser.getSelectedFile();
             if (file != null) {
                 lastDirectory = file.getParent();
-                //inspectorModel.setFile(file);
-                //tabbedPane.setSelectedIndex(0);
                 loadFile(file);
             }
         }
