@@ -117,6 +117,7 @@ public class LinearInterpolator extends Plottable {
         for (int i = 0; i < timestamps.length - 1 && ok; i++) {
             if (timestamps[i] >= timestamps[i + 1]) {
                 ok = false;
+                break;
             }
         }
         if (!ok) {

@@ -104,6 +104,7 @@ public class CubicSplineInterpolator extends Plottable {
         for (int i = 0; i < x.length - 1 && ok; i++) {
             if (x[i] >= x[i + 1] || Double.isNaN(y[i])) {
                 ok = false;
+                break;
             }
         }
         if (!ok) {
