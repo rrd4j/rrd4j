@@ -42,8 +42,6 @@ public class Epoch extends JFrame {
     private final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
     private final String helpText;
 
-    private final Timer timer = new Timer(1000, e -> showTimestamp());
-
     private final JLabel topLabel = new JLabel("Enter timestamp or readable date:");
     private final JTextField inputField = new JTextField(25);
     private final JButton convertButton = new JButton("Convert");
@@ -67,6 +65,7 @@ public class Epoch extends JFrame {
         tooltipBuff.append("Copyright (c) 2013-2020 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc. Licensed under the Apache License, Version 2.0.</html>");
         helpText = tooltipBuff.toString();
         constructUI();
+        Timer timer = new Timer(1000, e -> showTimestamp());
         timer.start();
     }
 
