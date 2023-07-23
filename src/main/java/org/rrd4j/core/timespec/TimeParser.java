@@ -6,7 +6,7 @@ import java.time.Instant;
  * Class which parses at-style time specification (described in detail on the rrdfetch man page),
  * used in all RRDTool commands. This code is in most parts just a java port of Tobi's parsetime.c
  * code.
- * 
+ * <p>
  * For years written with two digits, any year before 38 will be post 2000.
  *
  */

@@ -112,7 +112,7 @@ public class DataProcessor implements DataHolder {
      * Creates new DataProcessor object for the given time span. Ending date may be set to null.
      * In that case, the class will try to find optimal ending date based on the last update time of
      * RRD files processed with the {@link #processData()} method.
-     * 
+     * <p>
      * It use the time zone for starting calendar date.
      *
      * @param gc1 Starting Calendar date
@@ -365,7 +365,7 @@ public class DataProcessor implements DataHolder {
 
     /**
      * This method is just an alias for {@link #getPercentile(String)} method.
-     *
+     * <p>
      * Used by ISPs which charge for bandwidth utilization on a "95th percentile" basis.<p>
      *
      * The 95th percentile is the highest source value left when the top 5% of a numerically sorted set
@@ -570,7 +570,7 @@ public class DataProcessor implements DataHolder {
     /**
      * Creates a datasource that performs a percentile calculation on an
      * another named datasource to yield a single value.
-     *
+     * <p>
      * Requires that the other datasource has already been defined; otherwise, it'll
      * end up with no data
      *
@@ -588,7 +588,7 @@ public class DataProcessor implements DataHolder {
     /**
      * Creates a datasource that performs a variable calculation on an
      * another named datasource to yield a single combined timestamp/value.
-     *
+     * <p>
      * Requires that the other datasource has already been defined; otherwise, it'll
      * end up with no data
      *
@@ -606,7 +606,7 @@ public class DataProcessor implements DataHolder {
     /**
      * Creates a datasource that performs a variable calculation on an
      * another named datasource to yield a single combined timestamp/value.
-     *
+     * <p>
      * Requires that the other datasource has already been defined; otherwise, it'll
      * end up with no data
      *

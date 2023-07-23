@@ -9,7 +9,7 @@ import org.rrd4j.core.Util;
 
 /**
  *  An abstract class to help extract single value from a set of value (VDEF in rrdtool)
- *  
+ * <p>
  *  It can be used to add new fancy statistical calculation with rrd values 
  *
  */
@@ -101,7 +101,7 @@ public abstract class Variable {
 
     /**
      * This method is call with the needed values, extracted from the datasource to do the calculation.
-     * 
+     * <p>
      * Value is to be filled with both the double value and a possible timestamp, when it's used to find
      * a specific point
      * 

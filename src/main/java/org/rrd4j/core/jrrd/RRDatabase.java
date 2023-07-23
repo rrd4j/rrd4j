@@ -449,7 +449,7 @@ public class RRDatabase implements Closeable {
      * Outputs the content of the database to the given print stream
      * as a stream of XML. The XML format is almost identical to that produced by
      * <a href="http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/manual/rrddump.html">rrdtool dump</a>
-     * 
+     * <p>
      * A flush is issued at the end of the XML generation, so auto flush of the PrintStream can be set to false
      *
      * @param s the PrintStream to send the XML to.

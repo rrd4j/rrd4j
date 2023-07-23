@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  *
  * Factory classes are used to create concrete {@link org.rrd4j.core.RrdBackend} implementations.
  * Each factory creates unlimited number of specific backend objects.
- *
+ * <p>
  * Rrd4j supports six different backend types (backend factories) out of the box:
  * <ul>
  * <li>{@link org.rrd4j.core.RrdRandomAccessFileBackend}: objects of this class are created from the

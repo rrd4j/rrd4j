@@ -17,10 +17,10 @@ import org.rrd4j.graph.RrdGraphDef;
 
 /**
  * This class implements the example from the RRD tutorial using RRD4j:
- * http://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html
- * 
+ * <a href="http://oss.oetiker.ch/rrdtool/tut/rrdtutorial.en.html">...</a>
+ * <p>
  * This source file may be freely redistributed under the same terms as RRD4j.
- * 
+ *
  * @author Chris Lott
  */
 public class RrdTutorial {

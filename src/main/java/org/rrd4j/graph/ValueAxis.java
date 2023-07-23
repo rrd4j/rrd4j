@@ -170,7 +170,7 @@ class ValueAxis extends Axis {
      * If the graph covers positive and negative on the y-axis, then
      * desiredMinimumLabelCount is checked as well, to ensure the chosen YLabel definition
      * will result in the required number of labels
-     * 
+     * <p>
      * Returns null if none are acceptable (none the right size or with
      * enough labels)
      */

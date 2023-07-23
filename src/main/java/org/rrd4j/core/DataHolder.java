@@ -164,7 +164,7 @@ public interface DataHolder {
     /**
      * Creates a datasource that performs a variable calculation on an
      * another named datasource to yield a single combined timestamp/value.
-     *
+     * <p>
      * Requires that the other datasource has already been defined; otherwise, it'll
      * end up with no data
      *

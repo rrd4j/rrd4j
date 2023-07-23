@@ -1220,7 +1220,7 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * <p>
      * Use <code>original.xml</code> file to create the corresponding RRDTool file
      * (from your command line):
-     *
+     * <p>
      * <code>rrdtool restore copy.rrd original.xml</code>
      *
      * @param filename Path to XML file which will be created.

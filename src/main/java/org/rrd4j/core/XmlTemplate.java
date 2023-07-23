@@ -185,7 +185,7 @@ public abstract class XmlTemplate {
     /**
      * Returns the list of variables that should be set in this template.
      *
-     * @return List of variable names as an array of strings.
+     * @return Array of variable names as an array of strings.
      */
     public String[] getVariables() {
         ArrayList<String> list = new ArrayList<>();
