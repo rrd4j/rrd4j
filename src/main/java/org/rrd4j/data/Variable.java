@@ -111,7 +111,7 @@ public abstract class Variable {
      * @param end the end of the period
      * @return a filled Value object
      */
-    protected abstract Value fill(long timestamps[], double[] values, long start, long end);
+    protected abstract Value fill(long[] timestamps, double[] values, long start, long end);
 
     /**
      * Find the first valid data point and it's timestamp

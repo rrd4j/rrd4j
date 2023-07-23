@@ -64,7 +64,7 @@ public class DataProcessor implements DataHolder {
 
     private long tStart;
     private long tEnd;
-    private long timestamps[];
+    private long[] timestamps;
     private long lastRrdArchiveUpdateTime = 0;
     // this will be adjusted later
     private long step = 0;

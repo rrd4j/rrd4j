@@ -93,7 +93,7 @@ class DataTableModel extends AbstractTableModel {
                     Robin robin = arc.getRobin(dsIndex);
                     long start = arc.getStartTime();
                     long step = arc.getArcStep();
-                    double robinValues[] = robin.getValues();
+                    double[] robinValues = robin.getValues();
                     values = new Object[robinValues.length][];
                     for (int i = 0; i < robinValues.length; i++) {
                         long timestamp = start + i * step;

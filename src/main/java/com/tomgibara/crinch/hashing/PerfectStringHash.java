@@ -181,7 +181,7 @@ public class PerfectStringHash implements Hash<String> {
      *            such that <code>hash(values[i]) == i</code>.
      */
 
-    public PerfectStringHash(final String values[]) {
+    public PerfectStringHash(final String[] values) {
         final int length = values.length;
         if (length == 0) throw new IllegalArgumentException("No values supplied");
 

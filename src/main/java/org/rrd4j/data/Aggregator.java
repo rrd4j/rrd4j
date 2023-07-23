@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 class Aggregator {
-    private final long timestamps[], step;
+    private final long[] timestamps;
+    private final long step;
     private final double[] values;
 
     Aggregator(long[] timestamps, double[] values) {
