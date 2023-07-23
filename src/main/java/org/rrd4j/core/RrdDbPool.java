@@ -404,8 +404,7 @@ public class RrdDbPool {
      * @throws IOException
      */
     private RrdEntry requestEmpty(URI uri) throws InterruptedException, IOException {
-        RrdEntry ref = waitEmpty(uri);
-        return ref;
+        return waitEmpty(uri);
     }
 
     RrdDb requestRrdDb(URI uri, RrdBackendFactory factory) throws IOException {

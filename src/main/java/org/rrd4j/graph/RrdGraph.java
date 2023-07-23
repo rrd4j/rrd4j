@@ -269,10 +269,9 @@ public class RrdGraph implements RrdGraphConstants {
                 worker.drawString(gdef.title, x, y, gdef.getFont(FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
             }
             if (gdef.verticalLabel != null) {
-                int x = PADDING_LEFT;
                 int y = im.yorigin - im.ysize / 2 + (int) worker.getStringWidth(gdef.verticalLabel, gdef.getFont(FONTTAG_UNIT)) / 2;
                 int ascent = (int) worker.getFontAscent(gdef.getFont(FONTTAG_UNIT));
-                worker.transform(x, y, -Math.PI / 2);
+                worker.transform(PADDING_LEFT, y, -Math.PI / 2);
                 worker.drawString(gdef.verticalLabel, 0, ascent, gdef.getFont(FONTTAG_UNIT), gdef.getColor(ElementsNames.font));
                 worker.reset();
             }
