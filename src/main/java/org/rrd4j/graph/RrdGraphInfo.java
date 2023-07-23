@@ -67,7 +67,7 @@ public class RrdGraphInfo {
      * @return An array of formatted PRINT lines
      */
     public String[] getPrintLines() {
-        return printLines.toArray(new String[printLines.size()]);
+        return printLines.toArray(new String[0]);
     }
 
     /**

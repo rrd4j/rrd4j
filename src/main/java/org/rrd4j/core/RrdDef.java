@@ -524,7 +524,7 @@ public class RrdDef {
      * @return Array of data source definition objects
      */
     public DsDef[] getDsDefs() {
-        return dsDefs.toArray(new DsDef[dsDefs.size()]);
+        return dsDefs.toArray(new DsDef[0]);
     }
 
     /**

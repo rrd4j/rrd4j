@@ -656,7 +656,7 @@ class RpnCalculator {
             }
         }
 
-        String[] array = tokenStrings.toArray(new String[tokenStrings.size()]);
+        String[] array = tokenStrings.toArray(new String[0]);
         perfect = new PerfectStringHash(array);
         symbols = new Token_Symbol[tokenStrings.size()];
         for(Token_Symbol s: Token_Symbol.values()) {

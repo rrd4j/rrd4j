@@ -430,7 +430,7 @@ public class DataProcessor implements DataHolder {
      * @return array of datasource names
      */
     public String[] getSourceNames() {
-        return sources.keySet().toArray(new String[sources.keySet().size()]);
+        return sources.keySet().toArray(new String[0]);
     }
 
     /**

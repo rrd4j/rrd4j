@@ -74,7 +74,7 @@ public class FetchRequest {
      * @param filter Set of datasource names to fetch data for.
      */
     public void setFilter(Set<String> filter) {
-        this.filter = filter.toArray(new String[filter.size()]);
+        this.filter = filter.toArray(new String[0]);
     }
 
     /**
