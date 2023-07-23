@@ -14,7 +14,7 @@ public class RrdMemoryBackendTest {
         RrdMemoryBackend backend = new RrdMemoryBackend("", new AtomicReference<ByteBuffer>());
         char c = '\ue001';
         Assert.assertTrue(c >=  '\ue000' && c <= '\uf8ff');
-        StringBuffer builder = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         backend.setLength(6400 * 6400 + 10);
         int pos = 0;
         String previous = null;
