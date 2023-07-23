@@ -79,12 +79,12 @@ public class DataProcessorDemo {
 
     private static String dumpValues(double average, double first, double last, double max, double min, double total) {
         StringBuilder bl = new StringBuilder();
-        bl.append(ConsolFun.AVERAGE.name() + '=' + Util.formatDouble(average));
-        bl.append(", " + ConsolFun.FIRST.name() + '=' + Util.formatDouble(first));
-        bl.append(", " + ConsolFun.LAST.name() + '=' + Util.formatDouble(last));
-        bl.append(", " + ConsolFun.MAX.name() + '=' + Util.formatDouble(max));
-        bl.append(", " + ConsolFun.MIN.name() + '=' + Util.formatDouble(min));
-        bl.append(", " + ConsolFun.TOTAL.name() + '=' + Util.formatDouble(total));
+        bl.append(ConsolFun.AVERAGE.name()).append('=').append(Util.formatDouble(average));
+        bl.append(", ").append(ConsolFun.FIRST.name()).append('=').append(Util.formatDouble(first));
+        bl.append(", ").append(ConsolFun.LAST.name()).append('=').append(Util.formatDouble(last));
+        bl.append(", ").append(ConsolFun.MAX.name()).append('=').append(Util.formatDouble(max));
+        bl.append(", ").append(ConsolFun.MIN.name()).append('=').append(Util.formatDouble(min));
+        bl.append(", ").append(ConsolFun.TOTAL.name()).append('=').append(Util.formatDouble(total));
         return bl.toString();
     }
 

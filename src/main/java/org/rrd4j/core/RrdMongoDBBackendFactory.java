@@ -175,7 +175,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
     private URI buildRootUri(String dbName, String collectionName, List<ServerAddress> servers) {
         StringBuilder buffer = new StringBuilder();
         for (ServerAddress sa: servers) {
-            buffer.append(sa.getHost() + ":" + sa.getPort() + ",");
+            buffer.append(sa.getHost()).append(":").append(sa.getPort()).append(",");
         }
         buffer.deleteCharAt(buffer.length() - 1);
         try {
