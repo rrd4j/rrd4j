@@ -21,7 +21,7 @@ public class RrdMemoryBackend extends ByteBufferBackend {
     protected RrdMemoryBackend(String path, AtomicReference<ByteBuffer> refbb) {
         super(path);
         this.refbb = refbb;
-        Optional.ofNullable(refbb).map(r -> r.get()).ifPresent(this::setByteBuffer);
+        Optional.ofNullable(refbb).map(AtomicReference::get).ifPresent(this::setByteBuffer);
     }
 
     @Override

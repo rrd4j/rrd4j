@@ -970,7 +970,7 @@ public class DataProcessor implements DataHolder {
     // PRIVATE METHODS
 
     private void extractDefs() {
-        defSources = sources.values().stream().filter(s -> s instanceof Def).toArray(Def[]::new);
+        defSources = sources.values().stream().filter(Def.class::isInstance).toArray(Def[]::new);
     }
 
     private void fetchRrdData() throws IOException {
