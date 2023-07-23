@@ -4,7 +4,6 @@ import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdToolkit;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 
 /**
@@ -24,11 +23,7 @@ public class HeartbeatFix {
         }
         File directory = new File(args[0]);
         long heartbeat = Long.parseLong(args[1]);
-        File[] files = directory.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-                return pathname.isFile() && pathname.getName().endsWith(".rrd");
-            }
-        });
+        File[] files = directory.listFiles(pathname -> pathname.isFile() && pathname.getName().endsWith(".rrd"));
         System.out.println(files.length + " files found");
         for (int i = 0; i < files.length; i++) {
             String path = files[i].getAbsolutePath();
