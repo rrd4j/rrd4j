@@ -12,7 +12,7 @@ import java.text.NumberFormat;
  */
 public class DataSource {
 
-    private static enum ds_param_en { DS_mrhb_cnt, DS_min_val, DS_max_val, DS_cde }
+    private enum ds_param_en { DS_mrhb_cnt, DS_min_val, DS_max_val, DS_cde }
 
     private final long offset;
     private final long size;

@@ -30,7 +30,7 @@ public abstract class Variable {
         public String toString() {
             return "Value [value=" + value + ", timestamp=" + timestamp + "]";
         }
-    };
+    }
 
     public static final Value INVALIDVALUE = new Value(0, Double.NaN);
 

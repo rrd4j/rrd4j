@@ -21,7 +21,7 @@ import java.util.Locale;
  */
 public class Archive {
 
-    private static enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha};
+    private enum rra_par_en {RRA_cdp_xff_val, RRA_hw_alpha}
 
     final RRDatabase db;
     /** Header offset within file in bytes */

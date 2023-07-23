@@ -243,7 +243,7 @@ public class RrdDbPool {
     }
 
     private enum ACTION {
-        SWAP, DROP;
+        SWAP, DROP
     }
 
     private void passNext(ACTION a, RrdEntry e) {

@@ -35,7 +35,7 @@ class MinMax {
                 sample.setValue("a", Math.sin(t / 3000.0) * 50 + 50);
                 sample.update();
             }
-        };
+        }
         // graph
         RrdGraphDef gDef = new RrdGraphDef(start, start + 86400);
         gDef.setFilename(pngFile);

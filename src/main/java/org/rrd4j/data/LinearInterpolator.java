@@ -48,7 +48,7 @@ public class LinearInterpolator extends Plottable {
         LEFT,
         RIGHT,
         LINEAR,
-        REGRESSION;
+        REGRESSION
     }
 
     private int lastIndexUsed = 0;
