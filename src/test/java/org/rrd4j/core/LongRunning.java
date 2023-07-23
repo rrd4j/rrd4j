@@ -47,8 +47,7 @@ public class LongRunning {
             Long sampleTime = startTime;
             int sampleSize = (int) ((now - startTime) / (RRD_STEP * 1000));
 
-            RrdDb rrdDb = buildRrdDb(version, startTime, sampleSize);
-            try {
+            try (RrdDb rrdDb = buildRrdDb(version, startTime, sampleSize)) {
                 Sample sample = rrdDb.createSample();
                 for (int i = 1; i <= sampleSize; i++) {
                     int randomQueryResponseTime = random.nextInt(max - min + 1) + min; // in ms
@@ -59,8 +58,6 @@ public class LongRunning {
                     // Increment by RRD step
                     sampleTime += RRD_STEP;
                 }
-            } finally {
-                rrdDb.close();
             }
         }
     }

@@ -248,12 +248,8 @@ class GraphFrame extends JFrame {
                 }
                 String absolutePath = selectedFile.getAbsolutePath();
                 byte[] data = rrdGraph.getRrdGraphInfo().getBytes();
-                RandomAccessFile f = new RandomAccessFile(absolutePath, "rw");
-                try {
+                try (RandomAccessFile f = new RandomAccessFile(absolutePath, "rw")) {
                     f.write(data);
-                }
-                finally {
-                    f.close();
                 }
             }
             catch (IOException e) {
