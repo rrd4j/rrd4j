@@ -85,7 +85,7 @@ public abstract class XmlTemplate {
      * @param value value to be set in the XML template
      */
     public void setVariable(String name, int value) {
-        valueMap.put(name, Integer.valueOf(value));
+        valueMap.put(name, value);
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class XmlTemplate {
      * @param value value to be set in the XML template
      */
     public void setVariable(String name, long value) {
-        valueMap.put(name, Long.valueOf(value));
+        valueMap.put(name, value);
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class XmlTemplate {
      * @param value value to be set in the XML template
      */
     public void setVariable(String name, double value) {
-        valueMap.put(name, Double.valueOf(value));
+        valueMap.put(name, value);
     }
 
     /**

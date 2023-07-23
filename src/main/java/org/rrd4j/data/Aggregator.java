@@ -66,7 +66,7 @@ class Aggregator {
             long left = Math.max(timestamps[i] - step, tStart);
             long right = Math.min(timestamps[i], tEnd);
             if (right > left && !Double.isNaN(values[i])) {
-                valueList.add(Double.valueOf(values[i]));
+                valueList.add(values[i]);
             }
         }
         // create an array to work with
@@ -74,7 +74,7 @@ class Aggregator {
         if (count > 1) {
             double[] valuesCopy = new double[count];
             for (int i = 0; i < count; i++) {
-                valuesCopy[i] = valueList.get(i).doubleValue();
+                valuesCopy[i] = valueList.get(i);
             }
             // sort array
             Arrays.sort(valuesCopy);
@@ -90,4 +90,3 @@ class Aggregator {
         return Double.NaN;
     }
 }
-
