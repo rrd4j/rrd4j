@@ -55,8 +55,8 @@ class ValueScaler {
     }
 
     static class Scaled {
-        double value;
-        String unit;
+        final double value;
+        final String unit;
 
         public Scaled(double value, String unit) {
             this.value = value;

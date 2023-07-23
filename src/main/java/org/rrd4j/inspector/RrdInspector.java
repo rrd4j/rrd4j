@@ -55,7 +55,7 @@ public class RrdInspector extends JFrame {
     private static final String OPEN_A_VALID_RRD_FILE_FIRST = "Open a valid RRD file first.";
     private static final String SELECT_ARCHIVE_FIRST = "Select archive first";
 
-    JTabbedPane tabbedPane = new JTabbedPane();
+    final JTabbedPane tabbedPane = new JTabbedPane();
     private final JTree mainTree = new JTree();
     private final JSplitPane splitPane = new JSplitPane();
     private final JTable generalTable = new JTable();

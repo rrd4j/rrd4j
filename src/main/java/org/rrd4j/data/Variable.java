@@ -266,8 +266,8 @@ public abstract class Variable {
      *
      */
     static final class PercentElem {
-        long timestamp;
-        double value;
+        final long timestamp;
+        final double value;
 
         PercentElem(int pos, long timestamp, double value) {
             this.timestamp = timestamp;
@@ -305,7 +305,7 @@ public abstract class Variable {
      */
     static final class ComparPercentElemen implements Comparator<PercentElem>, Serializable {
         @Override
-        public final int compare(PercentElem arg0, PercentElem arg1) {
+        public int compare(PercentElem arg0, PercentElem arg1) {
             if (Double.isNaN(arg0.value) && Double.isNaN(arg1.value))
                 return Long.signum(arg0.timestamp - arg1.timestamp);
             else if (Double.isNaN(arg0.value))

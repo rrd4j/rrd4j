@@ -14,8 +14,8 @@ public class TimeParser {
     private static final int PREVIOUS_OP = -1;
 
     TimeToken token;
-    TimeScanner scanner;
-    TimeSpec spec;
+    final TimeScanner scanner;
+    final TimeSpec spec;
 
     int op = TimeToken.PLUS;
     int prev_multiplier = -1;
