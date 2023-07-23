@@ -15,8 +15,8 @@ import java.util.Date;
  */
 @SuppressWarnings("deprecation")
 public class CubicSplineInterpolator extends Plottable {
-    private double[] x;
-    private double[] y;
+    private final double[] x;
+    private final double[] y;
 
     // second derivates come here
     private double[] y2;

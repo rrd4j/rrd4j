@@ -56,14 +56,14 @@ public class RrdInspector extends JFrame {
     private static final String SELECT_ARCHIVE_FIRST = "Select archive first";
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    private JTree mainTree = new JTree();
-    private JSplitPane splitPane = new JSplitPane();
-    private JTable generalTable = new JTable();
-    private JTable datasourceTable = new JTable();
-    private JTable archiveTable = new JTable();
-    private JTable dataTable = new JTable();
+    private final JTree mainTree = new JTree();
+    private final JSplitPane splitPane = new JSplitPane();
+    private final JTable generalTable = new JTable();
+    private final JTable datasourceTable = new JTable();
+    private final JTable archiveTable = new JTable();
+    private final JTable dataTable = new JTable();
 
-    private InspectorModel inspectorModel = new InspectorModel();
+    private final InspectorModel inspectorModel = new InspectorModel();
 
     private String lastDirectory = null;
 

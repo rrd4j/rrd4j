@@ -60,8 +60,8 @@ public class RrdDef {
     private long step = DEFAULT_STEP;
     private int version = DEFAULTVERSION;
 
-    private List<DsDef> dsDefs = new ArrayList<>();
-    private List<ArcDef> arcDefs = new ArrayList<>();
+    private final List<DsDef> dsDefs = new ArrayList<>();
+    private final List<ArcDef> arcDefs = new ArrayList<>();
 
     /**
      * <p>Creates new RRD definition object with the given path.

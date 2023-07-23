@@ -767,7 +767,7 @@ class RpnCalculator {
 
     private static final class RpnStack {
         private static final int MAX_STACK_SIZE = 1000;
-        private double[] stack = new double[MAX_STACK_SIZE];
+        private final double[] stack = new double[MAX_STACK_SIZE];
         private int pos = 0;
 
         void push(double x) {

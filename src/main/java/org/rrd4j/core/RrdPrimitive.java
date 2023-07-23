@@ -7,8 +7,8 @@ abstract class RrdPrimitive<U extends RrdUpdater<U>> {
     static final int RRD_INT = 0, RRD_LONG = 1, RRD_DOUBLE = 2, RRD_STRING = 3;
     static final int[] RRD_PRIM_SIZES = {4, 8, 8, 2 * STRING_LENGTH};
 
-    private RrdBackend backend;
-    private int byteCount;
+    private final RrdBackend backend;
+    private final int byteCount;
     private final long pointer;
     private final boolean cachingAllowed;
 

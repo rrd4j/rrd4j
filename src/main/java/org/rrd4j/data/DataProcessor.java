@@ -74,7 +74,7 @@ public class DataProcessor implements DataHolder {
     private TimeZone tz = TimeZone.getDefault();
 
     // the order is important, ordinary HashMap is unordered
-    private Map<String, Source> sources = new LinkedHashMap<String, Source>();
+    private final Map<String, Source> sources = new LinkedHashMap<String, Source>();
 
     private Def[] defSources;
 

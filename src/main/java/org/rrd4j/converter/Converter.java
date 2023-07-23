@@ -17,7 +17,7 @@ public class Converter {
     private static final DecimalFormat secondsFormatter = new DecimalFormat("##0.000");
     private static final DecimalFormat countFormatter = new DecimalFormat("0000");
 
-    private String[] files;
+    private final String[] files;
     private int totalCount;
     private int badCount;
     private int goodCount;

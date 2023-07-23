@@ -10,8 +10,8 @@ import java.io.IOException;
  */
 public class PDPStatusBlock {
 
-    private long offset;
-    private long size;
+    private final long offset;
+    private final long size;
     String lastReading;
     int unknownSeconds;
     double value;

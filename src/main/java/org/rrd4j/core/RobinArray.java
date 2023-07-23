@@ -19,7 +19,7 @@ class RobinArray implements Robin {
     private final Archive parentArc;
     private final RrdInt<Robin> pointer;
     private final RrdDoubleArray<Robin> values;
-    private int rows;
+    private final int rows;
 
     RobinArray(Archive parentArc, int rows, boolean shouldInitialize) throws IOException {
         this.parentArc = parentArc;

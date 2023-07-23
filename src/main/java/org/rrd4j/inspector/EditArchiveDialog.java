@@ -12,18 +12,18 @@ class EditArchiveDialog extends JDialog {
     private static final String TITLE_NEW = "New archive";
     private static final String TITLE_EDIT = "Edit archive";
 
-    private JLabel consolFunLabel = new JLabel("Consolidation function: ");
-    private JLabel xffLabel = new JLabel("X-files factor: ");
-    private JLabel stepsLabel = new JLabel("Steps: ");
-    private JLabel rowsLabel = new JLabel("Rows: ");
+    private final JLabel consolFunLabel = new JLabel("Consolidation function: ");
+    private final JLabel xffLabel = new JLabel("X-files factor: ");
+    private final JLabel stepsLabel = new JLabel("Steps: ");
+    private final JLabel rowsLabel = new JLabel("Rows: ");
 
-    private JComboBox<ConsolFun> consolFunCombo = new JComboBox<>();
-    private JTextField xffField = new JTextField(FIELD_SIZE);
-    private JTextField stepsField = new JTextField(FIELD_SIZE);
-    private JTextField rowsField = new JTextField(FIELD_SIZE);
+    private final JComboBox<ConsolFun> consolFunCombo = new JComboBox<>();
+    private final JTextField xffField = new JTextField(FIELD_SIZE);
+    private final JTextField stepsField = new JTextField(FIELD_SIZE);
+    private final JTextField rowsField = new JTextField(FIELD_SIZE);
 
-    private JButton okButton = new JButton("OK");
-    private JButton cancelButton = new JButton("Cancel");
+    private final JButton okButton = new JButton("OK");
+    private final JButton cancelButton = new JButton("Cancel");
 
     private ArcDef arcDef;
 

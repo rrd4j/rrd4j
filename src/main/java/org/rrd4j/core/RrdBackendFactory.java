@@ -94,7 +94,7 @@ public abstract class RrdBackendFactory implements Closeable {
             factories.put(safeFactory.name, safeFactory);
             defaultFactory = factories.get(DEFAULTFACTORY);
         }
-        private static RrdBackendFactory defaultFactory;
+        private static final RrdBackendFactory defaultFactory;
     }
 
     /**

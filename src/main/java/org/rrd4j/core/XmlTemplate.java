@@ -24,8 +24,8 @@ public abstract class XmlTemplate {
     private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
 
     protected Element root;
-    private HashMap<String, Object> valueMap = new HashMap<>();
-    private HashSet<Node> validatedNodes = new HashSet<>();
+    private final HashMap<String, Object> valueMap = new HashMap<>();
+    private final HashSet<Node> validatedNodes = new HashSet<>();
 
     /**
      * <p>Constructor for XmlTemplate.</p>

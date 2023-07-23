@@ -46,11 +46,11 @@ class GraphFrame extends JFrame {
     private int deltaWidth = 0, deltaHeight = 0;
 
     private Color color = COLOR;
-    private GraphPanel graphPanel = new GraphPanel();
-    private JComboBox<GraphComboItem> graphCombo = new JComboBox<>();
+    private final GraphPanel graphPanel = new GraphPanel();
+    private final JComboBox<GraphComboItem> graphCombo = new JComboBox<>();
     private RrdGraph rrdGraph;
 
-    private String sourcePath;
+    private final String sourcePath;
     private int dsIndex, arcIndex;
 
     private int counted = 0;
@@ -251,8 +251,9 @@ class GraphFrame extends JFrame {
     }
 
     static class GraphComboItem {
-        private String description;
-        private int dsIndex, arcIndex;
+        private final String description;
+        private final int dsIndex;
+        private final int arcIndex;
 
         GraphComboItem(String description, int dsIndex, int arcIndex) {
             this.description = description;

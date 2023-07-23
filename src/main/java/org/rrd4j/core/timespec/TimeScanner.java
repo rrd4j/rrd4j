@@ -1,7 +1,7 @@
 package org.rrd4j.core.timespec;
 
 class TimeScanner {
-    private String dateString;
+    private final String dateString;
 
     private int pos, pos_save;
     private TimeToken token, token_save;

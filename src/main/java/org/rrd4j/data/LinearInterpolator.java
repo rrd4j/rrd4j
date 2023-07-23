@@ -54,8 +54,8 @@ public class LinearInterpolator extends Plottable {
     private int lastIndexUsed = 0;
     private Method interpolationMethod = Method.LINEAR;
 
-    private long[] timestamps;
-    private double[] values;
+    private final long[] timestamps;
+    private final double[] values;
 
     // used only if INTERPOLATE_BESTFIT is specified
     double b0 = Double.NaN;

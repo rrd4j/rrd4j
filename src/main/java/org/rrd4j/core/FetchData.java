@@ -43,14 +43,14 @@ public class FetchData {
     // anything funny will do
     private static final String RPN_SOURCE_NAME = "WHERE THE SPEECHLES UNITE IN A SILENT ACCORD";
 
-    private FetchRequest request;
+    private final FetchRequest request;
     private String[] dsNames;
     private long[] timestamps;
     private double[][] values;
 
-    private Archive matchingArchive;
-    private long arcStep;
-    private long arcEndTime;
+    private final Archive matchingArchive;
+    private final long arcStep;
+    private final long arcEndTime;
 
     FetchData(Archive matchingArchive, FetchRequest request) throws IOException {
         this.matchingArchive = matchingArchive;

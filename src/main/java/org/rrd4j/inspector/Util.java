@@ -25,7 +25,7 @@ class Util {
         error(parent, e.toString());
     }
 
-    private static Vector<Window> windows = new Vector<Window>();
+    private static final Vector<Window> windows = new Vector<Window>();
     private static final int WINDOW_POSITION_SHIFT = 20;
 
     static void placeWindow(Window window) {

@@ -14,7 +14,7 @@ public class RrdGraphInfo {
     Supplier<byte[]> bytesSource;
     Supplier<Integer> bytesCount;
     String imgInfo;
-    private List<String> printLines = new ArrayList<String>();
+    private final List<String> printLines = new ArrayList<String>();
 
     RrdGraphInfo() {
         // cannot instantiate this class

@@ -4,11 +4,11 @@ import java.io.File;
 import java.text.DecimalFormat;
 
 class InspectorModel {
-    private MainTreeModel mainTreeModel = new MainTreeModel();
-    private HeaderTableModel generalTableModel = new HeaderTableModel();
-    private DatasourceTableModel datasourceTableModel = new DatasourceTableModel();
-    private ArchiveTableModel archiveTableModel = new ArchiveTableModel();
-    private DataTableModel dataTableModel = new DataTableModel();
+    private final MainTreeModel mainTreeModel = new MainTreeModel();
+    private final HeaderTableModel generalTableModel = new HeaderTableModel();
+    private final DatasourceTableModel datasourceTableModel = new DatasourceTableModel();
+    private final ArchiveTableModel archiveTableModel = new ArchiveTableModel();
+    private final DataTableModel dataTableModel = new DataTableModel();
     private File file;
     private boolean ok = false;
 
@@ -59,7 +59,7 @@ class InspectorModel {
         return ok;
     }
 
-    private static String DOUBLE_FORMAT = "0.0000000000E00";
+    private static final String DOUBLE_FORMAT = "0.0000000000E00";
     private static final DecimalFormat df = new DecimalFormat(DOUBLE_FORMAT);
 
     static String formatDouble(double x, String nanString) {
