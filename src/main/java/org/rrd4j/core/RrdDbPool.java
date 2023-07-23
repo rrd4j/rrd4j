@@ -297,7 +297,7 @@ public class RrdDbPool {
             return;
         }
         URI dburi = rrdDb.getCanonicalUri();
-        RrdEntry ref = null;
+        RrdEntry ref;
         try {
             ref = getEntry(dburi, false);
         } catch (InterruptedException e) {
@@ -409,7 +409,7 @@ public class RrdDbPool {
 
     RrdDb requestRrdDb(URI uri, RrdBackendFactory factory) throws IOException {
         uri = factory.getCanonicalUri(uri);
-        RrdEntry ref = null;
+        RrdEntry ref;
         try {
             ref = getEntry(uri, true);
 

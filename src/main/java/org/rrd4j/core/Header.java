@@ -35,7 +35,7 @@ public class Header implements RrdUpdater<Header> {
     Header(RrdDb parentDb, RrdDef rrdDef) throws IOException {
         this.parentDb = parentDb;
 
-        String initSignature = null;
+        String initSignature;
         if(rrdDef != null) {
             version = rrdDef.getVersion(); 
             initSignature = SIGNATURE + ", " + VERSIONS[version - 1];

@@ -569,7 +569,7 @@ class RpnCalculator {
                 }
 
                 /* the real calculation */
-                double val = Double.NaN;
+                double val;
 
                 /* the info on the datasource */
                 double[] vals = c.dataProcessor.getValues(c.tokens[s.rpi-1].variable);

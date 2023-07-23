@@ -382,7 +382,7 @@ public class RrdInspector extends JFrame {
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
-        int dsIndex = -1;
+        int dsIndex;
         if (rrdNode == null || (dsIndex = rrdNode.getDsIndex()) < 0) {
             Util.error(this, "Select datasource first");
             return;
@@ -414,7 +414,7 @@ public class RrdInspector extends JFrame {
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
-        int arcIndex = -1;
+        int arcIndex;
         if (rrdNode == null || (arcIndex = rrdNode.getArcIndex()) < 0) {
             Util.error(this, SELECT_ARCHIVE_FIRST);
             return;
@@ -448,7 +448,7 @@ public class RrdInspector extends JFrame {
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
-        int dsIndex = -1;
+        int dsIndex;
         if (rrdNode == null || (dsIndex = rrdNode.getDsIndex()) < 0) {
             Util.error(this, "Select datasource first");
             return;
@@ -473,7 +473,7 @@ public class RrdInspector extends JFrame {
             return;
         }
         RrdNode rrdNode = getSelectedRrdNode();
-        int arcIndex = -1;
+        int arcIndex;
         if (rrdNode == null || (arcIndex = rrdNode.getArcIndex()) < 0) {
             Util.error(this, SELECT_ARCHIVE_FIRST);
             return;

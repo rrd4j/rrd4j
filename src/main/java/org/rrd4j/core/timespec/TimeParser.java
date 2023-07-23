@@ -104,7 +104,7 @@ public class TimeParser {
      * the scanner state to what it was at entry, and returns without setting anything.
      */
     private void timeOfDay() {
-        int hour = 0;
+        int hour;
         int minute = 0;
         /* save token status in case we must abort */
         scanner.saveState();
@@ -183,8 +183,8 @@ public class TimeParser {
 
     private void day() {
         long mday = 0;
-        long wday = 0;
-        long mon = 0;
+        long wday;
+        long mon;
         long year = spec.year;
         switch (token.token_id) {
         case TimeToken.YESTERDAY:

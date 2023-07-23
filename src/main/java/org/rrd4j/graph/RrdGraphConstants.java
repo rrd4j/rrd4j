@@ -363,7 +363,7 @@ public interface RrdGraphConstants {
          * @return a new {@link java.awt.Font} instance
          */
         public static Font getFont(int type, int size) {
-            Function<String, InputStream> fontStream = null;
+            Function<String, InputStream> fontStream;
             String fontPath = fileProps.getProperty(type == Font.BOLD ? PROPERTYFONTBOLDURL : PROPERTYFONTPLAINURL);
             if (fontPath!= null) {
                 fontStream = s -> {
