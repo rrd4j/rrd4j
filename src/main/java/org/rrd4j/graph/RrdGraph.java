@@ -585,10 +585,10 @@ public class RrdGraph implements RrdGraphConstants {
                 }
             }
             else {
-                im.minval = (double) im.ylabfact * im.ygridstep *
-                        Math.floor(im.minval / ((double) im.ylabfact * im.ygridstep));
-                im.maxval = (double) im.ylabfact * im.ygridstep *
-                        Math.ceil(im.maxval / ((double) im.ylabfact * im.ygridstep));
+                im.minval = im.ylabfact * im.ygridstep *
+                        Math.floor(im.minval / (im.ylabfact * im.ygridstep));
+                im.maxval = im.ylabfact * im.ygridstep *
+                        Math.ceil(im.maxval / (im.ylabfact * im.ygridstep));
             }
 
         }

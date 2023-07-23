@@ -615,7 +615,7 @@ class RpnCalculator {
                 val = Double.NaN;
                 if (s.token.id == TKN_PREDICT) {  /* the average */
                     if (count > 0) {
-                        val = sum / (double) count;
+                        val = sum / count;
                     }
                 } else {
                     if (count > 1) { /* the sigma case */
@@ -683,7 +683,7 @@ class RpnCalculator {
         this.sourceName = sourceName;
         this.dataProcessor = dataProcessor;
         this.timestamps = dataProcessor.getTimestamps();
-        this.timeStep = (double)(timestamps[1] - timestamps[0]);
+        this.timeStep = (timestamps[1] - timestamps[0]);
         this.calculatedValues = new double[timestamps.length];
         this.sourcesNames = Arrays.asList(dataProcessor.getSourceNames());
         String[] tokensString = rpnExpression.split(" *, *");
