@@ -356,7 +356,7 @@ public abstract class Variable {
                 valuesSet = valuesSet.tailSet(new PercentElem(0, 0, Double.NEGATIVE_INFINITY ));
             }
 
-            PercentElem[] element = (PercentElem[]) valuesSet.toArray(new PercentElem[valuesSet.size()]);
+            PercentElem[] element = valuesSet.toArray(new PercentElem[valuesSet.size()]);
             int pos = Math.round(percentile * (element.length - 1) / 100);
             // if we have anything left...
             if (pos >= 0) {

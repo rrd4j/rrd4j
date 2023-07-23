@@ -164,7 +164,7 @@ class RRDFile implements Constants {
 
     int align(int boundary) throws IOException {
 
-        int skip = (int) (boundary - (mappedByteBuffer.position() % boundary)) % boundary;
+        int skip = (boundary - (mappedByteBuffer.position() % boundary)) % boundary;
 
         if (skip != 0) {
             mappedByteBuffer.position(mappedByteBuffer.position() + skip);

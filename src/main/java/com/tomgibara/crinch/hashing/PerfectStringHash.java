@@ -239,7 +239,7 @@ public class PerfectStringHash implements Hash<String> {
         final int[] pivots = new int[offset * 2];
         for (int i = 0; i < length;) {
             final int runLength = runLengths[i];
-            if (runLength > 1)  generatePivots(values, i, runLength, pivots, (int) offsets[i << 1]);
+            if (runLength > 1)  generatePivots(values, i, runLength, pivots, offsets[i << 1]);
             i += runLength;
         }
 

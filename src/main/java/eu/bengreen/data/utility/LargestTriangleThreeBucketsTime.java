@@ -34,7 +34,7 @@ public class LargestTriangleThreeBucketsTime extends DownSampleImpl {
             int avg_range_start = (int)Math.floor((i+0)*every) + 0;
             int avg_range_end = (int)Math.floor((i+1)*every) + 1;
             avg_range_end = avg_range_end < inputLength ? avg_range_end : inputLength;
-            int avg_range_length = (int)(avg_range_end - avg_range_start);
+            int avg_range_length = avg_range_end - avg_range_start;
             while (avg_range_start < avg_range_end) {
                 avg_x = avg_x + timestamps[avg_range_start];
                 if ( ! Double.isNaN(values[avg_range_start])) {

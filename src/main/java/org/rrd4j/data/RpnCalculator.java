@@ -396,7 +396,7 @@ class RpnCalculator {
             @Override
             void do_method(RpnCalculator c, State s) {
                 TimeZone tz = s.getTimeZone();
-                c.push((double)(c.timestamps[s.slot] + ((long) tz.getOffset(c.timestamps[s.slot]) / 1000D)));
+                c.push(c.timestamps[s.slot] + ((long) tz.getOffset(c.timestamps[s.slot]) / 1000D));
             }
         },
         TKN_YEAR("YEAR") {
