@@ -253,6 +253,7 @@ public class RrdInspector extends JFrame {
         // finalize UI
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 closeWindow();
             }

@@ -166,11 +166,13 @@ class GraphFrame extends JFrame {
         // EVENT HANDLERS
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 closeWindow();
             }
         });
         addComponentListener(new ComponentAdapter() {
+            @Override
             public void componentResized(ComponentEvent e) {
                 createRrdGraph();
                 graphPanel.repaint();
@@ -245,6 +247,7 @@ class GraphFrame extends JFrame {
     }
 
     final class GraphPanel extends JPanel {
+        @Override
         public void paintComponent(Graphics g) {
             if (rrdGraph != null) rrdGraph.render(g);
         }

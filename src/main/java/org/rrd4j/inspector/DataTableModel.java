@@ -47,16 +47,19 @@ class DataTableModel extends AbstractTableModel {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getColumnName(int column) {
         return COLUMN_NAMES[column];
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 2;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         assert columnIndex == 2 : "Column " + columnIndex + " is not editable!";
         double value;

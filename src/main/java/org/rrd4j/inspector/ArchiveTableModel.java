@@ -53,6 +53,7 @@ class ArchiveTableModel extends AbstractTableModel {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getColumnName(int column) {
         return COLUMN_NAMES[column];
     }

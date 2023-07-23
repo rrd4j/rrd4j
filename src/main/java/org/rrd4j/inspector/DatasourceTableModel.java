@@ -54,11 +54,13 @@ class DatasourceTableModel extends AbstractTableModel {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getColumnName(int column) {
         return COLUMN_NAMES[column];
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
