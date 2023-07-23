@@ -77,9 +77,8 @@ class ArchiveTableModel extends AbstractTableModel {
                             Integer.toString(arc.getSteps()),
                             Integer.toString(arc.getRows()),
                             InspectorModel.formatDouble(state.getAccumValue()),
-                            Long.toString(state.getNanSteps()),
-                            Long.toString(arc.getStartTime()) + " [" + new Date(arc.getStartTime() * 1000L) + "]",
-                            Long.toString(arc.getEndTime()) + " [" + new Date(arc.getEndTime() * 1000L) + "]"
+                            Long.toString(state.getNanSteps()), arc.getStartTime() + " [" + new Date(arc.getStartTime() * 1000L) + "]",
+                            arc.getEndTime() + " [" + new Date(arc.getEndTime() * 1000L) + "]"
                     };
                 } catch (Exception e) {
                     Util.error(null, e);

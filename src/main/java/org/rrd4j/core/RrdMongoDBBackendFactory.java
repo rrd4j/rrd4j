@@ -231,10 +231,10 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
                     try {
                         tryHosts.add(new ServerAddress(parts[0], Integer.parseInt(parts[1])));
                     } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("can 't parse mongodb URI " + uri.toString());
+                        throw new IllegalArgumentException("can 't parse mongodb URI " + uri);
                     }
                 } else {
-                    throw new IllegalArgumentException("can 't parse mongodb URI " + uri.toString());
+                    throw new IllegalArgumentException("can 't parse mongodb URI " + uri);
                 }
                 if (! Collections.disjoint(tryHosts, wrapper.servers())) {
                     return resolvedUri;
@@ -268,10 +268,10 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
                 try {
                     tryHosts.add(new ServerAddress(parts[0], Integer.parseInt(parts[1])));
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("can 't parse mongodb URI " + uri.toString());
+                    throw new IllegalArgumentException("can 't parse mongodb URI " + uri);
                 }
             } else {
-                throw new IllegalArgumentException("can 't parse mongodb URI " + uri.toString());
+                throw new IllegalArgumentException("can 't parse mongodb URI " + uri);
             }
         }
         return ! Collections.disjoint(tryHosts, wrapper.servers());

@@ -470,7 +470,7 @@ public class RRDatabase implements Closeable {
         s.print("\t<lastupdate> ");
         s.print(lastUpdate.getTime() / 1000);
         s.print(" </lastupdate> <!-- ");
-        s.print(lastUpdate.toString());
+        s.print(lastUpdate);
         s.println(" -->");
         s.println();
 
