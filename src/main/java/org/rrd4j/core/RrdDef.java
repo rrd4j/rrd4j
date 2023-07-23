@@ -592,13 +592,7 @@ public class RrdDef {
     }
 
     void saveSingleDatasource(String dsName) {
-        Iterator<DsDef> it = dsDefs.iterator();
-        while (it.hasNext()) {
-            DsDef dsDef = it.next();
-            if (!dsDef.getDsName().equals(dsName)) {
-                it.remove();
-            }
-        }
+        dsDefs.removeIf(dsDef -> !dsDef.getDsName().equals(dsName));
     }
 
     void removeArchive(ConsolFun consolFun, int steps) {
