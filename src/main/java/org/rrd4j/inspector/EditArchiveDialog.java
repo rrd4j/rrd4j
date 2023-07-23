@@ -5,8 +5,6 @@ import org.rrd4j.core.ArcDef;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
 class EditArchiveDialog extends JDialog {
@@ -102,16 +100,8 @@ class EditArchiveDialog extends JDialog {
         getRootPane().setDefaultButton(okButton);
 
         // actions
-        okButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ok();
-            }
-        });
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cancel();
-            }
-        });
+        okButton.addActionListener(e -> ok());
+        cancelButton.addActionListener(e -> cancel());
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }

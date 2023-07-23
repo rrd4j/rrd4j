@@ -4,8 +4,6 @@ import org.rrd4j.core.Util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,11 +42,7 @@ public class Epoch extends JFrame {
     private final SimpleDateFormat[] parsers = new SimpleDateFormat[supportedFormats.length];
     private final String helpText;
 
-    private final Timer timer = new Timer(1000, new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            showTimestamp();
-        }
-    });
+    private final Timer timer = new Timer(1000, e -> showTimestamp());
 
     private final JLabel topLabel = new JLabel("Enter timestamp or readable date:");
     private final JTextField inputField = new JTextField(25);
@@ -83,17 +77,10 @@ public class Epoch extends JFrame {
         c.add(inputField, BorderLayout.WEST);
         c.add(convertButton, BorderLayout.CENTER);
         convertButton.setToolTipText(helpText);
-        convertButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                convert();
-            }
-        });
+        convertButton.addActionListener(e -> convert());
         c.add(helpButton, BorderLayout.EAST);
-        helpButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(helpButton, helpText, "Epoch Help", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
+        helpButton.addActionListener(
+                e -> JOptionPane.showMessageDialog(helpButton, helpText, "Epoch Help", JOptionPane.INFORMATION_MESSAGE));
         inputField.requestFocus();
         getRootPane().setDefaultButton(convertButton);
         setResizable(false);

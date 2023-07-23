@@ -3,8 +3,6 @@ package org.rrd4j.inspector;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -28,8 +26,6 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -74,11 +70,9 @@ public class RrdInspector extends JFrame {
     private RrdInspector(String path) throws Exception {
         super(TITLE);
 
-        SwingUtilities.invokeAndWait(new Runnable() {
-            public void run() {
-                constructUI();
-                pack();
-            }
+        SwingUtilities.invokeAndWait(() -> {
+            constructUI();
+            pack();
         });
 
         Util.placeWindow(this);
@@ -100,20 +94,12 @@ public class RrdInspector extends JFrame {
         toolBar.setFloatable(true);
 
         JButton openButton = new JButton(loadIcon("open-24.png"));
-        openButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                selectFile();
-            }
-        });
+        openButton.addActionListener(e -> selectFile());
         toolBar.add(openButton);
 
         final JButton plotButton = new JButton(loadIcon("graph-24.gif"));
         plotButton.setEnabled(false);
-        plotButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                plotArchive();
-            }
-        });
+        plotButton.addActionListener(e -> plotArchive());
         toolBar.add(plotButton);
 
         // tree pane
@@ -128,11 +114,9 @@ public class RrdInspector extends JFrame {
         splitPane.setOneTouchExpandable(true);
 
         mainTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        mainTree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                nodeChangedAction();
-                plotButton.setEnabled(isArchiveNode(getSelectedRrdNode()));
-            }
+        mainTree.addTreeSelectionListener(e -> {
+            nodeChangedAction();
+            plotButton.setEnabled(isArchiveNode(getSelectedRrdNode()));
         });
         mainTree.setModel(inspectorModel.getMainTreeModel());
 
@@ -196,22 +180,16 @@ public class RrdInspector extends JFrame {
 
         // Open file
         JMenuItem fileMenuItem = new JMenuItem("Open RRD file...", KeyEvent.VK_O);
-        fileMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                selectFile();
-            }
-        });
+        fileMenuItem.addActionListener(e -> selectFile());
         fileMenu.add(fileMenuItem);
 
         // Open file in new window
         JMenuItem fileMenuItem2 = new JMenuItem("Open RRD file in new window...");
-        fileMenuItem2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    new RrdInspector(null);
-                } catch (Exception e1) {
+        fileMenuItem2.addActionListener(e -> {
+            try {
+                new RrdInspector(null);
+            } catch (Exception e1) {
 
-                }
             }
         });
         fileMenu.add(fileMenuItem2);
@@ -219,76 +197,44 @@ public class RrdInspector extends JFrame {
 
         // Add datasource
         JMenuItem addDatasourceMenuItem = new JMenuItem("Add datasource...");
-        addDatasourceMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addDatasource();
-            }
-        });
+        addDatasourceMenuItem.addActionListener(e -> addDatasource());
         fileMenu.add(addDatasourceMenuItem);
 
         // Edit datasource
         JMenuItem editDatasourceMenuItem = new JMenuItem("Edit datasource...");
-        editDatasourceMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                editDatasource();
-            }
-        });
+        editDatasourceMenuItem.addActionListener(e -> editDatasource());
         fileMenu.add(editDatasourceMenuItem);
 
         // Remove datasource
         JMenuItem removeDatasourceMenuItem = new JMenuItem("Remove datasource");
-        removeDatasourceMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                removeDatasource();
-            }
-        });
+        removeDatasourceMenuItem.addActionListener(e -> removeDatasource());
         fileMenu.add(removeDatasourceMenuItem);
         fileMenu.addSeparator();
 
         // Add archive
         JMenuItem addArchiveMenuItem = new JMenuItem("Add archive...");
-        addArchiveMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addArchive();
-            }
-        });
+        addArchiveMenuItem.addActionListener(e -> addArchive());
         fileMenu.add(addArchiveMenuItem);
 
         // Edit archive
         JMenuItem editArchiveMenuItem = new JMenuItem("Edit archive...");
-        editArchiveMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                editArchive();
-            }
-        });
+        editArchiveMenuItem.addActionListener(e -> editArchive());
         fileMenu.add(editArchiveMenuItem);
 
         // Remove archive
         JMenuItem removeArchiveMenuItem = new JMenuItem("Remove archive");
-        removeArchiveMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                removeArchive();
-            }
-        });
+        removeArchiveMenuItem.addActionListener(e -> removeArchive());
         fileMenu.add(removeArchiveMenuItem);
 
         // Plot archive values
         JMenuItem plotArchiveMenuItem = new JMenuItem("Plot archive values...");
-        plotArchiveMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                plotArchive();
-            }
-        });
+        plotArchiveMenuItem.addActionListener(e -> plotArchive());
         fileMenu.add(plotArchiveMenuItem);
         fileMenu.addSeparator();
 
         // Exit
         JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
-        exitMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitMenuItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitMenuItem);
 
         // HELP MENU
@@ -297,11 +243,7 @@ public class RrdInspector extends JFrame {
 
         // About
         JMenuItem aboutMenuItem = new JMenuItem("About...", KeyEvent.VK_A);
-        aboutMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                about();
-            }
-        });
+        aboutMenuItem.addActionListener(e -> about());
         helpMenu.add(aboutMenuItem);
 
         menuBar.add(fileMenu);
@@ -598,16 +540,14 @@ public class RrdInspector extends JFrame {
         }
 
         // Set look and feel
-        SwingUtilities.invokeAndWait(new Runnable() {
-            public void run() {
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            } catch (Exception e1) {
                 try {
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-                } catch (Exception e1) {
-                    try {
-                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    } catch (Exception e2) {
-                        // ignore
-                    }
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception e2) {
+                    // ignore
                 }
             }
         });

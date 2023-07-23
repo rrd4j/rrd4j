@@ -66,17 +66,14 @@ public class PerfectStringHash implements Hash<String> {
      * compare lengths, it's faster.
      */
 
-    private static final Comparator<String> comparator = new Comparator<String>() {
-        @Override
-        public int compare(String s1, String s2) {
-            final int h1 = s1.hashCode();
-            final int h2 = s2.hashCode();
-            if (h1 == h2) {
-                final int d = s1.length() - s2.length();
-                return d == 0 ? s1.compareTo(s2) : d;
-            }
-            return h1 < h2 ? -1 : 1;
+    private static final Comparator<String> comparator = (s1, s2) -> {
+        final int h1 = s1.hashCode();
+        final int h2 = s2.hashCode();
+        if (h1 == h2) {
+            final int d = s1.length() - s2.length();
+            return d == 0 ? s1.compareTo(s2) : d;
         }
+        return h1 < h2 ? -1 : 1;
     };
 
     /**

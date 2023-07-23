@@ -5,12 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -159,17 +157,9 @@ class GraphFrame extends JFrame {
         southPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         JButton colorButton = new JButton("Change graph color");
         southPanel.add(colorButton);
-        colorButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changeColor();
-            }
-        });
+        colorButton.addActionListener(e -> changeColor());
         JButton saveButton = new JButton("Save graph");
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                saveGraph();
-            }
-        });
+        saveButton.addActionListener(e -> saveGraph());
         southPanel.add(Box.createHorizontalStrut(3));
         southPanel.add(saveButton);
         content.add(southPanel, BorderLayout.SOUTH);
@@ -186,15 +176,13 @@ class GraphFrame extends JFrame {
                 graphPanel.repaint();
             }
         });
-        graphCombo.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    GraphComboItem item = (GraphComboItem) e.getItem();
-                    dsIndex = item.getDsIndex();
-                    arcIndex = item.getArcIndex();
-                    createRrdGraph();
-                    graphPanel.repaint();
-                }
+        graphCombo.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                GraphComboItem item = (GraphComboItem) e.getItem();
+                dsIndex = item.getDsIndex();
+                arcIndex = item.getArcIndex();
+                createRrdGraph();
+                graphPanel.repaint();
             }
         });
     }
@@ -205,12 +193,10 @@ class GraphFrame extends JFrame {
 
     private void changeColor() {
         final JColorChooser picker = new JColorChooser(color);
-        ActionListener okListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                color = picker.getColor();
-                createRrdGraph();
-                repaint();
-            }
+        ActionListener okListener = e -> {
+            color = picker.getColor();
+            createRrdGraph();
+            repaint();
         };
         JColorChooser.createDialog(this, "Select color", true, picker, okListener, null).setVisible(true);
     }
