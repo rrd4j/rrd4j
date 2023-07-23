@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.rrd4j.core.Util;
 
 public class RpnCalculatorTest {
-    class Myplottable implements IPlottable {
+    static class Myplottable implements IPlottable {
         double[] values;
         Myplottable(double... values) {
             this.values = values;

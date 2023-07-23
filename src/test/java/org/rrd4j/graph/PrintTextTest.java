@@ -29,7 +29,7 @@ import org.rrd4j.data.Variable;
 
 public class PrintTextTest {
 
-    class ConstantStaticDef implements IPlottable {
+    static class ConstantStaticDef implements IPlottable {
         private double m_startTime = Double.NEGATIVE_INFINITY;
         private double m_endTime = Double.POSITIVE_INFINITY;
 
