@@ -2,8 +2,8 @@ package org.rrd4j.core;
 
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -44,10 +44,10 @@ public class RrdNioBackendTest extends BackendTester {
             be.setLength(10);
             be.writeDouble(0, 0);
             be.close();
-            try (DataInputStream is = new DataInputStream(new FileInputStream(rrdfile))) {
-                Double d = is.readDouble();
+            try (DataInputStream is = new DataInputStream(Files.newInputStream(rrdfile.toPath()))) {
+                double d = is.readDouble();
                 Assert.assertEquals("write to NIO failed", 0, d, 1e-10);
-            };
+            }
             Assert.assertNull(factory.getSyncThreadPool());
         }
     }
