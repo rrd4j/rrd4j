@@ -31,7 +31,7 @@ public class LargestTriangleThreeBucketsTime extends DownSampleImpl {
         for (int i = 0; i < threshold - 2; i++) {
             long avg_x = 0L;
             double avg_y = 0.0D;
-            int avg_range_start = (int)Math.floor((i+0)*every) + 0;
+            int avg_range_start = (int) Math.floor((i) * every);
             int avg_range_end = (int)Math.floor((i+1)*every) + 1;
             avg_range_end = avg_range_end < inputLength ? avg_range_end : inputLength;
             int avg_range_length = avg_range_end - avg_range_start;
@@ -50,7 +50,7 @@ public class LargestTriangleThreeBucketsTime extends DownSampleImpl {
             avg_x /= avg_range_length;
             avg_y /= avg_range_length;
 
-            int range_offs = (int)Math.floor((i + 0) * every) + 1;
+            int range_offs = (int)Math.floor((i) * every) + 1;
             int range_to = (int)Math.floor((i + 1) * every) + 1;
 
             double point_a_x = timestamps[a];

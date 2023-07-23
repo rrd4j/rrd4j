@@ -395,8 +395,7 @@ public class RrdGraph implements RrdGraphConstants {
                     im.xorigin + im.xsize + 4,
             };
             double[] Xarrow_y = {
-                    im.yorigin - 3,
-                    im.yorigin + 0,
+                    im.yorigin - 3, im.yorigin,
                     im.yorigin + 3,
             };
             worker.fillPolygon(Xarrow_x, im.yorigin + 3.0, Xarrow_y, arrowColor);

@@ -218,7 +218,7 @@ public class Demo {
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);
         gDef.setImageFormat("png");
-        gDef.setDownsampler(new eu.bengreen.data.utility.LargestTriangleThreeBuckets(IMG_WIDTH * 1));
+        gDef.setDownsampler(new eu.bengreen.data.utility.LargestTriangleThreeBuckets(IMG_WIDTH));
         println("Rendering graph " + Util.getLapTime());
         // create graph finally
         RrdGraph graph = new RrdGraph(gDef);
