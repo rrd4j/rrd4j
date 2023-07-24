@@ -44,7 +44,7 @@ Add this dependency to your project's POM file:
   * Simple API
   * Supports the same data source types as RRDTool (`COUNTER`, `ABSOLUTE`, `DERIVE`, `GAUGE`)
   * Supports the same consolidation functions as RRDTool (`AVERAGE`, `MIN`, `MAX`, `LAST`) and adds `TOTAL`, `FIRST`
-  * Supports almost all RRDTool RPN functions (wiki/see [RPNFuncs](RPNFuncs))
+  * Supports almost all RRDTool RPN functions (wiki/see [RPNFuncs](https://github.com/rrd4j/rrd4j/wiki/RPNFuncs))
   * Multiple backends, e.g. use MongoDB as data store
 
 ### Usage Example
