@@ -189,7 +189,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
     }
 
     @Override
-    public String getCanonicalPath() throws IOException {
+    public String getCanonicalPath() {
         return Paths.get(getPath()).toAbsolutePath().normalize().toString();
     }
 

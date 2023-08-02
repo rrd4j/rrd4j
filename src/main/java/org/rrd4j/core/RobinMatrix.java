@@ -22,7 +22,7 @@ class RobinMatrix implements Robin {
     private final int rows;
     private final int column;
 
-    RobinMatrix(Archive parentArc, RrdDoubleMatrix<Archive> values, RrdInt<Archive> pointer, int column) throws IOException {
+    RobinMatrix(Archive parentArc, RrdDoubleMatrix<Archive> values, RrdInt<Archive> pointer, int column) {
         this.parentArc = parentArc;
         this.pointer = pointer; 
         this.values = values;

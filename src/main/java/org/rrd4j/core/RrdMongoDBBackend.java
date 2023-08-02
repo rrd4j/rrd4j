@@ -1,7 +1,5 @@
 package org.rrd4j.core;
 
-import java.io.IOException;
-
 import org.rrd4j.core.RrdMongoDBBackendFactory.MongoWrapper;
 
 import com.mongodb.BasicDBObject;
@@ -35,7 +33,7 @@ public class RrdMongoDBBackend extends RrdByteArrayBackend {
 
     /** {@inheritDoc} */
     @Override
-    protected void close() throws IOException {
+    protected void close() {
         if (isDirty()) {
             BasicDBObject query = new BasicDBObject("path", getPath());
             wrapper.save(query, getBuffer());

@@ -351,11 +351,10 @@ public class FetchData {
      * @param rpnExpression RRDTool-like RPN expression
      * @return Object containing all aggregated values
      * @throws java.lang.IllegalArgumentException Thrown if invalid RPN expression is supplied
-     * @throws java.io.IOException if any.
      * @deprecated This method is deprecated. Uses instance of {@link org.rrd4j.data.Variable}, used with {@link org.rrd4j.data.DataProcessor#addDatasource(String, String, Variable)}
      */
     @Deprecated
-    public Aggregates getRpnAggregates(String rpnExpression) throws IOException {
+    public Aggregates getRpnAggregates(String rpnExpression) {
         DataProcessor dataProcessor = createDataProcessor(rpnExpression);
         return dataProcessor.getAggregates(RPN_SOURCE_NAME);
     }
@@ -403,9 +402,8 @@ public class FetchData {
      * Dumps fetch data to output stream in XML format. A flush is issued at the end of the xml generation.
      *
      * @param outputStream Output stream to dump fetch data to
-     * @throws java.io.IOException Thrown in case of I/O error
      */
-    public void exportXml(OutputStream outputStream) throws IOException {
+    public void exportXml(OutputStream outputStream) {
         //No auto flush for XmlWriter, it will be flushed once, when export is finished
         try (XmlWriter writer = new XmlWriter(outputStream, false)) {
             writer.startTag("fetch_data");
@@ -457,9 +455,8 @@ public class FetchData {
      * Dumps fetch data in XML format.
      *
      * @return String containing XML formatted fetch data
-     * @throws java.io.IOException Thrown in case of I/O error
      */
-    public String exportXml() throws IOException {
+    public String exportXml() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         exportXml(outputStream);
         return outputStream.toString();

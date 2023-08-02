@@ -23,7 +23,6 @@ import static org.easymock.EasyMock.gt;
 import static org.easymock.EasyMock.lt;
 import static org.easymock.EasyMock.same;
 
-import java.awt.FontFormatException;
 import java.io.IOException;
 import java.util.Date;
 
@@ -98,7 +97,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     }
 
     @Test
-    public void testBasicEmptyRrd() throws IOException, FontFormatException {
+    public void testBasicEmptyRrd() throws IOException {
         createGaugeRrd(100);
         prepareGraph();
 
@@ -109,7 +108,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     }
 
     @Test
-    public void testOneEntryInRrd() throws IOException, FontFormatException {
+    public void testOneEntryInRrd() throws IOException {
         createGaugeRrd(100);
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
             long nowSeconds = new Date().getTime();
@@ -125,7 +124,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     }
 
     @Test
-    public void testTwoEntriesInRrd() throws IOException, FontFormatException {
+    public void testTwoEntriesInRrd() throws IOException {
         createGaugeRrd(100);
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
             for(int i=0; i<2; i++) {
@@ -143,7 +142,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     }
 
     @Test
-    public void testEntriesZeroTo100InRrd() throws IOException, FontFormatException {
+    public void testEntriesZeroTo100InRrd() throws IOException {
         createGaugeRrd(105); //Make sure all entries are recorded (5 is just a buffer for consolidation)
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
             for(int i=0; i<100; i++) {
@@ -162,7 +161,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     }
 
     @Test
-    public void testEntriesNeg50To100InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg50To100InRrd() throws IOException {
         createGaugeRrd(155);
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
             for(int i=0; i<150; i++) {
@@ -182,7 +181,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     }
 
     @Test
-    public void testEntriesNeg50To0InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg50To0InRrd() throws IOException {
         createGaugeRrd(100);
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
             for(int i=0; i<50; i++) {
@@ -200,7 +199,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     }
 
     @Test
-    public void testEntriesNeg80To80InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg80To80InRrd() throws IOException {
         createGaugeRrd(180);
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
             for (int i = 0; i < 160; i++) {

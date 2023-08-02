@@ -1,6 +1,5 @@
 package org.rrd4j.core;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,7 +24,7 @@ public class RrdMemoryBackend extends ByteBufferBackend {
     }
 
     @Override
-    protected void setLength(long length) throws IOException {
+    protected void setLength(long length) {
         if (length < 0 || length > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Illegal length: " + length);
         }
@@ -34,7 +33,7 @@ public class RrdMemoryBackend extends ByteBufferBackend {
     }
 
     @Override
-    public long getLength() throws IOException {
+    public long getLength() {
         return Optional.ofNullable(refbb.get()).map(ByteBuffer::capacity).orElse(0);
     }
 
@@ -42,10 +41,9 @@ public class RrdMemoryBackend extends ByteBufferBackend {
      * This method is required by the base class definition, but it does not
      * releases any memory resources at all.
      *
-     * @throws java.io.IOException if any.
      */
     @Override
-    protected void close() throws IOException {
+    protected void close() {
         // Don't release ressources, as backend are cached by the factory and reused
     }
 

@@ -1,6 +1,5 @@
 package org.rrd4j.core.jrrd;
 
-import java.io.IOException;
 import java.io.PrintStream;
 
 /**
@@ -27,7 +26,7 @@ public class CDPStatusBlock {
     final double secondary_value;
     final double primary_value;
 
-    CDPStatusBlock(RRDFile file) throws IOException {
+    CDPStatusBlock(RRDFile file) {
         //Should read MAX_CDP_PAR_EN = 10
         //Size should be 0x50
         offset = file.getFilePointer();

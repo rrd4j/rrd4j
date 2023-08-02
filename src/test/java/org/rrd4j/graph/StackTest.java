@@ -54,7 +54,7 @@ public class StackTest {
     }
 
     @Test
-    public void fail() throws IOException {
+    public void fail() {
         RrdGraphDef def = new RrdGraphDef(1, 100);
         def.datasource("base1", new IPlottable() {
             @Override

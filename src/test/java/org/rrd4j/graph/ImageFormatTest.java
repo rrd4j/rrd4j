@@ -26,7 +26,7 @@ public class ImageFormatTest {
         RrdBackendFactory.setActiveFactories(previousBackend);
     }
 
-    private RrdGraphDef doGraph() throws IOException {
+    private RrdGraphDef doGraph() {
         RrdGraphDef gDef = new RrdGraphDef(1, 100);
         gDef.setWidth(200);
         gDef.setHeight(200);

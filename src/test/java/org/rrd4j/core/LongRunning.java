@@ -27,7 +27,7 @@ public class LongRunning {
     private long now;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         now = System.currentTimeMillis();
 
         startTimes = new ArrayList<Long>();

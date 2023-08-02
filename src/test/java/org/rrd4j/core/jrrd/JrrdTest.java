@@ -109,7 +109,7 @@ public class JrrdTest {
         
     }
 
-    Double readDouble(RRDFile rrdFile) throws IOException {
+    Double readDouble(RRDFile rrdFile) {
         return rrdFile.readDouble();
     }
 

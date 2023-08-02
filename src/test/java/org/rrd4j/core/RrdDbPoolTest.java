@@ -69,7 +69,7 @@ public class RrdDbPoolTest {
     }
     
     @Test(timeout=2000)
-    public void testCount() throws IOException, InterruptedException {
+    public void testCount() throws IOException {
         RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(10);
         RrdDef def = new RrdDef(new File(testFolder.getRoot().getCanonicalFile(), "test.rrd").getCanonicalPath());
@@ -89,7 +89,7 @@ public class RrdDbPoolTest {
     }
 
     @Test(timeout=2000)
-    public void testPoolFull() throws IOException, InterruptedException {
+    public void testPoolFull() throws InterruptedException {
         int capacity = 100;
         RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(capacity);

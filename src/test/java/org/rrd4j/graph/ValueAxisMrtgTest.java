@@ -23,7 +23,6 @@ import static org.easymock.EasyMock.gt;
 import static org.easymock.EasyMock.lt;
 import static org.easymock.EasyMock.same;
 
-import java.awt.FontFormatException;
 import java.io.IOException;
 import java.util.Date;
 
@@ -93,14 +92,14 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     }
 
     @Test
-    public void testBasicEmptyRrd() throws IOException, FontFormatException {
+    public void testBasicEmptyRrd() throws IOException {
         createGaugeRrd(100);
         prepareGraph();
         checkForBasicGraph();
     }
 
     @Test
-    public void testOneEntryInRrd() throws IOException, FontFormatException {
+    public void testOneEntryInRrd() throws IOException {
         createGaugeRrd(100);
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
             long nowSeconds = new Date().getTime();
@@ -113,7 +112,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     }
 
     @Test
-    public void testTwoEntriesInRrd() throws IOException, FontFormatException {
+    public void testTwoEntriesInRrd() throws IOException {
         createGaugeRrd(100);
 
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
@@ -135,7 +134,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     }
 
     @Test
-    public void testEntriesZeroTo100InRrd() throws IOException, FontFormatException {
+    public void testEntriesZeroTo100InRrd() throws IOException {
         createGaugeRrd(105); //Make sure all entries are recorded (5 is just a buffer for consolidation)
 
         try (RrdDb rrd = RrdDb.getBuilder().setPath(jrbFileName).build()) {
@@ -157,7 +156,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     }
 
     @Test
-    public void testEntriesNeg50To100InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg50To100InRrd() throws IOException {
         createGaugeRrd(155);
         RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
@@ -179,7 +178,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     }
 
     @Test
-    public void testEntriesNeg55To105InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg55To105InRrd() throws IOException {
         createGaugeRrd(165);
         RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
@@ -201,7 +200,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     }
 
     @Test
-    public void testEntriesNeg50To0InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg50To0InRrd() throws IOException {
         createGaugeRrd(100);
         RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
@@ -228,10 +227,9 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
      * (i.e. limited pixels available for X-axis labelling),ValueAxis gets all confused 
      * and decides it can only display "0" on the X-axis  (there's not enough pixels
      * for more labels, and none of the Y-label factorings available work well enough
-     * @throws FontFormatException 
      */
     @Test
-    public void testEntriesNeg80To90InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg80To90InRrd() throws IOException {
         createGaugeRrd(180);
         RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 
@@ -257,10 +255,9 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
      * Related to testEntriesNeg80To90InRrd, except in the original code
      * this produced sensible labelling.  Implemented to check that the 
      * changes don't break the sanity.
-     * @throws FontFormatException 
      */
     @Test
-    public void testEntriesNeg80To80InRrd() throws IOException, FontFormatException {
+    public void testEntriesNeg80To80InRrd() throws IOException {
         createGaugeRrd(180);
         RrdDb rrd =  RrdDb.getBuilder().setPath(jrbFileName).build();
 

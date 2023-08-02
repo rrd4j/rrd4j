@@ -13,7 +13,7 @@ public class SimpleTimeLabelFormatTest {
     private static final Date INSTANT = new Date(1428550160000L);
 
     @Test
-    public void strftime() throws Exception {
+    public void strftime() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
         calendar.setTime(INSTANT);
         TimeLabelFormat fmt = new SimpleTimeLabelFormat("%Y-%m-%dT%H:%M:%S");
@@ -21,7 +21,7 @@ public class SimpleTimeLabelFormatTest {
     }
 
     @Test
-    public void simpleDateFormat() throws Exception {
+    public void simpleDateFormat() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.US);
         calendar.setTime(INSTANT);
         TimeLabelFormat fmt = new SimpleTimeLabelFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss");

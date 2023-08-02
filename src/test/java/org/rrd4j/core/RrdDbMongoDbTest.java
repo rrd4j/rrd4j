@@ -32,7 +32,7 @@ public class RrdDbMongoDbTest {
     }
 
     @Test
-    public void testLifeCycle() throws IOException, InterruptedException {
+    public void testLifeCycle() throws IOException {
         try (MongoClient mongoClient = new MongoClient(Arrays.asList(new ServerAddress("localhost")),
                 new MongoClientOptions.Builder()
                 .serverSelectionTimeout(2000)

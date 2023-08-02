@@ -5,7 +5,7 @@ import java.io.IOException;
 class RrdDoubleArray<U extends RrdUpdater<U>> extends RrdPrimitive<U> {
     private final int length;
 
-    RrdDoubleArray(RrdUpdater<U> updater, int length) throws IOException {
+    RrdDoubleArray(RrdUpdater<U> updater, int length) {
         super(updater, RrdPrimitive.RRD_DOUBLE, length, false);
         this.length = length;
     }

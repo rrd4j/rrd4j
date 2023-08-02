@@ -12,11 +12,11 @@ abstract class RrdPrimitive<U extends RrdUpdater<U>> {
     private final long pointer;
     private final boolean cachingAllowed;
 
-    RrdPrimitive(RrdUpdater<U> updater, int type, boolean isConstant) throws IOException {
+    RrdPrimitive(RrdUpdater<U> updater, int type, boolean isConstant) {
         this(updater, type, 1, isConstant);
     }
 
-    RrdPrimitive(RrdUpdater<U> updater, int type, int count, boolean isConstant) throws IOException {
+    RrdPrimitive(RrdUpdater<U> updater, int type, int count, boolean isConstant) {
         this.backend = updater.getRrdBackend();
         this.byteCount = RRD_PRIM_SIZES[type] * count;
         this.pointer = updater.getRrdAllocator().allocate(byteCount);

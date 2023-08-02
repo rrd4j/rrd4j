@@ -60,14 +60,14 @@ public class RrdDbPool {
         final Lock lock;
         final boolean placeholder;
         final URI uri;
-        RrdEntry(URI canonicalPath) throws InterruptedException {
+        RrdEntry(URI canonicalPath) {
             placeholder = false;
             uri = canonicalPath;
             inuse = new ReentrantReadWriteLock();
             lock = inuse.writeLock();
             waitempty = new CountDownLatch(1);
         }
-        RrdEntry(RrdEntry parent) throws InterruptedException {
+        RrdEntry(RrdEntry parent) {
             assert ! parent.placeholder;
             placeholder = true;
             uri = parent.uri;
@@ -375,10 +375,9 @@ public class RrdDbPool {
      * Wait for a empty reference with no usage
      * @param uri
      * @return an reference with no usage 
-     * @throws IOException
      * @throws InterruptedException
      */
-    private RrdEntry waitEmpty(URI uri) throws IOException, InterruptedException {
+    private RrdEntry waitEmpty(URI uri) throws InterruptedException {
         RrdEntry ref = getEntry(uri, true);
         try {
             while (ref.count != 0) {
@@ -401,9 +400,8 @@ public class RrdDbPool {
      * @param uri
      * @return an reference with no usage 
      * @throws InterruptedException
-     * @throws IOException
      */
-    private RrdEntry requestEmpty(URI uri) throws InterruptedException, IOException {
+    private RrdEntry requestEmpty(URI uri) throws InterruptedException {
         return waitEmpty(uri);
     }
 
@@ -624,10 +622,9 @@ public class RrdDbPool {
      *
      * @param rrdDb RrdDb reference for which informations is needed.
      * @return the number of request for this RRD.
-     * @throws java.io.IOException if any
      * @throws java.lang.IllegalStateException if the thread was interrupted
      */
-    public int getOpenCount(RrdDb rrdDb) throws IOException {
+    public int getOpenCount(RrdDb rrdDb) {
         return getCanonicalUriUsage(rrdDb.getCanonicalUri());
     }
 
@@ -637,10 +634,9 @@ public class RrdDbPool {
      *
      * @param path RRD's path for which informations is needed.
      * @return the number of request for this RRD.
-     * @throws java.io.IOException if any
      * @throws java.lang.IllegalStateException if the thread was interrupted
      */
-    public int getOpenCount(String path) throws IOException {
+    public int getOpenCount(String path) {
         return getCanonicalUriUsage(defaultFactory.getCanonicalUri(defaultFactory.getUri(path)));
     }
 
@@ -649,10 +645,9 @@ public class RrdDbPool {
      *
      * @param uri RRD's URI for which informations is needed.
      * @return the number of request for this RRD.
-     * @throws java.io.IOException if any
      * @throws java.lang.IllegalStateException if the thread was interrupted
      */
-    public int getOpenCount(URI uri) throws IOException {
+    public int getOpenCount(URI uri) {
         return getCanonicalUriUsage(checkFactory(uri).getCanonicalUri(uri));
     }
 

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
 
@@ -34,7 +33,7 @@ public class ImageTest {
 
     @Ignore
     @Test
-    public void testOne() throws IOException, URISyntaxException {
+    public void testOne() throws IOException {
         RrdGraphDef gDef = new RrdGraphDef(1, 100);
         gDef.setImageFormat("png");
         gDef.setWidth(200);
