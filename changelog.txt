@@ -1,8 +1,20 @@
 =======
-Changes in version 3.9-SNAPSHOT - 26 dec 2021.
+Changes in version 3.9-SNAPSHOT.
 -------------------------------
 
-rrd4j now is integrated with JPMS (modules).
+These release includes two minor breaking changes.
+* Lots of useless thrown exceptions were removed, even in a few public API.
+* module name is now explicit, not derived from the file name.
+
+* PR 157: Use correct fonts when calculating limits
+* PR 156: Omit redundant fractional part on y-axis labels
+* PR 155: Avoid y-axis label corruption when using large axis font
+* PR 154: AXIS font was used instead of UNIT font
+* PR 153: Fix slow RrdGraph generation with big data sets
+
+=======
+Changes in version 3.8.2 - 14 oct 2022.
+-------------------------------
 
 * Fixed Issue 152: rrdDef.getPath() Does not return correct path in case of Windows machine.
 
