@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.rrd4j.data.IPlottable;
 
 public class StackTest {
 
