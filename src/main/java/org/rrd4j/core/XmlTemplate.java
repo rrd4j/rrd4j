@@ -301,7 +301,7 @@ public abstract class XmlTemplate {
             String var = matcher.group(1);
             if (valueMap.containsKey(var)) {
                 // mapping found
-                result.append(templateValue.substring(lastMatchEnd, matcher.start()));
+                result.append(templateValue, lastMatchEnd, matcher.start());
                 result.append(valueMap.get(var).toString());
                 lastMatchEnd = matcher.end();
             }
