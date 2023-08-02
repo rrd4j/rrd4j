@@ -48,10 +48,6 @@ import org.rrd4j.core.Sample;
 public class ValueAxisTest extends AxisTester<ValueAxis> {
 
     @Override
-    void setupGraphDef() {
-    }
-
-    @Override
     ValueAxis makeAxis(RrdGraph rrdGraph) {
         return new ValueAxis(rrdGraph, imageWorker);
     }
