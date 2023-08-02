@@ -77,7 +77,7 @@ public class JrrdTest {
 
     private void testFile(String file, String version) throws IOException {
         URL url = getClass().getResource(file);
-        try(RRDatabase rrd = new RRDatabase(url.getFile());) {
+        try(RRDatabase rrd = new RRDatabase(url.getFile())) {
             Assert.assertEquals("Invalid date", new Date(920808900000L), rrd.getLastUpdate());
             Assert.assertEquals("Invalid number of archives", 2, rrd.getNumArchives());
             Assert.assertEquals("Invalid number of datasources", 2, rrd.getDataSourcesName().size());

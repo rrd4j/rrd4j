@@ -51,13 +51,13 @@ public class RrdDbMongoDbTest {
                         "mongodb://localhost:27017/mydb/test/therrd",
                         db.getUri().toString());
                 db.createSample().setAndUpdate("NOW:1");
-            };
+            }
             try (RrdDb db = RrdDb.getBuilder().setPath("mongodb://localhost:27017/mydb/test/therrd").build()) {
                 Assert.assertEquals(
                         "mongodb://localhost:27017/mydb/test/therrd",
                         db.getUri().toString());
                 Assert.assertNotNull(db.getBytes());
-            };
+            }
         }
     }
 

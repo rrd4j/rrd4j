@@ -65,7 +65,7 @@ public class TutorialTest {
         rrdDef.addArchive(ConsolFun.AVERAGE, 0.5, 6, 10);
         try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
 
-        };
+        }
     }
 
     @Test

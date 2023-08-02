@@ -21,10 +21,10 @@ public abstract class BackendTester {
         be.setLength(10);
         be.writeDouble(0, 0);
         be.close();
-        try (DataInputStream is = new DataInputStream(new FileInputStream(path));) {
+        try (DataInputStream is = new DataInputStream(new FileInputStream(path))) {
             Double d = is.readDouble();
             Assert.assertEquals("write to random access file failed", 0, d, 1e-10);
-        };
+        }
     }
 
     public void testRrdDb(RrdDb db) throws IOException {

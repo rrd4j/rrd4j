@@ -245,7 +245,7 @@ public class RrdDbPoolTest {
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
         try (RrdDb db1 = instance.requestRrdDb(def);
-             RrdDb db2 = instance.requestRrdDb(new File(link2.toString(), "test.rrd").getPath());) {
+             RrdDb db2 = instance.requestRrdDb(new File(link2.toString(), "test.rrd").getPath())) {
             Assert.assertEquals(db1, db2);
             URI[] opendb = instance.getOpenUri();
             Assert.assertEquals(1, opendb.length);

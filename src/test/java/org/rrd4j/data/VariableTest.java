@@ -105,7 +105,7 @@ public class VariableTest {
                         "VDEF:lslcorrel=baz,LSLCORREL " + "PRINT:lslcorrel:\"lslcorrel %1.15le\" ";
                 System.out.println(cmd3);
             }
-        };
+        }
     }
 
     private DataProcessor getDp(Variable v) throws IOException {

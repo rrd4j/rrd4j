@@ -102,7 +102,7 @@ public class PercentileTest {
                 db.createSample(sampleTime).setValue(0, val).update();
                 sampleTime += 300;
             }
-        };
+        }
     }
 
 }
