@@ -10,9 +10,9 @@ public class PDPStatusBlock {
 
     private final long offset;
     private final long size;
-    String lastReading;
-    int unknownSeconds;
-    double value;
+    final String lastReading;
+    final int unknownSeconds;
+    final double value;
     private enum pdp_par_en {PDP_unkn_sec_cnt, PDP_val}
 
     PDPStatusBlock(RRDFile file) {
