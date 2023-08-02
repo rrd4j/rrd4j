@@ -8,7 +8,7 @@ import org.rrd4j.core.Util;
 
 public class RpnCalculatorTest {
     static class Myplottable implements IPlottable {
-        double[] values;
+        final double[] values;
         Myplottable(double... values) {
             this.values = values;
         }

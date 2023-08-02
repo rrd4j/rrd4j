@@ -220,7 +220,7 @@ public class TestDemo {
 
     static class GaugeSource {
         private double value;
-        private double step;
+        private final double step;
 
         GaugeSource(double value, double step) {
             this.value = value;
