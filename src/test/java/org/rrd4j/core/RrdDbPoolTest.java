@@ -93,7 +93,7 @@ public class RrdDbPoolTest {
         int capacity = 100;
         RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(capacity);
-        Queue<RrdDb> dbs = new ConcurrentLinkedQueue<RrdDb>();
+        Queue<RrdDb> dbs = new ConcurrentLinkedQueue<>();
         AtomicInteger done = new AtomicInteger(0);
         AtomicInteger created = new AtomicInteger(0);
         CountDownLatch full = new CountDownLatch(capacity);
@@ -152,7 +152,7 @@ public class RrdDbPoolTest {
     public void testMultiOpen() throws IOException, InterruptedException {
         RrdDbPool instance = new RrdDbPool();
         instance.setCapacity(2);
-        Queue<RrdDb> dbs = new ConcurrentLinkedQueue<RrdDb>();
+        Queue<RrdDb> dbs = new ConcurrentLinkedQueue<>();
         Set<Integer> dbid = ConcurrentHashMap.newKeySet(12);
         AtomicInteger done = new AtomicInteger(0);
         CountDownLatch full = new CountDownLatch(12);

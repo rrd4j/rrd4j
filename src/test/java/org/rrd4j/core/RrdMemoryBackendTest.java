@@ -11,7 +11,7 @@ public class RrdMemoryBackendTest {
 
     @Test
     public void testBigString() throws IOException {
-        RrdMemoryBackend backend = new RrdMemoryBackend("", new AtomicReference<ByteBuffer>());
+        RrdMemoryBackend backend = new RrdMemoryBackend("", new AtomicReference<>());
         char c = '\ue001';
         Assert.assertTrue(c >=  '\ue000' && c <= '\uf8ff');
         StringBuilder builder = new StringBuilder();

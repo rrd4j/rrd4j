@@ -30,7 +30,7 @@ public class LongRunning {
     public void setup() {
         now = System.currentTimeMillis();
 
-        startTimes = new ArrayList<Long>();
+        startTimes = new ArrayList<>();
         startTimes.add(now - (TimeUnit.HOURS).toMillis(1));
         startTimes.add(now - (TimeUnit.DAYS).toMillis(1));
         startTimes.add(now - (TimeUnit.DAYS).toMillis(7));
