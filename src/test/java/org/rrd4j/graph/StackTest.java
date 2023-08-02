@@ -56,14 +56,8 @@ public class StackTest {
     @Test
     public void fail() {
         RrdGraphDef def = new RrdGraphDef(1, 100);
-        def.datasource("base1", new IPlottable() {
-            @Override
-            public double getValue(long timestamp) {
-                return (timestamp % 2 == 0) ? Double.NaN : 1;
-            }});
-        Assert.assertThrows("You have to stack graph onto something (line or area)", IllegalArgumentException.class, () -> {
-            def.line("base1", Color.RED, null, 1.0f, true);
-        });
+        def.datasource("base1", timestamp -> (timestamp % 2 == 0) ? Double.NaN : 1);
+        Assert.assertThrows("You have to stack graph onto something (line or area)", IllegalArgumentException.class, () -> def.line("base1", Color.RED, null, 1.0f, true));
     }
 
 }

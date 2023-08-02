@@ -254,9 +254,7 @@ public class TimeParserTest {
      */
     @Test
     public void testSimpleNegativeOffset() {
-        check(c -> {
-            c.add(Calendar.HOUR_OF_DAY, -1);
-        }, c -> {
+        check(c -> c.add(Calendar.HOUR_OF_DAY, -1), c -> {
         },
         "-1hour", "now");
     }
@@ -266,11 +264,7 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeStartOffsetEnd() {
-        check(c -> {
-            c.add(Calendar.HOUR_OF_DAY, -3);
-        }, c -> {
-            c.add(Calendar.HOUR_OF_DAY, -1);
-        },
+        check(c -> c.add(Calendar.HOUR_OF_DAY, -3), c -> c.add(Calendar.HOUR_OF_DAY, -1),
         //End is 1 hour ago; start is 2 hours before that
         "end-2hours", "-1h");
     }
@@ -280,11 +274,7 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeStartOffsetEndAbbreviatedEnd() {
-        check(c -> {
-            c.add(Calendar.HOUR_OF_DAY, -3);
-        }, c -> {
-            c.add(Calendar.HOUR_OF_DAY, -1);
-        },
+        check(c -> c.add(Calendar.HOUR_OF_DAY, -3), c -> c.add(Calendar.HOUR_OF_DAY, -1),
         //End is 1 hour ago; start is 2 hours before that
         "e-2h", "-1h");
     }
@@ -294,11 +284,7 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeEndOffsetStart() {
-        check(c -> {
-            c.add(Calendar.HOUR_OF_DAY, -4);
-        }, c -> {
-            c.add(Calendar.HOUR_OF_DAY, -2);
-        },
+        check(c -> c.add(Calendar.HOUR_OF_DAY, -4), c -> c.add(Calendar.HOUR_OF_DAY, -2),
         "-4h", "start+2h");
     }
 
@@ -307,11 +293,7 @@ public class TimeParserTest {
      */
     @Test
     public void testRelativeEndOffsetStartAbbreviatedStart() {
-        check(c -> {
-            c.add(Calendar.HOUR_OF_DAY, -4);
-        }, c -> {
-            c.add(Calendar.HOUR_OF_DAY, -2);
-        },
+        check(c -> c.add(Calendar.HOUR_OF_DAY, -4), c -> c.add(Calendar.HOUR_OF_DAY, -2),
         "-4h", "s+2h");
     }
 
@@ -504,11 +486,7 @@ public class TimeParserTest {
      */
     @Test
     public void testTimeOffsets1() {
-        check(c -> {
-            c.add(Calendar.MINUTE, -1);
-        }, c -> {
-            c.add(Calendar.SECOND, -10);
-        },
+        check(c -> c.add(Calendar.MINUTE, -1), c -> c.add(Calendar.SECOND, -10),
         "now - 1minute", "now-10 second");
     }
 
@@ -519,11 +497,7 @@ public class TimeParserTest {
      */
     @Test
     public void testTimeOffsets2() {
-        check(c -> {
-            c.add(Calendar.DAY_OF_YEAR, -1);
-        }, c -> {
-            c.add(Calendar.HOUR, -3);
-        },
+        check(c -> c.add(Calendar.DAY_OF_YEAR, -1), c -> c.add(Calendar.HOUR, -3),
         "now - 1 day", "now-3 hours");
     }
 
