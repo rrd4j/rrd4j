@@ -1,5 +1,5 @@
 =======
-Changes in version 3.9-SNAPSHOT.
+Changes in version 3.9 - 14 aug 2023.
 -------------------------------
 
 These release includes two minor breaking changes.

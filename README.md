@@ -15,7 +15,7 @@ users [here](https://groups.google.com/forum/#!forum/rrd4j-discuss).
 
 ### Latest Version (requires Java 8+)
 
-RRD4J 3.8.1 (released 2021-12-26) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/release/changelog.txt)
+RRD4J 3.9 (released 2023-08-14) - [Download](https://github.com/rrd4j/rrd4j/releases) - [Changelog](https://raw.githubusercontent.com/rrd4j/rrd4j/release/changelog.txt)
 
 ### Building (optional)
 
@@ -34,7 +34,7 @@ Add this dependency to your project's POM file:
 <dependency>
     <groupId>org.rrd4j</groupId>
     <artifactId>rrd4j</artifactId>
-    <version>3.8.1</version>
+    <version>3.9</version>
 </dependency>
 ```
 
