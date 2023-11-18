@@ -24,7 +24,9 @@ public class FontTest {
         System.clearProperty(PROPERTYFONTSPROPERTIES);
         System.clearProperty(PROPERTYFONTSURL);
         System.clearProperty(PROPERTYFONTPLAIN);
+        System.clearProperty(PROPERTYFONTPLAINURL);
         System.clearProperty(PROPERTYFONTBOLD);
+        System.clearProperty(PROPERTYFONTBOLDURL);
     }
 
     private Font loadFont(String path) throws FontFormatException, IOException {
