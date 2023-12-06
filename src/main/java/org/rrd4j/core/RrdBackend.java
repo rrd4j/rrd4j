@@ -165,12 +165,10 @@ public abstract class RrdBackend {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     protected void rrdClose() throws IOException {
-        try {
+        if (ref == null) {
             close();
-        } finally {
-            if (ref != null) {
-                ref.clear();
-            }
+        } else {
+            ref.clear();   // will call `this.close()` because `ref` is of `RrdBackendFactory.ClosingReference` type 
         }
     }
 
