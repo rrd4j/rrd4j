@@ -448,4 +448,21 @@ public class RrdDbTest {
         }
     }
 
+    @Test
+    public void testClosingIdempotency() throws IOException, URISyntaxException {
+        // given
+        RrdDbPool pool = new RrdDbPool();
+        URL url = getClass().getResource("/demo2.rrd");
+        RrdDb rrd = RrdDb.getBuilder()
+                .setPath(url.toURI())
+                .setPool(pool)
+                .build();
+        // when
+        rrd.close();            // first invocation should actually close the database
+        rrd.close();            // second (and further) invocation(s) should do nothing
+        
+        // then
+        // The test just completes normally provided that no exceptions happened before.
+    }
+
 }
