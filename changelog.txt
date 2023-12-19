@@ -1,4 +1,11 @@
 =======
+Changes in version 3.9.1 - <TOBEDONE>.
+-------------------------------
+
+* PR 162: Make RRD DB closing idempotent when used with a pool
+* PR 161: Prevent excess RrdBackend.close() invocation
+
+=======
 Changes in version 3.9 - 14 aug 2023.
 -------------------------------
 
