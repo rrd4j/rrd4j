@@ -334,6 +334,7 @@ public class RrdInspector extends JFrame {
     private void loadFile(File file) {
         inspectorModel.setFile(file);
         tabbedPane.setSelectedIndex(0);
+        setTitle(String.format("%s - %s", file.getName(), TITLE));
     }
 
 
