@@ -1,54 +1,30 @@
 package org.rrd4j.graph;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.font.LineMetrics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.stream.ImageOutputStream;
+public abstract class ImageWorker {
 
-class ImageWorker {
     private static final String DUMMY_TEXT = "Dummy";
     private static final int IMG_BUFFER_CAPACITY = 10000; // bytes
-
-    private BufferedImage img;
     private Graphics2D g2d;
-    private int imgWidth, imgHeight;
-    private AffineTransform initialAffineTransform;
 
-    ImageWorker(int width, int height) {
-        resize(width, height);
-    }
-
-    void resize(int width, int height) {
+    protected void setG2d(Graphics2D g2d) {
         if (g2d != null) {
             dispose();
         }
-
-        imgWidth = width;
-        imgHeight = height;
-        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-        g2d = img.createGraphics();
-        initialAffineTransform = g2d.getTransform();
-
-        setAntiAliasing(false);
-        setTextAntiAliasing(false);
-
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        this.g2d = g2d;
     }
+
+    abstract void resize(int width, int height);
 
     void clip(int x, int y, int width, int height) {
         g2d.setClip(x, y, width, height);
@@ -60,18 +36,14 @@ class ImageWorker {
     }
 
     void reset() {
-        g2d.setTransform(initialAffineTransform);
-        g2d.setClip(0, 0, imgWidth, imgHeight);
+        reset(g2d);
     }
+
+    protected abstract void reset(Graphics2D g2d);
 
     void fillRect(int x, int y, int width, int height, Paint paint) {
         g2d.setPaint(paint);
         g2d.fillRect(x, y, width, height);
-    }
-
-    void fillPolygon(int[] x, int[] y, Paint paint) {
-        g2d.setPaint(paint);
-        g2d.fillPolygon(x, y, x.length);
     }
 
     void fillPolygon(double[] x, double yBottom, double[] yTop, Paint paint) {
@@ -112,12 +84,6 @@ class ImageWorker {
         g2d.setStroke(stroke);
         g2d.setPaint(paint);
         g2d.drawLine(x1, y1, x2, y2);
-    }
-
-    void drawPolyline(int[] x, int[] y, Paint paint, Stroke stroke) {
-        g2d.setStroke(stroke);
-        g2d.setPaint(paint);
-        g2d.drawPolyline(x, y, x.length);
     }
 
     void drawPolyline(double[] x, double[] y, Paint paint, Stroke stroke) {
@@ -165,59 +131,35 @@ class ImageWorker {
                 enable ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
 
-    void dispose() {
-        g2d.dispose();
-    }
-
-    void makeImage(Object stream, ImageWriter writer, ImageWriteParam iwp) throws IOException {
-        BufferedImage outputImage = img; 
-
-        ImageWriterSpi imgProvider = writer.getOriginatingProvider();
-
-        img.coerceData(false);
-
-        // Some format can't manage 16M colors images
-        // JPEG don't like transparency
-        if (! imgProvider.canEncodeImage(outputImage) || "image/jpeg".equalsIgnoreCase(imgProvider.getMIMETypes()[0])) {
-            int w = img.getWidth();
-            int h = img.getHeight();
-            outputImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-            outputImage.getGraphics().drawImage(img, 0, 0, w, h, null);
-            if (! imgProvider.canEncodeImage(outputImage)) {
-                throw new RuntimeException("Invalid image type");
-            }
-        }
-
-        if (! imgProvider.canEncodeImage(outputImage)) {
-            throw new RuntimeException("Invalid image type");
-        }
-
-        try (ImageOutputStream imageStream = ImageIO.createImageOutputStream(stream)) {
-            writer.setOutput(imageStream);
-            writer.write(null, new IIOImage(outputImage, null, null), iwp);
-            imageStream.flush();
-        } catch (IOException e) {
-            writer.abort();
-            throw e;
-        } finally {
-            writer.dispose();
-        }
-    }
-
-    void saveImage(String path, ImageWriter writer, ImageWriteParam iwp) throws IOException {
-        makeImage(Paths.get(path).toFile(), writer, iwp);
-    }
-
-    byte[] getImageBytes(ImageWriter writer, ImageWriteParam iwp) throws IOException {
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY)){
-            makeImage(stream, writer, iwp);
-            return stream.toByteArray();
-        }
-    }
-
     void loadImage(RrdGraphDef.ImageSource imageSource, int x, int y, int w, int h) throws IOException {
         BufferedImage wpImage = imageSource.apply(w, h).getSubimage(0, 0, w, h);
         g2d.drawImage(wpImage, new AffineTransform(1f, 0f, 0f, 1f, x, y), null);
+    }
+
+
+    void dispose() {
+        if (g2d != null) {
+            g2d.dispose();
+        }
+    }
+
+    void makeImage(Path path) throws IOException {
+        try (OutputStream os = Files.newOutputStream(path)) {
+            makeImage(os);
+        }
+    }
+
+    abstract void makeImage(OutputStream os) throws IOException ;
+
+    void saveImage(String path) throws IOException {
+        makeImage(Paths.get(path));
+    }
+
+    byte[] getImageBytes() throws IOException {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY)){
+            makeImage(stream);
+            return stream.toByteArray();
+        }
     }
 
 }

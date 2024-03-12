@@ -26,7 +26,7 @@ public abstract class AxisTester<T extends Axis> {
     static private RrdBackendFactory previousBackend;
 
     protected ImageWorker imageWorker;
-    protected ImageParameters imageParameters;
+    ImageParameters imageParameters;
     protected RrdGraphDef graphDef;
 
     @BeforeClass
@@ -80,7 +80,7 @@ public abstract class AxisTester<T extends Axis> {
         imageParameters = graph.im;
         //There's only a couple of methods of ImageWorker that we actually care about in this test.
         // More to the point, we want the rest to work as normal (like getFontHeight, getFontAscent etc)
-        imageWorker = createMockBuilder(ImageWorker.class)
+        imageWorker = createMockBuilder(BufferedImageWorker.class)
                 .addMockedMethod("drawLine")
                 .addMockedMethod("drawString")
                 .withConstructor(Integer.TYPE, Integer.TYPE)
