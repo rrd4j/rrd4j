@@ -68,6 +68,12 @@ public class RrdGraph implements RrdGraphConstants {
         }
     }
 
+    /**
+     * Create graph from a custom image worker
+     * @param gdef
+     * @param worker
+     * @throws IOException
+     */
     public RrdGraph(RrdGraphDef gdef, ImageWorker worker) throws IOException {
         this.gdef = gdef;
         signature = gdef.getSignature();

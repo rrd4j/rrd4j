@@ -103,7 +103,7 @@ class BufferedImageWorker extends ImageWorker {
         resize(imgWidth, imgHeight);
     }
 
-    void resize(int width, int height) {
+    protected void resize(int width, int height) {
         imgWidth = width;
         imgHeight = height;
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -123,7 +123,7 @@ class BufferedImageWorker extends ImageWorker {
         g2d.setClip(0, 0, imgWidth, imgHeight);
     }
 
-    void makeImage(OutputStream stream) throws IOException {
+    protected void makeImage(OutputStream stream) throws IOException {
         BufferedImage outputImage = img;
 
         ImageWriterSpi imgProvider = writer.getOriginatingProvider();

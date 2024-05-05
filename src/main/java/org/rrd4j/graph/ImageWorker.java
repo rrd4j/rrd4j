@@ -11,6 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * An abstract class, that allows to use custom {@link Graphics2D}. To use it the construct should build it and call
+ * {@link #setG2d(Graphics2D)} when finished.
+ */
 public abstract class ImageWorker {
 
     private static final String DUMMY_TEXT = "Dummy";
@@ -24,34 +28,40 @@ public abstract class ImageWorker {
         this.g2d = g2d;
     }
 
-    abstract void resize(int width, int height);
+    protected abstract void resize(int width, int height);
 
-    void clip(int x, int y, int width, int height) {
+    protected void clip(int x, int y, int width, int height) {
         g2d.setClip(x, y, width, height);
     }
 
-    void transform(int x, int y, double angle) {
+    protected void transform(int x, int y, double angle) {
         g2d.translate(x, y);
         g2d.rotate(angle);
     }
 
-    void reset() {
+     protected void reset() {
         reset(g2d);
     }
 
+    /**
+     * reset the dimensions of the {@link Graphics2D}
+     */
     protected abstract void reset(Graphics2D g2d);
 
-    void fillRect(int x, int y, int width, int height, Paint paint) {
+    protected void fillRect(int x, int y, int width, int height, Paint paint) {
         g2d.setPaint(paint);
         g2d.fillRect(x, y, width, height);
     }
 
-    void fillPolygon(double[] x, double yBottom, double[] yTop, Paint paint) {
+    protected void fillPolygon(double[] x, double yBottom, double[] yTop, Paint paint) {
         g2d.setPaint(paint);
         PathIterator path = new PathIterator(yTop);
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
-            int start = pos[0], end = pos[1], n = end - start;
-            int[] xDev = new int[n + 2], yDev = new int[n + 2];
+            int start = pos[0];
+            int end = pos[1];
+            int n = end - start;
+            int[] xDev = new int[n + 2];
+            int[] yDev = new int[n + 2];
             for (int i = start; i < end; i++) {
                 xDev[i - start] = (int) x[i];
                 yDev[i - start] = (int) yTop[i];
@@ -64,14 +74,18 @@ public abstract class ImageWorker {
         }
     }
 
-    void fillPolygon(double[] x, double[] yBottom, double[] yTop, Paint paint) {
+    protected void fillPolygon(double[] x, double[] yBottom, double[] yTop, Paint paint) {
         g2d.setPaint(paint);
         PathIterator path = new PathIterator(yTop);
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
-            int start = pos[0], end = pos[1], n = end - start;
-            int[] xDev = new int[n * 2], yDev = new int[n * 2];
+            int start = pos[0];
+            int end = pos[1];
+            int n = end - start;
+            int[] xDev = new int[n * 2];
+            int[] yDev = new int[n * 2];
             for (int i = start; i < end; i++) {
-                int ix1 = i - start, ix2 = n * 2 - 1 - i + start;
+                int ix1 = i - start;
+                int ix2 = n * 2 - 1 - i + start;
                 xDev[ix1] = xDev[ix2] = (int) x[i];
                 yDev[ix1] = (int) yTop[i];
                 yDev[ix2] = (int) yBottom[i];
@@ -80,19 +94,21 @@ public abstract class ImageWorker {
         }
     }
 
-    void drawLine(int x1, int y1, int x2, int y2, Paint paint, Stroke stroke) {
+    protected void drawLine(int x1, int y1, int x2, int y2, Paint paint, Stroke stroke) {
         g2d.setStroke(stroke);
         g2d.setPaint(paint);
         g2d.drawLine(x1, y1, x2, y2);
     }
 
-    void drawPolyline(double[] x, double[] y, Paint paint, Stroke stroke) {
+    protected void drawPolyline(double[] x, double[] y, Paint paint, Stroke stroke) {
         g2d.setPaint(paint);
         g2d.setStroke(stroke);
         PathIterator path = new PathIterator(y);
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
-            int start = pos[0], end = pos[1];
-            int[] xDev = new int[end - start], yDev = new int[end - start];
+            int start = pos[0];
+            int end = pos[1];
+            int[] xDev = new int[end - start];
+            int[] yDev = new int[end - start];
             for (int i = start; i < end; i++) {
                 xDev[i - start] = (int) x[i];
                 yDev[i - start] = (int) y[i];
@@ -101,61 +117,60 @@ public abstract class ImageWorker {
         }
     }
 
-    void drawString(String text, int x, int y, Font font, Paint paint) {
+    protected void drawString(String text, int x, int y, Font font, Paint paint) {
         g2d.setFont(font);
         g2d.setPaint(paint);
         g2d.drawString(text, x, y);
     }
 
-    double getFontAscent(Font font) {
+    protected double getFontAscent(Font font) {
         LineMetrics lm = font.getLineMetrics(DUMMY_TEXT, g2d.getFontRenderContext());
         return lm.getAscent();
     }
 
-    double getFontHeight(Font font) {
+    protected double getFontHeight(Font font) {
         LineMetrics lm = font.getLineMetrics(DUMMY_TEXT, g2d.getFontRenderContext());
         return lm.getAscent() + lm.getDescent();
     }
 
-    double getStringWidth(String text, Font font) {
+    protected double getStringWidth(String text, Font font) {
         return font.getStringBounds(text, 0, text.length(), g2d.getFontRenderContext()).getBounds().getWidth();
     }
 
-    void setAntiAliasing(boolean enable) {
+    protected void setAntiAliasing(boolean enable) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 enable ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
-    void setTextAntiAliasing(boolean enable) {
+    protected void setTextAntiAliasing(boolean enable) {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 enable ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
 
-    void loadImage(RrdGraphDef.ImageSource imageSource, int x, int y, int w, int h) throws IOException {
+    protected void loadImage(RrdGraphDef.ImageSource imageSource, int x, int y, int w, int h) throws IOException {
         BufferedImage wpImage = imageSource.apply(w, h).getSubimage(0, 0, w, h);
         g2d.drawImage(wpImage, new AffineTransform(1f, 0f, 0f, 1f, x, y), null);
     }
 
-
-    void dispose() {
+    protected void dispose() {
         if (g2d != null) {
             g2d.dispose();
         }
     }
 
-    void makeImage(Path path) throws IOException {
+    protected void makeImage(Path path) throws IOException {
         try (OutputStream os = Files.newOutputStream(path)) {
             makeImage(os);
         }
     }
 
-    abstract void makeImage(OutputStream os) throws IOException ;
+    protected abstract void makeImage(OutputStream os) throws IOException ;
 
-    void saveImage(String path) throws IOException {
+    protected void saveImage(String path) throws IOException {
         makeImage(Paths.get(path));
     }
 
-    byte[] getImageBytes() throws IOException {
+    protected byte[] getImageBytes() throws IOException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream(IMG_BUFFER_CAPACITY)){
             makeImage(stream);
             return stream.toByteArray();
