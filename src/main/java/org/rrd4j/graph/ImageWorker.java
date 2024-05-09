@@ -70,7 +70,6 @@ public abstract class ImageWorker {
             xDev[c + 1] = xDev[0];
             yDev[c] = yDev[c + 1] = (int) yBottom;
             g2d.fillPolygon(xDev, yDev, c + 2);
-            //g2d.drawPolygon(xDev, yDev, c + 2);
         }
     }
 
