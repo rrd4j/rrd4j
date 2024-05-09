@@ -52,15 +52,24 @@ public abstract class ImageWorker {
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
             int start = pos[0], end = pos[1], n = end - start;
             int[] xDev = new int[n + 2], yDev = new int[n + 2];
+            int c = 0;
             for (int i = start; i < end; i++) {
-                xDev[i - start] = (int) x[i];
-                yDev[i - start] = (int) yTop[i];
+                int cx = (int) x[i];
+                int cy = (int) yTop[i];
+                if (c == 0 || cx != xDev[c - 1] || cy != yDev[c - 1]) {
+                    if (c >= 2 && cy == yDev[c - 1] && cy == yDev[c - 2]) {
+                        // collapse horizontal lines
+                        xDev[c - 1] = cx;
+                    } else {
+                        xDev[c] = cx;
+                        yDev[c++] = cy;
+                    }
+                }
             }
-            xDev[n] = xDev[n - 1];
-            xDev[n + 1] = xDev[0];
-            yDev[n] = yDev[n + 1] = (int) yBottom;
-            g2d.fillPolygon(xDev, yDev, xDev.length);
-            g2d.drawPolygon(xDev, yDev, xDev.length);
+            xDev[c] = xDev[c - 1];
+            xDev[c + 1] = xDev[0];
+            yDev[c] = yDev[c + 1] = (int) yBottom;
+            g2d.fillPolygon(xDev, yDev, c + 2);
         }
     }
 
@@ -70,13 +79,34 @@ public abstract class ImageWorker {
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
             int start = pos[0], end = pos[1], n = end - start;
             int[] xDev = new int[n * 2], yDev = new int[n * 2];
+            int c = 0;
             for (int i = start; i < end; i++) {
-                int ix1 = i - start, ix2 = n * 2 - 1 - i + start;
-                xDev[ix1] = xDev[ix2] = (int) x[i];
-                yDev[ix1] = (int) yTop[i];
-                yDev[ix2] = (int) yBottom[i];
+                int cx = (int) x[i];
+                int cy = (int) yTop[i];
+                if (c == 0 || cx != xDev[c - 1] || cy != yDev[c - 1]) {
+                    if (c >= 2 && cy == yDev[c - 1] && cy == yDev[c - 2]) {
+                        // collapse horizontal lines
+                        xDev[c - 1] = cx;
+                    } else {
+                        xDev[c] = cx;
+                        yDev[c++] = cy;
+                    }
+                }
             }
-            g2d.fillPolygon(xDev, yDev, xDev.length);
+            for (int i = end - 1; i >= start; i--) {
+                int cx = (int) x[i];
+                int cy = (int) yBottom[i];
+                if (c == 0 || cx != xDev[c - 1] || cy != yDev[c - 1]) {
+                    if (c >= 2 && cy == yDev[c - 1] && cy == yDev[c - 2]) {
+                        // collapse horizontal lines
+                        xDev[c - 1] = cx;
+                    } else {
+                        xDev[c] = cx;
+                        yDev[c++] = cy;
+                    }
+                }
+            }
+            g2d.fillPolygon(xDev, yDev, c);
         }
     }
 
@@ -93,11 +123,21 @@ public abstract class ImageWorker {
         for (int[] pos = path.getNextPath(); pos != null; pos = path.getNextPath()) {
             int start = pos[0], end = pos[1];
             int[] xDev = new int[end - start], yDev = new int[end - start];
+            int c = 0;
             for (int i = start; i < end; i++) {
-                xDev[i - start] = (int) x[i];
-                yDev[i - start] = (int) y[i];
+                int cx = (int) x[i];
+                int cy = (int) y[i];
+                if (c == 0 || cx != xDev[c - 1] || cy != yDev[c - 1]) {
+                    if (c >= 2 && cy == yDev[c - 1] && cy == yDev[c - 2]) {
+                        // collapse horizontal lines
+                        xDev[c - 1] = cx;
+                    } else {
+                        xDev[c] = cx;
+                        yDev[c++] = cy;
+                    }
+                }
             }
-            g2d.drawPolyline(xDev, yDev, xDev.length);
+            g2d.drawPolyline(xDev, yDev, c);
         }
     }
 
