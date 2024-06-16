@@ -112,6 +112,12 @@
             <version>1.17</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>org.jfree.svg</artifactId>
+            <version>5.0.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>

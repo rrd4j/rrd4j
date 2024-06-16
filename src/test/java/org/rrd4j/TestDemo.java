@@ -9,6 +9,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -30,14 +31,17 @@ import org.rrd4j.core.Sample;
 import org.rrd4j.core.Util;
 import org.rrd4j.data.Variable;
 import org.rrd4j.graph.ElementsNames;
+import org.rrd4j.graph.ImageTest;
 import org.rrd4j.graph.RrdGraph;
 import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraphInfo;
+import org.rrd4j.graph.SVGImageWorker;
 import org.rrd4j.graph.TimeLabelFormat;
 
 import eu.bengreen.data.utility.LargestTriangleThreeBuckets;
 
 public class TestDemo {
+
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
@@ -197,9 +201,10 @@ public class TestDemo {
 
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);
-        gDef.setImageFormat("png");
+        gDef.setImageFormat("svg");
+        gDef.setFilename(Paths.get("/tmp").resolve("test.svg").toString());
         // create graph finally
-        RrdGraph graph = new RrdGraph(gDef);
+        RrdGraph graph = new RrdGraph(gDef, new SVGImageWorker());
         // demo ends
         log.close();
 
@@ -211,8 +216,8 @@ public class TestDemo {
         Assert.assertEquals("maxShade = 0.878k", lines[3]);
         Assert.assertEquals("avgShade = 0.404k", lines[4]);
         Assert.assertTrue(graphinfo.getHeight() > 410 && graphinfo.getHeight() < 425);
-        Assert.assertEquals(591, graphinfo.getWidth());
-        Assert.assertTrue(graphinfo.getFilename().endsWith(".png"));
+        Assert.assertEquals(600, graphinfo.getWidth());
+        Assert.assertTrue(graphinfo.getFilename().endsWith(".svg"));
 
         Assert.assertEquals(1277467200, sunmax.getValue().timestamp);
         Assert.assertEquals(4284.9218056, sunmax.getValue().value, 1e-15);
