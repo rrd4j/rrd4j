@@ -1,6 +1,7 @@
 package org.rrd4j.graph;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -9,6 +10,7 @@ import org.jfree.svg.SVGHints;
 
 public class SVGImageWorker extends ImageWorker {
     private SVGGraphics2D g2d;
+    private AffineTransform initialAffineTransform;
     private int imgWidth;
     private int imgHeight;
 
@@ -21,11 +23,13 @@ public class SVGImageWorker extends ImageWorker {
         imgHeight = height;
         g2d = new SVGGraphics2D(imgWidth, imgHeight);
         setG2d(g2d);
+        initialAffineTransform = g2d.getTransform();
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         g2d.setRenderingHint(SVGHints.KEY_TEXT_RENDERING, "optimizeLegibility");
     }
 
     protected void reset(Graphics2D g2d) {
+        g2d.setTransform(initialAffineTransform);
         g2d.setClip(0, 0, imgWidth, imgHeight);
     }
 

@@ -217,6 +217,7 @@ public class TestDemo {
         Assert.assertEquals("avgShade = 0.404k", lines[4]);
         Assert.assertTrue(graphinfo.getHeight() > 410 && graphinfo.getHeight() < 425);
         Assert.assertEquals(600, graphinfo.getWidth());
+        Assert.assertEquals(412, graphinfo.getHeight());
         Assert.assertTrue(graphinfo.getFilename().endsWith(".svg"));
 
         Assert.assertEquals(1277467200, sunmax.getValue().timestamp);
