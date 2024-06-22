@@ -5,8 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jfree.svg.SVGGraphics2D;
-import org.jfree.svg.SVGHints;
+import org.jfree.graphics2d.svg.SVGGraphics2D;
 
 public class SVGImageWorker extends ImageWorker {
     private SVGGraphics2D g2d;
@@ -25,7 +24,6 @@ public class SVGImageWorker extends ImageWorker {
         setG2d(g2d);
         initialAffineTransform = g2d.getTransform();
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-        g2d.setRenderingHint(SVGHints.KEY_TEXT_RENDERING, "optimizeLegibility");
     }
 
     protected void reset(Graphics2D g2d) {
