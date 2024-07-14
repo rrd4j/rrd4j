@@ -7,39 +7,38 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.client.MongoClient;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoNamespace;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.connection.ServerDescription;
 
 /**
  * <p>{@link org.rrd4j.core.RrdBackendFactory} that uses <a href="http://www.mongodb.org/">MongoDB</a> for data storage. Construct a
  * MongoDB {@link com.mongodb.DBCollection} or {@link com.mongodb.client.MongoCollection} and pass it via the constructor.</p>
- * 
+ *
  * <p>A simple use case could be </p>
  * <pre>
  * MongoClient mongoClient = ...
- * MongoCollection&lt;DBObject&gt; collection = 
+ * MongoCollection&lt;DBObject&gt; collection =
  * RrdBackendFactory factory = new RrdMongoDBBackendFactory(mongoClient, collection, false);
  * RrdBackendFactory.setActiveFactories(factory);
  * RrdDef def = new RrdDef(factory.getUri(...));
  * </pre>
- * 
+ *
  * <p>A mongo factory is in the form <code>mongodb://host:port/dbName/collectionName/</code></p>
  *
  * @author Mathias Bogaert
  */
 @RrdBackendAnnotation(name="MONGODB", shouldValidateHeader=false)
+@Deprecated
 public class RrdMongoDBBackendFactory extends RrdBackendFactory {
 
-    interface MongoWrapper {
+    protected interface MongoWrapper {
         void makeIndex(BasicDBObject index);
         boolean exists(BasicDBObject query);
         DBObject get(BasicDBObject query);
@@ -66,7 +65,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
     /**
      * Creates a RrdMongoDBBackendFactory. Make sure that the passed {@link com.mongodb.DBCollection} has a safe write
      * concern, is capped (if needed) and slaveOk() called if applicable.
-     * 
+     *
      * @param rrdCollection the collection to use for storing RRD byte data
      * @param registerAsDefault if true, the backend will be registered as the default
      * @deprecated create a instance instead
@@ -104,10 +103,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             }
             @Override
             public List<ServerAddress> servers() {
-                return rrdCollection.getDB().getMongoClient().getClusterDescription().getServerDescriptions()
-                        .stream()
-                        .map(ServerDescription::getAddress)
-                        .collect(Collectors.toList());
+                return rrdCollection.getDB().getMongo().getServerAddressList();
             }
             @Override
             public void close() throws IOException {
@@ -116,21 +112,16 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         };
 
         DB db = rrdCollection.getDB();
-
-        List<ServerAddress> servers = db.getMongoClient().getClusterDescription().getServerDescriptions()
-                .stream()
-                .map(ServerDescription::getAddress)
-                .collect(Collectors.toList());
-        rootUri = buildRootUri(db.getName(), rrdCollection.getName(), servers);
+        rootUri = buildRootUri(db.getName(), rrdCollection.getName(), db.getMongo().getServerAddressList());
         // make sure we have an index on the path field
         makeIndex();
 
     }
 
     /**
-     * Creates a RrdMongoDBBackendFactory. Make sure that the passed {@link com.mongodb.client.MongoClient} has a safe write
+     * Creates a RrdMongoDBBackendFactory. Make sure that the passed {@link com.mongodb.MongoClient} has a safe write
      * concern, is capped (if needed) and slaveOk() called if applicable.
-     * 
+     *
      * @param client the client connection
      * @param rrdCollection the collection to use for storing RRD byte data
      * @param registerAsDefault if true, the backend will be registered as the default
@@ -167,10 +158,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
             }
             @Override
             public List<ServerAddress> servers() {
-                return client.getClusterDescription().getServerDescriptions()
-                        .stream()
-                        .map(ServerDescription::getAddress)
-                        .collect(Collectors.toList());
+                return client.getServerAddressList();
             }
             @Override
             public void close() throws IOException {
@@ -179,12 +167,7 @@ public class RrdMongoDBBackendFactory extends RrdBackendFactory {
         };
 
         MongoNamespace ns = rrdCollection.getNamespace();
-        List<ServerAddress> servers = client.getClusterDescription().getServerDescriptions()
-                .stream()
-                .map(ServerDescription::getAddress)
-                .collect(Collectors.toList());
-
-        rootUri = buildRootUri(ns.getDatabaseName(), ns.getCollectionName(), servers);
+        rootUri = buildRootUri(ns.getDatabaseName(), ns.getCollectionName(), client.getServerAddressList());
         // make sure we have an index on the path field
         makeIndex();
 
