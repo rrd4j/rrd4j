@@ -1,9 +1,15 @@
 =======
-Changes in version 3.9.1 - <TOBEDONE>.
+Changes in version 3.10 - <TOBEDONE>.
 -------------------------------
+
+These release introduce a feature that allows to provide a custom ImageWorker. It allows to generate
+native SVG images using any SVG library. There is a sample implementation org.rrd4j.graph.SVGImageWorker in the test code.
 
 * PR 162: Make RRD DB closing idempotent when used with a pool
 * PR 161: Prevent excess RrdBackend.close() invocation
+* PR 164: Add current file name to window title of RRD File Inspector
+* PR 166: ImageWorker rendering improvements
+* PR 168: Upgrade to mongodb-java-sync
 
 =======
 Changes in version 3.9 - 14 aug 2023.
