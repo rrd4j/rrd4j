@@ -5,18 +5,6 @@ class Mapper {
     private final ImageParameters im;
     private final double pixieX, pixieY;
 
-    Mapper(RrdGraph rrdGraph) {
-        this.gdef = rrdGraph.gdef;
-        this.im = rrdGraph.im;
-        pixieX = (double) im.xsize / (double) (im.end - im.start);
-        if (!gdef.logarithmic) {
-            pixieY = im.ysize / (im.maxval - im.minval);
-        }
-        else {
-            pixieY = im.ysize / (ValueAxisLogarithmic.log10(im.maxval) - ValueAxisLogarithmic.log10(im.minval));
-        }
-    }
-
     Mapper(RrdGraphDef gdef, ImageParameters im) {
         this.gdef = gdef;
         this.im = im;
@@ -25,7 +13,7 @@ class Mapper {
             pixieY = im.ysize / (im.maxval - im.minval);
         }
         else {
-            pixieY = im.ysize / (Math.log10(im.maxval) - Math.log10(im.minval));
+            pixieY = im.ysize / (ValueAxisLogarithmic.log10(im.maxval) - ValueAxisLogarithmic.log10(im.minval));
         }
     }
 

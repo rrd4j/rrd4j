@@ -21,11 +21,21 @@ class ValueAxisLogarithmic extends Axis {
     private final int fontHeight;
     private final Mapper mapper;
 
-    ValueAxisLogarithmic(RrdGraph rrdGraph) {
-        this(rrdGraph, rrdGraph.worker);
+    /**
+     * Used for tests
+     *
+     * @param rrdGraph
+     * @param worker
+     */
+    ValueAxisLogarithmic(RrdGraph rrdGraph, ImageWorker worker) {
+        this.im = rrdGraph.im;
+        this.gdef = rrdGraph.gdef;
+        this.worker = worker;
+        this.fontHeight = (int) Math.ceil(worker.getFontHeight(gdef.getFont(FONTTAG_AXIS)));
+        this.mapper = new Mapper(this.gdef, this.im);
     }
 
-    ValueAxisLogarithmic(RrdGraph rrdGraph, ImageWorker worker) {
+    ValueAxisLogarithmic(RrdGraphGenerator rrdGraph, ImageWorker worker) {
         this.im = rrdGraph.im;
         this.gdef = rrdGraph.gdef;
         this.worker = worker;

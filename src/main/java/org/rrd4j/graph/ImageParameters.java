@@ -18,5 +18,4 @@ class ImageParameters {
     int yorigin;
     int unitslength;
     int xgif, ygif;
-    String unit;
 }
