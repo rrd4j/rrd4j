@@ -4,15 +4,15 @@ import java.awt.Color;
 import java.io.IOException;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.rrd4j.GraphTester;
 
-public class StackTest {
+public class StackTest extends GraphTester {
 
-    @BeforeClass
-    public static void prepare() {
-        System.getProperties().setProperty("java.awt.headless","true");
-    }
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Test
     public void test1() throws IOException {
@@ -23,6 +23,7 @@ public class StackTest {
         def.line("base1", Color.BLUE);
         def.stack("base2", Color.RED);
         def.stack("base3", Color.RED);
+        saveGraph(def, testFolder, "StackTest", "test1", "png");
         new RrdGraph(def);
 
         SourcedPlotElement base2 = (SourcedPlotElement) def.plotElements.get(1);
@@ -42,6 +43,7 @@ public class StackTest {
         def.line("base1", Color.BLUE);
         def.line("base2", Color.RED, null, 1.0f, true);
         def.area("base3", Color.RED, null, true);
+        saveGraph(def, testFolder, "StackTest", "test2", "png");
         new RrdGraph(def);
 
         SourcedPlotElement base2 = (SourcedPlotElement) def.plotElements.get(1);

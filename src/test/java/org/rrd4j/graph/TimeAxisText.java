@@ -37,7 +37,7 @@ public class TimeAxisText extends AxisTester<TimeAxis> {
     @Test
     public void firstTest() throws IOException {
         createGaugeRrd(100);
-        prepareGraph();
+        prepareGraph("TimeAxisText", "firstTest");
 
         expectMinorGridLines(24);
         expectMajorGridLine();

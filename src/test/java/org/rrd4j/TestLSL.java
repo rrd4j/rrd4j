@@ -29,7 +29,7 @@ import org.rrd4j.graph.RrdGraphConstants;
 import org.rrd4j.graph.RrdGraphDef;
 import org.rrd4j.graph.RrdGraphInfo;
 
-public class TestLSL {
+public class TestLSL extends GraphTester {
     static final long START = getTimestamp(2010, 3, 1, 0, 0);
     static final long LASTWEEK = getTimestamp(2010, 3, 25, 23, 59);
     static final long END = getTimestamp(2010, 3, 30, 23, 59);
@@ -162,6 +162,7 @@ public class TestLSL {
         gdef.print("maxabc2", "  Reach  100%% at %tc ", true);                 //GPRINT:maxabc2:"  Reach 100% at %c ":strftime
         gdef.print("maxabc3", "  Reach  100%% at %tc\\l", true);               //GPRINT:maxabc3:"  Reach 100% at %c "\\n:strftime
 
+        saveGraph(gdef, testFolder, "TestLSL", "test1");
         RrdGraph graph = new RrdGraph(gdef);
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
         String[] lines = graphinfo.getPrintLines();

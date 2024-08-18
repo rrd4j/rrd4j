@@ -17,18 +17,19 @@
  *******************************************************************************/
 package org.rrd4j.graph;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.Locale;
+
+import org.junit.Test;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.Sample;
+
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.gt;
 import static org.easymock.EasyMock.lt;
 import static org.easymock.EasyMock.same;
-
-import java.io.IOException;
-import java.util.Date;
-
-import org.junit.Test;
-import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.Sample;
 
 
 /**
@@ -76,9 +77,8 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
         //Horizontal tick on the right
         imageWorker.drawLine(gt(threeQuartersX), anyInt(), gt(threeQuartersX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.TICK_STROKE));
         //Line in between the ticks (but overlapping a bit)
-        imageWorker.drawLine(lt(quarterX), anyInt(), gt(midX),anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.GRID_STROKE));
+        imageWorker.drawLine(lt(quarterX), anyInt(), gt(midX), anyInt(), eq(RrdGraphDef.DEFAULT_MGRID_COLOR), same(RrdGraphDef.GRID_STROKE));
         imageWorker.drawString(eq(label), anyInt(), anyInt(), eq(graphDef.getFont(RrdGraphDef.FONTTAG_AXIS)), same(RrdGraphDef.DEFAULT_FONT_COLOR));
-
     }
 
     private void expectMinorGridLines(int count) {
@@ -99,7 +99,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
     @Test
     public void testBasicEmptyRrd() throws IOException {
         createGaugeRrd(100);
-        prepareGraph();
+        prepareGraph("ValueAxisLogarithmicTest", "testBasicEmptyRrd");
 
         expectMinorGridLines(1);
         expectMajorGridLine("1e+00");
@@ -116,7 +116,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
             Sample sample = rrd.createSample();
             sample.setAndUpdate(fiveMinutesAgo+":10");
         }
-        prepareGraph();
+        prepareGraph("ValueAxisLogarithmicTest", "testOneEntryInRrd");
         expectMinorGridLines(1);
         expectMajorGridLine("1e+00");
 
@@ -133,7 +133,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
                 sample.setAndUpdate(timestamp+":100");
             }
         }
-        prepareGraph();
+        prepareGraph("ValueAxisLogarithmicTest", "testTwoEntriesInRrd");
 
         expectMinorGridLines(1);
         expectMajorGridLine("1e+02");
@@ -151,7 +151,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
                 sample.setAndUpdate(timestamp + ":" + i);
             }
         }
-        prepareGraph();
+        prepareGraph("ValueAxisLogarithmicTest", "testEntriesZeroTo100InRrd");
         expectMinorGridLines(11);
         expectMajorGridLine("1e+00");
         expectMajorGridLine("1e+01");
@@ -170,7 +170,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
                 sample.setAndUpdate(timestamp + ":" + (i -50));
             }
         }
-        prepareGraph();
+        prepareGraph("ValueAxisLogarithmicTest", "testEntriesNeg50To100InRrd");
         expectMinorGridLines(5);
         expectMajorGridLine("0e+00");
         expectMajorGridLine("1e+01");
@@ -190,7 +190,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
                 sample.setAndUpdate(timestamp + ":" + (i -50));
             }
         }
-        prepareGraph();
+        prepareGraph("ValueAxisLogarithmicTest", "testEntriesNeg50To0InRrd");
 
         expectMinorGridLines(5);
         expectMajorGridLine("-1e+01");
@@ -210,7 +210,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
         } finally {
             // TODO: handle finally clause
         }
-        prepareGraph();
+        prepareGraph("ValueAxisLogarithmicTest", "testEntriesNeg80To80InRrd");
 
         expectMinorGridLines(4);
         expectMajorGridLine("0e+00");

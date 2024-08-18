@@ -15,15 +15,16 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.rrd4j.ConsolFun;
 import org.rrd4j.DsType;
+import org.rrd4j.GraphTester;
 import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdDb;
 import org.rrd4j.core.RrdDef;
 import org.rrd4j.core.RrdRandomAccessFileBackendFactory;
 import org.rrd4j.core.Util;
 
-public abstract class AxisTester<T extends Axis> {
+public abstract class AxisTester<T extends Axis> extends GraphTester {
 
-    static private RrdBackendFactory previousBackend;
+    private static RrdBackendFactory previousBackend;
 
     protected ImageWorker imageWorker;
     ImageParameters imageParameters;
@@ -66,15 +67,14 @@ public abstract class AxisTester<T extends Axis> {
     }
 
     //Cannot be called until the RRD has been populated; wait
-    void prepareGraph() throws IOException {
-
+    void prepareGraph(String testClass, String testName) throws IOException {
         graphDef = new RrdGraphDef(startTime, startTime + (60*60*24));
         graphDef.datasource("testvalue", jrbFileName, "testvalue", ConsolFun.AVERAGE);
         graphDef.area("testvalue", Util.parseColor("#FF0000"), "TestValue");
         graphDef.setLocale(Locale.US);
 
         setupGraphDef();
-
+        saveGraph(graphDef, testFolder, testClass, testName);
         RrdGraph graph = new RrdGraph(graphDef);
 
         imageParameters = graph.im;
@@ -88,7 +88,6 @@ public abstract class AxisTester<T extends Axis> {
                 .createStrictMock(); //Order is important!
 
         valueAxis = makeAxis(graph);
-
     }
 
     void run() {

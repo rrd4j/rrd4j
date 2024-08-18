@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -44,13 +43,12 @@ import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.ConsolFun.MAX;
 import static org.rrd4j.DsType.GAUGE;
 
-public class TestDemo {
-
+public class TestDemo extends GraphTester {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    static private RrdBackendFactory previousBackend;
+    private static RrdBackendFactory previousBackend;
 
     static final long SEED = 1909752002L;
     static final Random RANDOM = new Random(SEED);
@@ -87,15 +85,12 @@ public class TestDemo {
     }
 
     private void generateGraph(long start, long end, String rrdRestoredPath, String format) throws IOException {
-        Path imgPath = Paths.get(testFolder.getRoot().getCanonicalPath()).resolve(FILE + "." + format);
-
         // create graph
         RrdGraphDef gDef = new RrdGraphDef(start, end);
         gDef.setLocale(Locale.US);
         gDef.setTimeZone(TimeZone.getTimeZone("CET"));
         gDef.setWidth(IMG_WIDTH);
         gDef.setHeight(IMG_HEIGHT);
-        gDef.setFilename(imgPath.toString());
         gDef.setTitle("Temperatures in May-June 2010");
         gDef.setVerticalLabel("temperature");
         gDef.setColor(ElementsNames.xaxis, Color.BLUE);
@@ -140,7 +135,7 @@ public class TestDemo {
         gDef.setImageInfo("<img src='%s' width='%d' height = '%d'>");
         gDef.setPoolUsed(false);
         gDef.setImageFormat(format);
-        gDef.setFilename(imgPath.toString());
+        Path imgPath = saveGraph(gDef, testFolder, "TestDemo", "runDemo", format);
 
         RrdGraph graph;
         // create graph finally
@@ -151,7 +146,6 @@ public class TestDemo {
         }
 
         RrdGraphInfo graphinfo = graph.getRrdGraphInfo();
-        System.err.println(graphinfo.dump());
         String[] lines = graphinfo.getPrintLines();
         Assert.assertEquals("maxSun = 4.285k", lines[0]);
         Assert.assertEquals("maxSun time = 1277467200", lines[1]);
@@ -168,7 +162,6 @@ public class TestDemo {
         BufferedImage img = ImageIO.read(new File(graphinfo.getFilename()));
         Assert.assertEquals(graphinfo.getHeight(), img.getHeight());
         Assert.assertEquals(graphinfo.getWidth(), img.getWidth());
-
     }
 
     @Test
@@ -176,10 +169,11 @@ public class TestDemo {
         long start = START;
         long end = END;
 
-        String rrdPath = testFolder.getRoot().getCanonicalPath() + "FILE" + ".rrd";
-        String xmlPath = testFolder.getRoot().getCanonicalPath() + "FILE" + ".xml";
-        String rrdRestoredPath = testFolder.getRoot().getCanonicalPath() + "FILE" + "_restored.rrd";
-        String logPath = testFolder.getRoot().getCanonicalPath() + "FILE" + ".log";
+        Path testDirectory = resolveTestsPath(testFolder, "TestDemo");
+        String rrdPath = testDirectory.resolve(FILE + ".rrd").toString();
+        String xmlPath = testDirectory.resolve(FILE + ".xml").toString();
+        String rrdRestoredPath = testDirectory.resolve(FILE + "_restored.rrd").toString();
+        String logPath = testDirectory.resolve(FILE + ".log").toString();
         PrintWriter log = new PrintWriter(new BufferedOutputStream(new FileOutputStream(logPath, false)));
 
         // creation
@@ -243,7 +237,6 @@ public class TestDemo {
         // close files
         rrdDb.close();
         rrdRestoredDb.close();
-
     }
 
     static class GaugeSource {

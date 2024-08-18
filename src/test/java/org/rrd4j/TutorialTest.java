@@ -27,7 +27,7 @@ import org.rrd4j.graph.RrdGraphDef;
  * @author Fabrice Bacchella
  *
  */
-public class TutorialTest {
+public class TutorialTest extends GraphTester {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
@@ -108,6 +108,7 @@ public class TutorialTest {
         graphDef.datasource("myspeed", root + "/test.rrd", "speed", ConsolFun.AVERAGE);
         graphDef.line("myspeed", new Color(0xFF, 0, 0), null, 2);
         graphDef.setFilename(root + "/speed.gif");
+        saveGraph(graphDef, testFolder, "TutorialTest", "testCode4");
         RrdGraph graph = new RrdGraph(graphDef);
         BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
         graph.render(bi.getGraphics());
@@ -121,7 +122,7 @@ public class TutorialTest {
         graphDef.datasource("myspeed", root + "/test.rrd", "speed", ConsolFun.AVERAGE);
         graphDef.datasource("realspeed", "myspeed,1000,*");
         graphDef.line("realspeed", new Color(0xFF, 0, 0), null, 2);
-        graphDef.setFilename(Paths.get(testFolder.getRoot().getAbsolutePath(), "speed2.gif").toString());
+        saveGraph(graphDef, testFolder, "TutorialTest", "testCode5");
         RrdGraph graph = new RrdGraph(graphDef);
         BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
         graph.render(bi.getGraphics());
@@ -140,6 +141,7 @@ public class TutorialTest {
         graphDef.area("fast", new Color(0xFF, 0, 0), "Too fast");
         graphDef.hrule(100, new Color(0, 0, 0xFF), "Maximum allowed");
         graphDef.setFilename(root + "/speed3.gif");
+        saveGraph(graphDef, testFolder, "TutorialTest", "testCode6");
         RrdGraph graph = new RrdGraph(graphDef);
         BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
         graph.render(bi.getGraphics());
@@ -160,6 +162,7 @@ public class TutorialTest {
         graphDef.stack("over", new Color(0xFF, 0, 0), "Over speed");
         graphDef.hrule(100, new Color(0, 0, 0xFF), "Maximum allowed");
         graphDef.setFilename(root + "/speed4.gif");
+        saveGraph(graphDef, testFolder, "TutorialTest", "testCode7");
         RrdGraph graph = new RrdGraph(graphDef);
         BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
         graph.render(bi.getGraphics());
@@ -211,6 +214,7 @@ public class TutorialTest {
         graphDef.line("outoctets", new Color(0, 0, 0xFF), "Out traffic", 1);
         graphDef.setFilename(root + "myrouter-day.gif");
         BufferedImage bi = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
+        saveGraph(graphDef, testFolder, "TutorialTest", "testCode10");
         RrdGraph graph = new RrdGraph(graphDef);
         graph.render(bi.getGraphics());
     }
@@ -249,6 +253,7 @@ public class TutorialTest {
         graphDef.setFilename(root + "all1.gif");
         graphDef.setWidth(400);
         graphDef.setHeight(400);
+        saveGraph(graphDef, testFolder, "TutorialTest", "testCode11");
         RrdGraph graph = new RrdGraph(graphDef);
         BufferedImage bim = new BufferedImage(400,400,BufferedImage.TYPE_INT_RGB);
         graph.render(bim.getGraphics());

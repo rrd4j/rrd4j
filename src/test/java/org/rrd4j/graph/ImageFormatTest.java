@@ -6,14 +6,18 @@ import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.GraphTester;
 import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdNioBackendFactory;
 
-public class ImageFormatTest {
-    private final static String rrdpath = ImageFormatTest.class.getResource("/demo1.rrd").getFile(); 
-    static private RrdBackendFactory previousBackend;
+public class ImageFormatTest extends GraphTester {
+
+    private static final String rrdpath = ImageFormatTest.class.getResource("/demo1.rrd").getFile();
+    private static RrdBackendFactory previousBackend;
 
     @BeforeClass
     public static void setBackendBefore() {
@@ -25,6 +29,9 @@ public class ImageFormatTest {
     public static void setBackendAfter() {
         RrdBackendFactory.setActiveFactories(previousBackend);
     }
+
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
 
     private RrdGraphDef doGraph() {
         RrdGraphDef gDef = new RrdGraphDef(1, 100);
@@ -45,6 +52,7 @@ public class ImageFormatTest {
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("jpeg");
         gDef.setImageQuality(0.99f);
+        saveGraph(gDef, testFolder, "ImageFormatTest", "testJPEG", "jpeg");
         doGraph(gDef);
     }
 
@@ -52,6 +60,7 @@ public class ImageFormatTest {
     public void testGIF() throws IOException {
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("gif");
+        saveGraph(gDef, testFolder, "ImageFormatTest", "testGIF", "gif");
         doGraph(gDef);
     }
 
@@ -59,6 +68,7 @@ public class ImageFormatTest {
     public void testPNG() throws IOException {
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("png");
+        saveGraph(gDef, testFolder, "ImageFormatTest", "testPNG", "png");
         doGraph(gDef);
     }
 
@@ -66,6 +76,7 @@ public class ImageFormatTest {
     public void testBMP() throws IOException {
         RrdGraphDef gDef = doGraph();
         gDef.setImageFormat("bmp");
+        saveGraph(gDef, testFolder, "ImageFormatTest", "testBMP", "bmp");
         doGraph(gDef);
     }
 

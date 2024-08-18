@@ -11,14 +11,18 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.rrd4j.ConsolFun;
+import org.rrd4j.GraphTester;
 import org.rrd4j.core.RrdBackendFactory;
 import org.rrd4j.core.RrdNioBackendFactory;
 
-public class ImageTest {
-    private static final String rrdpath = ImageFormatTest.class.getResource("/demo1.rrd").getFile(); 
-    static private RrdBackendFactory previousBackend;
+public class ImageTest extends GraphTester {
+
+    private static final String rrdpath = ImageFormatTest.class.getResource("/demo1.rrd").getFile();
+    private static RrdBackendFactory previousBackend;
 
     @BeforeClass
     public static void setBackendBefore() {
@@ -30,6 +34,9 @@ public class ImageTest {
     public static void setBackendAfter() {
         RrdBackendFactory.setActiveFactories(previousBackend);
     }
+
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Ignore
     @Test
@@ -48,6 +55,7 @@ public class ImageTest {
         gDef.setCanvasImage(getClass().getClassLoader().getResource("canvas.png").getFile());
         gDef.setColor(ElementsNames.canvas, new Color(0, 0, 0, 0));
         gDef.setAntiAliasing(false);
+        saveGraph(gDef, testFolder, "ImageTest", "testOne", "png");
 
         RrdGraph graph = new RrdGraph(gDef);
         BufferedImage wpImage = ImageIO.read(new ByteArrayInputStream(graph.getRrdGraphInfo().getBytes()));

@@ -94,7 +94,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
     @Test
     public void testBasicEmptyRrd() throws IOException {
         createGaugeRrd(100);
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testBasicEmptyRrd");
         checkForBasicGraph();
     }
 
@@ -107,7 +107,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
             Sample sample = rrd.createSample();
             sample.setAndUpdate(fiveMinutesAgo+":10");
         }
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testOneEntryInRrd");
         checkForBasicGraph();
     }
 
@@ -122,7 +122,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
                 sample.setAndUpdate(timestamp+":100");
             }
         }
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testTwoEntriesInRrd");
 
         expectMajorGridLine("   0");
         expectMajorGridLine("  30");
@@ -144,7 +144,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
                 sample.setAndUpdate(timestamp + ":" + i);
             }
         }
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testEntriesZeroTo100InRrd");
         expectMajorGridLine("   0");
         expectMajorGridLine("  25");
         expectMajorGridLine("  50");
@@ -166,7 +166,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
             sample.setAndUpdate(timestamp + ":" + (i -50));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testEntriesNeg50To100InRrd");
         expectMajorGridLine("-100");
         expectMajorGridLine(" -50");
         expectMajorGridLine("   0");
@@ -188,7 +188,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
             sample.setAndUpdate(timestamp + ":" + (i -55));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testEntriesNeg55To105InRrd");
         expectMajorGridLine("-120");
         expectMajorGridLine(" -60");
         expectMajorGridLine("   0");
@@ -210,7 +210,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
             sample.setAndUpdate(timestamp + ":" + (i -50));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testEntriesNeg50To0InRrd");
         expectMajorGridLine(" -52");
         expectMajorGridLine(" -39");
         expectMajorGridLine(" -26");
@@ -239,7 +239,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
             sample.setAndUpdate(timestamp + ":" + (i -80));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testEntriesNeg80To90InRrd");
         expectMajorGridLine(" -90");
         expectMajorGridLine(" -45");
         expectMajorGridLine("   0");
@@ -267,7 +267,7 @@ public class ValueAxisMrtgTest extends AxisTester<ValueAxisMrtg> {
             sample.setAndUpdate(timestamp + ":" + (i -80));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisMrtgTest", "testEntriesNeg80To80InRrd");
 
         // Original
         expectMajorGridLine(" -80");

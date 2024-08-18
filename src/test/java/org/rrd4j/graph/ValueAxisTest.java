@@ -108,7 +108,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
     @Test
     public void testBasicEmptyRrd() throws IOException {
         createGaugeRrd(100);
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testBasicEmptyRrd");
         checkForBasicGraph();
     }
 
@@ -121,7 +121,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         Sample sample = rrd.createSample();
         sample.setAndUpdate(fiveMinutesAgo+":10");
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testOneEntryInRrd");
         checkForBasicGraph();
     }
 
@@ -136,7 +136,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
             sample.setAndUpdate(timestamp+":100");
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testTwoEntriesInRrd");
 
         expectMajorGridLine("  90");
         expectMinorGridLines(1);
@@ -162,7 +162,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
             sample.setAndUpdate(timestamp + ":" + i);
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testEntriesZeroTo100InRrd");
         expectMinorGridLines(4);
         expectMajorGridLine("  50");
         expectMinorGridLines(4);
@@ -183,7 +183,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
             sample.setAndUpdate(timestamp + ":" + (i -50));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testEntriesNeg50To100InRrd");
         expectMajorGridLine(" -50");
         expectMinorGridLines(4);
         expectMajorGridLine("   0");
@@ -207,9 +207,8 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
             sample.setAndUpdate(timestamp + ":" + (i -55));
         }
         rrd.close();
-        prepareGraph();
-        /**
-         * Prior to JRB-12 fix, this was the behaviour.  Note the lack of a decent negative label
+        prepareGraph("ValueAxisTest", "testEntriesNeg55To105InRrd");
+        /* Prior to JRB-12 fix, this was the behaviour.  Note the lack of a decent negative label
                 expectMinorGridLines(3);
                 expectMajorGridLine("   0");
                 expectMinorGridLines(4);
@@ -237,7 +236,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
             sample.setAndUpdate(timestamp + ":" + (i -50));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testEntriesNeg50To0InRrd");
         expectMinorGridLines(2);
         expectMajorGridLine(" -40");
         expectMinorGridLines(3);
@@ -266,7 +265,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
             sample.setAndUpdate(timestamp + ":" + (i -80));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testEntriesNeg80To90InRrd");
         /**
          * Original behaviour; a single major X-axis label (0) only.
                 expectMinorGridLines(4);
@@ -299,7 +298,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
             sample.setAndUpdate(timestamp + ":" + (i -80));
         }
         rrd.close();
-        prepareGraph();
+        prepareGraph("ValueAxisTest", "testEntriesNeg80To80InRrd");
 
         // Original
         expectMinorGridLines(3);
