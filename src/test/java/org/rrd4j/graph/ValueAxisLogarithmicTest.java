@@ -55,7 +55,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
 
     @Override
     ValueAxisLogarithmic makeAxis(RrdGraph graph) {
-        return new ValueAxisLogarithmic(graph, imageWorker);
+        return new ValueAxisLogarithmic(graph, imageWorker, Locale.ENGLISH);
     }
 
     private void expectMajorGridLine(String label) {
@@ -172,7 +172,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
         }
         prepareGraph("ValueAxisLogarithmicTest", "testEntriesNeg50To100InRrd");
         expectMinorGridLines(5);
-        expectMajorGridLine("0e+00");
+        expectMajorGridLine("0");
         expectMajorGridLine("1e+01");
         expectMajorGridLine("1e+02");
         expectMajorGridLine("-1e+01");
@@ -213,7 +213,7 @@ public class ValueAxisLogarithmicTest extends AxisTester<ValueAxisLogarithmic> {
         prepareGraph("ValueAxisLogarithmicTest", "testEntriesNeg80To80InRrd");
 
         expectMinorGridLines(4);
-        expectMajorGridLine("0e+00");
+        expectMajorGridLine("0");
         expectMajorGridLine("1e+01");
         expectMajorGridLine("-1e+01");
 

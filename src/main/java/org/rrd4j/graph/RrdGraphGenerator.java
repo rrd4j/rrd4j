@@ -216,7 +216,7 @@ class RrdGraphGenerator {
                 if (gdef.altYMrtg) {
                     ok = new ValueAxisMrtg(this).draw();
                 } else if (gdef.logarithmic) {
-                    ok = new ValueAxisLogarithmic(this, worker).draw();
+                    ok = new ValueAxisLogarithmic(this, worker, gdef.locale).draw();
                 } else {
                     ok = new ValueAxis(this).draw();
                 }
@@ -560,6 +560,9 @@ class RrdGraphGenerator {
             if (im.maxval == 0.0) {
                 im.maxval = 1.0;
             }
+        }
+        if (gdef.logarithmic) {
+            im.log = LogService.resolve(im);
         }
     }
 

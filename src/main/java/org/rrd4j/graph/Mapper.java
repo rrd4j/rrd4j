@@ -13,7 +13,7 @@ class Mapper {
             pixieY = im.ysize / (im.maxval - im.minval);
         }
         else {
-            pixieY = im.ysize / (ValueAxisLogarithmic.log10(im.maxval) - ValueAxisLogarithmic.log10(im.minval));
+            pixieY = im.ysize / (im.log.applyAsDouble(im.maxval) - im.log.applyAsDouble(im.minval));
         }
     }
 
@@ -31,7 +31,7 @@ class Mapper {
                 yval = im.yorigin;
             }
             else {
-                yval = im.yorigin - pixieY * (ValueAxisLogarithmic.log10(value) - ValueAxisLogarithmic.log10(im.minval)) + 0.5;
+                yval = im.yorigin - pixieY * (im.log.applyAsDouble(value) - im.log.applyAsDouble(im.minval)) + 0.5;
             }
         }
         if (!gdef.rigid) {
