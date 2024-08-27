@@ -82,7 +82,10 @@ class TimeAxis extends Axis {
                 if (status == 0) {
                     long time = calendar.getTime().getTime() / 1000L;
                     int x = mapper.xtr(time);
-                    worker.drawLine(x, y0 - 1, x, y0 + 1, color, gdef.tickStroke);
+                    // skip ticks if zero width
+                    if (gdef.drawTicks()) {
+                        worker.drawLine(x, y0 - 1, x, y0 + 1, color, gdef.tickStroke);
+                    }
                     worker.drawLine(x, y0, x, y1, color, gdef.gridStroke);
                 }
                 findNextTime(tickSetting.minorUnit, tickSetting.minorUnitCount);
@@ -98,7 +101,10 @@ class TimeAxis extends Axis {
             if (status == 0) {
                 long time = calendar.getTime().getTime() / 1000L;
                 int x = mapper.xtr(time);
-                worker.drawLine(x, y0 - 2, x, y0 + 2, color, gdef.tickStroke);
+                // skip ticks if zero width
+                if (gdef.drawTicks()) {
+                    worker.drawLine(x, y0 - 2, x, y0 + 2, color, gdef.tickStroke);
+                }
                 worker.drawLine(x, y0, x, y1, color, gdef.gridStroke);
             }
             findNextTime(tickSetting.majorUnit, tickSetting.majorUnitCount);

@@ -37,7 +37,6 @@ public class PercentileTest {
 
     @Test
     public void testSampleVDEFPercentile1() throws Exception {
-
         long startTime = (int)( now / 1000);
         startTime -= (startTime % 300); 
         long endTime = startTime +  200 * 300;
@@ -54,7 +53,6 @@ public class PercentileTest {
 
         RrdGraphInfo info = graph.getRrdGraphInfo();
         Assert.assertNotNull("graph info object", info);
-
         String[] printLines = info.getPrintLines();
         Assert.assertNotNull("graph printLines", printLines);
         Assert.assertEquals("graph printLines size", 1, printLines.length);
@@ -64,7 +62,6 @@ public class PercentileTest {
 
     @Test
     public void testSampleVDEFPercentile2() throws Exception {
-
         long startTime = (int)( now / 1000);
         startTime -= (startTime % 300); 
         long endTime = startTime +  100 * 300;

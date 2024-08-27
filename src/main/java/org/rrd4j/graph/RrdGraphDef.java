@@ -1939,4 +1939,11 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
         return this.step;
     }
 
+    /**
+     * @since 3.10
+     */
+    boolean drawTicks() {
+        return tickStroke != null && ((! (tickStroke instanceof BasicStroke)) || ((BasicStroke)tickStroke).getLineWidth() > 0);
+    }
+
 }
