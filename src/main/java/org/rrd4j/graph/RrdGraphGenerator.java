@@ -63,8 +63,7 @@ class RrdGraphGenerator {
                 drawAxis();
                 drawText();
                 drawLegend();
-                drawRules();
-                drawSpans();
+                drawRulesAndSpans();
                 gator();
                 drawOverlay();
                 saveImage();
@@ -134,51 +133,61 @@ class RrdGraphGenerator {
         }
     }
 
-    private void drawRules() {
-        worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+    private void drawRulesAndSpans() {
+        boolean found = false;
         for (PlotElement pe : gdef.plotElements) {
             if (pe instanceof HRule) {
                 HRule hr = (HRule) pe;
                 if (hr.value >= im.minval && hr.value <= im.maxval) {
                     int y = mapper.ytr(hr.value);
+                    if (!found) {
+                        worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+                        found = true;
+                    }
                     worker.drawLine(im.xorigin, y, im.xorigin + im.xsize, y, hr.color, hr.stroke);
                 }
             } else if (pe instanceof VRule) {
                 VRule vr = (VRule) pe;
                 if (vr.timestamp >= im.start && vr.timestamp <= im.end) {
                     int x = mapper.xtr(vr.timestamp);
+                    if (!found) {
+                        worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+                        found = true;
+                    }
                     worker.drawLine(x, im.yorigin, x, im.yorigin - im.ysize, vr.color, vr.stroke);
                 }
             }
-        }
-        worker.reset();
-    }
-
-    private void drawSpans() {
-        worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
-        for (PlotElement pe : gdef.plotElements) {
-            if (pe instanceof HSpan) {
+            else if (pe instanceof HSpan) {
                 HSpan hr = (HSpan) pe;
                 int ys = mapper.ytr(hr.start);
                 int ye = mapper.ytr(hr.end);
                 int height = ys - ye;
+                if (!found) {
+                    worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+                    found = true;
+                }
                 worker.fillRect(im.xorigin, ys - height, im.xsize, height, hr.color);
             } else if (pe instanceof VSpan) {
                 VSpan vr = (VSpan) pe;
                 int xs = mapper.xtr(vr.start);
                 int xe = mapper.xtr(vr.end);
+                if (!found) {
+                    worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+                    found = true;
+                }
                 worker.fillRect(xs, im.yorigin - im.ysize, xe - xs, im.ysize, vr.color);
             }
         }
-        worker.reset();
+        if (found)
+            worker.reset();
     }
 
     private void drawText() {
         if (!gdef.onlyGraph) {
             worker.setTextAntiAliasing(gdef.textAntiAliasing);
             if (gdef.title != null) {
-                int x = im.xgif / 2 - (int) (worker.getStringWidth(gdef.title, gdef.getFont(RrdGraphConstants.FONTTAG_TITLE)) / 2);
-                int y = RrdGraphConstants.PADDING_TOP + (int) worker.getFontAscent(gdef.getFont(RrdGraphConstants.FONTTAG_TITLE));
+                int x = Math.max(2, im.xgif / 2 - (int) (worker.getStringWidth(gdef.title, gdef.getFont(RrdGraphConstants.FONTTAG_TITLE)) / 2));
+                int y = RrdGraphConstants.PADDING_TOP * 2 / 3 + (int) worker.getFontAscent(gdef.getFont(RrdGraphConstants.FONTTAG_TITLE));
                 worker.drawString(gdef.title, x, y, gdef.getFont(RrdGraphConstants.FONTTAG_TITLE), gdef.getColor(ElementsNames.font));
             }
             if (gdef.verticalLabel != null) {
@@ -300,6 +309,11 @@ class RrdGraphGenerator {
                     im.yorigin, xaxisColor, stroke);
             worker.drawLine(im.xorigin, im.yorigin + 4, im.xorigin,
                     im.yorigin - im.ysize - 4, yaxisColor, stroke);
+
+            // skip arrowheads if transparent
+            if ((arrowColor instanceof Color) && ((Color)arrowColor).getAlpha() == 0)
+                return;
+
             //Do X axis arrow
             double[] xArrowX = { im.xorigin + im.xsize + 4,
                     im.xorigin + im.xsize + 9, im.xorigin + im.xsize + 4, };
@@ -624,11 +638,17 @@ class RrdGraphGenerator {
                     if (c instanceof LegendText) {
                         // draw with BOX
                         worker.fillRect(x, y - box, box, box, gdef.getColor(ElementsNames.frame));
-                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2,
-                                gdef.getColor(ElementsNames.canvas));
-                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2,
-                                gdef.getColor(ElementsNames.back));
-                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, ((LegendText) c).legendColor);
+                        Paint bc = gdef.getColor(ElementsNames.back);
+                        Paint lc = ((LegendText) c).legendColor;
+                        boolean bt = bc.getTransparency() != Transparency.OPAQUE;
+                        boolean lt = lc.getTransparency() != Transparency.OPAQUE;
+                        // no use drawing unless both the two on top have some transparency
+                        if (bt && lt)
+                            worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, gdef.getColor(ElementsNames.canvas));
+                        // no use drawing unless the one on top has some transparency
+                        if (lt)
+                            worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, bc);
+                        worker.fillRect(x + 1, y - box + 1, box - 2, box - 2, lc);
                         worker.drawString(c.resolvedText, x + boxSpace, y,
                                 gdef.getFont(RrdGraphConstants.FONTTAG_LEGEND),
                                 gdef.getColor(ElementsNames.font));

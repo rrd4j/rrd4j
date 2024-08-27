@@ -3,7 +3,7 @@ package org.rrd4j.graph;
 class ValueScaler {
     static final String UNIT_UNKNOWN = "?";
     static final String[] UNIT_SYMBOLS = {
-            "a", "f", "p", "n", "u", "m", " ", "k", "M", "G", "T", "P", "E"
+            "a", "f", "p", "n", "µ", "m", " ", "k", "M", "G", "T", "P", "E"
     };
     static final int SYMB_CENTER = 6;
 
@@ -16,6 +16,9 @@ class ValueScaler {
     }
 
     Scaled scale(double value, boolean mustRescale) {
+        // avoid NaN in legend
+        if (Double.isNaN(value))
+            value = 0.0;
         Scaled scaled;
         if (mustRescale) {
             scaled = rescale(value);
