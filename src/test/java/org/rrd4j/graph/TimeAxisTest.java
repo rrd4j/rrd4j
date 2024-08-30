@@ -1,9 +1,5 @@
 package org.rrd4j.graph;
 
-import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.same;
-
 import java.awt.Font;
 import java.awt.Paint;
 import java.io.IOException;
@@ -11,7 +7,11 @@ import java.io.IOException;
 import org.junit.Test;
 import org.rrd4j.graph.RrdGraphConstants.FontConstructor;
 
-public class TimeAxisText extends AxisTester<TimeAxis> {
+import static org.easymock.EasyMock.anyInt;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.same;
+
+public class TimeAxisTest extends AxisTester<TimeAxis> {
 
     private void expectMajorGridLine() {
         //Note the use of "same" for the strokes; in RrdGraphConstants, these are both BasicStroke(1)
@@ -21,7 +21,6 @@ public class TimeAxisText extends AxisTester<TimeAxis> {
         imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(), eq(color), same(graphDef.tickStroke));
         //Horizontal tick on the right
         imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(), eq(color), same(graphDef.gridStroke));
-
     }
 
     private void expectMinorGridLines(int count) {
@@ -34,10 +33,11 @@ public class TimeAxisText extends AxisTester<TimeAxis> {
             imageWorker.drawLine(anyInt(), anyInt(), anyInt(), anyInt(), eq(color), same(graphDef.gridStroke));
         }
     }
+
     @Test
     public void firstTest() throws IOException {
         createGaugeRrd(100);
-        prepareGraph("TimeAxisText", "firstTest");
+        prepareGraph("TimeAxisTest", "firstTest");
 
         expectMinorGridLines(24);
         expectMajorGridLine();
