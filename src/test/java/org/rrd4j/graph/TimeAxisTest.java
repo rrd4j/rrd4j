@@ -1,21 +1,25 @@
 package org.rrd4j.graph;
 
-import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.same;
-
-import java.awt.Font;
-import java.awt.Paint;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.easymock.Capture;
+import org.easymock.CaptureType;
+import org.junit.Assert;
 import org.junit.Test;
-import org.rrd4j.graph.RrdGraphConstants.FontConstructor;
+
+import static org.easymock.EasyMock.anyInt;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.same;
 
 public class TimeAxisTest extends AxisTester<TimeAxis> {
 
     private Function<TimeUnit, Optional<TimeLabelFormat>> formatter;
+    Capture<String> labels = Capture.newInstance(CaptureType.ALL);
 
     private void expectMajorGridLine() {
         //Note the use of "same" for the strokes; in RrdGraphConstants, these are both BasicStroke(1)
@@ -43,18 +47,8 @@ public class TimeAxisTest extends AxisTester<TimeAxis> {
         formatter = t -> Optional.empty();
         createGaugeRrd(100);
         prepareGraph("TimeAxisTest", "firstTest");
-
-        expectMinorGridLines(24);
-        expectMajorGridLine();
-        expectMajorGridLine();
-        expectMajorGridLine();
-        expectMajorGridLine();
-        imageWorker.drawString("06:00", 132, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
-        imageWorker.drawString("12:00", 232, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
-        imageWorker.drawString("18:00", 332, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
-        imageWorker.drawString("00:00", 432, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
-
-        run();
+        runTest();
+        Assert.assertArrayEquals(new String[]{"06:00", "12:00", "18:00"}, labels.getValues().toArray());
     }
 
     @Override
@@ -72,24 +66,28 @@ public class TimeAxisTest extends AxisTester<TimeAxis> {
             }
         };
         createGaugeRrd(100);
-        prepareGraph("TimeAxisTest", "firstTest");
+        prepareGraph("TimeAxisTest", "customFormatting");
 
-        expectMinorGridLines(24);
-        expectMajorGridLine();
-        expectMajorGridLine();
-        expectMajorGridLine();
-        expectMajorGridLine();
-        imageWorker.drawString("06 00", 132, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
-        imageWorker.drawString("12 00", 232, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
-        imageWorker.drawString("18 00", 332, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
-        imageWorker.drawString("00 00", 432, 125, FontConstructor.getFont(Font.PLAIN, 10), java.awt.Color.BLACK);
+        runTest();
+        Assert.assertArrayEquals(new String[]{"06 00", "12 00", "18 00"}, labels.getValues().toArray());
 
-        run();
     }
 
     @Override
     TimeAxis makeAxis(RrdGraph graph) {
         return new TimeAxis(graph, imageWorker);
+    }
+
+    private void runTest() {
+        expectMinorGridLines(24);
+        expectMajorGridLine();
+        expectMajorGridLine();
+        expectMajorGridLine();
+        expectMajorGridLine();
+        imageWorker.drawString(capture(labels), eq(148), eq(125), anyObject(), anyObject());
+        imageWorker.drawString(capture(labels), eq(248), eq(125), anyObject(), anyObject());
+        imageWorker.drawString(capture(labels),  eq(348), eq(125), anyObject(), anyObject());
+        run();
     }
 
 }

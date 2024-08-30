@@ -212,8 +212,7 @@ class TimeAxis extends Axis {
     private void chooseTickSettings() {
         if (gdef.timeAxisSetting != null) {
             tickSetting = new TimeAxisSetting(gdef.timeAxisSetting);
-        }
-        else {
+        } else {
             for (TimeAxisSetting i: tickSettings) {
                 if (secPerPix < i.secPerPix) {
                     break;
