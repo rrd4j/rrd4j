@@ -1,9 +1,9 @@
 <settings>
     <servers>
         <server>
-            <id>ossrh</id>
-            <username>${env.SONAR_USER_TOKEN_USER}</username>
-            <password>${env.SONAR_USER_TOKEN_PASSWORD}</password>
+            <id>central</id>
+            <username>${env.MAVENCENTRAL_USERNAME}</username>
+            <password>${env.MAVENCENTRAL_PASSWORD}</password>
         </server>
     </servers>
     <profiles>
