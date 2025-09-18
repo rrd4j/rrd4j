@@ -33,7 +33,7 @@ import com.mongodb.connection.ServerDescription;
  * <p>A mongo factory is in the form <code>mongodb://host:port/dbName/collectionName/</code></p>
  *
  */
-@RrdBackendAnnotation(name="MONGODBNEW", shouldValidateHeader=false)
+@RrdBackendAnnotation(name="MONGODBNEW", shouldValidateHeader=false, scheme = "mongodb")
 public class RrdMongoDBNewBackendFactory extends RrdBackendFactory {
 
     private final URI rootUri;
