@@ -11,7 +11,7 @@ public class RrdMongoDBNewBackend extends RrdByteArrayBackend {
      * <p>Constructor for RrdMongoDBBackend.</p>
      *
      * @param path a {@link java.lang.String} object.
-     * @param rrdCollection a {@link MongoCollection<DBObject>} object.
+     * @param rrdCollection a {@link MongoCollection} object.
      */
     public RrdMongoDBNewBackend(String path, MongoCollection<DBObject> rrdCollection) {
         super(path);

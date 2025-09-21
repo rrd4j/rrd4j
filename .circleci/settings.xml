@@ -12,7 +12,8 @@
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.organization>${env.SONARCLOUD_ORG}</sonar.organization>
-                <sonar.login>${env.SONARCLOUD_LOGIN}</sonar.login>
+                <sonar.token>${env.SONAR_TOKEN}</sonar.token>
+                <sonar.projectKey>org.rrd4j:rrd4j</sonar.projectKey>
             </properties>
         </profile>
         <profile>

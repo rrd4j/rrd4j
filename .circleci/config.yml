@@ -56,7 +56,7 @@ jobs:
                   command: |
                       # If no symbolic name, it's a PR, will run sonar
                       if [ -n "$(git symbolic-ref HEAD 2>/dev/null )" ] ; then
-                          SONAR="jacoco:report sonar:sonar -Psonar -Dsonar.projectKey=$SONARCLOUD_PROJECTKEY"
+                          SONAR="jacoco:report sonar:sonar -Psonar"
                           echo "Doing sonar"
                       else
                           SONAR=""
@@ -87,6 +87,7 @@ jobs:
               mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
         - run:
             command: |
+                mkdir -p /tmp/$CIRCLE_JOB
                 mvn -B verify -Pskip -Darg.line="-Xmx2048m -Djava.io.tmpdir=/tmp/$CIRCLE_JOB" -s .circleci/settings.xml
             environment:
               MAVEN_OPTS: "-Xmx512m"
@@ -108,6 +109,7 @@ jobs:
                       mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
             - run:
                   command: |
+                      mkdir -p /tmp/$CIRCLE_JOB
                       mvn -B verify -Pskip -Darg.line="-Xmx2048m -Djava.io.tmpdir=/tmp/$CIRCLE_JOB" -s .circleci/settings.xml
                   environment:
                       MAVEN_OPTS: "-Xmx512m"
@@ -129,7 +131,8 @@ jobs:
                     mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
             - run:
                 command: |
-                    mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
+                    mkdir -p /tmp/$CIRCLE_JOB
+                    mvn -B verify -Pskip -Darg.line="-Xmx2048m -Djava.io.tmpdir=/tmp/$CIRCLE_JOB" -s .circleci/settings.xml
                 environment:
                     MAVEN_OPTS: "-Xmx512m"
             - store_test_results:
@@ -150,7 +153,8 @@ jobs:
                     mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
             - run:
                 command: |
-                    mvn -B test -Pskip -Darg.line="-Xmx2048m" -s .circleci/settings.xml
+                    mkdir -p /tmp/$CIRCLE_JOB
+                    mvn -B verify -Pskip -Darg.line="-Xmx2048m -Djava.io.tmpdir=/tmp/$CIRCLE_JOB" -s .circleci/settings.xml
                 environment:
                     MAVEN_OPTS: "-Xmx512m"
             - store_test_results:
@@ -223,7 +227,9 @@ workflows:
           requires:
               - testsj8
               - testsj11
+              - testsj17
               - testsj21
+              - testsj24
       - savecache:
           requires:
               - publish
