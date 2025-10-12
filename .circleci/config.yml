@@ -2,7 +2,7 @@ version: 2.1
 jobs:
     checkout:
         docker:
-            - image: cimg/openjdk:24.0
+            - image: cimg/openjdk:25.0
         steps:
             - checkout
             - restore_cache:
@@ -22,7 +22,7 @@ jobs:
                     - home/circleci/project
     build:
         docker:
-            - image: cimg/openjdk:24.0
+            - image: cimg/openjdk:25.0
         steps:
             - attach_workspace:
                 at: /tmp/ws
@@ -40,9 +40,9 @@ jobs:
                 paths:
                     - home/circleci/.m2/repository
                     - home/circleci/project
-    testsj24:
+    testsj25:
         docker:
-            - image: cimg/openjdk:24.0
+            - image: cimg/openjdk:25.0
             - image: mongo:5
         steps:
             - attach_workspace:
@@ -162,7 +162,7 @@ jobs:
             #don't persist_to_workspace, can't be done in parallel with other tests
     publish:
         docker:
-            - image: cimg/openjdk:24.0
+            - image: cimg/openjdk:25.0
         steps:
             - attach_workspace:
                 at: /tmp/ws
@@ -185,7 +185,7 @@ jobs:
                     - home/circleci/.sonar/cache
     savecache:
         docker:
-            - image: cimg/openjdk:24.0
+            - image: cimg/openjdk:25.0
         steps:
             - attach_workspace:
                 at: /tmp/ws
@@ -220,7 +220,7 @@ workflows:
       - testsj21:
             requires:
                 - build
-      - testsj24:
+      - testsj25:
           requires:
             - build
       - publish:
@@ -229,7 +229,7 @@ workflows:
               - testsj11
               - testsj17
               - testsj21
-              - testsj24
+              - testsj25
       - savecache:
           requires:
               - publish
