@@ -47,12 +47,12 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
-            <version>4.11.2</version>
+            <version>5.6.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
+            <artifactId>mongodb-driver-legacy</artifactId>
             <version>3.12.14</version>
             <optional>true</optional>
         </dependency>

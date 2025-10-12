@@ -43,7 +43,7 @@ jobs:
     testsj24:
         docker:
             - image: cimg/openjdk:24.0
-            - image: mongo:3
+            - image: mongo:5
         steps:
             - attach_workspace:
                   at: /tmp/ws
@@ -75,7 +75,7 @@ jobs:
     testsj21:
       docker:
         - image: cimg/openjdk:21.0
-        - image: mongo:3
+        - image: mongo:5
       steps:
         - attach_workspace:
             at: /tmp/ws
@@ -97,7 +97,7 @@ jobs:
     testsj17:
         docker:
             - image: cimg/openjdk:17.0
-            - image: mongo:3
+            - image: mongo:5
         steps:
             - attach_workspace:
                   at: /tmp/ws
@@ -119,7 +119,7 @@ jobs:
     testsj11:
         docker:
             - image: cimg/openjdk:11.0
-            - image: mongo:3
+            - image: mongo:5
         steps:
             - attach_workspace:
                 at: /tmp/ws
@@ -141,7 +141,7 @@ jobs:
     testsj8:
         docker:
             - image: cimg/openjdk:8.0
-            - image: mongo:3
+            - image: mongo:5
         steps:
             - attach_workspace:
                 at: /tmp/ws
