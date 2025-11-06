@@ -3,6 +3,7 @@ package org.rrd4j.graph;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.function.Function;
 
 import org.easymock.Capture;
@@ -54,6 +55,7 @@ public class TimeAxisTest extends AxisTester<TimeAxis> {
     @Override
     void setupGraphDef() {
         graphDef.setTimeLabelFormatter(formatter);
+        graphDef.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Test
