@@ -11,7 +11,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -25,6 +27,19 @@ public class RrdBerkleyDbTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
+
+    static private RrdBackendFactory previousBackend;
+
+    @BeforeClass
+    public static void setBackendBefore() {
+        previousBackend = RrdBackendFactory.getDefaultFactory();
+        RrdBackendFactory.setActiveFactories(new RrdRandomAccessFileBackendFactory());
+    }
+
+    @AfterClass
+    public static void setBackendAfter() {
+        RrdBackendFactory.setActiveFactories(previousBackend);
+    }
 
     @Test
     public void test1() throws IOException, URISyntaxException {
