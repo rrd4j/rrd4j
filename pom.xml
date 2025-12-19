@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.plugin.surefire.version>3.5.4</maven.plugin.surefire.version>
         <junit.version>4.13.2</junit.version>
-        <log4j.version>2.23.1</log4j.version>
+        <log4j.version>2.25.3</log4j.version>
         <pax-exam.version>4.13.5</pax-exam.version>
         <!-- current year. -->
         <year>2025</year>
