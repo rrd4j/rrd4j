@@ -65,15 +65,18 @@ public class PerfectStringHash implements Hash<String> {
      * priority over character ordering because the hash algorithm prefers to
      * compare lengths, it's faster.
      */
-
-    private static final Comparator<String> comparator = (s1, s2) -> {
-        final int h1 = s1.hashCode();
-        final int h2 = s2.hashCode();
-        if (h1 == h2) {
-            final int d = s1.length() - s2.length();
-            return d == 0 ? s1.compareTo(s2) : d;
+    private static Comparator<String> comparator = (s1, s2) -> {
+        if (s1 == null || s2 == null) {
+            throw new IllegalArgumentException("Not allowed null string");
         }
-        return h1 < h2 ? -1 : 1;
+        int h1 = s1.hashCode();
+        int h2 = s2.hashCode();
+        if (h1 == h2) {
+            int d = s1.length() - s2.length();
+            return d == 0 ? s1.compareTo(s2) : d;
+        } else {
+            return h1 < h2 ? -1 : 1;
+        }
     };
 
     /**
@@ -92,54 +95,54 @@ public class PerfectStringHash implements Hash<String> {
      *            the index at which the tree should be written
      */
     private static void generatePivots(String[] values, int start, int length, int[] pivots, int pivotIndex) {
-        final int capacity = Integer.highestOneBit(length - 1) << 1;
-        final int depth = Integer.numberOfTrailingZeros(capacity);
+        int capacity = Integer.highestOneBit(length - 1) << 1;
+        int depth = Integer.numberOfTrailingZeros(capacity);
         pivots[ pivotIndex << 1     ] = depth;
         pivots[(pivotIndex << 1) + 1] = length;
         pivotIndex++;
         //build the array
         for (int i = 0; i < depth; i++) {
             int step = capacity >> i;
-        for (int j = (1 << (depth-i-1)) - 1; j < capacity; j += step) {
-            final int part;
-            final int comp;
-            if (j >= length - 1) {
-                part = Integer.MIN_VALUE;
-                comp = 0;
-            } else {
-                final String v1 = values[start + j];
-                final String v2 = values[start + j + 1];
-                final int l1 = v1.length();
-                final int l2 = v2.length();
-                if (l1 == l2) {
-                    int tPart = -1;
-                    int tComp = -1;
-                    for (int k = 0; k < l1; k++) {
-                        final char c1 = v1.charAt(k);
-                        final char c2 = v2.charAt(k);
-                        if (c1 == c2) continue;
-                        if (c1 < c2) { //must occur at some point because we have already checked that the two strings are unequal
-                            tPart = k;
-                            tComp = c1;
-                        } else {
-                            //shouldn't be possible - we've sorted the strings to avoid this case
-                            throw new IllegalStateException();
-                        }
-                        break;
-                    }
-                    //check if we've been passed a duplicated value
-                    if (tPart == -1) throw new IllegalArgumentException("duplicate value: " + v1);
-                    part = tPart;
-                    comp = tComp;
+            for (int j = (1 << (depth-i-1)) - 1; j < capacity; j += step) {
+                int part;
+                int comp;
+                if (j >= length - 1) {
+                    part = Integer.MIN_VALUE;
+                    comp = 0;
                 } else {
-                    part = -1;
-                    comp = l1;
+                    String v1 = values[start + j];
+                    String v2 = values[start + j + 1];
+                    int l1 = v1.length();
+                    int l2 = v2.length();
+                    if (l1 == l2) {
+                        int tPart = -1;
+                        int tComp = -1;
+                        for (int k = 0; k < l1; k++) {
+                            char c1 = v1.charAt(k);
+                            char c2 = v2.charAt(k);
+                            if (c1 == c2) continue;
+                            if (c1 < c2) { //must occur at some point because we have already checked that the two strings are unequal
+                                tPart = k;
+                                tComp = c1;
+                            } else {
+                                //shouldn't be possible - we've sorted the strings to avoid this case
+                                throw new IllegalStateException();
+                            }
+                            break;
+                        }
+                        //check if we've been passed a duplicated value
+                        if (tPart == -1) throw new IllegalArgumentException("duplicate value: " + v1);
+                        part = tPart;
+                        comp = tComp;
+                    } else {
+                        part = -1;
+                        comp = l1;
+                    }
                 }
+                pivots[ pivotIndex<<1     ] = part;
+                pivots[(pivotIndex<<1) + 1] = comp;
+                pivotIndex++;
             }
-            pivots[ pivotIndex<<1     ] = part;
-            pivots[(pivotIndex<<1) + 1] = comp;
-            pivotIndex++;
-        }
         }
     }
 
@@ -181,45 +184,47 @@ public class PerfectStringHash implements Hash<String> {
      *            such that <code>hash(values[i]) == i</code>.
      */
 
-    public PerfectStringHash(final String[] values) {
-        final int length = values.length;
-        if (length == 0) throw new IllegalArgumentException("No values supplied");
+    public PerfectStringHash(String[] values) {
+        if (values == null || values.length == 0) throw new IllegalArgumentException("No values supplied");
 
-        final int[] hashes = new int[length];
-        final int[] offsets = new int[2 * length];
-        final int[] runLengths = new int[length];
+        int length = values.length;
+        int[] newHashes = new int[length];
+        int[] newOffsets = new int[2 * length];
+        int[] runLengths = new int[length];
 
         //sort values so that we can assume ordering by hashcode, length and char[]
         Arrays.sort(values, comparator);
 
         //pull the hashcodes into an array for analysis
-        for (int i = 0; i < length; i++) hashes[i] = values[i].hashCode();
+        for (int i = 0; i < length; i++) {
+            newHashes[i] = values[i].hashCode();
+        }
 
         //test for unique hashes
         int offset = 0;
         if (length > 1) {
-            int previousHash = hashes[0];
+            int previousHash = newHashes[0];
             int runLength = 1;
             for (int i = 1; i <= length; i++) {
-                int currentHash = i == length ? ~previousHash : hashes[i];
+                int currentHash = i == length ? ~previousHash : newHashes[i];
                 if (currentHash == previousHash) {
                     runLength++;
                 } else {
                     if (runLength > 1) {
-                        final int firstIndex = i - runLength;
+                        int firstIndex = i - runLength;
                         for (int j = i - 1; j >= firstIndex; j--) {
                             runLengths[j] = runLength;
                             //offset points to the first node in decision tree
-                            offsets[ j<<1     ] = offset;
+                            newOffsets[ j<<1     ] = offset;
                             //adjustment is number of indices to first duplicate
-                            offsets[(j<<1) + 1] = j - firstIndex;
+                            newOffsets[(j<<1) + 1] = j - firstIndex;
                         }
                         //extra one for recording depth
                         offset += (Integer.highestOneBit(runLength - 1) << 1);
                         runLength = 1;
                     } else {
                         runLengths[i-1] = 1;
-                        offsets[(i-1)<<1] = -1;
+                        newOffsets[(i-1)<<1] = -1;
                     }
                 }
                 previousHash = currentHash;
@@ -228,7 +233,7 @@ public class PerfectStringHash implements Hash<String> {
 
         //shortcut for when all hashes are unique
         if (offset == 0) {
-            this.hashes = hashes;
+            this.hashes = newHashes;
             this.offsets = null;
             this.pivots = null;
             this.range = new HashRange(0, length - 1);
@@ -236,17 +241,17 @@ public class PerfectStringHash implements Hash<String> {
         }
 
         //build the decision trees
-        final int[] pivots = new int[offset * 2];
+        int[] newPivots = new int[offset * 2];
         for (int i = 0; i < length;) {
-            final int runLength = runLengths[i];
-            if (runLength > 1)  generatePivots(values, i, runLength, pivots, offsets[i << 1]);
+            int runLength = runLengths[i];
+            if (runLength > 1)  generatePivots(values, i, runLength, newPivots, newOffsets[i << 1]);
             i += runLength;
         }
 
-        //setup our state
-        this.pivots = pivots;
-        this.offsets = offsets;
-        this.hashes = hashes;
+        //set up our state
+        this.pivots = newPivots;
+        this.offsets = newOffsets;
+        this.hashes = newHashes;
         this.range = new HashRange(0, length - 1);
     }
 
@@ -282,22 +287,22 @@ public class PerfectStringHash implements Hash<String> {
      */
 
     private int hash(String value) {
-        final int h = value.hashCode();
-        final int index = Arrays.binarySearch(hashes, h);
-        final int[] pivots = this.pivots;
-        if (pivots == null || index < 0) return index;
+        int h = value.hashCode();
+        int index = Arrays.binarySearch(hashes, h);
+        int[] workingPivots = this.pivots;
+        if (workingPivots == null || index < 0) return index;
 
-        final int offset = offsets[index << 1];
+        int offset = offsets[index << 1];
         if (offset == -1) return index;
 
-        final int depth = pivots[(offset << 1)    ];
-        final int count = pivots[(offset << 1) + 1];
+        int depth = workingPivots[(offset << 1)    ];
+        int count = workingPivots[(offset << 1) + 1];
         int i = 0;
         for (int d = 0; d < depth; d++) {
-            final int t = (offset + (1 << d) + i) << 1;
-            final int part = pivots[t    ];
-            final int comp = pivots[t + 1];
-            final boolean right;
+            int t = (offset + (1 << d) + i) << 1;
+            int part = workingPivots[t    ];
+            int comp = workingPivots[t + 1];
+            boolean right;
             if (part == Integer.MIN_VALUE) { //easy case - no right value
                 right = false;
             } else if (part == -1) { //compare length
