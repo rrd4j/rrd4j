@@ -143,7 +143,7 @@ public class RrdDbPool {
      * @return Array with {@link URI} to open RRD held in the pool.
      */
     public URI[] getOpenUri() {
-        return pool.keySet().stream().toArray(URI[]::new);
+        return pool.keySet().toArray(URI[]::new);
     }
 
     /**
