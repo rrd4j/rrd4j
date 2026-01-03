@@ -4,7 +4,8 @@ jobs:
         docker:
             - image: cimg/openjdk:25.0
         steps:
-            - checkout
+            - checkout:
+                method: full
             - restore_cache:
                 key: rrd4j-{{ checksum "pom.xml" }}
             - run: mkdir -p /home/circleci/.sonar/cache /home/circleci/.m2/repository
