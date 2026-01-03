@@ -5,6 +5,7 @@ import java.awt.Paint;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.ToLongBiFunction;
@@ -495,12 +496,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             }
         }
         if (datasource != null) {
-            if (color != null) {
-                rrdGraphDef.stack(datasource, color, legend);
-            }
-            else {
-                rrdGraphDef.stack(datasource, BLIND_COLOR, legend);
-            }
+            rrdGraphDef.stack(datasource, Objects.requireNonNullElse(color, BLIND_COLOR), legend);
         }
         else {
             throw new IllegalArgumentException("Incomplete STACK settings");
@@ -531,12 +527,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             }
         }
         if (datasource != null) {
-            if (color != null) {
-                rrdGraphDef.line(datasource, color, legend, width);
-            }
-            else {
-                rrdGraphDef.line(datasource, BLIND_COLOR, legend, width);
-            }
+            rrdGraphDef.line(datasource, Objects.requireNonNullElse(color, BLIND_COLOR), legend, width);
         }
         else {
             throw new IllegalArgumentException("Incomplete LINE settings");
@@ -563,12 +554,7 @@ public class RrdGraphDefTemplate extends XmlTemplate implements RrdGraphConstant
             }
         }
         if (datasource != null) {
-            if (color != null) {
-                rrdGraphDef.area(datasource, color, legend);
-            }
-            else {
-                rrdGraphDef.area(datasource, BLIND_COLOR, legend);
-            }
+            rrdGraphDef.area(datasource, Objects.requireNonNullElse(color, BLIND_COLOR), legend);
         }
         else {
             throw new IllegalArgumentException("Incomplete AREA settings");
