@@ -267,8 +267,6 @@ public class RrdDbPoolTest {
                 l.countDown();
                 Thread.sleep(100);
                 done.set(true);
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
             } catch (IllegalArgumentException e) {
                 e.getCause().printStackTrace();
             } catch (Throwable e) {
