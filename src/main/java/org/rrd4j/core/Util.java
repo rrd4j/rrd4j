@@ -376,7 +376,7 @@ public class Util {
      * @return File system separator ("/" on Unix, "\" on Windows)
      */
     public static String getFileSeparator() {
-        return System.getProperty("file.separator");
+        return FileSystems.getDefault().getSeparator();
     }
 
     /**

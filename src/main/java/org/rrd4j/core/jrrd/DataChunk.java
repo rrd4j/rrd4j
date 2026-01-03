@@ -14,7 +14,7 @@ import org.rrd4j.data.LinearInterpolator;
 @SuppressWarnings("deprecation")
 public class DataChunk {
 
-    private static final String NEWLINE = System.getProperty("line.separator");
+    private static final String NEWLINE = System.lineSeparator();
     /** Start time in seconds since epoch */
     private final long startTime;
     /** Row number offset relative to current row. Can be negative */
