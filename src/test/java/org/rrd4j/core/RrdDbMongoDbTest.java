@@ -1,7 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -36,7 +36,7 @@ public class RrdDbMongoDbTest {
     @Ignore
     @Test
     public void testLifeCycle() throws IOException {
-        try (MongoClient mongoClient = new MongoClient(Arrays.asList(new ServerAddress("localhost")),
+        try (MongoClient mongoClient = new MongoClient(List.of(new ServerAddress("localhost")),
                 new MongoClientOptions.Builder()
                         .serverSelectionTimeout(2000)
                         .minConnectionsPerHost(0)

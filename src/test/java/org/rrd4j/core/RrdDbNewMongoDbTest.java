@@ -1,7 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 import org.bson.UuidRepresentation;
 import org.junit.AfterClass;
@@ -37,7 +37,8 @@ public class RrdDbNewMongoDbTest {
     public void testLifeCycle() throws IOException {
         MongoClientSettings settings = MongoClientSettings.builder()
                                                .uuidRepresentation( UuidRepresentation.JAVA_LEGACY )
-                                               .applyToClusterSettings( builder -> builder.hosts( Arrays.asList( new ServerAddress( "localhost", 27017 ) ) ) )
+                                               .applyToClusterSettings(builder -> builder.hosts(
+                                                       List.of(new ServerAddress("localhost", 27017))) )
                                                .build();
 
         ;
