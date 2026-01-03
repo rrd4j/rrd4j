@@ -3,7 +3,6 @@ package org.rrd4j;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -1,7 +1,6 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
