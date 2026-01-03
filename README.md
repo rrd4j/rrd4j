@@ -55,6 +55,7 @@ import java.awt.Color;
 import org.rrd4j.core.*;
 import org.rrd4j.graph.*;
 import static org.rrd4j.ConsolFun.*;
+import static org.rrd4j.DsType.*;
 
 String rrdPath = "my.rrd";
 
@@ -63,6 +64,9 @@ RrdDef rrdDef = new RrdDef(rrdPath, 300);
 rrdDef.addArchive(AVERAGE, 0.5, 1, 600); // 1 step, 600 rows
 rrdDef.addArchive(AVERAGE, 0.5, 6, 700); // 6 steps, 700 rows
 rrdDef.addArchive(MAX, 0.5, 1, 600);
+
+rrdDef.addDatasource("inbytes", COUNTER, 600, 0, Double.NaN);
+rrdDef.addDatasource("outbytes", COUNTER, 600, 0, Double.NaN);
 
 // then, create a RrdDb from the definition and start adding data
 try (RrdDb rrdDb = RrdDb.getBuilder().setRrdDef(rrdDef).build()) {
