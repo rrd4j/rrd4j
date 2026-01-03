@@ -1123,9 +1123,7 @@ public class DataProcessor implements DataHolder {
 
     private static String format(String s, int length) {
         StringBuilder b = new StringBuilder(s);
-        for (int i = 0; i < length - s.length(); i++) {
-            b.append(' ');
-        }
+        b.append(" ".repeat(Math.max(0, length - s.length())));
         return b.toString();
     }
 
