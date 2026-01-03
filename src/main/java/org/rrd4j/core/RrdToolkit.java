@@ -559,11 +559,10 @@ public class RrdToolkit {
     }
 
     private static String createSplitPath(String dsName, String sourcePath) {
-        File file = new File(sourcePath);
-        String newName = dsName + "-" + file.getName();
-        String path = file.getAbsolutePath();
-        String parentDir = path.substring(0, 1 + path.lastIndexOf(Util.getFileSeparator()));
-        return parentDir + newName;
+        Path file = Paths.get(sourcePath);
+        Path parent = file.getParent();
+        String newName = dsName + "-" + file.getFileName().toString();
+        return parent.resolve(newName).toString();
     }
 
 }
