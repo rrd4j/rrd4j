@@ -481,9 +481,9 @@ public class DataProcessor implements DataHolder {
     }
 
     /**
-     * Adds a custom, {@link org.rrd4j.data.Plottable plottable} datasource (<b>PDEF</b>).
+     * Adds a custom, {@link org.rrd4j.data.IPlottable plottable} datasource (<b>PDEF</b>).
      * The datapoints should be made available by a class extending
-     * {@link org.rrd4j.data.Plottable Plottable} class.
+     * {@link org.rrd4j.data.IPlottable Plottable} class.
      *
      * @param name      source name.
      * @param plottable class that extends Plottable class and is suited for graphing.
