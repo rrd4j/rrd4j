@@ -838,7 +838,7 @@ public class RrdDef {
         int result = 1;
         result = prime * result + ((arcDefs == null) ? 0 : arcDefs.hashCode());
         result = prime * result + ((dsDefs == null) ? 0 : dsDefs.hashCode());
-        result = prime * result + (int) (step ^ (step >>> 32));
+        result = prime * result + Long.hashCode(step);
         return result;
     }
 
