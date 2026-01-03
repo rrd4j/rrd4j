@@ -1,4 +1,10 @@
 =======
+Changes in version 4.0 - TOBEDONE.
+-------------------------------
+
+Minimum java version is now 11.
+
+=======
 Changes in version 3.10 - 3 jan 2026.
 -------------------------------
 

@@ -4,8 +4,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
+import org.jfree.svg.SVGGraphics2D;
 
 public class SVGImageWorker extends ImageWorker {
     private SVGGraphics2D g2d;
@@ -32,7 +33,7 @@ public class SVGImageWorker extends ImageWorker {
     }
 
     protected void makeImage(OutputStream os) throws IOException {
-        os.write(g2d.getSVGDocument().getBytes("UTF-8"));
+        os.write(g2d.getSVGDocument().getBytes(StandardCharsets.UTF_8));
     }
 
     /**

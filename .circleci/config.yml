@@ -139,28 +139,6 @@ jobs:
             - store_test_results:
                 path: target/surefire-reports
             #don't persist_to_workspace, can't be done in parallel with other tests
-    testsj8:
-        docker:
-            - image: cimg/openjdk:8.0
-            - image: mongo:5
-        steps:
-            - attach_workspace:
-                at: /tmp/ws
-            - run:
-                command: |
-                    mv -n /tmp/ws/home/circleci/.m2 /home/circleci/
-                    mv -n /tmp/ws/home/circleci/.sonar /home/circleci/
-                    mv -n /tmp/ws/home/circleci/project/* /home/circleci/project/
-                    mv -n /tmp/ws/home/circleci/project/.??* /home/circleci/project/
-            - run:
-                command: |
-                    mkdir -p /tmp/$CIRCLE_JOB
-                    mvn -B verify -Pskip -Darg.line="-Xmx2048m -Djava.io.tmpdir=/tmp/$CIRCLE_JOB" -s .circleci/settings.xml
-                environment:
-                    MAVEN_OPTS: "-Xmx512m"
-            - store_test_results:
-                path: target/surefire-reports
-            #don't persist_to_workspace, can't be done in parallel with other tests
     publish:
         docker:
             - image: cimg/openjdk:25.0
@@ -209,9 +187,6 @@ workflows:
       - build:
           requires:
               - checkout
-      - testsj8:
-          requires:
-              - build
       - testsj11:
           requires:
               - build
@@ -226,7 +201,6 @@ workflows:
             - build
       - publish:
           requires:
-              - testsj8
               - testsj11
               - testsj17
               - testsj21

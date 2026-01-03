@@ -12,6 +12,7 @@
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>11</maven.compiler.release>
         <maven.plugin.surefire.version>3.5.4</maven.plugin.surefire.version>
         <junit.version>4.13.2</junit.version>
         <log4j.version>2.25.3</log4j.version>
@@ -22,6 +23,7 @@
         <!-- Indirection needed to keep optionnal jacoco settings and external argument lines during tests-->
         <!-- to use, add -Darg.line=... instead of -DargLine=-->
         <arg.line></arg.line>
+        <argLine>${arg.line} --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
         <!-- Setting for OSGI -->
         <manifestPath>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestPath>
         <bnd.fixupmessages>"Classes found in the wrong directory"; is:=warning</bnd.fixupmessages>
@@ -121,9 +123,8 @@
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
-            <artifactId>jfreesvg</artifactId>
-            <!-- Don't update major version, version 4 drop support of java 1.8 -->
-            <version>3.4.4</version>
+            <artifactId>org.jfree.svg</artifactId>
+            <version>5.0.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -271,7 +272,7 @@
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
-                    <!-- Don't upgrade, latter versions fails on Java 8 -->
+                    <!-- Don't update to 7.x.x, it's based on java 17-->
                     <version>6.4.0</version>
                 </plugin>
                 <plugin>
@@ -282,10 +283,6 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>
@@ -476,6 +473,9 @@ Export-Package: org.rrd4j, \
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <excludePackageNames>org.rrd4j.demo,org.rrd4j.converter,org.rrd4j.inspector</excludePackageNames>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -510,51 +510,6 @@ Export-Package: org.rrd4j, \
         </plugins>
     </reporting>
     <profiles>
-        <profile>
-            <id>java8</id>
-            <activation>
-                <jdk>1.8</jdk>
-            </activation>
-            <properties>
-                <maven.compiler.source>1.8</maven.compiler.source>
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <argLine>${arg.line}</argLine>
-            </properties>
-        </profile>
-        <profile>
-            <id>notjava8</id>
-            <activation>
-                <jdk>(1.8,)</jdk>
-            </activation>
-            <properties>
-                <maven.compiler.release>8</maven.compiler.release>
-                <argLine>${arg.line} --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>compile-java-9</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <configuration>
-                                    <release>9</release>
-                                    <compileSourceRoots>
-                                        <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
-                                    </compileSourceRoots>
-                                    <multiReleaseOutput>true</multiReleaseOutput>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>sonar</id>
             <build>
