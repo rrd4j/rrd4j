@@ -15,7 +15,7 @@
         <maven.compiler.release>11</maven.compiler.release>
         <maven.plugin.surefire.version>3.5.4</maven.plugin.surefire.version>
         <junit.version>4.13.2</junit.version>
-        <log4j.version>2.25.3</log4j.version>
+        <log4j.version>2.25.4</log4j.version>
         <!-- 4.14 dropped support of Java 8 -->
         <pax-exam.version>4.13.5</pax-exam.version>
         <!-- current year. -->
