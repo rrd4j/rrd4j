@@ -134,6 +134,16 @@ public class VariableTest {
         dp.processData();
         return dp;
     }
+    
+    //A range that is results in a single data point
+    private DataProcessor getDp4(Variable v) throws IOException {
+        DataProcessor dp = new DataProcessor(startTime, startTime + step);
+        dp.datasource("baz", fileName, "bar", ConsolFun.AVERAGE, backend);
+        dp.datasource("value", "baz", v);
+        dp.processData();
+        return dp;
+      
+    }
 
     @Test
     public void test95Percentile() throws Exception {        
@@ -280,6 +290,13 @@ public class VariableTest {
         DataProcessor dp = getDp3(new Variable.TOTAL());
         // rrdtools says 9.896720700000000e+09
         Assert.assertEquals("Wrong total", 9.896720700000000e+09, dp.getVariable("value").value, 1e-6);
+    }
+    
+    @Test
+    public void testTotal4() throws Exception {
+        DataProcessor dp = getDp4(new Variable.TOTAL());
+        double expected = vals[1]*step; // The total should be the value at the first step multiplied by the step size
+        Assert.assertEquals("Wrong total", expected, dp.getVariable("value").value, 1e-6);
     }
 
     @Test

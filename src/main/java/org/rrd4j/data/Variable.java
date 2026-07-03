@@ -90,7 +90,7 @@ public abstract class Variable {
             System.arraycopy(s.timestamps, first, timestamps, 0, timestamps.length);
             double[] values = new double[ last - first + 1];
             System.arraycopy(s.getValues(), first, values, 0, values.length);
-            val = fill(timestamps, values, start, end);
+            val = fill(timestamps, values, start, end, step);
         }
     }
 
@@ -109,9 +109,10 @@ public abstract class Variable {
      * @param values the actual values
      * @param start the start of the period
      * @param end the end of the period
+     * @param step the step of the period
      * @return a filled Value object
      */
-    protected abstract Value fill(long[] timestamps, double[] values, long start, long end);
+    protected abstract Value fill(long[] timestamps, double[] values, long start, long end, long step);
 
     /**
      * Find the first valid data point and it's timestamp
@@ -119,7 +120,7 @@ public abstract class Variable {
      */
     public static class FIRST extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             for (int i = 0; i < values.length; i++) {
                 if (timestamps[i] > start && timestamps[i] < end && ! Double.isNaN(values[i])) {
                     return new Value(timestamps[i], values[i]);
@@ -135,7 +136,7 @@ public abstract class Variable {
      */
     public static class LAST extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             for (int i = values.length - 1 ; i >=0 ; i--) {
                 if (! Double.isNaN(values[i]) ) {
                     return new Value(timestamps[i], values[i]);
@@ -151,7 +152,7 @@ public abstract class Variable {
      */
     public static class MIN extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             long timestamp = 0;
             double value = Double.NaN;
             for (int i = values.length -1 ; i >=0 ; i--) {
@@ -173,7 +174,7 @@ public abstract class Variable {
      */
     public static class MAX extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             long timestamp = 0;
             double value = Double.NaN;
             for (int i = values.length -1 ; i >=0 ; i--) {
@@ -195,13 +196,13 @@ public abstract class Variable {
      */
     public static class TOTAL extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             double value = Double.NaN;
 
             for (double tempVal: values) {
                 value = Util.sum(value, tempVal);
             }
-            return new Value(0, value * (timestamps[1] - timestamps[0]) );
+            return new Value(0, value * step );
         }
     }
 
@@ -211,7 +212,7 @@ public abstract class Variable {
      */
     public static class AVERAGE extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             double value = 0;
             int count = 0;
             for (int i = values.length - 1 ; i >= 0 ; i--) {
@@ -235,7 +236,7 @@ public abstract class Variable {
      */
     public static class STDDEV extends Variable {
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             double value = Double.NaN;
             int count = 0;
             double M = 0.0;
@@ -304,6 +305,8 @@ public abstract class Variable {
      *
      */
     static final class ComparPercentElemen implements Comparator<PercentElem>, Serializable {
+        private static final long serialVersionUID = 1L;
+
         @Override
         public int compare(PercentElem arg0, PercentElem arg1) {
             if (Double.isNaN(arg0.value) && Double.isNaN(arg1.value))
@@ -344,7 +347,7 @@ public abstract class Variable {
         }
 
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             // valuesSet will be a set with NaN packet at the start
             SortedSet<PercentElem> valuesSet = new TreeSet<>(new ComparPercentElemen());
             for (int i = 0 ; i < values.length ; i++) {
@@ -386,7 +389,7 @@ public abstract class Variable {
     public static class LSLSLOPE extends Variable {
 
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             int cnt = 0;
             int lslstep = 0;
             double SUMx = 0.0;
@@ -426,7 +429,7 @@ public abstract class Variable {
     public static class LSLINT extends Variable {
 
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             int cnt = 0;
             int lslstep = 0;
             double SUMx = 0.0;
@@ -467,7 +470,7 @@ public abstract class Variable {
     public static class LSLCORREL extends Variable {
 
         @Override
-        protected Value fill(long[] timestamps, double[] values, long start, long end) {
+        protected Value fill(long[] timestamps, double[] values, long start, long end, long step) {
             int cnt = 0;
             int lslstep = 0;
             double SUMx = 0.0;
