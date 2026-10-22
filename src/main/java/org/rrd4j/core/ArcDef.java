@@ -109,8 +109,7 @@ public class ArcDef {
      * equal archive definitions.
      */
     public boolean equals(Object obj) {
-        if (obj instanceof ArcDef) {
-            ArcDef arcObj = (ArcDef) obj;
+        if (obj instanceof ArcDef arcObj) {
             return consolFun == arcObj.consolFun && steps == arcObj.steps;
         }
         return false;

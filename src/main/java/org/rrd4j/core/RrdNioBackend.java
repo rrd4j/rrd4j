@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Set;
@@ -88,7 +88,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
             options.add(StandardOpenOption.WRITE);
         }
 
-        file = FileChannel.open(Paths.get(path), options);
+        file = FileChannel.open(Path.of(path), options);
         this.readOnly = readOnly;
         try {
             mapFile(file.size());
@@ -190,7 +190,7 @@ public class RrdNioBackend extends ByteBufferBackend implements RrdFileBackend {
 
     @Override
     public String getCanonicalPath() {
-        return Paths.get(getPath()).toAbsolutePath().normalize().toString();
+        return Path.of(getPath()).toAbsolutePath().normalize().toString();
     }
 
 }

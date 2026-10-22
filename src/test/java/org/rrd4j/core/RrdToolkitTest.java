@@ -4,7 +4,7 @@ import static org.rrd4j.ConsolFun.AVERAGE;
 import static org.rrd4j.DsType.GAUGE;
 
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class RrdToolkitTest {
     private String createRrd(String test) throws IOException {
         String[] dsNames = new String[]{"A", "B", "C"};
         Set<String> dsNamesSet = new HashSet<>(dsNames.length);
-        String rrdPath = Paths.get(testFolder.getRoot().getCanonicalPath(), test + ".rrd").toString();
+        String rrdPath = Path.of(testFolder.getRoot().getCanonicalPath(), test + ".rrd").toString();
         RrdDef rrdDef = new RrdDef(rrdPath, 0, 300);
         rrdDef.setVersion(2);
         for (String dsName: dsNames) {
@@ -60,7 +60,7 @@ public class RrdToolkitTest {
     @Test
     public void addDatasourcesTest() throws IOException {
         String source = createRrd("adddatasources");
-        String destination = Paths.get(testFolder.getRoot().getCanonicalPath(), "new.rrd").toString();
+        String destination = Path.of(testFolder.getRoot().getCanonicalPath(), "new.rrd").toString();
         RrdToolkit.addDatasources(source, destination, Collections.singleton(new DsDef("D", DsType.ABSOLUTE, 1, 0, 1)));
         try (RrdDb db = RrdDb.getBuilder().setPath(destination).build()) {
             Assert.assertTrue(db.containsDs("A"));
@@ -101,7 +101,7 @@ public class RrdToolkitTest {
     @Test
     public void removeDatasourcesTest() throws IOException {
         String source = createRrd("removedadatasources");
-        String destination = Paths.get(testFolder.getRoot().getCanonicalPath(), "new.rrd").toString();
+        String destination = Path.of(testFolder.getRoot().getCanonicalPath(), "new.rrd").toString();
         RrdToolkit.removeDatasource(source, destination, "C");
         try (RrdDb db = RrdDb.getBuilder().setPath(destination).build()) {
             Assert.assertTrue(db.containsDs("A"));
@@ -159,7 +159,7 @@ public class RrdToolkitTest {
     @Test
     public void addArchiveTest() throws IOException {
         String source = createRrd("addarchive");
-        String destination = Paths.get(testFolder.getRoot().getCanonicalPath(), "new.rrd").toString();
+        String destination = Path.of(testFolder.getRoot().getCanonicalPath(), "new.rrd").toString();
         RrdToolkit.addArchive(source, destination, new ArcDef(ConsolFun.AVERAGE, 0.5, 2, 3));
         try (RrdDb db = RrdDb.getBuilder().setPath(destination).build()) {
             Assert.assertTrue(db.containsDs("A"));

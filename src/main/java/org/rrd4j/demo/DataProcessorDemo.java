@@ -19,8 +19,8 @@ public class DataProcessorDemo {
         // time span
         long t1 = Demo.START;
         long t2 = Demo.END;
-        System.out.println("t1 = " + t1);
-        System.out.println("t2 = " + t2);
+        IO.println("t1 = " + t1);
+        IO.println("t2 = " + t2);
 
         // RRD file to use
         String rrdPath = Util.getRrd4jDemoPath("demo.rrd");
@@ -47,34 +47,34 @@ public class DataProcessorDemo {
         long laptime = System.currentTimeMillis();
         //dp.setStep(86400);
         dp.processData();
-        System.out.println("Data processed in " + (System.currentTimeMillis() - laptime) + " milliseconds\n---");
-        System.out.println(dp.dump());
+        IO.println("Data processed in " + (System.currentTimeMillis() - laptime) + " milliseconds\n---");
+        IO.println(dp.dump());
 
         // aggregates
-        System.out.println("\nAggregates for X");
+        IO.println("\nAggregates for X");
         double xAverage = dp.getVariable("X", new Variable.AVERAGE()).value;
         double xFirst = dp.getVariable("X", new Variable.FIRST()).value;
         double xLast = dp.getVariable("X", new Variable.LAST()).value;
         double xMax = dp.getVariable("X", new Variable.MAX()).value;
         double xMin = dp.getVariable("X", new Variable.MIN()).value;
         double xTotal = dp.getVariable("X", new Variable.TOTAL()).value;
-        System.out.println(dumpValues(xAverage, xFirst, xLast, xMax, xMin, xTotal));
-        System.out.println("\nAggregates for Y");
+        IO.println(dumpValues(xAverage, xFirst, xLast, xMax, xMin, xTotal));
+        IO.println("\nAggregates for Y");
         double yAverage = dp.getVariable("Y", new Variable.AVERAGE()).value;
         double yFirst = dp.getVariable("Y", new Variable.FIRST()).value;
         double yLast = dp.getVariable("Y", new Variable.LAST()).value;
         double yMax = dp.getVariable("Y", new Variable.MAX()).value;
         double yMin = dp.getVariable("Y", new Variable.MIN()).value;
         double yTotal = dp.getVariable("Y", new Variable.TOTAL()).value;
-        System.out.println(dumpValues(yAverage, yFirst, yLast, yMax, yMin, yTotal));
+        IO.println(dumpValues(yAverage, yFirst, yLast, yMax, yMin, yTotal));
 
         // 95-percentile
 
-        System.out.println("\n95-percentile for X: " + Util.formatDouble(dp.getVariable("X", new Variable.PERCENTILE(95)).value));
-        System.out.println("95-percentile for Y: " + Util.formatDouble(dp.getVariable("Y", new Variable.PERCENTILE(95)).value));
+        IO.println("\n95-percentile for X: " + Util.formatDouble(dp.getVariable("X", new Variable.PERCENTILE(95)).value));
+        IO.println("95-percentile for Y: " + Util.formatDouble(dp.getVariable("Y", new Variable.PERCENTILE(95)).value));
 
         // lastArchiveUpdateTime
-        System.out.println("\nLast archive update time was: " + dp.getLastRrdArchiveUpdateTime());
+        IO.println("\nLast archive update time was: " + dp.getLastRrdArchiveUpdateTime());
     }
 
     private static String dumpValues(double average, double first, double last, double max, double min, double total) {

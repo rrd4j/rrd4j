@@ -1779,8 +1779,8 @@ public class RrdGraphDef implements RrdGraphConstants, DataHolder {
         SourcedPlotElement parent = null;
         for (int i = plotElements.size() - 1; i >= 0; i--) {
             PlotElement plotElement = plotElements.get(i);
-            if (plotElement instanceof SourcedPlotElement) {
-                parent = (SourcedPlotElement) plotElement;
+            if (plotElement instanceof SourcedPlotElement sourcedPlotElement) {
+                parent = sourcedPlotElement;
                 break;
             }
         }

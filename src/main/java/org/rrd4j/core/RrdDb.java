@@ -1384,8 +1384,8 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      *                             not derived from RrdFileBackend.
      */
     public String getCanonicalPath() throws IOException {
-        if (backend instanceof RrdFileBackend) {
-            return ((RrdFileBackend) backend).getCanonicalPath();
+        if (backend instanceof RrdFileBackend fileBackend) {
+            return fileBackend.getCanonicalPath();
         } else {
             throw new RrdBackendException("The underlying backend has no canonical path");
         }
@@ -1543,14 +1543,14 @@ public class RrdDb implements RrdUpdater<RrdDb>, Closeable {
      * @param args an array of {@link java.lang.String} objects.
      */
     public static void main(String[] args) {
-        System.out.println("RRD4J :: RRDTool choice for the Java world");
-        System.out.println("===============================================================================");
-        System.out.println("RRD4J base directory: " + Util.getRrd4jHomeDirectory());
+        IO.println("RRD4J :: RRDTool choice for the Java world");
+        IO.println("===============================================================================");
+        IO.println("RRD4J base directory: " + Util.getRrd4jHomeDirectory());
         long time = Util.getTime();
-        System.out.println("Current time: " + time + ": " + new Date(time * 1000L));
-        System.out.println("-------------------------------------------------------------------------------");
-        System.out.println("See https://github.com/rrd4j/rrd4j for more information and the latest version.");
-        System.out.println("Copyright 2017 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc.. Licensed under the Apache License, Version 2.0.");
+        IO.println("Current time: " + time + ": " + new Date(time * 1000L));
+        IO.println("-------------------------------------------------------------------------------");
+        IO.println("See https://github.com/rrd4j/rrd4j for more information and the latest version.");
+        IO.println("Copyright 2017 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc.. Licensed under the Apache License, Version 2.0.");
     }
 
 }

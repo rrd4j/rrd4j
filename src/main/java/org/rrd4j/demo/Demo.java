@@ -126,7 +126,7 @@ public class Demo {
                 sample.update();
                 t += RANDOM.nextDouble() * MAX_STEP + 1;
                 if (((++n) % 1000) == 0) {
-                    System.out.print("*");
+                    IO.print("*");
                 }
             } 
         }
@@ -238,11 +238,11 @@ public class Demo {
         return RrdBackendFactory.getFactory(name);
     }
     static void println(String msg) {
-        System.out.println(msg);
+        IO.println(msg);
     }
 
     static void print(String msg) {
-        System.out.print(msg);
+        IO.print(msg);
     }
 
     static class GaugeSource {

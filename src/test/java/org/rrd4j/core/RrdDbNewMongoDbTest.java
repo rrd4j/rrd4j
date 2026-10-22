@@ -41,8 +41,6 @@ public class RrdDbNewMongoDbTest {
                                                        List.of(new ServerAddress("localhost", 27017))) )
                                                .build();
 
-        ;
-
         try (MongoClient mongoClient = MongoClients.create(settings)) {
             MongoDatabase database = mongoClient.getDatabase( "mydb" );
             MongoCollection<DBObject> collection = database.getCollection( "test", DBObject.class );

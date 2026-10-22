@@ -3,7 +3,6 @@ package org.rrd4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.junit.BeforeClass;
@@ -27,7 +26,7 @@ public class GraphTester {
 
     protected Path resolveTestsPath(TemporaryFolder tf, String testClass) throws IOException {
         String testsPathProperty = System.getProperty("rrd4j.graphTestsPath");
-        Path testsPath = Optional.of(testsPathProperty == null ? tf.getRoot().toPath() : Paths.get(testsPathProperty))
+        Path testsPath = Optional.of(testsPathProperty == null ? tf.getRoot().toPath() : Path.of(testsPathProperty))
                                  .map(p -> p.resolve(testClass))
                                  .get();
         if (!Files.exists(testsPath)) {

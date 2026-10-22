@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import org.rrd4j.ConsolFun;
 import org.rrd4j.data.Aggregates;
@@ -450,7 +450,7 @@ public class FetchData {
      * @throws java.io.IOException Thrown in case of I/O error
      */
     public void exportXml(String filepath) throws IOException {
-        try (OutputStream outputStream = Files.newOutputStream(Paths.get(filepath))) {
+        try (OutputStream outputStream = Files.newOutputStream(Path.of(filepath))) {
             exportXml(outputStream);
         }
     }

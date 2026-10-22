@@ -2,7 +2,7 @@ package org.rrd4j.core;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 /**
  * Backend which is used to store RRD data to ordinary files on the disk. This was the
@@ -64,7 +64,7 @@ public class RrdRandomAccessFileBackend extends RrdBackend implements RrdFileBac
 
     @Override
     public String getCanonicalPath() {
-        return Paths.get(getPath()).toAbsolutePath().normalize().toString();
+        return Path.of(getPath()).toAbsolutePath().normalize().toString();
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.rrd4j.core;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * A general purpose RRD4J exception.
@@ -9,7 +10,8 @@ import java.io.IOException;
  */
 public class RrdException extends IOException {
 
-   private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
    public RrdException(String message) {
       super(message);

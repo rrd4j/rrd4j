@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
@@ -323,11 +322,11 @@ public class RrdToolkit {
     private static void copyFile(String sourcePath, String destPath, boolean saveBackup)
             throws IOException {
         
-        Path source = Paths.get(sourcePath);
-        Path destination = Paths.get(destPath);
+        Path source = Path.of(sourcePath);
+        Path destination = Path.of(destPath);
         if (saveBackup) {
             String backupPath = getBackupPath(destPath);
-            Files.move(destination, Paths.get(backupPath), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(destination, Path.of(backupPath), StandardCopyOption.REPLACE_EXISTING);
         }
         Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
     }
@@ -559,7 +558,7 @@ public class RrdToolkit {
     }
 
     private static String createSplitPath(String dsName, String sourcePath) {
-        Path file = Paths.get(sourcePath);
+        Path file = Path.of(sourcePath);
         Path parent = file.getParent();
         String newName = dsName + "-" + file.getFileName().toString();
         return parent.resolve(newName).toString();

@@ -68,7 +68,7 @@ class GraphFrame extends JFrame {
     }
 
     private void createRrdGraph() {
-        System.out.println("Creating graph...");
+        IO.println("Creating graph...");
         try (RrdDb rrdDb = RrdDb.getBuilder().setPath(sourcePath).readOnly().build()) {
             RrdDef rrdDef;
             long[] timestamps;

@@ -49,8 +49,10 @@ public class RrdInspector extends JFrame {
     static final Dimension MAIN_TREE_SIZE = new Dimension(250, 400);
     static final Dimension INFO_PANE_SIZE = new Dimension(450, 400);
 
-    static final String ABOUT = "RRD4J\nRRD File Inspector\n" +
-            "Copyright (c) 2013-2022 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc. Licensed under the Apache License, Version 2.0.";
+    static final String ABOUT = """
+            RRD4J
+            RRD File Inspector
+            Copyright (c) 2013-2022 The RRD4J Authors. Copyright (c) 2001-2005 Sasa Markovic and Ciaran Treanor. Copyright (c) 2013 The OpenNMS Group, Inc. Licensed under the Apache License, Version 2.0.""";
     private static final String JSCROLL_BAR_FAST_WHEEL_SCROLLING = "JScrollBar.fastWheelScrolling";
     private static final String OPEN_A_VALID_RRD_FILE_FIRST = "Open a valid RRD file first.";
     private static final String SELECT_ARCHIVE_FIRST = "Select archive first";
@@ -300,8 +302,8 @@ public class RrdInspector extends JFrame {
         if (path != null) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
             Object obj = node.getUserObject();
-            if (obj instanceof RrdNode) {
-                return (RrdNode) obj;
+            if (obj instanceof RrdNode rrdNode) {
+                return rrdNode;
             }
         }
         return null;

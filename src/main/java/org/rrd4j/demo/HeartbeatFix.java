@@ -24,24 +24,24 @@ public class HeartbeatFix {
         File directory = new File(args[0]);
         long heartbeat = Long.parseLong(args[1]);
         File[] files = directory.listFiles(pathname -> pathname.isFile() && pathname.getName().endsWith(".rrd"));
-        System.out.println(files.length + " files found");
+        IO.println(files.length + " files found");
         for (int i = 0; i < files.length; i++) {
             String path = files[i].getAbsolutePath();
-            System.out.print((i + 1) + ": " + path + ": ");
+            IO.print((i + 1) + ": " + path + ": ");
             // fix heartbeat
             RrdToolkit.setDsHeartbeat(files[i].getAbsolutePath(), 0, heartbeat);
-            System.out.print("fixed");
+            IO.print("fixed");
             // check consistency of the file
             try (RrdDb rrd = RrdDb.getBuilder().setPath(path).build()) {
                 if (rrd.getRrdDef().getEstimatedSize() == files[i].length() &&
                         rrd.getDatasource(0).getHeartbeat() == heartbeat) {
-                    System.out.println(", verified");
+                    IO.println(", verified");
                 }
                 else {
-                    System.out.println(", ********** ERROR **********");
+                    IO.println(", ********** ERROR **********");
                 }
             }
         }
-        System.out.println("FINISHED!");
+        IO.println("FINISHED!");
     }
 }

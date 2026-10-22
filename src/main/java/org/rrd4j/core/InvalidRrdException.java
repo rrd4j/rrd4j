@@ -1,5 +1,7 @@
 package org.rrd4j.core;
 
+import java.io.Serial;
+
 /**
  * An exception indicating a corrupted RRD.
  * 
@@ -7,6 +9,7 @@ package org.rrd4j.core;
  */
 public class InvalidRrdException extends RrdException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public InvalidRrdException(String message) {

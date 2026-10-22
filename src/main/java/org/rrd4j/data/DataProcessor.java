@@ -342,8 +342,8 @@ public class DataProcessor implements DataHolder {
      */
     public Variable.Value getVariable(String sourceName) {
         Source source = getSource(sourceName);
-        if( source instanceof VDef) {
-            return ((VDef) source).getValue();
+        if( source instanceof VDef def) {
+            return def.getValue();
         }
         else {
             throw new IllegalArgumentException(String.format("%s is not a Variable source", source.getName()));
@@ -1115,8 +1115,8 @@ public class DataProcessor implements DataHolder {
 
     private void calculateNonRrdSources() {
         for (Source source : sources.values()) {
-            if (source instanceof NonRrdSource) {
-                ((NonRrdSource)source).calculate(tStart, tEnd, this);
+            if (source instanceof NonRrdSource rrdSource) {
+                rrdSource.calculate(tStart, tEnd, this);
             }
         }
     }

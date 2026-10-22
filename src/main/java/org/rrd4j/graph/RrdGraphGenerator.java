@@ -4,7 +4,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.rrd4j.core.Util;
@@ -77,8 +76,7 @@ class RrdGraphGenerator {
         info.width = im.xgif;
         info.height = im.ygif;
         for (CommentText comment : gdef.comments) {
-            if (comment instanceof PrintText) {
-                PrintText pt = (PrintText) comment;
+            if (comment instanceof PrintText pt) {
                 if (pt.isPrint()) {
                     info.addPrintLine(pt.resolvedText);
                 }
@@ -91,7 +89,7 @@ class RrdGraphGenerator {
 
     private void saveImage() throws IOException {
         if (!RrdGraphConstants.IN_MEMORY_IMAGE.equals(gdef.filename)) {
-            Path imgpath = Paths.get(gdef.filename);
+            Path imgpath = Path.of(gdef.filename);
             worker.saveImage(gdef.filename);
             info.bytesSource = () -> {
                 try {
@@ -136,46 +134,47 @@ class RrdGraphGenerator {
     private void drawRulesAndSpans() {
         boolean found = false;
         for (PlotElement pe : gdef.plotElements) {
-            if (pe instanceof HRule) {
-                HRule hr = (HRule) pe;
-                if (hr.value >= im.minval && hr.value <= im.maxval) {
-                    int y = mapper.ytr(hr.value);
+            switch (pe) {
+                case HRule hr -> {
+                    if (hr.value >= im.minval && hr.value <= im.maxval) {
+                        int y = mapper.ytr(hr.value);
+                        if (!found) {
+                            worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+                            found = true;
+                        }
+                        worker.drawLine(im.xorigin, y, im.xorigin + im.xsize, y, hr.color, hr.stroke);
+                    }
+                }
+                case VRule vr -> {
+                    if (vr.timestamp >= im.start && vr.timestamp <= im.end) {
+                        int x = mapper.xtr(vr.timestamp);
+                        if (!found) {
+                            worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
+                            found = true;
+                        }
+                        worker.drawLine(x, im.yorigin, x, im.yorigin - im.ysize, vr.color, vr.stroke);
+                    }
+                }
+                case HSpan hr -> {
+                    int ys = mapper.ytr(hr.start);
+                    int ye = mapper.ytr(hr.end);
+                    int height = ys - ye;
                     if (!found) {
                         worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
                         found = true;
                     }
-                    worker.drawLine(im.xorigin, y, im.xorigin + im.xsize, y, hr.color, hr.stroke);
+                    worker.fillRect(im.xorigin, ys - height, im.xsize, height, hr.color);
                 }
-            } else if (pe instanceof VRule) {
-                VRule vr = (VRule) pe;
-                if (vr.timestamp >= im.start && vr.timestamp <= im.end) {
-                    int x = mapper.xtr(vr.timestamp);
+                case VSpan vr -> {
+                    int xs = mapper.xtr(vr.start);
+                    int xe = mapper.xtr(vr.end);
                     if (!found) {
                         worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
                         found = true;
                     }
-                    worker.drawLine(x, im.yorigin, x, im.yorigin - im.ysize, vr.color, vr.stroke);
+                    worker.fillRect(xs, im.yorigin - im.ysize, xe - xs, im.ysize, vr.color);
                 }
-            }
-            else if (pe instanceof HSpan) {
-                HSpan hr = (HSpan) pe;
-                int ys = mapper.ytr(hr.start);
-                int ye = mapper.ytr(hr.end);
-                int height = ys - ye;
-                if (!found) {
-                    worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
-                    found = true;
-                }
-                worker.fillRect(im.xorigin, ys - height, im.xsize, height, hr.color);
-            } else if (pe instanceof VSpan) {
-                VSpan vr = (VSpan) pe;
-                int xs = mapper.xtr(vr.start);
-                int xe = mapper.xtr(vr.end);
-                if (!found) {
-                    worker.clip(im.xorigin + 1, im.yorigin - gdef.height - 1, gdef.width - 1, gdef.height + 2);
-                    found = true;
-                }
-                worker.fillRect(xs, im.yorigin - im.ysize, xe - xs, im.ysize, vr.color);
+                case null, default -> {}
             }
         }
         if (found) {
@@ -251,8 +250,7 @@ class RrdGraphGenerator {
         double[] lastY = null;
         // draw line, area and stack
         for (PlotElement plotElement : gdef.plotElements) {
-            if (plotElement instanceof SourcedPlotElement) {
-                SourcedPlotElement source = (SourcedPlotElement) plotElement;
+            if (plotElement instanceof SourcedPlotElement source) {
                 double[] y;
                 if (gdef.downsampler != null) {
                     DownSampler.DataSet set = gdef.downsampler.downsize(dproc.getTimestamps(),
@@ -271,8 +269,7 @@ class RrdGraphGenerator {
                         worker.fillPolygon(x, lastY, y, source.color);
                         worker.drawPolyline(x, lastY, source.getParentColor(), new BasicStroke(0));
                     }
-                } else if (source instanceof Stack) {
-                    Stack stack = (Stack) source;
+                } else if (source instanceof Stack stack) {
                     float width = stack.getParentLineWidth();
                     if (width >= 0F) {
                         // line
@@ -312,7 +309,7 @@ class RrdGraphGenerator {
                     im.yorigin - im.ysize - 4, yaxisColor, stroke);
 
             // skip arrowheads if transparent
-            if ((arrowColor instanceof Color) && ((Color)arrowColor).getAlpha() == 0) {
+            if ((arrowColor instanceof Color color) && color.getAlpha() == 0) {
                 return;
             }
 
@@ -391,20 +388,20 @@ class RrdGraphGenerator {
 
     private void removeOutOfRangeRules() {
         for (PlotElement plotElement : gdef.plotElements) {
-            if (plotElement instanceof HRule) {
-                ((HRule) plotElement).setLegendVisibility(im.minval, im.maxval, gdef.forceRulesLegend);
-            } else if (plotElement instanceof VRule) {
-                ((VRule) plotElement).setLegendVisibility(im.start, im.end, gdef.forceRulesLegend);
+            if (plotElement instanceof HRule rule1) {
+                rule1.setLegendVisibility(im.minval, im.maxval, gdef.forceRulesLegend);
+            } else if (plotElement instanceof VRule rule) {
+                rule.setLegendVisibility(im.start, im.end, gdef.forceRulesLegend);
             }
         }
     }
 
     private void removeOutOfRangeSpans() {
         for (PlotElement plotElement : gdef.plotElements) {
-            if (plotElement instanceof HSpan) {
-                ((HSpan) plotElement).setLegendVisibility(im.minval, im.maxval, gdef.forceRulesLegend);
-            } else if (plotElement instanceof VSpan) {
-                ((VSpan) plotElement).setLegendVisibility(im.start, im.end, gdef.forceRulesLegend);
+            if (plotElement instanceof HSpan span1) {
+                span1.setLegendVisibility(im.minval, im.maxval, gdef.forceRulesLegend);
+            } else if (plotElement instanceof VSpan span) {
+                span.setLegendVisibility(im.start, im.end, gdef.forceRulesLegend);
             }
         }
     }
@@ -533,9 +530,9 @@ class RrdGraphGenerator {
         double minval = Double.NaN;
         double maxval = Double.NaN;
         for (PlotElement pe : gdef.plotElements) {
-            if (pe instanceof SourcedPlotElement) {
-                minval = Util.min(((SourcedPlotElement) pe).getMinValue(), minval);
-                maxval = Util.max(((SourcedPlotElement) pe).getMaxValue(), maxval);
+            if (pe instanceof SourcedPlotElement element) {
+                minval = Util.min(element.getMinValue(), minval);
+                maxval = Util.max(element.getMaxValue(), maxval);
             }
         }
         if (Double.isNaN(minval)) {
@@ -580,8 +577,8 @@ class RrdGraphGenerator {
 
     private void calculatePlotValues() {
         for (PlotElement pe : gdef.plotElements) {
-            if (pe instanceof SourcedPlotElement) {
-                ((SourcedPlotElement) pe).assignValues(dproc);
+            if (pe instanceof SourcedPlotElement element) {
+                element.assignValues(dproc);
             }
         }
     }
@@ -633,11 +630,11 @@ class RrdGraphGenerator {
                 if (c.isValidGraphElement()) {
                     int x = c.x;
                     int y = c.y + ascent;
-                    if (c instanceof LegendText) {
+                    if (c instanceof LegendText text) {
                         // draw with BOX
                         worker.fillRect(x, y - box, box, box, gdef.getColor(ElementsNames.frame));
                         Paint bc = gdef.getColor(ElementsNames.back);
-                        Paint lc = ((LegendText) c).legendColor;
+                        Paint lc = text.legendColor;
                         boolean bt = bc.getTransparency() != Transparency.OPAQUE;
                         boolean lt = lc.getTransparency() != Transparency.OPAQUE;
                         // no use drawing unless both the two on top have some transparency

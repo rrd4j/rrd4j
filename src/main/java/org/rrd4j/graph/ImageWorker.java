@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * An abstract class, that allows to use custom {@link Graphics2D}. To use it the construct should build it and call
@@ -198,7 +197,7 @@ public abstract class ImageWorker {
     protected abstract void makeImage(OutputStream os) throws IOException ;
 
     protected void saveImage(String path) throws IOException {
-        makeImage(Paths.get(path));
+        makeImage(Path.of(path));
     }
 
     protected byte[] getImageBytes() throws IOException {

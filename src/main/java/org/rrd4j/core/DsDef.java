@@ -134,8 +134,7 @@ public class DsDef {
      * It is not possible to create RRD with two equal archive definitions.
      */
     public boolean equals(Object obj) {
-        if (obj instanceof DsDef) {
-            DsDef dsObj = (DsDef) obj;
+        if (obj instanceof DsDef dsObj) {
             return dsName.equals(dsObj.dsName);
         }
         return false;

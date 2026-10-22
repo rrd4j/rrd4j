@@ -30,8 +30,8 @@ class Stack extends SourcedPlotElement {
     }
 
     float getParentLineWidth() {
-        if (parent instanceof Line) {
-            return ((Line) parent).stroke.getLineWidth();
+        if (parent instanceof Line line) {
+            return line.stroke.getLineWidth();
         }
         else if (parent instanceof Area) {
             return -1F;

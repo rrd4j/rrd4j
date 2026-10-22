@@ -266,7 +266,7 @@ public class ValueAxisTest extends AxisTester<ValueAxis> {
         }
         rrd.close();
         prepareGraph("ValueAxisTest", "testEntriesNeg80To90InRrd");
-        /**
+        /*
          * Original behaviour; a single major X-axis label (0) only.
                 expectMinorGridLines(4);
                 expectMajorGridLine("   0");

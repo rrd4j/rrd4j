@@ -82,21 +82,14 @@ public class Aggregates {
      * @throws java.lang.IllegalArgumentException Thrown if unsupported consolidation function is supplied
      */
     public double getAggregate(ConsolFun consolFun) {
-        switch (consolFun) {
-        case AVERAGE:
-            return average;
-        case FIRST:
-            return first;
-        case LAST:
-            return last;
-        case MAX:
-            return max;
-        case MIN:
-            return min;
-        case TOTAL:
-            return total;
-        }
-        throw new IllegalArgumentException("Unknown consolidation function: " + consolFun);
+        return switch (consolFun) {
+        case AVERAGE -> average;
+        case FIRST -> first;
+        case LAST -> last;
+        case MAX -> max;
+        case MIN -> min;
+        case TOTAL -> total;
+        };
     }
 
     /**

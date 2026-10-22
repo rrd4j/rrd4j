@@ -24,7 +24,6 @@ import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -399,9 +398,9 @@ public class Util {
     public static String getRrd4jDemoDirectory() {
         Path root;
         if (System.getProperty("rrd4j.demopath") != null) {
-            root = Paths.get(System.getProperty("rrd4j.demopath"));
+            root = Path.of(System.getProperty("rrd4j.demopath"));
         } else {
-            root = Paths.get(getUserHomeDirectory(), RRD4J_DIR);
+            root = Path.of(getUserHomeDirectory(), RRD4J_DIR);
         }
         try {
             root = Files.createDirectories(root.toAbsolutePath().normalize());
@@ -429,13 +428,13 @@ public class Util {
     }
 
     static boolean sameFilePath(String pathname1, String pathname2) throws IOException {
-        Path path1 = Paths.get(pathname1);
-        Path path2 = Paths.get(pathname2);
+        Path path1 = Path.of(pathname1);
+        Path path2 = Path.of(pathname2);
         if (Files.exists(path1) != Files.exists(path2)) {
             return false;
         } else if (Files.exists(path1) && Files.exists(path2)){
-            path1 = Paths.get(pathname1).toRealPath().normalize();
-            path2 = Paths.get(pathname2).toRealPath().normalize();
+            path1 = Path.of(pathname1).toRealPath().normalize();
+            path2 = Path.of(pathname2).toRealPath().normalize();
             return Files.isSameFile(path1, path2);
         } else {
             return false;
@@ -696,7 +695,7 @@ public class Util {
             String className = Util.class.getName().replace('.', '/');
             URI uri = Util.class.getResource("/" + className + ".class").toURI();
             if ("file".equals(uri.getScheme())) {
-                homedir = Paths.get(uri).toString();
+                homedir = Path.of(uri).toString();
             }
             else if ("jar".equals(uri.getScheme())) {
                 // JarURLConnection doesn't open the JAR
@@ -706,7 +705,7 @@ public class Util {
         } catch (URISyntaxException | IOException e) {
         }
         if (homedir != null) {
-            return Paths.get(homedir).toAbsolutePath().toString();
+            return Path.of(homedir).toAbsolutePath().toString();
         } else {
             return null;
         }
@@ -732,7 +731,7 @@ public class Util {
      * @throws java.io.IOException Thrown if canonical file path could not be resolved
      */
     public static String getCanonicalPath(String path) throws IOException {
-        return Paths.get(path).toRealPath().toString();
+        return Path.of(path).toRealPath().toString();
     }
 
     /**
@@ -745,7 +744,7 @@ public class Util {
     @Deprecated
     public static long getLastModified(String file) {
         try {
-            return Files.getLastModifiedTime(Paths.get(file)).to(TimeUnit.SECONDS);
+            return Files.getLastModifiedTime(Path.of(file)).to(TimeUnit.SECONDS);
         } catch (IOException e) {
             // For compatibility with old API
             return 0;
@@ -760,7 +759,7 @@ public class Util {
      * @throws IOException 
      */
     public static long getLastModifiedTime(String file) throws IOException {
-        return Files.getLastModifiedTime(Paths.get(file)).to(TimeUnit.SECONDS);
+        return Files.getLastModifiedTime(Path.of(file)).to(TimeUnit.SECONDS);
     }
 
     /**
@@ -770,7 +769,7 @@ public class Util {
      * @return <code>true</code> if file exists, <code>false</code> otherwise
      */
     public static boolean fileExists(String filename) {
-        return Files.exists(Paths.get(filename));
+        return Files.exists(Path.of(filename));
     }
 
     /**

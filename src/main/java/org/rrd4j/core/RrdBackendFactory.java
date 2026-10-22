@@ -179,7 +179,7 @@ public abstract class RrdBackendFactory implements Closeable {
      */
     public static synchronized RrdBackendFactory getDefaultFactory() {
         if (!activeFactories.isEmpty()) {
-            return activeFactories.get(0);
+            return activeFactories.getFirst();
         } else {
             return Registry.defaultFactory;
         }

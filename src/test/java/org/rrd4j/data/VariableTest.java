@@ -50,7 +50,7 @@ public class VariableTest {
                 String xmlfile = System.getProperty("java.io.tmpdir") + File.separator + "variabletest.xml";
                 String rrdfile = System.getProperty("java.io.tmpdir") + File.separator + "variabletest.rrd";
                 db.dumpXml(xmlfile);
-                System.out.println("rrdtool restore " + xmlfile + " " + rrdfile);
+                IO.println("rrdtool restore " + xmlfile + " " + rrdfile);
                 String cmd = "rrdtool graph /dev/null " +
                         String.format("--start=%d ", startTime ) +
                         String.format("--end=%d ", endTime) +
@@ -67,7 +67,7 @@ public class VariableTest {
                         "VDEF:lslope=baz,LSLSLOPE " + "PRINT:lslope:\"lslope %1.15le\" " +
                         "VDEF:lslint=baz,LSLINT " + "PRINT:lslint:\"lslintn %1.15le\" " +
                         "VDEF:lslcorrel=baz,LSLCORREL " + "PRINT:lslcorrel:\"lslcorrel %1.15le\" ";
-                System.out.println(cmd);
+                IO.println(cmd);
                 long interval = (endTime - startTime) / 3;
                 String cmd2 = "rrdtool graph /dev/null " +
                         String.format("--start=%d ", startTime  + interval) +
@@ -85,7 +85,7 @@ public class VariableTest {
                         "VDEF:lslope=baz,LSLSLOPE " + "PRINT:lslope:\"lslope %1.15le\" " +
                         "VDEF:lslint=baz,LSLINT " + "PRINT:lslint:\"lslintn %1.15le\" " +
                         "VDEF:lslcorrel=baz,LSLCORREL " + "PRINT:lslcorrel:\"lslcorrel %1.15le\" ";
-                System.out.println(cmd2);
+                IO.println(cmd2);
 
                 String cmd3 = "rrdtool graph /dev/null " +
                         String.format("--start=%d ", startTime - 10 * step) +
@@ -103,7 +103,7 @@ public class VariableTest {
                         "VDEF:lslope=baz,LSLSLOPE " + "PRINT:lslope:\"lslope %1.15le\" " +
                         "VDEF:lslint=baz,LSLINT " + "PRINT:lslint:\"lslintn %1.15le\" " +
                         "VDEF:lslcorrel=baz,LSLCORREL " + "PRINT:lslcorrel:\"lslcorrel %1.15le\" ";
-                System.out.println(cmd3);
+                IO.println(cmd3);
             }
         }
     }

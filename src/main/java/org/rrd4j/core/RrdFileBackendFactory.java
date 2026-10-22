@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * An abstract backend factory which is used to store RRD data to ordinary files on the disk.
@@ -23,7 +22,7 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
      */
     @Override
     protected boolean exists(String path) {
-        return Files.exists(Paths.get(path));
+        return Files.exists(Path.of(path));
     }
 
     /** {@inheritDoc} */
@@ -44,9 +43,9 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
         Path file;
         try {
             if (uri.isOpaque() || uri.getScheme() == null) {
-                file = Paths.get(uri.getSchemeSpecificPart());
+                file = Path.of(uri.getSchemeSpecificPart());
             } else {
-                file = Paths.get(uri);
+                file = Path.of(uri);
             }
             Path parent = file.getParent().toRealPath();
             return parent.resolve(file.getFileName()).toUri();
@@ -58,7 +57,7 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
     @Override
     public URI getUri(String path) {
         try {
-            return Paths.get(path).normalize().toUri();
+            return Path.of(path).normalize().toUri();
         } catch (IOError e) {
             throw new IllegalArgumentException("can't get URI from path " + path + ": " + e, e);
         }
@@ -69,7 +68,7 @@ public abstract class RrdFileBackendFactory extends RrdBackendFactory {
         if (uri.isOpaque()) {
             return uri.getSchemeSpecificPart();
         } else if (uri.isAbsolute()) {
-            return Paths.get(uri).normalize().toString();
+            return Path.of(uri).normalize().toString();
         } else {
             return uri.getPath();
         }

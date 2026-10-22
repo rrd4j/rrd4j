@@ -54,7 +54,7 @@ class ValueScaler {
         }
 
         void dump() {
-            System.out.println("[" + value + unit + "]");
+            IO.println("[" + value + unit + "]");
         }
     }
 }

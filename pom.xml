@@ -12,8 +12,8 @@
     <properties>
         <!-- The project should have a source encoding set. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>11</maven.compiler.release>
-        <maven.plugin.surefire.version>3.5.4</maven.plugin.surefire.version>
+        <maven.compiler.release>25</maven.compiler.release>
+        <maven.plugin.surefire.version>3.5.6</maven.plugin.surefire.version>
         <junit.version>4.13.2</junit.version>
         <log4j.version>2.25.3</log4j.version>
         <!-- 4.14 dropped support of Java 8 -->
@@ -164,7 +164,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.1</version>
+                    <version>3.16.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -204,7 +204,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.14</version>
+                    <version>0.8.15</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -273,7 +273,7 @@
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
                     <!-- Don't update to 7.x.x, it's based on java 17-->
-                    <version>6.4.0</version>
+                    <version>7.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.central</groupId>

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.rrd4j.core.Util;
 
@@ -165,13 +166,13 @@ class RpnCalculator {
         TKN_RANDOM("RANDOM") {
             @Override
             void do_method(RpnCalculator c, State s) {
-                c.push(Math.random());
+                c.push(ThreadLocalRandom.current().nextDouble());
             }
         },
         TKN_RND("RND") {
             @Override
             void do_method(RpnCalculator c, State s) {
-                c.push(Math.floor(c.pop() * Math.random()));
+                c.push(Math.floor(c.pop() * ThreadLocalRandom.current().nextDouble()));
             }
         },
 

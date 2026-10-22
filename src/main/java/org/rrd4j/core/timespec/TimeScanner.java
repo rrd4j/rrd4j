@@ -59,7 +59,7 @@ class TimeScanner {
             new TimeToken("fri", TimeToken.FRI),
             new TimeToken("saturday", TimeToken.SAT),
             new TimeToken("sat", TimeToken.SAT),
-            new TimeToken(null, 0)            /*** SENTINEL ***/
+            new TimeToken(null, 0)            /** SENTINEL ***/
     };
 
     static final TimeToken[] MULTIPLIERS = {
@@ -89,7 +89,7 @@ class TimeScanner {
             new TimeToken("years", TimeToken.YEARS),      /* (pluralized) */
             new TimeToken("yr", TimeToken.YEARS),         /* (generic) */
             new TimeToken("y", TimeToken.YEARS),          /* (short generic) */
-            new TimeToken(null, 0)            /*** SENTINEL ***/
+            new TimeToken(null, 0)            /** SENTINEL ***/
     };
 
     TimeToken[] specials = WORDS;

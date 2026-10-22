@@ -7,7 +7,6 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Queue;
@@ -239,8 +238,8 @@ public class RrdDbPoolTest {
     public void testCanonical() throws IOException {
         RrdDbPool instance = new RrdDbPool(new RrdRandomAccessFileBackendFactory());
         URI testRoot = testFolder.newFolder().toURI();
-        Path link1 = Files.createSymbolicLink(Paths.get(testFolder.getRoot().getCanonicalPath(), "link1"), Paths.get(testRoot));
-        Path link2 = Files.createSymbolicLink(Paths.get(testFolder.getRoot().getCanonicalPath(), "link2"), Paths.get(testRoot));
+        Path link1 = Files.createSymbolicLink(Path.of(testFolder.getRoot().getCanonicalPath(), "link1"), Path.of(testRoot));
+        Path link2 = Files.createSymbolicLink(Path.of(testFolder.getRoot().getCanonicalPath(), "link2"), Path.of(testRoot));
         RrdDef def = new RrdDef(new File(link1.toString(), "test.rrd").getPath());
         def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
         def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
@@ -249,7 +248,7 @@ public class RrdDbPoolTest {
             Assert.assertEquals(db1, db2);
             URI[] opendb = instance.getOpenUri();
             Assert.assertEquals(1, opendb.length);
-            Assert.assertEquals(Paths.get(testRoot.getPath(), "test.rrd").toRealPath().toString(), opendb[0].getPath());
+            Assert.assertEquals(Path.of(testRoot.getPath(), "test.rrd").toRealPath().toString(), opendb[0].getPath());
         }
     }
 
