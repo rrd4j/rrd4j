@@ -293,8 +293,12 @@ public class RrdDef {
      * Sets RRD's time step.
      *
      * @param step RRD time step.
+     * @throws IllegalArgumentException if the step is not positive
      */
     public void setStep(long step) {
+        if (step <= 0) {
+            throw new IllegalArgumentException("Invalid RRD step specified: " + step);
+        }
         this.step = step;
     }
 
