@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -283,6 +285,103 @@ public class RrdDbPoolTest {
         Assert.assertTrue("requestRrdDb didn't wait for available path", (end - start) > 100); 
         String[] files = instance.getOpenFiles();
         Assert.assertArrayEquals(new String[]{}, files);
+    }
+
+    /**
+     * A slot released after a thread failed to take one, but before that thread started to wait, must wake it.
+     * Otherwise the thread waits forever although the pool has a free slot.
+     */
+    @Test(timeout=10000)
+    public void testSlotReleasedBeforeWaiting() throws Exception {
+        RrdBackendFactory factory = new RrdRandomAccessFileBackendFactory();
+        RrdDbPool instance = new RrdDbPool(factory);
+        instance.setCapacity(1);
+        String heldPath = createRrd(factory, "held.rrd");
+        String waitingPath = createRrdInAnotherBin(factory, heldPath);
+
+        // Takes the only slot of the pool
+        RrdDb held = instance.requestRrdDb(heldPath);
+
+        // When the waiting thread fails to get a slot, the held database is closed before that thread goes on,
+        // so the slot is free again before the thread starts to wait for it
+        AtomicBoolean raceArranged = new AtomicBoolean(false);
+        Semaphore usage = new Semaphore(0) {
+            @Override
+            public boolean tryAcquire() {
+                boolean acquired = super.tryAcquire();
+                if (!acquired && raceArranged.compareAndSet(false, true)) {
+                    Thread closer = getThread(() -> {
+                        try {
+                            held.close();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+                    closer.start();
+                    try {
+                        closer.join(2000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                return acquired;
+            }
+        };
+        Field usageField = RrdDbPool.class.getDeclaredField("usage");
+        usageField.setAccessible(true);
+        usageField.set(instance, usage);
+
+        AtomicBoolean done = new AtomicBoolean(false);
+        Thread waiting = getThread(() -> {
+            try (RrdDb db = instance.requestRrdDb(waitingPath)) {
+                done.set(true);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+        waiting.start();
+        waiting.join(5000);
+        try {
+            Assert.assertTrue("the race was not arranged", raceArranged.get());
+            Assert.assertFalse("waiting for a slot although the pool has room", waiting.isAlive());
+            Assert.assertTrue("failure in sub thread", done.get());
+        } finally {
+            if (waiting.isAlive()) {
+                waiting.interrupt();
+                waiting.join(1000);
+                failed.clear();
+            }
+        }
+        Assert.assertArrayEquals(new String[]{}, instance.getOpenFiles());
+    }
+
+    private String createRrd(RrdBackendFactory factory, String name) throws IOException {
+        String path = new File(testFolder.getRoot().getCanonicalFile(), name).getCanonicalPath();
+        RrdDef def = new RrdDef(path);
+        def.addArchive(ConsolFun.AVERAGE, 0.5, 1, 215);
+        def.addDatasource("bar", DsType.GAUGE, 3000, Double.NaN, Double.NaN);
+        RrdDb.getBuilder().setBackendFactory(factory).setRrdDef(def).build().close();
+        return path;
+    }
+
+    /**
+     * Creates a database whose pool entry does not share a hash bin with the given one, so that closing the
+     * other database cannot be blocked by the entry update running while a slot is requested.
+     */
+    private String createRrdInAnotherBin(RrdBackendFactory factory, String otherPath) throws IOException {
+        int otherBin = poolBin(factory, otherPath);
+        for (int i = 0; ; i++) {
+            String path = new File(testFolder.getRoot().getCanonicalFile(), "waiting" + i + ".rrd").getCanonicalPath();
+            if (poolBin(factory, path) != otherBin) {
+                return createRrd(factory, "waiting" + i + ".rrd");
+            }
+        }
+    }
+
+    private static int poolBin(RrdBackendFactory factory, String path) {
+        int h = factory.getCanonicalUri(factory.getUri(path)).hashCode();
+        // ConcurrentHashMap spreads the hash this way; the lowest bits select the bin in any table of the pool
+        return (h ^ (h >>> 16)) & 0xff;
     }
 
 }

@@ -209,14 +209,19 @@ public class RrdDbPool {
                     ref = null;
                     try {
                         usageWLock.lockInterruptibly();
+                        // A slot may have been released since tryAcquire() failed, by a thread that did not see
+                        // waitFull set yet and so did not signal. Publish waitFull first, then check the slots
+                        // again: such a release is either seen here or followed by a signal.
                         waitFull.set(true);
-                        fullCondition.await();
+                        if (usage.availablePermits() == 0) {
+                            fullCondition.await();
+                        }
                     } catch (InterruptedException ex) {
                         holder.completeExceptionally(ex);
                         Thread.currentThread().interrupt();
                     } finally {
+                        // waitFull is not reset here: other threads may still be waiting, it's reset by the signaling thread
                         if (usageWLock.isHeldByCurrentThread()) {
-                            waitFull.set(false);
                             usageWLock.unlock();
                         }
                     }
@@ -262,6 +267,8 @@ public class RrdDbPool {
             if (waitFull.get()) {
                 try {
                     usageWLock.lockInterruptibly();
+                    // All the waiting threads are woken; the ones that still find no slot set waitFull again
+                    waitFull.set(false);
                     fullCondition.signalAll();
                 } catch (InterruptedException e1) {
                     // Lost slot available notification
